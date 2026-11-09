@@ -72,6 +72,11 @@ h2{font-size:1.05rem;margin:0}
 .sets input[type=number]{width:100%;min-width:0;box-sizing:border-box;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:6px;padding:7px 6px;font-family:var(--f-num);font-size:.95rem;text-align:center}
 .sets input[type=checkbox]{width:22px;height:22px;justify-self:center;accent-color:var(--accent)}
 .sets .warm{font-size:.7rem;color:var(--warn);text-align:center}
+.pick-h{grid-column:1/-1;font-family:var(--f-num);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.run-in{display:grid;gap:14px}.run-f{display:grid;grid-template-columns:1fr 1fr;gap:10px}.run-f label{display:grid;gap:4px;font-size:.78rem;color:var(--muted);min-width:0}
+.run-f input{width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);font:inherit;font-size:1.1rem}
+.run-pace{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:10px}.run-pace small{color:var(--muted)}.run-pace b{font-family:var(--f-num);font-size:1.6rem;color:#fc5200}
+.run-in .actions{flex-wrap:wrap}
 .prog-pick{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
 .prog-pick .prog{grid-column:span 2;min-width:0}.prog-pick .prog.cardio{grid-column:span 3;grid-template-columns:auto 1fr;text-align:left;align-items:center;column-gap:10px;padding:10px 12px}
 .prog.cardio .ic{grid-row:span 2;font-size:1.4rem}.prog.cardio[aria-pressed="true"]{border-color:var(--up)}.prog.cardio[aria-pressed="true"] small{color:var(--up)}
@@ -251,6 +256,16 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
     <button class="btn" type="button" id="passkey-login" hidden>🙂 Face ID</button>
   </form>
 </div>
+<div class="modal" id="run-modal" hidden role="dialog" aria-modal="true" aria-label="Run">
+  <div class="modal-in run-in">
+    <div class="label" style="margin:0">🏃 <span data-i="บันทึกการวิ่ง">บันทึกการวิ่ง</span></div>
+    <div class="run-f"><label><span data-i="ระยะ (km)">ระยะ (km)</span><input id="run-km" type="number" inputmode="decimal" step="0.01" min="0" placeholder="10.00"></label>
+    <label><span data-i="เวลา (ชม:นาที:วิ)">เวลา (ชม:นาที:วิ)</span><input id="run-time" inputmode="numeric" placeholder="58:30"></label></div>
+    <div class="run-pace"><small>Pace</small><b id="run-pace">– /km</b></div>
+    <div class="actions"><button class="btn primary" id="run-save" data-i="เซฟ">เซฟ</button><button class="btn" id="run-share" style="background:#fc5200;border:0;color:#fff" data-i="แชร์การ์ด">แชร์การ์ด</button><button class="btn" id="run-overlay" data-i="แบบพื้นใส">แบบพื้นใส</button></div>
+    <div class="actions"><button class="btn ghost sm" id="run-del" data-i="ลบ">ลบ</button><button class="btn sm" id="run-close" data-i="ปิด">ปิด</button></div>
+  </div>
+</div>
 <div class="modal" id="share-modal" hidden role="dialog" aria-modal="true" aria-label="Share">
   <div class="modal-in">
     <img id="share-img" alt="Workout summary card">
@@ -277,7 +292,7 @@ const dkey=d=>{const t=new Date(d.getTime()-d.getTimezoneOffset()*60000);return 
 let TODAY=dkey(now);
 let lang=(()=>{try{return localStorage.getItem("lang")||"en"}catch(e){return "en"}})();
 const LOC=()=>lang==="th"?"th-TH":"en-GB";
-const EN={"บันทึกแล้ว":"Logged","แตะเพื่อบันทึก":"Tap to log","ยกเลิกแล้ว":"Removed","อาหาร":"Food","เวท":"Workout","แคลอรี":"Calories","โปรตีน":"Protein","วันนี้":"Today","วิ่ง":"Run","ตีแบด":"Badminton","เวทค่ำ":"Late workout","โปรตีน 7 วัน":"Protein · 7 days","ล้างวันนี้":"Clear today","โปรแกรม":"Program","บันทึก":"Save workout","ล้าง":"Clear","ประวัติ":"History","ข้อมูล":"Data","พัก":"Rest","พร้อม":"Ready",
+const EN={"เซฟ":"Save","เวทเทรนนิ่ง":"Weight training","คาร์ดิโอ":"Cardio","ใส่ระยะ / เวลา":"Add distance / time","บันทึกการวิ่ง":"Log run","ระยะ (km)":"Distance (km)","เวลา (ชม:นาที:วิ)":"Time (h:mm:ss)","แชร์การ์ด":"Share card","แบบพื้นใส":"Transparent","ระยะทาง":"Distance","เวลา":"Time","ใส่ระยะและเวลาก่อน":"Enter distance and time first","ลบ":"Delete","บันทึกแล้ว":"Logged","แตะเพื่อบันทึก":"Tap to log","ยกเลิกแล้ว":"Removed","อาหาร":"Food","เวท":"Workout","แคลอรี":"Calories","โปรตีน":"Protein","วันนี้":"Today","วิ่ง":"Run","ตีแบด":"Badminton","เวทค่ำ":"Late workout","โปรตีน 7 วัน":"Protein · 7 days","ล้างวันนี้":"Clear today","โปรแกรม":"Program","บันทึก":"Save workout","ล้าง":"Clear","ประวัติ":"History","ข้อมูล":"Data","พัก":"Rest","พร้อม":"Ready",
 "วันนี้กินครบหรือยัง":"Meals","เวทวันนี้":"Workout",
 "เช้า":"Breakfast","กลางวัน":"Lunch","บ่าย":"Afternoon","วิตามินหลังมื้อเช้า":"Vitamins after breakfast","วิตามินหลังมื้อเย็น":"Vitamins after dinner","วิตามินชุดเช้า":"Morning vitamins","วิตามินชุดเย็น":"Evening vitamins","เย็น (มื้อสุดท้าย)":"Dinner (last meal)","หลังเวท / ก่อนนอน":"Post-workout / bedtime","หลังวิ่ง":"Post-run","เติมหลังวิ่ง":"Run refuel","เพิ่มวันแบด":"Badminton extra",
 "Iso Soy 2 สกู๊ป + Mass 2 สกู๊ป ชงน้ำ":"Iso Soy 2 scoops + Mass 2 scoops, water","กล้วย 2 ลูก":"2 bananas","ข้าวกล้อง 150 g":"Brown rice 150 g","เนื้อวัว 90% 100 g":"Lean beef 90% 100 g","ไข่ต้ม 1 + ผัก 1-2 ถ้วย":"1 boiled egg + 1-2 cups veg","อัลมอนด์ / ถั่วอบ 1 กำมือ (~25 g)":"Almonds / nuts, 1 handful (~25 g)","ปลาหรืออกไก่ 100 g":"Fish or chicken breast 100 g","Iso Soy 2 สกู๊ป ชงน้ำ":"Iso Soy 2 scoops, water","Mass 2 สกู๊ป ชงน้ำ":"Mass 2 scoops, water","กล้วย 1 ลูก (กินพร้อมมื้อเย็น)":"1 banana (with dinner)",
@@ -397,15 +412,56 @@ function lastFor(id){for(let i=logs.length-1;i>=0;i--){if(logs[i].date>DAY)conti
 function best(sets){return sets.reduce((m,s)=>Math.max(m,+s.kg||0),0)}
 function renderProgs(){
   const nx=nextProg();const box=document.getElementById("progs");box.innerHTML="";
+  const hd=s=>{const d=document.createElement("div");d.className="pick-h";d.textContent=t(s);box.appendChild(d)};
+  hd("เวทเทรนนิ่ง");
   Object.entries(PROGS).forEach(([k,p])=>{
     const last=[...logs].reverse().find(l=>l.prog===k);
     const b=document.createElement("button");b.className="prog";b.id="p-"+k;b.setAttribute("aria-pressed",picked&&k===cur);
     b.innerHTML=`<b>${p.name}</b><small>${t(p.sub)}</small><small class="${k===nx?"next":""}">${k===nx?t("คิวถัดไป"):last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small>`;
     b.addEventListener("click",()=>{if(picked&&cur===k){cancelProg();return}if(cur!==k){draft.ex={}}cur=k;draft.prog=k;picked=true;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});box.appendChild(b)});
-  [["run","🏃","วิ่ง"],["bad","🏸","ตีแบด"]].forEach(([k,ic,lb])=>{const on=!!fs().tags[k];const b=document.createElement("button");b.className="prog cardio";b.setAttribute("aria-pressed",on);
-    b.innerHTML=`<span class="ic">${ic}</span><b>${t(lb)}</b><small>${on?"✓ "+t("บันทึกแล้ว")+" +50 XP":t("แตะเพื่อบันทึก")}</small>`;
-    b.addEventListener("click",()=>{const tg=fs().tags;tg[k]=!tg[k];save("mealcheck",food);try{renderFood()}catch(e){}renderGym();toast(tg[k]?t(lb)+" ✓":t("ยกเลิกแล้ว"))});box.appendChild(b)});
+  hd("คาร์ดิโอ");
+  const tg=fs().tags,rd=tg.runData;
+  const run=document.createElement("button");run.className="prog cardio";run.setAttribute("aria-pressed",!!tg.run);
+  run.innerHTML=`<span class="ic">🏃</span><b>${t("วิ่ง")}</b><small>${tg.run?(rd&&rd.km?`${rd.km} km · ${fmtPace(rd.sec/rd.km)}/km`:"✓ "+t("บันทึกแล้ว")):t("ใส่ระยะ / เวลา")}</small>`;
+  run.addEventListener("click",openRun);box.appendChild(run);
+  const bad=document.createElement("button");bad.className="prog cardio";bad.setAttribute("aria-pressed",!!tg.bad);
+  bad.innerHTML=`<span class="ic">🏸</span><b>${t("ตีแบด")}</b><small>${tg.bad?"✓ "+t("บันทึกแล้ว")+" +50 XP":t("แตะเพื่อบันทึก")}</small>`;
+  bad.addEventListener("click",()=>{tg.bad=!tg.bad;save("mealcheck",food);try{renderFood()}catch(e){}renderGym();toast(tg.bad?t("ตีแบด")+" ✓":t("ยกเลิกแล้ว"))});box.appendChild(bad);
 }
+/* ---------- run log + strava-style card ---------- */
+const fmtDur=s=>{s=Math.round(s);const hh=Math.floor(s/3600),mm=Math.floor(s%3600/60),ss=s%60;return (hh?hh+":"+String(mm).padStart(2,"0"):mm)+":"+String(ss).padStart(2,"0")};
+const fmtPace=s=>isFinite(s)&&s>0?fmtDur(s):"–";
+const parseDur=v=>{const p=String(v).trim().split(":").map(Number);if(p.some(isNaN)||!p.length)return 0;return p.reduce((a,b)=>a*60+b,0)};
+function runPrev(){const km=+document.getElementById("run-km").value,sec=parseDur(document.getElementById("run-time").value);
+  document.getElementById("run-pace").textContent=km>0&&sec>0?fmtPace(sec/km)+" /km":"– /km";return{km,sec}}
+function openRun(){const rd=fs().tags.runData||{};document.getElementById("run-km").value=rd.km||"";document.getElementById("run-time").value=rd.sec?fmtDur(rd.sec):"";
+  document.getElementById("run-del").hidden=!fs().tags.run;runPrev();document.getElementById("run-modal").hidden=false}
+function saveRun(){const {km,sec}=runPrev();const tg=fs().tags;tg.run=true;tg.runData=km>0&&sec>0?{km,sec}:null;save("mealcheck",food);try{renderFood()}catch(e){}renderGym();return tg.runData}
+async function drawRun(d,clear){try{await document.fonts.ready}catch(e){}
+  const W=1080,H=1920,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
+  const sans='"IBM Plex Sans Thai",system-ui,sans-serif',mono='"IBM Plex Mono",monospace',OR="#fc5200",FG="#fff",MU="#b9b6b0";
+  if(!clear){const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"#1a1a1a");g.addColorStop(1,"#000");x.fillStyle=g;x.fillRect(0,0,W,H);
+    x.fillStyle=OR;x.fillRect(0,0,W,14)}
+  x.shadowColor=clear?"rgba(0,0,0,.55)":"transparent";x.shadowBlur=clear?18:0;
+  x.textAlign="center";
+  const blk=(lab,val,y)=>{x.fillStyle=MU;x.font=`500 44px ${sans}`;x.fillText(lab,W/2,y);x.fillStyle=FG;x.font=`700 150px ${sans}`;x.fillText(val,W/2,y+150)};
+  const y0=clear?560:520;
+  blk(t("ระยะทาง"),`${(+d.km).toFixed(2)} km`,y0);blk("Pace",`${fmtPace(d.sec/d.km)} /km`,y0+300);blk(t("เวลา"),fmtDur(d.sec),y0+600);
+  x.fillStyle=OR;x.font=`700 46px ${mono}`;x.fillText("🏃 RUN · FUEL & LIFT",W/2,y0-180);
+  x.fillStyle=MU;x.font=`400 40px ${sans}`;x.fillText(new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{weekday:"short",month:"short",day:"numeric",year:"numeric"}),W/2,y0-110);
+  const im=HERO_IMG[tierOf(lvOf(heroXP()))];if(im.complete){x.imageSmoothingEnabled=false;x.shadowBlur=0;x.drawImage(im,W/2-110,y0+800,220,220)}
+  return new Promise(r=>c.toBlob(b=>r(b),"image/png"))}
+async function shareRun(clear){const d=saveRun();if(!d){toast(t("ใส่ระยะและเวลาก่อน"));return}
+  document.getElementById("run-modal").hidden=true;
+  shareBlob=await drawRun(d,clear);shareName=`run-${DAY}${clear?"-overlay":""}.png`;
+  const img=document.getElementById("share-img");if(img.src)URL.revokeObjectURL(img.src);img.src=URL.createObjectURL(shareBlob);
+  document.getElementById("share-hint").hidden=true;document.getElementById("open-ig").hidden=true;document.getElementById("open-ig-web").hidden=true;document.getElementById("share-modal").hidden=false}
+document.getElementById("run-km").addEventListener("input",runPrev);document.getElementById("run-time").addEventListener("input",runPrev);
+document.getElementById("run-save").addEventListener("click",()=>{saveRun();document.getElementById("run-modal").hidden=true;toast(t("วิ่ง")+" ✓ +50 XP")});
+document.getElementById("run-share").addEventListener("click",()=>shareRun(false));
+document.getElementById("run-overlay").addEventListener("click",()=>shareRun(true));
+document.getElementById("run-del").addEventListener("click",()=>{const tg=fs().tags;tg.run=false;delete tg.runData;save("mealcheck",food);try{renderFood()}catch(e){}renderGym();document.getElementById("run-modal").hidden=true;toast(t("ยกเลิกแล้ว"))});
+document.getElementById("run-close").addEventListener("click",()=>document.getElementById("run-modal").hidden=true);
 function renderEx(){
   const box=document.getElementById("exs");box.innerHTML="";
   if(editing){renderEdit(box);return}
