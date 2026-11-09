@@ -199,7 +199,7 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
 
   <!-- GYM -->
   <div id="v-gym" class="stack" style="gap:16px" hidden>
-    <section class="hero" id="hero"><canvas id="hero-cv" width="20" height="24" style="width:60px;height:72px"></canvas><div class="hero-i"><div class="hero-l"><b id="hero-lv">Lv 1</b><span id="hero-tier"></span></div><div class="track"><div class="fill" id="hero-fill"></div></div><div class="hero-l"><span id="hero-xp"></span><span id="hero-next"></span></div></div></section>
+    <section class="hero" id="hero"><canvas id="hero-cv" width="64" height="64" style="width:80px;height:80px"></canvas><div class="hero-i"><div class="hero-l"><b id="hero-lv">Lv 1</b><span id="hero-tier"></span></div><div class="track"><div class="fill" id="hero-fill"></div></div><div class="hero-l"><span id="hero-xp"></span><span id="hero-next"></span></div></div></section>
     <section class="stepbox">
       <div class="step"><span class="num" id="sn-2">2</span><span class="step-t" data-i="เลือกโปรแกรม">เลือกโปรแกรม</span></div>
       <div class="prog-pick" id="progs"></div>
@@ -259,7 +259,7 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
 </div>
 <div class="rest" id="rest" hidden role="timer" aria-live="polite">
   <div class="rest-in">
-    <div class="rest-top"><div><div class="label" style="margin:0" data-i="พัก">พัก</div><div class="rest-time" id="rest-time">1:30</div></div><canvas id="rest-cv" width="20" height="24" style="width:50px;height:60px"></canvas><div class="rest-next" id="rest-next"></div></div>
+    <div class="rest-top"><div><div class="label" style="margin:0" data-i="พัก">พัก</div><div class="rest-time" id="rest-time">1:30</div></div><canvas id="rest-cv" width="64" height="64" style="width:64px;height:64px"></canvas><div class="rest-next" id="rest-next"></div></div>
     <div class="track"><div class="fill" id="rest-fill"></div></div>
     <div class="actions"><button class="btn sm" id="rest-minus">−15s</button><button class="btn sm" id="rest-plus">+15s</button><button class="btn sm primary" id="rest-skip" data-i="พร้อม">พร้อม</button></div>
   </div>
@@ -546,31 +546,17 @@ function renderEdit(box){
 
 
 /* ---------- pixel hero ---------- */
-const PAL=[["#7d7a74","#4a4844"],["#d9a46c","#8a6237"],["#f2d36b","#a8862a"]];
+const HERO_IMG=[1,2,3].map(n=>{const i=new Image();i.src="/hero-"+n+".png";return i});
 function heroXP(){let n=0;logs.forEach(l=>Object.values(l.ex).forEach(s=>s.forEach(x=>{if(+x.reps>0)n++})));
   if(draft&&draft.ex)Object.values(draft.ex).forEach(s=>s.forEach(x=>{if(x.ok)n++}));return n*10}
 function lvOf(xp){let L=1;while(xp>=25*L*(L+1))L++;return L}
 function tierOf(L){return L<5?0:L<12?1:2}
-function drawHero(cv,tier,pose,f){const c=cv.getContext("2d");c.clearRect(0,0,20,24);
-  const R=(x,y,w,hh,col)=>{c.fillStyle=col;c.fillRect(x,y,w,hh)};
-  const skin="#e0b48a",pant="#2f2f33",bar="#c9c9c9",[sh,sd]=PAL[tier];
-  const sq=pose==="legs"&&f?3:0, tw=[6,8,10][tier], tx=10-tw/2, ty=8+sq;
-  // legs
-  if(sq){R(tx,ty+8,3,2,pant);R(tx+tw-3,ty+8,3,2,pant);R(tx-1,ty+10,2,3,pant);R(tx+tw-1,ty+10,2,3,pant)}
-  else{R(tx+1,16,2,7,pant);R(tx+tw-3,16,2,7,pant)}
-  R(tx,23,3,1,"#111");R(tx+tw-3,23,3,1,"#111");
-  // torso
-  R(tx,ty,tw,8,sh);R(tx,ty+6,tw,2,sd);if(tier===0)R(tx+tw-1,ty+4,1,3,sd);
-  if(tier>0){R(tx+1,ty+1,tw/2-1,2,sd);R(10,ty+1,tw/2-1,2,sd)}
-  // head
-  R(7,1+sq,6,6,skin);R(7,1+sq,6,2,"#2a1d14");R(8,4+sq,1,1,"#111");R(11,4+sq,1,1,"#111");
-  if(tier===2)R(6,0+sq,8,1,"#f2d36b");
-  // arms
-  const aw=tier?3:2, lx=tx-aw, rx=tx+tw;
-  if(pose==="push"){const up=f?0:4;R(lx,ty-6+up,aw,7-up,skin);R(rx,ty-6+up,aw,7-up,skin);R(1,ty-7+up,18,1,bar);R(0,ty-9+up,2,5,"#555");R(18,ty-9+up,2,5,"#555")}
-  else if(pose==="pull"){const up=f?2:6;R(lx,ty-up,aw,up+1,skin);R(rx,ty-up,aw,up+1,skin);R(2,ty-up-1,16,1,bar)}
-  else if(pose==="legs"){R(lx,ty-1,aw,3,skin);R(rx,ty-1,aw,3,skin);R(1,ty-2,18,1,bar);R(0,ty-4,2,5,"#555");R(18,ty-4,2,5,"#555")}
-  else{const b=f?1:0;R(lx,ty+b,aw,6,skin);R(rx,ty+b,aw,6,skin)}}
+function drawHero(cv,tier,pose,f){const c=cv.getContext("2d"),W=cv.width,H=cv.height,im=HERO_IMG[tier];c.imageSmoothingEnabled=false;c.clearRect(0,0,W,H);
+  if(!im.complete)return;
+  const bar=(y)=>{c.fillStyle="#c9c9c9";c.fillRect(4,y,W-8,3);c.fillStyle="#555";c.fillRect(2,y-5,6,13);c.fillRect(W-8,y-5,6,13)};
+  if(pose==="idle"){c.drawImage(im,0,f?1:0,W,H-(f?1:0));return}
+  if(pose==="legs"){const d=f?8:0;bar(25+d);c.drawImage(im,0,d,W,H-d);return}
+  const d=pose==="pull"?(f?3:0):(f?0:2);c.drawImage(im,0,d,W,H-d);bar(pose==="pull"?(f?4:0):(f?0:5))}
 let heroLv=null,heroF=0;
 function renderHero(){const xp=heroXP(),L=lvOf(xp),lo=25*(L-1)*L,hi=25*L*(L+1),tr=tierOf(L);
   document.getElementById("hero-lv").textContent="Lv "+L;
