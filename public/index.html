@@ -261,6 +261,7 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
     <div class="label" style="margin:0">🏃 <span data-i="บันทึกการวิ่ง">บันทึกการวิ่ง</span></div>
     <div class="run-f"><label><span data-i="ระยะ (km)">ระยะ (km)</span><input id="run-km" type="number" inputmode="decimal" step="0.01" min="0" placeholder="10.00"></label>
     <label><span data-i="เวลา (ชม:นาที:วิ)">เวลา (ชม:นาที:วิ)</span><input id="run-time" inputmode="numeric" placeholder="58:30"></label></div>
+    <label class="btn sm" style="justify-self:start;cursor:pointer">📷 <span data-i="เลือกรูปพื้นหลัง">เลือกรูปพื้นหลัง</span><input id="run-photo" type="file" accept="image/*" hidden></label><small id="run-photo-n" style="color:var(--muted);margin-top:-8px"></small>
     <div class="run-pace"><small>Pace</small><b id="run-pace">– /km</b></div>
     <div class="actions"><button class="btn primary" id="run-save" data-i="เซฟ">เซฟ</button><button class="btn" id="run-share" style="background:#fc5200;border:0;color:#fff" data-i="แชร์การ์ด">แชร์การ์ด</button><button class="btn" id="run-overlay" data-i="แบบพื้นใส">แบบพื้นใส</button></div>
     <div class="actions"><button class="btn ghost sm" id="run-del" data-i="ลบ">ลบ</button><button class="btn sm" id="run-close" data-i="ปิด">ปิด</button></div>
@@ -292,7 +293,7 @@ const dkey=d=>{const t=new Date(d.getTime()-d.getTimezoneOffset()*60000);return 
 let TODAY=dkey(now);
 let lang=(()=>{try{return localStorage.getItem("lang")||"en"}catch(e){return "en"}})();
 const LOC=()=>lang==="th"?"th-TH":"en-GB";
-const EN={"เซฟ":"Save","เวทเทรนนิ่ง":"Weight training","คาร์ดิโอ":"Cardio","ใส่ระยะ / เวลา":"Add distance / time","บันทึกการวิ่ง":"Log run","ระยะ (km)":"Distance (km)","เวลา (ชม:นาที:วิ)":"Time (h:mm:ss)","แชร์การ์ด":"Share card","แบบพื้นใส":"Transparent","ระยะทาง":"Distance","เวลา":"Time","ใส่ระยะและเวลาก่อน":"Enter distance and time first","ลบ":"Delete","บันทึกแล้ว":"Logged","แตะเพื่อบันทึก":"Tap to log","ยกเลิกแล้ว":"Removed","อาหาร":"Food","เวท":"Workout","แคลอรี":"Calories","โปรตีน":"Protein","วันนี้":"Today","วิ่ง":"Run","ตีแบด":"Badminton","เวทค่ำ":"Late workout","โปรตีน 7 วัน":"Protein · 7 days","ล้างวันนี้":"Clear today","โปรแกรม":"Program","บันทึก":"Save workout","ล้าง":"Clear","ประวัติ":"History","ข้อมูล":"Data","พัก":"Rest","พร้อม":"Ready",
+const EN={"เลือกรูปพื้นหลัง":"Background photo","เซฟ":"Save","เวทเทรนนิ่ง":"Weight training","คาร์ดิโอ":"Cardio","ใส่ระยะ / เวลา":"Add distance / time","บันทึกการวิ่ง":"Log run","ระยะ (km)":"Distance (km)","เวลา (ชม:นาที:วิ)":"Time (h:mm:ss)","แชร์การ์ด":"Share card","แบบพื้นใส":"Transparent","ระยะทาง":"Distance","เวลา":"Time","ใส่ระยะและเวลาก่อน":"Enter distance and time first","ลบ":"Delete","บันทึกแล้ว":"Logged","แตะเพื่อบันทึก":"Tap to log","ยกเลิกแล้ว":"Removed","อาหาร":"Food","เวท":"Workout","แคลอรี":"Calories","โปรตีน":"Protein","วันนี้":"Today","วิ่ง":"Run","ตีแบด":"Badminton","เวทค่ำ":"Late workout","โปรตีน 7 วัน":"Protein · 7 days","ล้างวันนี้":"Clear today","โปรแกรม":"Program","บันทึก":"Save workout","ล้าง":"Clear","ประวัติ":"History","ข้อมูล":"Data","พัก":"Rest","พร้อม":"Ready",
 "วันนี้กินครบหรือยัง":"Meals","เวทวันนี้":"Workout",
 "เช้า":"Breakfast","กลางวัน":"Lunch","บ่าย":"Afternoon","วิตามินหลังมื้อเช้า":"Vitamins after breakfast","วิตามินหลังมื้อเย็น":"Vitamins after dinner","วิตามินชุดเช้า":"Morning vitamins","วิตามินชุดเย็น":"Evening vitamins","เย็น (มื้อสุดท้าย)":"Dinner (last meal)","หลังเวท / ก่อนนอน":"Post-workout / bedtime","หลังวิ่ง":"Post-run","เติมหลังวิ่ง":"Run refuel","เพิ่มวันแบด":"Badminton extra",
 "Iso Soy 2 สกู๊ป + Mass 2 สกู๊ป ชงน้ำ":"Iso Soy 2 scoops + Mass 2 scoops, water","กล้วย 2 ลูก":"2 bananas","ข้าวกล้อง 150 g":"Brown rice 150 g","เนื้อวัว 90% 100 g":"Lean beef 90% 100 g","ไข่ต้ม 1 + ผัก 1-2 ถ้วย":"1 boiled egg + 1-2 cups veg","อัลมอนด์ / ถั่วอบ 1 กำมือ (~25 g)":"Almonds / nuts, 1 handful (~25 g)","ปลาหรืออกไก่ 100 g":"Fish or chicken breast 100 g","Iso Soy 2 สกู๊ป ชงน้ำ":"Iso Soy 2 scoops, water","Mass 2 สกู๊ป ชงน้ำ":"Mass 2 scoops, water","กล้วย 1 ลูก (กินพร้อมมื้อเย็น)":"1 banana (with dinner)",
@@ -437,20 +438,24 @@ function runPrev(){const km=+document.getElementById("run-km").value,sec=parseDu
 function openRun(){const rd=fs().tags.runData||{};document.getElementById("run-km").value=rd.km||"";document.getElementById("run-time").value=rd.sec?fmtDur(rd.sec):"";
   document.getElementById("run-del").hidden=!fs().tags.run;runPrev();document.getElementById("run-modal").hidden=false}
 function saveRun(){const {km,sec}=runPrev();const tg=fs().tags;tg.run=true;tg.runData=km>0&&sec>0?{km,sec}:null;save("mealcheck",food);try{renderFood()}catch(e){}renderGym();return tg.runData}
+let runPhoto=null;
 async function drawRun(d,clear){try{await document.fonts.ready}catch(e){}
   const W=1080,H=1920,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
-  const sans='"IBM Plex Sans Thai",system-ui,sans-serif',mono='"IBM Plex Mono",monospace',OR="#fc5200",FG="#fff",MU="#b9b6b0";
-  if(!clear){const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"#1a1a1a");g.addColorStop(1,"#000");x.fillStyle=g;x.fillRect(0,0,W,H);
-    x.fillStyle=OR;x.fillRect(0,0,W,14)}
-  x.shadowColor=clear?"rgba(0,0,0,.55)":"transparent";x.shadowBlur=clear?18:0;
-  x.textAlign="center";
-  const blk=(lab,val,y)=>{x.fillStyle=MU;x.font=`500 44px ${sans}`;x.fillText(lab,W/2,y);x.fillStyle=FG;x.font=`700 150px ${sans}`;x.fillText(val,W/2,y+150)};
-  const y0=clear?560:520;
-  blk(t("ระยะทาง"),`${(+d.km).toFixed(2)} km`,y0);blk("Pace",`${fmtPace(d.sec/d.km)} /km`,y0+300);blk(t("เวลา"),fmtDur(d.sec),y0+600);
-  x.fillStyle=OR;x.font=`700 46px ${mono}`;x.fillText("🏃 RUN · FUEL & LIFT",W/2,y0-180);
-  x.fillStyle=MU;x.font=`400 40px ${sans}`;x.fillText(new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{weekday:"short",month:"short",day:"numeric",year:"numeric"}),W/2,y0-110);
-  const im=HERO_IMG[tierOf(lvOf(heroXP()))];if(im.complete){x.imageSmoothingEnabled=false;x.shadowBlur=0;x.drawImage(im,W/2-110,y0+800,220,220)}
+  const sans='"IBM Plex Sans Thai",system-ui,sans-serif',OR="#fc5200",FG="#fff";
+  if(runPhoto&&!clear){const im=runPhoto,sc=Math.max(W/im.width,H/im.height),w=im.width*sc,hh=im.height*sc;
+    x.filter="grayscale(1) contrast(1.1) brightness(.8)";x.drawImage(im,(W-w)/2,(H-hh)/2,w,hh);x.filter="none";
+    const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"rgba(0,0,0,.35)");g.addColorStop(.55,"rgba(0,0,0,.1)");g.addColorStop(1,"rgba(0,0,0,.45)");x.fillStyle=g;x.fillRect(0,0,W,H)}
+  else if(!clear){const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"#1c1c1c");g.addColorStop(1,"#050505");x.fillStyle=g;x.fillRect(0,0,W,H)}
+  x.shadowColor="rgba(0,0,0,.6)";x.shadowBlur=14;x.textAlign="center";
+  let y=clear?700:560;
+  [[t("ระยะทาง"),`${(+d.km).toFixed(2)} km`],["Pace",`${fmtPace(d.sec/d.km)} /km`],[t("เวลา"),fmtDur(d.sec)]].forEach(([lab,val])=>{
+    x.fillStyle=FG;x.font=`600 30px ${sans}`;x.fillText(lab,W/2,y);x.font=`700 76px ${sans}`;x.fillText(val,W/2,y+80);y+=170});
+  const im=HERO_IMG[tierOf(lvOf(heroXP()))];if(im.complete){x.imageSmoothingEnabled=false;x.drawImage(im,W/2-80,y-30,160,160)}
+  x.fillStyle=OR;x.font=`800 italic 44px ${sans}`;x.fillText("FUEL & LIFT",W/2,y+190);
+  x.fillStyle="rgba(255,255,255,.75)";x.font=`500 26px ${sans}`;x.fillText(new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"numeric"}),W/2,y+235);
   return new Promise(r=>c.toBlob(b=>r(b),"image/png"))}
+document.getElementById("run-photo").addEventListener("change",async ev=>{const f=ev.target.files[0];if(!f){runPhoto=null;return}
+  const im=new Image();im.src=URL.createObjectURL(f);await new Promise(r=>im.onload=r);runPhoto=im;document.getElementById("run-photo-n").textContent="✓ "+f.name.slice(0,24)});
 async function shareRun(clear){const d=saveRun();if(!d){toast(t("ใส่ระยะและเวลาก่อน"));return}
   document.getElementById("run-modal").hidden=true;
   shareBlob=await drawRun(d,clear);shareName=`run-${DAY}${clear?"-overlay":""}.png`;
