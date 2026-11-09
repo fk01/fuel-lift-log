@@ -13,5 +13,7 @@
   ],
   // ทุก 15 นาที (UTC) — โค้ดแปลงเป็นเวลาไทยแล้วเช็กมื้อที่ถึงเวลา
   "triggers": { "crons": ["*/15 * * * *"] },
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  // เก็บ Variables ที่ตั้งใน Dashboard ไว้ ไม่ให้ถูกลบตอน deploy
+  "keep_vars": true
 }

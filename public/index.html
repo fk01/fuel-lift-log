@@ -563,7 +563,7 @@ async function shareFile(blob,name){try{const f=new File([blob],name,{type:blob.
 function showLogin(){document.getElementById("login").hidden=false;setTimeout(()=>document.getElementById("pin").focus(),50)}
 document.getElementById("login-form").addEventListener("submit",async ev=>{ev.preventDefault();const pin=document.getElementById("pin").value;
   const r=await fetch("/api/login",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({pin})});
-  if(r.ok)location.reload();else{document.getElementById("login-err").hidden=false}});
+  if(r.ok)location.reload();else{const j=await r.json().catch(()=>({}));const el=document.getElementById("login-err");el.textContent=r.status===500?"Server: ACCESS_PIN is not set":"Wrong PIN";el.hidden=false}});
 
 /* ---------- push notifications ---------- */
 const b64uToU8=s=>{s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";return Uint8Array.from(atob(s),c=>c.charCodeAt(0))};

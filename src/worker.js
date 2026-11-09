@@ -50,7 +50,7 @@ async function api(req, env, url) {
   if (p === "/api/login" && m === "POST") {
     const { pin } = await req.json().catch(() => ({}));
     if (!env.ACCESS_PIN) return json({ error: "ACCESS_PIN is not set" }, 500);
-    if (String(pin || "") !== String(env.ACCESS_PIN)) return json({ error: "wrong pin" }, 401);
+    if (String(pin || "").trim() !== String(env.ACCESS_PIN).trim()) return json({ error: "wrong pin" }, 401);
     const tok = await token(env);
     return json({ ok: true }, 200, {
       "Set-Cookie": `${COOKIE}=${tok}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=31536000`,
@@ -117,7 +117,7 @@ async function api(req, env, url) {
 
 /* ---------------- auth ---------------- */
 async function token(env) {
-  const d = await crypto.subtle.digest("SHA-256", enc(`${env.ACCESS_PIN}:fuel-lift-log`));
+  const d = await crypto.subtle.digest("SHA-256", enc(`${String(env.ACCESS_PIN).trim()}:fuel-lift-log`));
   return b64u(new Uint8Array(d));
 }
 async function authed(req, env) {
