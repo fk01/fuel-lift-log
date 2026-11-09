@@ -39,6 +39,8 @@ async function init(env) {
     env.DB.prepare("CREATE TABLE IF NOT EXISTS docs (id TEXT PRIMARY KEY, value TEXT NOT NULL, updated INTEGER NOT NULL)"),
     env.DB.prepare("CREATE TABLE IF NOT EXISTS subs (endpoint TEXT PRIMARY KEY, sub TEXT NOT NULL, created INTEGER NOT NULL)"),
     env.DB.prepare("CREATE TABLE IF NOT EXISTS sent (key TEXT PRIMARY KEY, ts INTEGER NOT NULL)"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS creds (id TEXT PRIMARY KEY, pk TEXT NOT NULL, alg INTEGER NOT NULL, name TEXT, created INTEGER NOT NULL)"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS challenges (c TEXT PRIMARY KEY, kind TEXT NOT NULL, ts INTEGER NOT NULL)"),
   ]);
   ready = true;
 }
@@ -60,7 +62,54 @@ async function api(req, env, url) {
     return json({ ok: true }, 200, { "Set-Cookie": `${COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0` });
   }
 
+  /* ---- passkey (Face ID / Touch ID) login ---- */
+  if (p === "/api/passkey/login/options" && m === "POST") {
+    const { results } = await env.DB.prepare("SELECT id FROM creds").all();
+    if (!results.length) return json({ error: "no passkey" }, 404);
+    const c = await newChallenge(env, "login");
+    return json({ challenge: c, rpId: url.hostname, allow: results.map((r) => r.id) });
+  }
+  if (p === "/api/passkey/login" && m === "POST") {
+    const b = await req.json();
+    const cred = await env.DB.prepare("SELECT pk, alg FROM creds WHERE id = ?1").bind(b.id).first();
+    if (!cred) return json({ error: "unknown passkey" }, 401);
+    const cd = JSON.parse(new TextDecoder().decode(b64uDec(b.clientDataJSON)));
+    if (cd.type !== "webauthn.get" || cd.origin !== url.origin || !(await useChallenge(env, cd.challenge, "login"))) return json({ error: "bad challenge" }, 401);
+    const ad = b64uDec(b.authenticatorData);
+    if (!(await rpOk(ad, url.hostname)) || (ad[32] & 0x05) !== 0x05) return json({ error: "user not verified" }, 401);
+    const key = await crypto.subtle.importKey("spki", b64uDec(cred.pk), { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
+    const signed = concat(ad, new Uint8Array(await crypto.subtle.digest("SHA-256", b64uDec(b.clientDataJSON))));
+    const ok = await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, key, derToRaw(b64uDec(b.signature)), signed);
+    if (!ok) return json({ error: "bad signature" }, 401);
+    const tok = await token(env);
+    return json({ ok: true }, 200, { "Set-Cookie": `${COOKIE}=${tok}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=31536000` });
+  }
+
   if (!(await authed(req, env))) return json({ error: "unauthorized" }, 401);
+
+  if (p === "/api/passkey/register/options" && m === "POST") {
+    const c = await newChallenge(env, "reg");
+    const { results } = await env.DB.prepare("SELECT id FROM creds").all();
+    return json({ challenge: c, rpId: url.hostname, userId: b64u(enc("fuel-lift-owner")), exclude: results.map((r) => r.id) });
+  }
+  if (p === "/api/passkey/register" && m === "POST") {
+    const b = await req.json();
+    const cd = JSON.parse(new TextDecoder().decode(b64uDec(b.clientDataJSON)));
+    if (cd.type !== "webauthn.create" || cd.origin !== url.origin || !(await useChallenge(env, cd.challenge, "reg"))) return json({ error: "bad challenge" }, 400);
+    if (b.alg !== -7 || !b.publicKey) return json({ error: "unsupported key" }, 400);
+    await crypto.subtle.importKey("spki", b64uDec(b.publicKey), { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
+    await env.DB.prepare("INSERT OR REPLACE INTO creds (id, pk, alg, name, created) VALUES (?1, ?2, ?3, ?4, ?5)")
+      .bind(b.id, b.publicKey, b.alg, String(b.name || "").slice(0, 60), Date.now()).run();
+    return json({ ok: true });
+  }
+  if (p === "/api/passkey/list" && m === "GET") {
+    const { results } = await env.DB.prepare("SELECT id, name, created FROM creds").all();
+    return json(results);
+  }
+  if (p === "/api/passkey/clear" && m === "POST") {
+    await env.DB.prepare("DELETE FROM creds").run();
+    return json({ ok: true });
+  }
 
   if (p === "/api/docs" && m === "GET") {
     const { results } = await env.DB.prepare("SELECT id, value FROM docs").all();
@@ -124,6 +173,31 @@ async function authed(req, env) {
   if (!env.ACCESS_PIN) return false;
   const c = (req.headers.get("Cookie") || "").split(/;\s*/).find((x) => x.startsWith(COOKIE + "="));
   return !!c && c.slice(COOKIE.length + 1) === (await token(env));
+}
+
+/* ---------------- passkey helpers ---------------- */
+async function newChallenge(env, kind) {
+  const c = b64u(crypto.getRandomValues(new Uint8Array(32)));
+  await env.DB.batch([
+    env.DB.prepare("DELETE FROM challenges WHERE ts < ?1").bind(Date.now() - 5 * 60e3),
+    env.DB.prepare("INSERT INTO challenges (c, kind, ts) VALUES (?1, ?2, ?3)").bind(c, kind, Date.now()),
+  ]);
+  return c;
+}
+async function useChallenge(env, c, kind) {
+  const r = await env.DB.prepare("DELETE FROM challenges WHERE c = ?1 AND kind = ?2 AND ts > ?3 RETURNING c").bind(c, kind, Date.now() - 5 * 60e3).first();
+  return !!r;
+}
+async function rpOk(ad, host) {
+  const h = new Uint8Array(await crypto.subtle.digest("SHA-256", enc(host)));
+  for (let i = 0; i < 32; i++) if (ad[i] !== h[i]) return false;
+  return true;
+}
+function derToRaw(der) {
+  // ECDSA DER (SEQUENCE{INTEGER r, INTEGER s}) -> 64-byte r||s
+  let o = 2; if (der[1] & 0x80) o += der[1] & 0x7f;
+  const read = () => { o++; const len = der[o++]; let v = der.slice(o, o + len); o += len; while (v.length > 32 && v[0] === 0) v = v.slice(1); const out = new Uint8Array(32); out.set(v, 32 - v.length); return out; };
+  return concat(read(), read());
 }
 
 /* ---------------- reminders (cron) ---------------- */
