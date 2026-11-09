@@ -144,7 +144,7 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
 
 <div class="wrap">
   <header>
-    <div style="display:flex;justify-content:space-between;gap:12px;align-items:start"><h1 id="h1"></h1><span style="display:flex;gap:6px"><button class="btn sm" id="reload-btn" aria-label="Refresh" onclick="location.reload()">↻</button><button class="btn sm" id="lang" aria-label="Language">TH</button></span></div>
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:start"><h1 id="h1"></h1><span style="display:flex;gap:6px"><button class="btn sm" id="reload-btn" aria-label="Refresh" onclick="doRefresh()">↻</button><button class="btn sm" id="lang" aria-label="Language">TH</button></span></div>
   </header>
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" id="tab-food" data-v="food" data-i="อาหาร" data-pre="🍽️ ">🍽️ อาหาร</button>
@@ -270,7 +270,7 @@ const EN={"อาหาร":"Food","เวท":"Workout","แคลอรี":"C
 "เช้า":"Breakfast","กลางวัน":"Lunch","บ่าย":"Afternoon","วิตามินหลังมื้อเช้า":"Vitamins after breakfast","วิตามินหลังมื้อเย็น":"Vitamins after dinner","วิตามินชุดเช้า":"Morning vitamins","วิตามินชุดเย็น":"Evening vitamins","เย็น (มื้อสุดท้าย)":"Dinner (last meal)","หลังเวท / ก่อนนอน":"Post-workout / bedtime","หลังวิ่ง":"Post-run","เติมหลังวิ่ง":"Run refuel","เพิ่มวันแบด":"Badminton extra",
 "Iso Soy 2 สกู๊ป + Mass 2 สกู๊ป ชงน้ำ":"Iso Soy 2 scoops + Mass 2 scoops, water","กล้วย 2 ลูก":"2 bananas","ข้าวกล้อง 150 g":"Brown rice 150 g","เนื้อวัว 90% 100 g":"Lean beef 90% 100 g","ไข่ต้ม 1 + ผัก 1-2 ถ้วย":"1 boiled egg + 1-2 cups veg","อัลมอนด์ / ถั่วอบ 1 กำมือ (~25 g)":"Almonds / nuts, 1 handful (~25 g)","ปลาหรืออกไก่ 100 g":"Fish or chicken breast 100 g","Iso Soy 2 สกู๊ป ชงน้ำ":"Iso Soy 2 scoops, water","Mass 2 สกู๊ป ชงน้ำ":"Mass 2 scoops, water","กล้วย 1 ลูก (กินพร้อมมื้อเย็น)":"1 banana (with dinner)",
 "อก · ไหล่ข้าง · หลังแขน":"Chest · side delts · triceps","หลัง · หลังไหล่ · หน้าแขน":"Back · rear delts · biceps","ขา · แกนกลาง":"Legs · core",
-"ครบทุกมื้อแล้ว ✅":"All meals done ✅","คิวถัดไป":"Up next","ล่าสุด":"Last","ยังไม่เคยเล่น":"Not yet","ยังไม่มีประวัติ":"No history","ลอง":"Try","ดูวิธีเล่น":"How-to","แก้ไข":"Edit","วอม":"Warm-up","เซ็ต":"Set","ครั้ง":"Reps","ท่า":"exercises","วอลุ่ม":"Volume","สูงสุด":"Max","ลบรายการนี้":"Delete","กดอีกครั้งเพื่อยืนยัน":"Tap again to confirm","ลบแล้ว":"Deleted","ยังไม่ได้กรอกน้ำหนักและจำนวนครั้ง":"Enter weight and reps first","บันทึกแล้ว ✅":"Saved ✅","เสร็จแล้ว":"Done","แก้ไขท่า":"Edit exercises","ชื่อท่า":"Exercise name","อุปกรณ์":"Equipment","ช่วงครั้ง":"Rep range","เครื่อง":"Machine","ดัมเบล/บาร์":"Dumbbell/bar","เคเบิล":"Cable","ลิงก์วิธีเล่น (YouTube / TikTok)":"How-to link (YouTube / TikTok)","หน่วย":"Unit","ท่าหลัก":"Main lift","ลบท่า":"Delete","เสร็จ":"Done","ลิงก์ต้องขึ้นต้นด้วย https://":"Link must start with https://","ลบท่าแล้ว":"Exercise deleted","เพิ่มท่า":"Add exercise","คืนค่าเริ่มต้น":"Reset to default","ท่าใหม่":"New exercise","ท่าถัดไป":"Next","ครบทุกท่าแล้ว":"All done","ไปต่อ!":"Go!","ซิงก์แล้ว ✓":"Synced ✓","ซิงก์ไม่สำเร็จ":"Sync failed","ออฟไลน์ · เก็บในเครื่องนี้":"Offline · saved on this device","ส่งไฟล์แล้ว":"File sent","คัดลอก JSON แล้ว":"JSON copied","ย้ายวัน":"Change date","ย้ายวันแล้ว":"Date changed","แก้เซ็ต":"Edit sets","แก้แล้วกด Save":"Edit, then tap Save","บันทึกเวทเมื่อวานให้แล้ว":"Auto-saved your last workout","นำเข้า JSON":"Import JSON","ตั้งค่า Face ID":"Set up Face ID","ตั้งค่าแล้ว":"Ready","ยังไม่ได้ตั้งค่า":"Not set up","ตั้งค่า Face ID แล้ว":"Face ID is set up","แจ้งเตือน":"Reminders","เปิดแจ้งเตือน":"Turn on reminders","ปิดแจ้งเตือน":"Turn off reminders","ส่งทดสอบ":"Send test","เปิดแจ้งเตือนมื้ออาหารแล้ว 🔔":"Meal reminders are on 🔔","ยังไม่เปิดแจ้งเตือน":"Reminders are off","เครื่องนี้ยังไม่รองรับการแจ้งเตือน (iPhone: เพิ่มลงหน้าโฮมก่อน)":"Not supported here. On iPhone, add to Home Screen first.","ไม่ได้รับอนุญาตแจ้งเตือน":"Notifications not allowed","เปิดแจ้งเตือนแล้ว 🔔":"Reminders on 🔔","ส่งทดสอบแล้ว":"Test sent","ไม่มีเครื่องที่รับแจ้งเตือน":"No subscribed device","นำเข้าแล้ว":"Imported","นำเข้าไม่สำเร็จ":"Import failed","เลือกวัน":"Pick a date","ผลงาน":"Achievements","บันทึกแล้ว เปิด IG เพื่อลง Story":"Saved. Open Instagram to post the Story","วันนี้ไม่มีบันทึกเวท":"No workout saved on this date","แชร์ล่าสุด":"Share latest","แชร์":"Share","บันทึกรูป":"Save image","ปิด":"Close","วันที่เล่น":"Workout days","สัปดาห์ติดกัน":"Week streak","เดือนนี้":"This month","ยังไม่มีบันทึก":"Nothing to share yet","รูปถูกส่งแล้ว":"Image saved","กดค้างที่รูปเพื่อบันทึก":"Long-press the image to save","ครั้งแรก":"First workout","ครั้ง":"Reps","สัปดาห์":"weeks","ยกรวม":"lifted","เลือกโปรแกรม":"Pick a program","กรอกน้ำหนัก":"Log your sets","เลือกโปรแกรมด้านบนก่อน":"Pick a program above to start","เลือกประเภทวัน":"Day type","ติ๊กมื้อที่กินแล้ว":"Tick meals eaten","ขาดโปรตีน":"Protein left","ถัดไป":"Next","ถึงเป้าแล้ว":"Target reached","เหลือ":"left"};
+"ครบทุกมื้อแล้ว ✅":"All meals done ✅","คิวถัดไป":"Up next","ล่าสุด":"Last","ยังไม่เคยเล่น":"Not yet","ยังไม่มีประวัติ":"No history","ลอง":"Try","ดูวิธีเล่น":"How-to","แก้ไข":"Edit","วอม":"Warm-up","เซ็ต":"Set","ครั้ง":"Reps","ท่า":"exercises","วอลุ่ม":"Volume","สูงสุด":"Max","ลบรายการนี้":"Delete","กดอีกครั้งเพื่อยืนยัน":"Tap again to confirm","ลบแล้ว":"Deleted","ยังไม่ได้กรอกน้ำหนักและจำนวนครั้ง":"Enter weight and reps first","บันทึกแล้ว ✅":"Saved ✅","เสร็จแล้ว":"Done","แก้ไขท่า":"Edit exercises","ชื่อท่า":"Exercise name","อุปกรณ์":"Equipment","ช่วงครั้ง":"Rep range","เครื่อง":"Machine","ดัมเบล/บาร์":"Dumbbell/bar","เคเบิล":"Cable","ลิงก์วิธีเล่น (YouTube / TikTok)":"How-to link (YouTube / TikTok)","หน่วย":"Unit","ท่าหลัก":"Main lift","ลบท่า":"Delete","เสร็จ":"Done","ลิงก์ต้องขึ้นต้นด้วย https://":"Link must start with https://","ลบท่าแล้ว":"Exercise deleted","เพิ่มท่า":"Add exercise","คืนค่าเริ่มต้น":"Reset to default","ท่าใหม่":"New exercise","ท่าถัดไป":"Next","ครบทุกท่าแล้ว":"All done","ไปต่อ!":"Go!","ซิงก์แล้ว ✓":"Synced ✓","ซิงก์ไม่สำเร็จ":"Sync failed","ออฟไลน์ · เก็บในเครื่องนี้":"Offline · saved on this device","ส่งไฟล์แล้ว":"File sent","คัดลอก JSON แล้ว":"JSON copied","ย้ายวัน":"Change date","ย้ายวันแล้ว":"Date changed","แก้เซ็ต":"Edit sets","แก้แล้วกด Save":"Edit, then tap Save","บันทึกเวทเมื่อวานให้แล้ว":"Auto-saved your last workout","นำเข้า JSON":"Import JSON","เพิ่งอัปเดตไป รออีกสักครู่":"Just updated, try again in a moment","อัปเดตแล้ว":"Updated","ตั้งค่า Face ID":"Set up Face ID","ตั้งค่าแล้ว":"Ready","ยังไม่ได้ตั้งค่า":"Not set up","ตั้งค่า Face ID แล้ว":"Face ID is set up","แจ้งเตือน":"Reminders","เปิดแจ้งเตือน":"Turn on reminders","ปิดแจ้งเตือน":"Turn off reminders","ส่งทดสอบ":"Send test","เปิดแจ้งเตือนมื้ออาหารแล้ว 🔔":"Meal reminders are on 🔔","ยังไม่เปิดแจ้งเตือน":"Reminders are off","เครื่องนี้ยังไม่รองรับการแจ้งเตือน (iPhone: เพิ่มลงหน้าโฮมก่อน)":"Not supported here. On iPhone, add to Home Screen first.","ไม่ได้รับอนุญาตแจ้งเตือน":"Notifications not allowed","เปิดแจ้งเตือนแล้ว 🔔":"Reminders on 🔔","ส่งทดสอบแล้ว":"Test sent","ไม่มีเครื่องที่รับแจ้งเตือน":"No subscribed device","นำเข้าแล้ว":"Imported","นำเข้าไม่สำเร็จ":"Import failed","เลือกวัน":"Pick a date","ผลงาน":"Achievements","บันทึกแล้ว เปิด IG เพื่อลง Story":"Saved. Open Instagram to post the Story","วันนี้ไม่มีบันทึกเวท":"No workout saved on this date","แชร์ล่าสุด":"Share latest","แชร์":"Share","บันทึกรูป":"Save image","ปิด":"Close","วันที่เล่น":"Workout days","สัปดาห์ติดกัน":"Week streak","เดือนนี้":"This month","ยังไม่มีบันทึก":"Nothing to share yet","รูปถูกส่งแล้ว":"Image saved","กดค้างที่รูปเพื่อบันทึก":"Long-press the image to save","ครั้งแรก":"First workout","ครั้ง":"Reps","สัปดาห์":"weeks","ยกรวม":"lifted","เลือกโปรแกรม":"Pick a program","กรอกน้ำหนัก":"Log your sets","เลือกโปรแกรมด้านบนก่อน":"Pick a program above to start","เลือกประเภทวัน":"Day type","ติ๊กมื้อที่กินแล้ว":"Tick meals eaten","ขาดโปรตีน":"Protein left","ถัดไป":"Next","ถึงเป้าแล้ว":"Target reached","เหลือ":"left"};
 const t=k=>lang==="th"?k:(EN[k]??k);
 const thDate=(s,o)=>new Date(s+"T12:00:00").toLocaleDateString(LOC(),o);
 function applyStatic(){document.querySelectorAll("[data-i]").forEach(el=>el.textContent=(el.dataset.pre||"")+t(el.dataset.i));document.getElementById("lang").textContent=lang==="th"?"EN":"TH";document.documentElement.lang=lang}
@@ -644,7 +644,7 @@ async function flush(){
   }catch(e){keys.forEach(k=>dirty.add(k));syncMsg(t("ซิงก์ไม่สำเร็จ"))}
   syncing=false;
 }
-(async()=>{
+async function cloudLoad(){
   const timer=setTimeout(()=>{if(!col)syncMsg(t("ออฟไลน์ · เก็บในเครื่องนี้"))},10000);
   try{
     const c=API;let snap;
@@ -670,7 +670,8 @@ async function flush(){
     autoCommitOld();
     if(!PROGS[cur])cur=nextProg();cur=draft.prog&&PROGS[draft.prog]?draft.prog:nextProg();updUnitBtn();renderFood();renderGym();
   }catch(e){clearTimeout(timer);syncMsg(t("ออฟไลน์ · เก็บในเครื่องนี้"))}
-})();
+}
+cloudLoad();
 
 /* ---------- export ---------- */
 document.getElementById("export").addEventListener("click",async()=>{
@@ -820,6 +821,16 @@ document.getElementById("share-save").addEventListener("click",async()=>{
 });
 
 
+
+/* ---------- refresh (soft, throttled) ---------- */
+let lastRefresh=Date.now(),refreshing=false;const COOLDOWN=15000;
+async function doRefresh(){
+  if(refreshing)return;
+  if(Date.now()-lastRefresh<COOLDOWN){toast(t("เพิ่งอัปเดตไป รออีกสักครู่"));return}
+  refreshing=true;lastRefresh=Date.now();
+  try{clearTimeout(syncT);if(dirty.size)await flush();await cloudLoad();toast(t("อัปเดตแล้ว"))}catch(e){toast(t("ซิงก์ไม่สำเร็จ"))}finally{refreshing=false}
+}
+
 /* ---------- pull to refresh ---------- */
 (()=>{const el=document.getElementById("ptr"),ic=document.getElementById("ptr-i");let y0=null,dy=0;const MAX=110,TRIG=80;
   const modalOpen=()=>[...document.querySelectorAll(".modal")].some(m=>!m.hidden);
@@ -828,7 +839,7 @@ document.getElementById("share-save").addEventListener("click",async()=>{
     const d=Math.min(MAX,dy*0.5);el.classList.add("on");el.style.opacity=Math.min(1,d/TRIG*1.2);el.style.transform=`translateY(${d-20}px) rotate(${d*3}deg)`;
     el.classList.toggle("ready",d>=TRIG*0.75);ic.textContent=d>=TRIG*0.75?"↻":"↓"},{passive:true});
   window.addEventListener("touchend",()=>{if(y0===null)return;el.classList.remove("on");
-    if(Math.min(MAX,dy*0.5)>=TRIG*0.75){el.classList.add("spin");el.style.transform="translateY(40px)";ic.textContent="↻";setTimeout(()=>location.reload(),250)}
+    if(Math.min(MAX,dy*0.5)>=TRIG*0.75){el.classList.add("spin");el.style.transform="translateY(40px)";ic.textContent="↻";doRefresh().finally(()=>{el.classList.remove("spin","ready");el.style.opacity=0;el.style.transform="translateY(-80px)"})}
     else{el.style.opacity=0;el.style.transform="translateY(-80px)";el.classList.remove("ready")}y0=null},{passive:true});
 })();
 

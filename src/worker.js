@@ -60,6 +60,7 @@ async function api(req, env, url) {
   const p = url.pathname, m = req.method;
 
   if (p === "/api/login" && m === "POST") {
+    if (limited(req, "login", "LOGIN")) return json({ error: "too many attempts" }, 429);
     const { pin } = await req.json().catch(() => ({}));
     const c = await conf(env);
     if (!c.ACCESS_PIN && !c.PIN_HASH) return json({ error: "ACCESS_PIN is not set" }, 500);
@@ -97,6 +98,7 @@ async function api(req, env, url) {
   }
 
   if (!(await authed(req, env))) return json({ error: "unauthorized" }, 401);
+  if (limited(req, p, m)) return json({ error: "too many requests" }, 429, { "Retry-After": "10" });
 
   if (p === "/api/passkey/register/options" && m === "POST") {
     const c = await newChallenge(env, "reg");
@@ -173,6 +175,18 @@ async function api(req, env, url) {
   }
 
   return json({ error: "not found" }, 404);
+}
+
+/* ---------------- rate limit (per isolate, per IP) ---------------- */
+const hits = new Map();
+function limited(req, path, method) {
+  const ip = req.headers.get("CF-Connecting-IP") || "x";
+  const key = `${ip}|${method}`;
+  const now = Date.now(), win = 60e3, max = method === "GET" ? 30 : method === "LOGIN" ? 10 : 120;
+  const arr = (hits.get(key) || []).filter((t) => now - t < win);
+  arr.push(now); hits.set(key, arr);
+  if (hits.size > 500) hits.clear();
+  return arr.length > max;
 }
 
 /* ---------------- auth ---------------- */
