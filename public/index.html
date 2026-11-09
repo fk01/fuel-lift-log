@@ -826,7 +826,7 @@ document.getElementById("share-save").addEventListener("click",async()=>{
 let lastRefresh=Date.now(),refreshing=false;const COOLDOWN=15000;
 async function doRefresh(){
   if(refreshing)return;
-  if(Date.now()-lastRefresh<COOLDOWN){toast(t("เพิ่งอัปเดตไป รออีกสักครู่"));return}
+  if(Date.now()-lastRefresh<COOLDOWN){const s=Math.ceil((COOLDOWN-(Date.now()-lastRefresh))/1000);toast(lang==="th"?`เพิ่งอัปเดตไป รีเฟรชได้อีกใน ${s} วินาที`:`Just updated. Refresh again in ${s}s`);return}
   refreshing=true;lastRefresh=Date.now();
   try{clearTimeout(syncT);if(dirty.size)await flush();await cloudLoad();toast(t("อัปเดตแล้ว"))}catch(e){toast(t("ซิงก์ไม่สำเร็จ"))}finally{refreshing=false}
 }
