@@ -95,6 +95,14 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
 .rest-next b{color:var(--fg);font-weight:500}
 .rest .track{height:3px}
 .wrap.has-rest{padding-bottom:150px}
+.hero{display:flex;align-items:center;gap:14px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--accent-soft)}
+.hero canvas,.rest canvas{image-rendering:pixelated;flex:none}
+.hero-i{flex:1;min-width:0;display:grid;gap:6px}
+.hero-l{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--f-num)}
+.hero-l b{font-size:1.3rem}.hero-l span{font-size:.75rem;color:var(--muted)}
+.hero .track{height:6px}.hero .fill{background:var(--up)}
+.rest-top canvas{margin-right:auto;margin-left:12px}
+@keyframes lvl{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}.hero.lv canvas{animation:lvl .5s 3}
 .restset{display:flex;align-items:center;gap:6px;font-family:var(--f-num);font-size:.75rem;color:var(--muted);letter-spacing:.04em}
 .restset b{color:var(--fg);font-weight:500;min-width:3.2em;text-align:center;font-variant-numeric:tabular-nums}
 .restset button{width:28px;height:28px;border:1px solid var(--line);background:none;color:var(--fg);border-radius:999px;font:inherit;cursor:pointer;line-height:1}
@@ -191,6 +199,7 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
 
   <!-- GYM -->
   <div id="v-gym" class="stack" style="gap:16px" hidden>
+    <section class="hero" id="hero"><canvas id="hero-cv" width="20" height="24" style="width:60px;height:72px"></canvas><div class="hero-i"><div class="hero-l"><b id="hero-lv">Lv 1</b><span id="hero-tier"></span></div><div class="track"><div class="fill" id="hero-fill"></div></div><div class="hero-l"><span id="hero-xp"></span><span id="hero-next"></span></div></div></section>
     <section class="stepbox">
       <div class="step"><span class="num" id="sn-2">2</span><span class="step-t" data-i="เลือกโปรแกรม">เลือกโปรแกรม</span></div>
       <div class="prog-pick" id="progs"></div>
@@ -250,7 +259,7 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
 </div>
 <div class="rest" id="rest" hidden role="timer" aria-live="polite">
   <div class="rest-in">
-    <div class="rest-top"><div><div class="label" style="margin:0" data-i="พัก">พัก</div><div class="rest-time" id="rest-time">1:30</div></div><div class="rest-next" id="rest-next"></div></div>
+    <div class="rest-top"><div><div class="label" style="margin:0" data-i="พัก">พัก</div><div class="rest-time" id="rest-time">1:30</div></div><canvas id="rest-cv" width="20" height="24" style="width:50px;height:60px"></canvas><div class="rest-next" id="rest-next"></div></div>
     <div class="track"><div class="fill" id="rest-fill"></div></div>
     <div class="actions"><button class="btn sm" id="rest-minus">−15s</button><button class="btn sm" id="rest-plus">+15s</button><button class="btn sm primary" id="rest-skip" data-i="พร้อม">พร้อม</button></div>
   </div>
@@ -415,7 +424,7 @@ function renderEx(){
       card.querySelector(`#rp-${e.id}-${i}`).addEventListener("input",ev=>{r.reps=ev.target.value;save("gymdraft",draft)});
       card.querySelector(`#ok-${e.id}-${i}`).addEventListener("change",ev=>{r.ok=ev.target.checked;
         if(r.ok&&!r.reps){r.reps=e.r.split("-")[0];card.querySelector(`#rp-${e.id}-${i}`).value=r.reps}save("gymdraft",draft);
-        if(r.ok)startRest(e,i,rows)});
+        try{renderHero()}catch(_){}if(r.ok)startRest(e,i,rows)});
     });
     const setRest=d=>{restCfg[e.id]=Math.max(15,Math.min(600,restFor(e)+d));save("restcfg",restCfg);card.querySelector(".restset b").textContent=fmt(restCfg[e.id])};
     card.querySelector("[data-edit]").addEventListener("click",()=>{editId=e.id;renderEx()});
@@ -480,7 +489,7 @@ document.getElementById("fold-btn").addEventListener("click",()=>{folded=!folded
 applyFold();
 function cancelProg(){picked=false;editing=false;editId=null;draft.ex={};save("gymdraft",draft);stopRest&&stopRest();updUnitBtn();renderGym()}
 document.getElementById("cancel-prog").addEventListener("click",cancelProg);
-function renderGym(){try{renderProgress()}catch(e){}
+function renderGym(){try{renderProgress()}catch(e){}try{renderHero()}catch(e){}
   ["step3","step4"].forEach(id=>document.getElementById(id).hidden=!picked&&!editing);
   document.getElementById("step1").classList.toggle("compact",(picked||editing)&&!document.getElementById("v-gym").hidden);document.getElementById("hist-sec").hidden=picked||editing;
   if(!picked&&draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.kg!==""||x.ok)))picked=true;
@@ -535,6 +544,44 @@ function renderEdit(box){
   box.appendChild(a);
 }
 
+
+/* ---------- pixel hero ---------- */
+const PAL=[["#7d7a74","#4a4844"],["#d9a46c","#8a6237"],["#f2d36b","#a8862a"]];
+function heroXP(){let n=0;logs.forEach(l=>Object.values(l.ex).forEach(s=>s.forEach(x=>{if(+x.reps>0)n++})));
+  if(draft&&draft.ex)Object.values(draft.ex).forEach(s=>s.forEach(x=>{if(x.ok)n++}));return n*10}
+function lvOf(xp){let L=1;while(xp>=25*L*(L+1))L++;return L}
+function tierOf(L){return L<5?0:L<12?1:2}
+function drawHero(cv,tier,pose,f){const c=cv.getContext("2d");c.clearRect(0,0,20,24);
+  const R=(x,y,w,hh,col)=>{c.fillStyle=col;c.fillRect(x,y,w,hh)};
+  const skin="#e0b48a",pant="#2f2f33",bar="#c9c9c9",[sh,sd]=PAL[tier];
+  const sq=pose==="legs"&&f?3:0, tw=[6,8,10][tier], tx=10-tw/2, ty=8+sq;
+  // legs
+  if(sq){R(tx,ty+8,3,2,pant);R(tx+tw-3,ty+8,3,2,pant);R(tx-1,ty+10,2,3,pant);R(tx+tw-1,ty+10,2,3,pant)}
+  else{R(tx+1,16,2,7,pant);R(tx+tw-3,16,2,7,pant)}
+  R(tx,23,3,1,"#111");R(tx+tw-3,23,3,1,"#111");
+  // torso
+  R(tx,ty,tw,8,sh);R(tx,ty+6,tw,2,sd);if(tier===0)R(tx+tw-1,ty+4,1,3,sd);
+  if(tier>0){R(tx+1,ty+1,tw/2-1,2,sd);R(10,ty+1,tw/2-1,2,sd)}
+  // head
+  R(7,1+sq,6,6,skin);R(7,1+sq,6,2,"#2a1d14");R(8,4+sq,1,1,"#111");R(11,4+sq,1,1,"#111");
+  if(tier===2)R(6,0+sq,8,1,"#f2d36b");
+  // arms
+  const aw=tier?3:2, lx=tx-aw, rx=tx+tw;
+  if(pose==="push"){const up=f?0:4;R(lx,ty-6+up,aw,7-up,skin);R(rx,ty-6+up,aw,7-up,skin);R(1,ty-7+up,18,1,bar);R(0,ty-9+up,2,5,"#555");R(18,ty-9+up,2,5,"#555")}
+  else if(pose==="pull"){const up=f?2:6;R(lx,ty-up,aw,up+1,skin);R(rx,ty-up,aw,up+1,skin);R(2,ty-up-1,16,1,bar)}
+  else if(pose==="legs"){R(lx,ty-1,aw,3,skin);R(rx,ty-1,aw,3,skin);R(1,ty-2,18,1,bar);R(0,ty-4,2,5,"#555");R(18,ty-4,2,5,"#555")}
+  else{const b=f?1:0;R(lx,ty+b,aw,6,skin);R(rx,ty+b,aw,6,skin)}}
+let heroLv=null,heroF=0;
+function renderHero(){const xp=heroXP(),L=lvOf(xp),lo=25*(L-1)*L,hi=25*L*(L+1),tr=tierOf(L);
+  document.getElementById("hero-lv").textContent="Lv "+L;
+  document.getElementById("hero-tier").textContent=(lang==="th"?["มือใหม่","สายฟิต","ตัวท็อป"]:["Rookie","Fit","Beast"])[tr];
+  document.getElementById("hero-fill").style.width=((xp-lo)/(hi-lo)*100)+"%";
+  document.getElementById("hero-xp").textContent=xp+" XP";
+  document.getElementById("hero-next").textContent=(lang==="th"?"อีก ":"")+(hi-xp)+(lang==="th"?" XP ถึงเลเวลถัดไป":" XP to next");
+  if(heroLv!==null&&L>heroLv){const el=document.getElementById("hero");el.classList.remove("lv");void el.offsetWidth;el.classList.add("lv");toast((lang==="th"?"เลเวลอัป! Lv ":"LEVEL UP! Lv ")+L+(tierOf(heroLv)<tr?" 💪":""))}
+  heroLv=L;return tr}
+setInterval(()=>{heroF^=1;try{const tr=tierOf(lvOf(heroXP()));const hv=document.getElementById("hero-cv");if(hv&&!document.getElementById("v-gym").hidden)drawHero(hv,tr,"idle",heroF);
+  if(!document.getElementById("rest").hidden){const p=(PROGS[cur]&&/pull|back/i.test(cur))?"pull":/leg|lower/i.test(cur)?"legs":"push";drawHero(document.getElementById("rest-cv"),tr,p,heroF)}}catch(e){}},450);
 /* ---------- rest timer ---------- */
 let rt={end:0,total:0,iv:null,beeped:false};let actx=null;
 function beep(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();[0,.25,.5].forEach(t=>{const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;g.gain.value=.15;o.connect(g);g.connect(actx.destination);o.start(actx.currentTime+t);o.stop(actx.currentTime+t+.15)})}catch(e){}try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}}
