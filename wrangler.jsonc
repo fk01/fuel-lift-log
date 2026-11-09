@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fuel-lift-log",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "fuel-lift-log", "database_id": "67913da1-ae9a-43e1-b600-be92ab1d4c07" }
+  ],
+  // ทุก 15 นาที (UTC) — โค้ดแปลงเป็นเวลาไทยแล้วเช็กมื้อที่ถึงเวลา
+  "triggers": { "crons": ["*/15 * * * *"] },
+  "observability": { "enabled": true }
+}

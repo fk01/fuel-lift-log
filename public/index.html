@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e0e0d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fuel & Lift">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<title>Fuel &amp; Lift Log</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+Thai:wght@400;500&display=swap">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*{-webkit-tap-highlight-color:transparent}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>
+/* Layout: one narrow column on near-black with a faint dot grid; serif headings, mono uppercase labels, cream pills. Single dark look by choice. */
+:root{
+  --bg:#0e0e0d; --surface:#151514; --fg:#ece8e1; --muted:#8a8780; --line:#2a2927;
+  --accent:#ece8e1; --accent-soft:#1f1e1c; --warn:#d9a46c; --up:#c9e6c2; --on-accent:#111110;
+  --f-body:"IBM Plex Sans Thai",system-ui,sans-serif; --f-num:"IBM Plex Mono",ui-monospace,monospace;
+  --f-display:"Noto Serif Thai",Georgia,serif;
+  color-scheme:dark;
+}
+body{background:var(--bg) radial-gradient(circle,#ffffff10 1px,transparent 1.2px) 0 0/16px 16px;color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 48px;display:flex;flex-direction:column;gap:18px}
+h1{font-family:var(--f-display);font-weight:400;font-size:2rem;line-height:1.15;letter-spacing:-.01em;margin:0;text-wrap:balance}
+h2{font-size:1.05rem;margin:0}
+.date{color:var(--muted);font-family:var(--f-num);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;margin-top:6px}
+.tabs{display:flex;gap:8px}
+.tab{border:1px solid var(--line);background:none;color:var(--fg);font-family:var(--f-num);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;padding:8px 16px;border-radius:999px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.totals{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;display:grid;gap:10px;border-bottom:1px solid var(--line)}
+.bar{display:grid;gap:4px}
+.bar-top{display:flex;justify-content:space-between;font-size:.85rem}
+.bar-top b{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.track{height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.fill{height:100%;background:var(--accent);transition:width .3s}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:none;color:var(--fg);border-radius:999px;padding:6px 14px;font:inherit;font-size:.85rem;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:500}
+.label{font-family:var(--f-num);font-size:.7rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.label::before{content:"● ";font-size:.6rem}
+.stack{display:flex;flex-direction:column;gap:10px}
+.meal{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:12px 14px;cursor:pointer}
+.meal.done{border-color:#4a4844;background:var(--accent-soft);opacity:.72}
+.meal input{width:22px;height:22px;margin-top:3px;accent-color:var(--accent)}
+.day{border-radius:4px}
+.row-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.time{font-family:var(--f-num);font-weight:500}
+.macro{font-family:var(--f-num);font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.meal ul{margin:4px 0 0;padding-left:18px;color:var(--muted);font-size:.9rem}
+.extra .time{color:var(--accent)}
+.note{font-size:.85rem;color:var(--muted);margin:0}
+.hist{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 2px;font-size:.75rem}
+.day b{display:block;font-family:var(--f-num);font-size:.8rem}
+.day.hit{border-color:var(--up);color:var(--up)}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px;padding:8px 14px;font:inherit;font-size:.9rem;cursor:pointer}
+.btn{border-radius:999px;font-family:var(--f-num);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:500}
+.btn.ghost{background:none;color:var(--muted)}
+.btn.sm{padding:4px 10px;font-size:.8rem}
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:12px 14px;display:grid;gap:8px}
+.ex-name{font-weight:500}
+.zone{font-size:.8rem;color:var(--muted)}
+.last{font-size:.8rem;color:var(--muted);font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.last .up{color:var(--up)}
+.sets{display:grid;grid-template-columns:2.2em 1fr 1fr 2.4em;gap:6px;align-items:center}
+.sets .h{font-size:.72rem;color:var(--muted);text-align:center}
+.sets .n{font-family:var(--f-num);font-size:.8rem;color:var(--muted);text-align:center}
+.sets input[type=number]{width:100%;min-width:0;box-sizing:border-box;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:6px;padding:7px 6px;font-family:var(--f-num);font-size:.95rem;text-align:center}
+.sets input[type=checkbox]{width:22px;height:22px;justify-self:center;accent-color:var(--accent)}
+.sets .warm{font-size:.7rem;color:var(--warn);text-align:center}
+.prog-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.prog{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:4px;padding:12px 6px;font:inherit;cursor:pointer;display:grid;gap:2px;text-align:center}
+.prog b{font-family:var(--f-display);font-weight:400;font-size:1.15rem}
+.prog small{color:var(--muted);font-size:.72rem}
+.prog[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.prog .next{color:var(--up)}
+.prog .next{color:var(--accent);font-weight:500}
+.rules{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:10px 14px;font-size:.85rem;color:var(--muted)}
+.rules ol{margin:4px 0 0;padding-left:20px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:8px 16px;border-radius:8px;font-size:.9rem;z-index:20}
+details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
+.log table{width:100%;border-collapse:collapse;font-size:.8rem;font-family:var(--f-num);margin-top:6px}
+.log td{padding:3px 4px;border-top:1px solid var(--line);vertical-align:top}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.rest{position:fixed;left:0;right:0;bottom:0;z-index:15;background:#0e0e0dee;border-top:1px solid var(--line);backdrop-filter:blur(6px);padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.rest-in{max-width:560px;margin:0 auto;display:grid;gap:8px}
+.rest-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.rest-time{font-family:var(--f-num);font-size:2.4rem;line-height:1;font-variant-numeric:tabular-nums}
+.rest-time.done{color:var(--up)}
+.rest-next{font-size:.85rem;color:var(--muted);text-align:right;min-width:0}
+.rest-next b{color:var(--fg);font-weight:500}
+.rest .track{height:3px}
+.wrap.has-rest{padding-bottom:150px}
+.restset{display:flex;align-items:center;gap:6px;font-family:var(--f-num);font-size:.75rem;color:var(--muted);letter-spacing:.04em}
+.restset b{color:var(--fg);font-weight:500;min-width:3.2em;text-align:center;font-variant-numeric:tabular-nums}
+.restset button{width:28px;height:28px;border:1px solid var(--line);background:none;color:var(--fg);border-radius:999px;font:inherit;cursor:pointer;line-height:1}
+.stepbox{display:grid;gap:12px;padding-top:4px}
+.step{display:flex;align-items:center;gap:10px}
+.step .num{width:24px;height:24px;border-radius:50%;border:1px solid var(--accent);display:grid;place-items:center;font-family:var(--f-num);font-size:.75rem;flex:none}
+.step .num.done{background:var(--accent);color:var(--on-accent)}
+.step-t{font-family:var(--f-display);font-size:1.1rem}
+.stepbox.locked{opacity:.4;pointer-events:none}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:10px;display:grid;gap:2px}
+.stat b{font-family:var(--f-display);font-weight:400;font-size:1.6rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat span{font-family:var(--f-num);font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.cal{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:12px;display:grid;gap:10px}
+.cal-head{display:flex;align-items:center;justify-content:space-between}
+.cal-head b{font-family:var(--f-display);font-weight:400;font-size:1.05rem}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-family:var(--f-num);font-size:.8rem}
+.cal-grid .dow{color:var(--muted);font-size:.65rem}
+.cal-grid .d{aspect-ratio:1;max-width:100%;display:grid;place-items:center;border-radius:50%;color:var(--muted)}
+.cal-grid .d.in{color:var(--fg)}
+.cal-grid .d.on{background:var(--accent);color:var(--on-accent);font-weight:500}
+.cal-grid button.d{border:0;background:none;font:inherit;cursor:pointer;padding:0;width:100%}
+.cal-grid .d.sel{outline:2px dashed var(--up);outline-offset:2px;color:var(--up);font-weight:700}
+.cal-grid .d.sel.on{color:var(--on-accent)}
+.cal-grid .d:disabled{opacity:.3;cursor:default}
+#step1.compact .fold,#step1.folded .fold{display:none}
+.fold{display:grid;gap:8px}
+.cal-grid .d.today{outline:1px solid var(--accent)}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.badge{border:1px solid var(--line);border-radius:4px;padding:10px 6px;text-align:center;display:grid;gap:4px;background:var(--surface)}
+.badge i{font-style:normal;font-size:1.6rem}
+.badge small{font-size:.72rem;color:var(--muted);line-height:1.3}
+.badge.lock{opacity:.35;filter:grayscale(1)}
+.badge.got{border-color:var(--up)}
+.modal{position:fixed;inset:0;z-index:30;background:#000;display:grid;place-items:center;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow:auto}
+.modal-in{max-width:420px;width:100%;display:grid;gap:12px}
+.modal-in img{width:auto;max-width:100%;max-height:calc(100dvh - 190px);justify-self:center;object-fit:contain;border-radius:8px;border:1px solid var(--line)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+</head><body>
+
+<div class="wrap">
+  <header>
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:start"><h1 id="h1"></h1><button class="btn sm" id="lang" aria-label="Language">TH</button></div>
+  </header>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-food" data-v="food" data-i="อาหาร" data-pre="🍽️ ">🍽️ อาหาร</button>
+    <button class="tab" role="tab" id="tab-gym" data-v="gym" data-i="เวท" data-pre="🏋️ ">🏋️ เวท</button>
+  </div>
+  <section class="stepbox" id="step1"><div class="step"><span class="num" id="sn-1">1</span><span class="step-t" data-i="เลือกวัน">เลือกวัน</span><span style="margin-left:auto;display:flex;gap:6px"><button class="btn sm" id="fold-btn" aria-label="Show or hide calendar">📅 ▾</button><button class="btn sm" id="today-btn" hidden data-i="วันนี้">วันนี้</button><button class="btn sm primary" id="share-last" data-i="แชร์" data-pre="↗ ">↗ แชร์</button></span></div>
+    <input type="hidden" id="day"><div class="date" id="date" style="margin:0"></div>
+    <div class="fold">
+      <div class="stats" id="stats"></div>
+      <div class="cal">
+        <div class="cal-head"><button class="btn sm" id="cal-prev" aria-label="Previous month">‹</button><b id="cal-title"></b><button class="btn sm" id="cal-next" aria-label="Next month">›</button></div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOD -->
+  <div id="v-food" class="stack" style="gap:18px">
+    <section class="totals" aria-label="Totals">
+      <div class="bar"><div class="bar-top"><span data-i="แคลอรี">แคลอรี</span><b id="kcal-t"></b></div><div class="track"><div class="fill" id="kcal-f"></div></div></div>
+      <div class="bar"><div class="bar-top"><span data-i="โปรตีน">โปรตีน</span><b id="p-t"></b></div><div class="track"><div class="fill" id="p-f"></div></div></div>
+      <p class="note" id="status"></p>
+    </section>
+    <section>
+      <div class="step" style="margin-bottom:8px"><span class="num">2</span><span class="step-t" data-i="เลือกประเภทวัน">เลือกประเภทวัน</span></div>
+      <div class="chips">
+        <button class="chip" id="t-run" data-k="run" aria-pressed="false" data-i="วิ่ง" data-pre="🏃 ">🏃 วิ่ง</button>
+        <button class="chip" id="t-bad" data-k="bad" aria-pressed="false" data-i="ตีแบด" data-pre="🏸 ">🏸 ตีแบด</button>
+        <button class="chip" id="t-late" data-k="late" aria-pressed="false" data-i="เวทค่ำ" data-pre="🏋️ ">🏋️ เวทค่ำ</button>
+      </div>
+    </section>
+    <div class="step"><span class="num">3</span><span class="step-t" data-i="ติ๊กมื้อที่กินแล้ว">ติ๊กมื้อที่กินแล้ว</span></div>
+    <section class="stack" id="meals"></section>
+    <section>
+      <div class="label" data-i="โปรตีน 7 วัน">โปรตีน 7 วัน</div>
+      <div class="hist" id="hist"></div>
+    </section>
+    <button class="btn ghost" id="reset" style="align-self:start" data-i="ล้างวันนี้">ล้างวันนี้</button>
+    <section>
+      <div class="label" data-i="ประวัติ">ประวัติ</div>
+      <div class="stack" id="food-hist"></div>
+    </section>
+  </div>
+
+  <!-- GYM -->
+  <div id="v-gym" class="stack" style="gap:16px" hidden>
+    <section class="stepbox">
+      <div class="step"><span class="num" id="sn-2">2</span><span class="step-t" data-i="เลือกโปรแกรม">เลือกโปรแกรม</span></div>
+      <div class="prog-pick" id="progs"></div>
+    </section>
+    <section class="stepbox" id="step3">
+      <div class="step"><span class="num" id="sn-3">3</span><span class="step-t" data-i="กรอกน้ำหนัก">กรอกน้ำหนัก</span><button class="btn sm" id="edit-mode" style="margin-left:auto">แก้ไขท่า</button><button class="btn sm ghost" id="cancel-prog" aria-label="Cancel">✕</button></div>
+      <p class="note" id="pick-hint" data-i="เลือกโปรแกรมด้านบนก่อน">เลือกโปรแกรมด้านบนก่อน</p>
+      <div class="stack" id="exs"></div>
+    </section>
+    <section class="stepbox" id="step4">
+      <div class="step"><span class="num" id="sn-4">4</span><span class="step-t" data-i="บันทึก">บันทึก</span></div>
+      <div class="actions">
+      <button class="btn primary" id="save-w" data-i="บันทึก">บันทึก</button>
+      <span class="note" id="save-day" style="align-self:center;font-family:var(--f-num)"></span>
+      <button class="btn ghost" id="clear-w" data-i="ล้าง">ล้าง</button>
+      </div>
+    </section>
+    <section id="hist-sec">
+      <div class="label" data-i="ประวัติ">ประวัติ</div>
+      <div class="stack" id="sessions"></div>
+    </section>
+  </div>
+
+  <section class="rules" style="display:grid;gap:8px">
+    <div class="label" style="margin:0" data-i="ข้อมูล">ข้อมูล</div>
+    <p class="note" id="sync"></p>
+    <div class="actions"><button class="btn sm" id="export">Export JSON</button><button class="btn sm" id="import" data-i="นำเข้า JSON">นำเข้า JSON</button><input type="file" id="import-file" accept="application/json,.json" hidden></div>
+    <div class="label" style="margin:8px 0 0" data-i="แจ้งเตือน">แจ้งเตือน</div>
+    <p class="note" id="push-state"></p>
+    <div class="actions"><button class="btn sm primary" id="push-on" data-i="เปิดแจ้งเตือน">เปิดแจ้งเตือน</button><button class="btn sm" id="push-test" hidden data-i="ส่งทดสอบ">ส่งทดสอบ</button></div>
+    <textarea id="export-box" hidden readonly rows="6" style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;font-family:var(--f-num);font-size:.75rem"></textarea>
+  </section>
+</div>
+<div class="toast" id="toast" hidden></div>
+<div class="modal" id="login" hidden role="dialog" aria-modal="true" aria-label="Login">
+  <form class="modal-in" id="login-form" style="max-width:320px">
+    <h1 style="margin:0">Fuel &amp; Lift</h1>
+    <label class="label" for="pin" style="margin:0">PIN</label>
+    <input id="pin" type="password" inputmode="numeric" autocomplete="current-password" required style="background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:12px;font-family:var(--f-num);font-size:1.2rem;letter-spacing:.3em;text-align:center">
+    <p class="note" id="login-err" hidden style="color:var(--warn)">Wrong PIN</p>
+    <button class="btn primary" type="submit">Unlock</button>
+  </form>
+</div>
+<div class="modal" id="share-modal" hidden role="dialog" aria-modal="true" aria-label="Share">
+  <div class="modal-in">
+    <img id="share-img" alt="Workout summary card">
+    <div class="actions" style="justify-content:center"><button class="btn" id="share-story" style="background:linear-gradient(45deg,#f9a03f,#e1306c,#833ab4);border:0;color:#fff">IG Story 9:16</button><button class="btn primary" id="share-save" data-i="บันทึกรูป">บันทึกรูป</button><button class="btn" id="share-close" data-i="ปิด">ปิด</button></div>
+    <p class="note" id="share-hint" style="text-align:center" hidden></p>
+    <a id="open-ig" hidden href="instagram://story-camera" class="btn" style="justify-self:center;text-decoration:none;background:linear-gradient(45deg,#f9a03f,#e1306c,#833ab4);border:0;color:#fff">เปิด Instagram →</a>
+    <a id="open-ig-web" hidden href="https://www.instagram.com/" target="_blank" rel="noopener" class="note" style="justify-self:center;color:var(--muted)">instagram.com</a>
+  </div>
+</div>
+<div class="rest" id="rest" hidden role="timer" aria-live="polite">
+  <div class="rest-in">
+    <div class="rest-top"><div><div class="label" style="margin:0" data-i="พัก">พัก</div><div class="rest-time" id="rest-time">1:30</div></div><div class="rest-next" id="rest-next"></div></div>
+    <div class="track"><div class="fill" id="rest-fill"></div></div>
+    <div class="actions"><button class="btn sm" id="rest-minus">−15s</button><button class="btn sm" id="rest-plus">+15s</button><button class="btn sm primary" id="rest-skip" data-i="พร้อม">พร้อม</button></div>
+  </div>
+</div>
+
+<script>
+/* ---------- storage ---------- */
+function load(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}}
+function save(k,v){if(k==="gymdraft"&&v&&v.ex&&Object.keys(v.ex).length&&typeof DAY!=="undefined"){v.day=DAY;v.prog=v.prog||cur}try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(typeof markDirty==="function")markDirty(k)}
+const now=new Date();
+const dkey=d=>{const t=new Date(d.getTime()-d.getTimezoneOffset()*60000);return t.toISOString().slice(0,10)};
+let TODAY=dkey(now);
+let lang=(()=>{try{return localStorage.getItem("lang")||"en"}catch(e){return "en"}})();
+const LOC=()=>lang==="th"?"th-TH":"en-GB";
+const EN={"อาหาร":"Food","เวท":"Workout","แคลอรี":"Calories","โปรตีน":"Protein","วันนี้":"Today","วิ่ง":"Run","ตีแบด":"Badminton","เวทค่ำ":"Late workout","โปรตีน 7 วัน":"Protein · 7 days","ล้างวันนี้":"Clear today","โปรแกรม":"Program","บันทึก":"Save workout","ล้าง":"Clear","ประวัติ":"History","ข้อมูล":"Data","พัก":"Rest","พร้อม":"Ready",
+"วันนี้กินครบหรือยัง":"Meals","เวทวันนี้":"Workout",
+"เช้า":"Breakfast","กลางวัน":"Lunch","บ่าย":"Afternoon","วิตามินหลังมื้อเช้า":"Vitamins after breakfast","วิตามินหลังมื้อเย็น":"Vitamins after dinner","วิตามินชุดเช้า":"Morning vitamins","วิตามินชุดเย็น":"Evening vitamins","เย็น (มื้อสุดท้าย)":"Dinner (last meal)","หลังเวท / ก่อนนอน":"Post-workout / bedtime","หลังวิ่ง":"Post-run","เติมหลังวิ่ง":"Run refuel","เพิ่มวันแบด":"Badminton extra",
+"Iso Soy 2 สกู๊ป + Mass 2 สกู๊ป ชงน้ำ":"Iso Soy 2 scoops + Mass 2 scoops, water","กล้วย 2 ลูก":"2 bananas","ข้าวกล้อง 150 g":"Brown rice 150 g","เนื้อวัว 90% 100 g":"Lean beef 90% 100 g","ไข่ต้ม 1 + ผัก 1-2 ถ้วย":"1 boiled egg + 1-2 cups veg","อัลมอนด์ / ถั่วอบ 1 กำมือ (~25 g)":"Almonds / nuts, 1 handful (~25 g)","ปลาหรืออกไก่ 100 g":"Fish or chicken breast 100 g","Iso Soy 2 สกู๊ป ชงน้ำ":"Iso Soy 2 scoops, water","Mass 2 สกู๊ป ชงน้ำ":"Mass 2 scoops, water","กล้วย 1 ลูก (กินพร้อมมื้อเย็น)":"1 banana (with dinner)",
+"อก · ไหล่ข้าง · หลังแขน":"Chest · side delts · triceps","หลัง · หลังไหล่ · หน้าแขน":"Back · rear delts · biceps","ขา · แกนกลาง":"Legs · core",
+"ครบทุกมื้อแล้ว ✅":"All meals done ✅","คิวถัดไป":"Up next","ล่าสุด":"Last","ยังไม่เคยเล่น":"Not yet","ยังไม่มีประวัติ":"No history","ลอง":"Try","ดูวิธีเล่น":"How-to","แก้ไข":"Edit","วอม":"Warm-up","เซ็ต":"Set","ครั้ง":"Reps","ท่า":"exercises","วอลุ่ม":"Volume","สูงสุด":"Max","ลบรายการนี้":"Delete","กดอีกครั้งเพื่อยืนยัน":"Tap again to confirm","ลบแล้ว":"Deleted","ยังไม่ได้กรอกน้ำหนักและจำนวนครั้ง":"Enter weight and reps first","บันทึกแล้ว ✅":"Saved ✅","เสร็จแล้ว":"Done","แก้ไขท่า":"Edit exercises","ชื่อท่า":"Exercise name","อุปกรณ์":"Equipment","ช่วงครั้ง":"Rep range","เครื่อง":"Machine","ดัมเบล/บาร์":"Dumbbell/bar","เคเบิล":"Cable","ลิงก์วิธีเล่น (YouTube / TikTok)":"How-to link (YouTube / TikTok)","หน่วย":"Unit","ท่าหลัก":"Main lift","ลบท่า":"Delete","เสร็จ":"Done","ลิงก์ต้องขึ้นต้นด้วย https://":"Link must start with https://","ลบท่าแล้ว":"Exercise deleted","เพิ่มท่า":"Add exercise","คืนค่าเริ่มต้น":"Reset to default","ท่าใหม่":"New exercise","ท่าถัดไป":"Next","ครบทุกท่าแล้ว":"All done","ไปต่อ!":"Go!","ซิงก์แล้ว ✓":"Synced ✓","ซิงก์ไม่สำเร็จ":"Sync failed","ออฟไลน์ · เก็บในเครื่องนี้":"Offline · saved on this device","ส่งไฟล์แล้ว":"File sent","คัดลอก JSON แล้ว":"JSON copied","ย้ายวัน":"Change date","ย้ายวันแล้ว":"Date changed","แก้เซ็ต":"Edit sets","แก้แล้วกด Save":"Edit, then tap Save","บันทึกเวทเมื่อวานให้แล้ว":"Auto-saved your last workout","นำเข้า JSON":"Import JSON","แจ้งเตือน":"Reminders","เปิดแจ้งเตือน":"Turn on reminders","ปิดแจ้งเตือน":"Turn off reminders","ส่งทดสอบ":"Send test","เปิดแจ้งเตือนมื้ออาหารแล้ว 🔔":"Meal reminders are on 🔔","ยังไม่เปิดแจ้งเตือน":"Reminders are off","เครื่องนี้ยังไม่รองรับการแจ้งเตือน (iPhone: เพิ่มลงหน้าโฮมก่อน)":"Not supported here. On iPhone, add to Home Screen first.","ไม่ได้รับอนุญาตแจ้งเตือน":"Notifications not allowed","เปิดแจ้งเตือนแล้ว 🔔":"Reminders on 🔔","ส่งทดสอบแล้ว":"Test sent","ไม่มีเครื่องที่รับแจ้งเตือน":"No subscribed device","นำเข้าแล้ว":"Imported","นำเข้าไม่สำเร็จ":"Import failed","เลือกวัน":"Pick a date","ผลงาน":"Achievements","บันทึกแล้ว เปิด IG เพื่อลง Story":"Saved. Open Instagram to post the Story","วันนี้ไม่มีบันทึกเวท":"No workout saved on this date","แชร์ล่าสุด":"Share latest","แชร์":"Share","บันทึกรูป":"Save image","ปิด":"Close","วันที่เล่น":"Workout days","สัปดาห์ติดกัน":"Week streak","เดือนนี้":"This month","ยังไม่มีบันทึก":"Nothing to share yet","รูปถูกส่งแล้ว":"Image saved","กดค้างที่รูปเพื่อบันทึก":"Long-press the image to save","ครั้งแรก":"First workout","ครั้ง":"Reps","สัปดาห์":"weeks","ยกรวม":"lifted","เลือกโปรแกรม":"Pick a program","กรอกน้ำหนัก":"Log your sets","เลือกโปรแกรมด้านบนก่อน":"Pick a program above to start","เลือกประเภทวัน":"Day type","ติ๊กมื้อที่กินแล้ว":"Tick meals eaten","ขาดโปรตีน":"Protein left","ถัดไป":"Next","ถึงเป้าแล้ว":"Target reached","เหลือ":"left"};
+const t=k=>lang==="th"?k:(EN[k]??k);
+const thDate=(s,o)=>new Date(s+"T12:00:00").toLocaleDateString(LOC(),o);
+function applyStatic(){document.querySelectorAll("[data-i]").forEach(el=>el.textContent=(el.dataset.pre||"")+t(el.dataset.i));document.getElementById("lang").textContent=lang==="th"?"EN":"TH";document.documentElement.lang=lang}
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,1800)}
+
+/* ---------- FOOD ---------- */
+const MEALS=[
+ {id:"m1",time:"08:00",name:"เช้า",k:560,p:45,items:["Iso Soy 2 สกู๊ป + Mass 2 สกู๊ป ชงน้ำ","กล้วย 2 ลูก"]},
+ {id:"v1",time:"08:15",name:"วิตามินหลังมื้อเช้า",k:0,p:0,vit:1,items:["วิตามินชุดเช้า"]},
+ {id:"m2",time:"12:30",name:"กลางวัน",k:444,p:31,items:["ข้าวกล้อง 150 g","เนื้อวัว 90% 100 g","ไข่ต้ม 1 + ผัก 1-2 ถ้วย"]},
+ {id:"m3",time:"15:00",name:"บ่าย",k:500,p:48,items:["Iso Soy 2 สกู๊ป + Mass 2 สกู๊ป ชงน้ำ","อัลมอนด์ / ถั่วอบ 1 กำมือ (~25 g)"]},
+ {id:"m4",time:"19:00",name:"เย็น (มื้อสุดท้าย)",k:388,p:34,items:["ข้าวกล้อง 150 g","ปลาหรืออกไก่ 100 g","ไข่ต้ม 1 + ผัก 1-2 ถ้วย"]},
+ {id:"v2",time:"19:15",name:"วิตามินหลังมื้อเย็น",k:0,p:0,vit:1,items:["วิตามินชุดเย็น"]},
+ {id:"m5",time:"21:00",name:"หลังเวท / ก่อนนอน",k:140,p:30,items:["Iso Soy 2 สกู๊ป ชงน้ำ"]},
+];
+const EXTRAS={
+ run:{id:"x-run",time:"หลังวิ่ง",name:"เติมหลังวิ่ง",k:210,p:13,items:["Mass 2 สกู๊ป ชงน้ำ"]},
+ bad:{id:"x-bad",time:"19:00",name:"เพิ่มวันแบด",k:105,p:1,items:["กล้วย 1 ลูก (กินพร้อมมื้อเย็น)"]},
+};
+const P_TARGET=160;
+let food=load("mealcheck",{}); food[TODAY]=food[TODAY]||{done:{},tags:{}};
+let DAY=TODAY;
+const fs=()=>(food[DAY]=food[DAY]||{done:{},tags:{}});
+function mealList(){const t=fs().tags;const l=MEALS.map(m=>({...m}));if(t.late){l.find(x=>x.id==="m4").time="18:00";l.find(x=>x.id==="v2").time="18:15"}if(t.run)l.push(EXTRAS.run);if(t.bad)l.push(EXTRAS.bad);return l}
+function dayP(day){const d=food[day];if(!d)return null;let p=0;[...MEALS,EXTRAS.run,EXTRAS.bad].forEach(m=>{if(d.done[m.id])p+=m.p});return p}
+function renderFoodHist(){
+  const box=document.getElementById("food-hist");box.innerHTML="";
+  const days=Object.keys(food).filter(d=>food[d]&&Object.values(food[d].done||{}).some(Boolean)).sort().reverse().slice(0,30);
+  if(!days.length){box.innerHTML='<p class="note">—</p>';return}
+  days.forEach(ds=>{const d=food[ds],tg=d.tags||{};const all=[...MEALS,EXTRAS.run,EXTRAS.bad];
+    const eaten=all.filter(m=>d.done[m.id]);const k=eaten.reduce((a,m)=>a+m.k,0),p=eaten.reduce((a,m)=>a+m.p,0);
+    const planned=MEALS.length+(tg.run?1:0)+(tg.bad?1:0);
+    const el=document.createElement("details");el.className="ex log";
+    el.innerHTML=`<summary><b>${thDate(ds,{weekday:"short",day:"numeric",month:"short"})}</b> · ${k} kcal · <span style="color:${p>=P_TARGET?"var(--up)":"inherit"}">P${p}</span> · ${eaten.length}/${planned}${tg.run?" 🏃":""}${tg.bad?" 🏸":""}${tg.late?" 🏋️":""}</summary>
+      <table>${all.filter(m=>m.id[0]!=="x"||(m.id==="x-run"&&tg.run)||(m.id==="x-bad"&&tg.bad)).map(m=>`<tr><td>${d.done[m.id]?"✓":"·"}</td><td>${m.time.length<6?m.time:t(m.time)}</td><td>${t(m.name)}</td><td>${m.vit?"💊":m.k+" kcal"}</td></tr>`).join("")}</table>
+      <div class="actions" style="margin-top:8px"><button class="btn sm" data-open>✎ ${t("แก้ไข")}</button></div>`;
+    el.querySelector("[data-open]").addEventListener("click",()=>{DAY=ds;draft.ex={};picked=false;renderAll();window.scrollTo({top:0,behavior:"smooth"})});
+    box.appendChild(el)});
+}
+function renderFood(){renderFoodHist();
+  document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",!!fs().tags[c.dataset.k]));
+  const box=document.getElementById("meals");box.innerHTML="";
+  const meals=mealList();
+  meals.forEach(m=>{
+    const done=!!fs().done[m.id];
+    const el=document.createElement("label");el.className="meal"+(done?" done":"")+(m.id.startsWith("x")?" extra":"");
+    el.innerHTML=`<input type="checkbox" id="c-${m.id}" ${done?"checked":""}><div><div class="row-head"><span><span class="time">${t(m.time)}</span> · ${t(m.name)}</span><span class="macro">${m.vit?"💊":`${m.k} kcal · P${m.p}`}</span></div><ul>${m.items.map(i=>`<li>${t(i)}</li>`).join("")}</ul></div>`;
+    el.querySelector("input").addEventListener("change",e=>{fs().done[m.id]=e.target.checked;save("mealcheck",food);renderFood()});
+    box.appendChild(el);
+  });
+  let k=0,p=0,kt=0;meals.forEach(m=>{kt+=m.k;if(fs().done[m.id]){k+=m.k;p+=m.p}});
+  document.getElementById("kcal-t").textContent=`${k} / ${kt}`;
+  document.getElementById("p-t").textContent=`${p} / ${P_TARGET} g`;
+  document.getElementById("kcal-f").style.width=Math.min(100,k/kt*100)+"%";
+  document.getElementById("p-f").style.width=Math.min(100,p/P_TARGET*100)+"%";
+  const left=meals.filter(m=>!fs().done[m.id]);
+  document.getElementById("status").textContent=left.length===0?t("ครบทุกมื้อแล้ว ✅"):
+    p>=P_TARGET?`${t("ถึงเป้าแล้ว")} · ${left.length} ${t("เหลือ")}`:`${t("ขาดโปรตีน")} ${P_TARGET-p} g · ${t("ถัดไป")} ${left[0].time} ${t(left[0].name)}`;
+  const h=document.getElementById("hist");h.innerHTML="";
+  for(let i=6;i>=0;i--){const d=new Date(DAY+"T12:00:00");d.setDate(d.getDate()-i);const kk=dkey(d);const p2=dayP(kk);
+    const el=document.createElement("div");el.className="day"+(p2!==null&&p2>=P_TARGET?" hit":"");
+    el.innerHTML=`${d.toLocaleDateString(LOC(),{weekday:"short"})}<b>${p2===null?"–":p2}</b>`;h.appendChild(el)}
+}
+document.querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>{const t=fs().tags;t[c.dataset.k]=!t[c.dataset.k];save("mealcheck",food);renderFood()}));
+document.getElementById("reset").addEventListener("click",()=>{fs().done={};save("mealcheck",food);renderFood()});
+
+/* ---------- GYM ---------- */
+const DEFAULT_PROGS={
+ push:{name:"Push",sub:"อก · ไหล่ข้าง · หลังแขน",ex:[
+  {id:"chest-press",n:"Chest Press Machine",z:"🔩",s:5,r:"5",main:1},
+  {id:"incline-db",n:"Incline Dumbbell Press",z:"🏋️",s:5,r:"5"},
+  {id:"db-shoulder-press",n:"Dumbbell Shoulder Press",z:"🏋️",s:5,r:"5"},
+  {id:"cable-lat-raise",n:"Cable Side Lateral Raise",z:"🔗",s:5,r:"5"},
+  {id:"cable-oh-tri",n:"Cable Overhead Triceps Extension",z:"🔗",s:5,r:"5"},
+  {id:"pec-fly",n:"Peck Deck Fly",z:"🔩",s:5,r:"5"}]},
+ pull:{name:"Pull",sub:"หลัง · หลังไหล่ · หน้าแขน",ex:[
+  {id:"lat-pulldown",n:"Lat Pulldown",z:"🔩",s:5,r:"5",main:1},
+  {id:"wide-cable-row",n:"Wide Grip Seated Cable Row",z:"🔗",s:5,r:"5"},
+  {id:"seated-cable-row",n:"Seated Cable Row",z:"🔗",s:5,r:"5"},
+  {id:"reverse-fly",n:"Reverse Peck Deck Fly",z:"🔩",s:5,r:"5"},
+  {id:"machine-curl",n:"Machine Biceps Curl",z:"🔩",s:5,r:"5"},
+  {id:"abdominal",n:"Crunch Machine (Abdominal Machine)",z:"🔩",s:5,r:"5"}]},
+ legs:{name:"Legs",sub:"ขา · แกนกลาง",ex:[
+  {id:"squat",n:"Squat",z:"🏋️",s:3,r:"5",main:1},
+  {id:"leg-curl",n:"Leg Curl",z:"🔩",s:3,r:"5"},
+  {id:"leg-ext",n:"Leg Extension",z:"🔩",s:3,r:"5"},
+  {id:"hip-abd",n:"Hip Abduction (Outer Thigh)",z:"🔩",s:3,r:"5"},
+  {id:"hip-add",n:"Hip Adduction (Inner Thigh)",z:"🔩",s:3,r:"5"},
+  {id:"seated-calf",n:"Seated Calf Raise",z:"🔩",s:3,r:"5"},
+  {id:"woodchop",n:"Cable Wood Chop",z:"🔗",s:5,r:"5"}]},
+};
+let PROGS=load("progs",null)||JSON.parse(JSON.stringify(DEFAULT_PROGS));
+function to5x5(){const keep={};Object.values(PROGS).forEach(p=>p.ex.forEach(e=>keep[e.id]=e));PROGS=JSON.parse(JSON.stringify(DEFAULT_PROGS));Object.values(PROGS).forEach(p=>p.ex.forEach(e=>{const o=keep[e.id];if(o){if(o.u)e.u=o.u;if(o.link)e.link=o.link}}))}
+if(load("scheme",1)<3){to5x5();try{localStorage.setItem("progs",JSON.stringify(PROGS));localStorage.setItem("scheme","3")}catch(e){};var _clearDraft=true}
+let unit=load("unit","kg");let editing=false;let editId=null;let picked=false;
+const LB=2.20462;
+const toDisp=(kg,u)=>kg===""||kg==null?"":u!=="lb"?+kg:Math.round(kg*LB*2)/2;
+const fromDisp=(v,u)=>v===""?"":u!=="lb"?+v:Math.round(v/LB*1000)/1000;
+function uOf(id){for(const p of Object.values(PROGS)){const e=p.ex.find(x=>x.id===id);if(e)return e.u||"kg"}return "kg"}
+function exName(id,l){if(l&&l.names&&l.names[id])return l.names[id];for(const p of Object.values(PROGS)){const e=p.ex.find(x=>x.id===id);if(e)return e.n}return id}
+let restCfg=load("restcfg",{});
+function restDefault(e){return e.main?150:(["cable-lat-raise","seated-calf","woodchop","hip-abd","hip-add","abdominal"].includes(e.id)?60:90)}
+function restFor(e){return restCfg[e.id]??restDefault(e)}
+function fmt(s){s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+let logs=load("gymlog",[]);           // [{date,prog,ex:{id:[{kg,reps}]}}]
+let draft=load("gymdraft",{});
+if(typeof _clearDraft!=="undefined"){draft={prog:draft.prog}}        // {prog, ex:{id:[{kg,reps,ok}]}}
+function nextProg(){const order=["push","pull","legs"];const last={};logs.forEach(l=>{last[l.prog]=l.date});
+  return order.slice().sort((a,b)=>(last[a]||"0").localeCompare(last[b]||"0"))[0]}
+let cur=draft.prog||nextProg();
+function lastFor(id){for(let i=logs.length-1;i>=0;i--){if(logs[i].date>DAY)continue;const s=logs[i].ex[id];if(s&&s.length)return{date:logs[i].date,sets:s}}return null}
+function best(sets){return sets.reduce((m,s)=>Math.max(m,+s.kg||0),0)}
+function renderProgs(){
+  const nx=nextProg();const box=document.getElementById("progs");box.innerHTML="";
+  Object.entries(PROGS).forEach(([k,p])=>{
+    const last=[...logs].reverse().find(l=>l.prog===k);
+    const b=document.createElement("button");b.className="prog";b.id="p-"+k;b.setAttribute("aria-pressed",picked&&k===cur);
+    b.innerHTML=`<b>${p.name}</b><small>${t(p.sub)}</small><small class="${k===nx?"next":""}">${k===nx?t("คิวถัดไป"):last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small>`;
+    b.addEventListener("click",()=>{if(picked&&cur===k){cancelProg();return}if(cur!==k){draft.ex={}}cur=k;draft.prog=k;picked=true;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});box.appendChild(b)});
+}
+function renderEx(){
+  const box=document.getElementById("exs");box.innerHTML="";
+  if(editing){renderEdit(box);return}
+  draft.ex=draft.ex||{};
+  PROGS[cur].ex.forEach((e,ei)=>{if(e.id===editId){editCard(box,e,ei);return}
+    const last=lastFor(e.id);const u=e.u||"kg";
+    const rows=draft.ex[e.id]||(draft.ex[e.id]=Array.from({length:e.s},(_,i)=>({kg:last?.sets[i]?.kg??"",reps:"",ok:false})));
+    const hitAll=last&&last.sets.length>=e.s&&last.sets.every(s=>+s.reps>=+(e.r.split("-")[1]||e.r));
+    const card=document.createElement("div");card.className="ex";
+    let lastTxt=last?`${t("ล่าสุด")} ${thDate(last.date,{day:"numeric",month:"short"})}: ${last.sets.map(s=>`${toDisp(s.kg,u)}×${s.reps}`).join(" · ")} ${u}`:t("ยังไม่มีประวัติ");
+    if(hitAll)lastTxt+=` <span class="up">↑ ${t("ลอง")} ${u==="kg"?"+2.5 kg":"+5 lb"}</span>`;
+    card.innerHTML=`<div class="row-head"><span class="ex-name" style="display:flex;gap:10px;align-items:center"><span>${e.z} ${e.n}${safeUrl(e.link)?` <a href="${esc(safeUrl(e.link))}" target="_blank" rel="noopener" style="color:var(--up);font-size:.8rem;white-space:nowrap">▶ ${t("ดูวิธีเล่น")}</a>`:""}</span></span><span style="display:flex;gap:8px;align-items:center"><span class="macro">${e.s} × ${e.r}${e.main?` · ${t("วอม")}`:""} · <b style="color:var(--fg)">${u}</b></span><button class="btn sm" data-edit aria-label="${t("แก้ไข")} ${esc(e.n)}">✎ ${t("แก้ไข")}</button></span></div>
+      <div class="row-head"><div class="last">${lastTxt}</div><div class="restset">⏱ <button data-rm-rest aria-label="− ${e.n}">−</button><b>${fmt(restFor(e))}</b><button data-add-rest aria-label="+ ${e.n}">+</button></div></div>
+      ${e.main?`<div class="zone">${t("วอม")}: 50% × 8 · 75% × 3</div>`:""}
+      <div class="sets"><span class="h">${t("เซ็ต")}</span><button class="h" data-unit aria-label="${t("หน่วย")} ${e.n}" style="border:1px solid var(--line);background:none;color:var(--fg);border-radius:999px;font-family:var(--f-num);font-size:.72rem;cursor:pointer;padding:2px 0">${u} ⇄</button><span class="h">${t("ครั้ง")}</span><span class="h">✓</span>
+      ${rows.map((r,i)=>`<span class="n">${i+1}</span><input type="number" inputmode="decimal" step="0.5" min="0" id="kg-${e.id}-${i}" value="${toDisp(r.kg,u)}" placeholder="${u}" aria-label="${e.n} ${i+1} weight"><input type="number" inputmode="numeric" min="0" id="rp-${e.id}-${i}" value="${r.reps}" placeholder="${e.r}" aria-label="${e.n} ${i+1} reps"><input type="checkbox" id="ok-${e.id}-${i}" ${r.ok?"checked":""} aria-label="${i+1} done">`).join("")}
+      </div>
+      <div class="actions"><button class="btn sm" data-add>+ ${t("เซ็ต")}</button>${rows.length>1?`<button class="btn sm ghost" data-del>− ${t("เซ็ต")}</button>`:""}</div>
+      ${exHistory(e.id)}`;
+    rows.forEach((r,i)=>{
+      card.querySelector(`#kg-${e.id}-${i}`).addEventListener("input",ev=>{r.kg=fromDisp(ev.target.value,u);save("gymdraft",draft)});
+      card.querySelector(`#rp-${e.id}-${i}`).addEventListener("input",ev=>{r.reps=ev.target.value;save("gymdraft",draft)});
+      card.querySelector(`#ok-${e.id}-${i}`).addEventListener("change",ev=>{r.ok=ev.target.checked;
+        if(r.ok&&!r.reps){r.reps=e.r.split("-")[0];card.querySelector(`#rp-${e.id}-${i}`).value=r.reps}save("gymdraft",draft);
+        if(r.ok)startRest(e,i,rows)});
+    });
+    const setRest=d=>{restCfg[e.id]=Math.max(15,Math.min(600,restFor(e)+d));save("restcfg",restCfg);card.querySelector(".restset b").textContent=fmt(restCfg[e.id])};
+    card.querySelector("[data-edit]").addEventListener("click",()=>{editId=e.id;renderEx()});
+    card.querySelector("[data-unit]").addEventListener("click",()=>{e.u=u==="kg"?"lb":"kg";saveProgs();renderEx()});
+    card.querySelector("[data-rm-rest]").addEventListener("click",()=>setRest(-15));
+    card.querySelector("[data-add-rest]").addEventListener("click",()=>setRest(15));
+    card.querySelector("[data-add]").addEventListener("click",()=>{const l=rows[rows.length-1];rows.push({kg:l?.kg??"",reps:"",ok:false});save("gymdraft",draft);renderEx()});
+    card.querySelector("[data-del]")?.addEventListener("click",()=>{rows.pop();save("gymdraft",draft);renderEx()});
+    box.appendChild(card);
+  });
+}
+function exHistory(id){const u=uOf(id);
+  const h=logs.filter(l=>l.ex[id]&&l.ex[id].length).slice(-8).reverse();
+  if(!h.length)return"";
+  return `<details class="log"><summary>${t("ประวัติ")} (${h.length})</summary><table>${h.map(l=>`<tr><td>${thDate(l.date,{day:"numeric",month:"short"})}</td><td>${l.ex[id].map(s=>`${toDisp(s.kg,u)}×${s.reps}`).join(" · ")} ${u}</td><td>${t("สูงสุด")} ${toDisp(best(l.ex[id]),u)}</td></tr>`).join("")}</table></details>`;
+}
+function renderSessions(){
+  const box=document.getElementById("sessions");box.innerHTML="";
+  if(!logs.length){box.innerHTML=`<p class="note">—</p>`;return}
+  [...logs].reverse().slice(0,10).forEach((l,ri)=>{
+    const idx=logs.length-1-ri;const p=PROGS[l.prog]||{name:l.prog};
+    const d=document.createElement("details");d.className="ex log";
+    const vol=Object.values(l.ex).flat().reduce((a,s)=>a+(+s.kg||0)*(+s.reps||0),0);
+    d.innerHTML=`<summary><b>${thDate(l.date,{weekday:"short",day:"numeric",month:"short"})}</b> · ${p.name} · ${Object.keys(l.ex).length} ${t("ท่า")} · ${t("วอลุ่ม")} ${Math.round(vol).toLocaleString()} kg</summary>
+      <table>${Object.keys(l.ex).map(id=>`<tr><td>${exName(id,l)}</td><td>${l.ex[id].map(s=>`${toDisp(s.kg,uOf(id))}×${s.reps}`).join(" · ")} ${uOf(id)}</td></tr>`).join("")}</table>
+      <div class="actions" style="margin-top:8px;align-items:center"><label style="display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:2px 10px">📅<input type="date" data-mv value="${l.date}" max="${TODAY}" aria-label="${t("ย้ายวัน")}" style="background:none;color:var(--fg);border:0;min-width:9.5em;min-height:26px;font-family:var(--f-num);font-size:.8rem"></label><button class="btn sm" data-ed>✎ ${t("แก้เซ็ต")}</button><button class="btn sm" data-sh>↗ ${t("แชร์")}</button><button class="btn sm ghost" data-rm>${t("ลบรายการนี้")}</button></div>`;
+    d.querySelector("[data-sh]").addEventListener("click",()=>openShare(l));
+    d.querySelector("[data-mv]").addEventListener("change",ev=>{const v=ev.target.value;if(!v||v>TODAY||v===l.date)return;
+      const clash=logs.findIndex(x=>x!==l&&x.date===v&&x.prog===l.prog);if(clash>=0)logs.splice(clash,1);
+      l.date=v;logs.sort((a,b)=>a.date.localeCompare(b.date));save("gymlog",logs);renderGym();toast(t("ย้ายวันแล้ว"))});
+    d.querySelector("[data-ed]").addEventListener("click",()=>{DAY=l.date;cur=l.prog;editId=null;editing=false;picked=true;
+      draft={prog:l.prog,ex:{}};Object.entries(l.ex).forEach(([id,sets])=>draft.ex[id]=sets.map(s=>({kg:s.kg,reps:String(s.reps),ok:true})));
+      save("gymdraft",draft);renderAll();window.scrollTo({top:0,behavior:"smooth"});toast(t("แก้แล้วกด Save"))});
+    d.querySelector("[data-rm]").addEventListener("click",ev=>{const b=ev.target;
+      if(b.dataset.sure){logs.splice(idx,1);save("gymlog",logs);renderGym();toast(t("ลบแล้ว"))}else{b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน")}});
+    box.appendChild(d);
+  });
+}
+function commitDraft(day,prog){
+  const P=PROGS[prog];if(!P||!draft.ex)return false;
+  const ex={};P.ex.forEach(e=>{const s=(draft.ex[e.id]||[]).filter(r=>r.reps!==""&&r.kg!=="").map(r=>({kg:+r.kg,reps:+r.reps}));if(s.length)ex[e.id]=s});
+  if(!Object.keys(ex).length)return false;
+  const i=logs.findIndex(l=>l.date===day&&l.prog===prog);
+  const names={};P.ex.forEach(e=>{if(ex[e.id])names[e.id]=e.n});
+  if(i>=0){logs[i].ex=ex;logs[i].names=names}else logs.push({date:day,prog,ex,names});
+  logs.sort((a,b)=>a.date.localeCompare(b.date));
+  save("gymlog",logs);draft={};save("gymdraft",draft);return true;
+}
+document.getElementById("save-w").addEventListener("click",()=>{
+  if(!commitDraft(DAY,cur)){toast(t("ยังไม่ได้กรอกน้ำหนักและจำนวนครั้ง"));return}
+  cur=nextProg();picked=false;renderGym();const just=logs.find(l=>l.date===DAY);toast(t("บันทึกแล้ว ✅"));if(just)openShare(just);
+});
+/* auto-save unsaved workout when the day ends */
+function autoCommitOld(){if(draft.day&&draft.day<TODAY&&commitDraft(draft.day,draft.prog||cur)){cur=nextProg();toast(t("บันทึกเวทเมื่อวานให้แล้ว"));return true}return false}
+setInterval(()=>{const nd=dkey(new Date());if(nd===TODAY)return;
+  const prev=TODAY;TODAY=nd;autoCommitOld();if(DAY===prev){DAY=nd;draft.ex=draft.ex||{}}renderAll()},60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&dkey(new Date())!==TODAY){const prev=TODAY;TODAY=dkey(new Date());autoCommitOld();if(DAY===prev)DAY=TODAY;renderAll()}});
+document.getElementById("clear-w").addEventListener("click",()=>{draft={prog:cur};save("gymdraft",draft);renderGym()});
+let folded=(()=>{try{return localStorage.getItem("calFolded")==="1"}catch(e){return false}})();
+function applyFold(){document.getElementById("step1").classList.toggle("folded",folded);document.getElementById("fold-btn").textContent="📅 "+(folded?"▸":"▾");document.getElementById("fold-btn").setAttribute("aria-expanded",!folded)}
+document.getElementById("fold-btn").addEventListener("click",()=>{folded=!folded;try{localStorage.setItem("calFolded",folded?"1":"0")}catch(e){}if(!folded)document.getElementById("step1").classList.remove("compact");applyFold()});
+applyFold();
+function cancelProg(){picked=false;editing=false;editId=null;draft.ex={};save("gymdraft",draft);stopRest&&stopRest();updUnitBtn();renderGym()}
+document.getElementById("cancel-prog").addEventListener("click",cancelProg);
+function renderGym(){try{renderProgress()}catch(e){}
+  ["step3","step4"].forEach(id=>document.getElementById(id).hidden=!picked&&!editing);
+  document.getElementById("step1").classList.toggle("compact",(picked||editing)&&!document.getElementById("v-gym").hidden);document.getElementById("hist-sec").hidden=picked||editing;
+  if(!picked&&draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.kg!==""||x.ok)))picked=true;
+  document.getElementById("pick-hint").hidden=picked;document.getElementById("exs").hidden=!picked&&!editing;
+  document.getElementById("step4").classList.toggle("locked",!picked);
+  document.getElementById("sn-2").classList.toggle("done",picked);document.getElementById("sn-3").classList.toggle("done",picked&&draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.ok)));
+  document.getElementById("sn-1").classList.add("done");
+  renderProgs();renderEx();renderSessions();document.getElementById("step4").hidden=editing||!picked}
+
+/* ---------- unit + edit exercises ---------- */
+function updUnitBtn(){document.getElementById("edit-mode").textContent=editing?t("เสร็จแล้ว"):t("แก้ไขท่า")}
+document.getElementById("edit-mode").addEventListener("click",()=>{editing=!editing;updUnitBtn();renderGym()});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function saveProgs(){save("progs",PROGS)}
+function safeUrl(u){if(!u)return "";try{const x=new URL(u.trim());return /^https?:$/.test(x.protocol)?x.href:""}catch(e){return ""}}
+function editCard(box,e,i){
+  const list=PROGS[cur].ex;{
+    const c=document.createElement("div");c.className="ex";
+    c.innerHTML=`<input id="en-${e.id}" value="${esc(e.n)}" aria-label="${t("ชื่อท่า")}" style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px;font:inherit">
+      <div class="sets" style="grid-template-columns:1fr 1fr 1fr"><span class="h">${t("อุปกรณ์")}</span><span class="h">${t("เซ็ต")}</span><span class="h">${t("ช่วงครั้ง")}</span>
+      <select id="ez-${e.id}" style="background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:7px;font:inherit">${[["🔩","🔩 "+t("เครื่อง")],["🏋️","🏋️ "+t("ดัมเบล/บาร์")],["🔗","🔗 "+t("เคเบิล")]].map(([v,t])=>`<option value="${v}" ${e.z===v?"selected":""}>${t}</option>`).join("")}</select>
+      <input type="number" min="1" max="10" id="es-${e.id}" value="${e.s}" aria-label="${t("เซ็ต")}">
+      <input id="er-${e.id}" value="${esc(e.r)}" aria-label="${t("ช่วงครั้ง")}" style="min-width:0;box-sizing:border-box;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:6px;padding:7px 6px;font-family:var(--f-num);text-align:center"></div>
+      <input id="el-${e.id}" type="url" inputmode="url" value="${esc(e.link||"")}" placeholder="${t("ลิงก์วิธีเล่น (YouTube / TikTok)")}" aria-label="link" style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px;font:inherit;font-size:.85rem">
+      <label class="zone" style="display:flex;gap:8px;align-items:center">${t("หน่วย")} <select id="eu-${e.id}" style="background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px;font:inherit"><option value="kg" ${(e.u||"kg")==="kg"?"selected":""}>kg</option><option value="lb" ${e.u==="lb"?"selected":""}>lb</option></select></label>
+      <label class="zone" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="em-${e.id}" ${e.main?"checked":""} style="accent-color:var(--accent)"> ${t("ท่าหลัก")}</label>
+      <div class="actions"><button class="btn sm" data-up ${i===0?"disabled":""}>↑</button><button class="btn sm" data-down ${i===list.length-1?"disabled":""}>↓</button><button class="btn sm ghost" data-del>${t("ลบท่า")}</button><button class="btn sm primary" data-done>${t("เสร็จ")}</button></div>`;
+    const on=(sel,ev,fn)=>c.querySelector(sel).addEventListener(ev,fn);
+    on(`#en-${e.id}`,"change",ev=>{e.n=ev.target.value.trim()||e.n;saveProgs()});
+    on(`#ez-${e.id}`,"change",ev=>{e.z=ev.target.value;saveProgs()});
+    on(`#es-${e.id}`,"change",ev=>{e.s=Math.max(1,Math.min(10,+ev.target.value||1));if(draft.ex)delete draft.ex[e.id];saveProgs()});
+    on(`#er-${e.id}`,"change",ev=>{e.r=ev.target.value.trim()||e.r;saveProgs()});
+    on(`#el-${e.id}`,"change",ev=>{const v=ev.target.value.trim();if(v&&!safeUrl(v)){toast(t("ลิงก์ต้องขึ้นต้นด้วย https://"));return}e.link=v;saveProgs()});
+    on(`#eu-${e.id}`,"change",ev=>{e.u=ev.target.value;saveProgs()});
+    on(`#em-${e.id}`,"change",ev=>{e.main=ev.target.checked?1:0;saveProgs()});
+    on("[data-done]","click",()=>{editId=null;if(editing){editing=false;updUnitBtn()}renderGym()});
+    on("[data-up]","click",()=>{list.splice(i-1,0,list.splice(i,1)[0]);saveProgs();renderEx()});
+    on("[data-down]","click",()=>{list.splice(i+1,0,list.splice(i,1)[0]);saveProgs();renderEx()});
+    on("[data-del]","click",ev=>{const b=ev.target;if(!b.dataset.sure){b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน");return}
+      list.splice(i,1);if(draft.ex)delete draft.ex[e.id];saveProgs();save("gymdraft",draft);renderEx();toast(t("ลบท่าแล้ว"))});
+    box.appendChild(c);
+  }
+}
+function renderEdit(box){
+  const list=PROGS[cur].ex;list.forEach((e,i)=>editCard(box,e,i));
+  const a=document.createElement("div");a.className="actions";
+  a.innerHTML=`<button class="btn primary" id="add-ex">+ ${t("เพิ่มท่า")}</button><button class="btn ghost" id="reset-ex">${t("คืนค่าเริ่มต้น")}</button>`;
+  a.querySelector("#add-ex").addEventListener("click",()=>{list.push({id:"c"+Date.now().toString(36),n:t("ท่าใหม่"),z:"🔩",s:5,r:"5"});saveProgs();renderEx();
+    const inp=box.querySelectorAll("input[id^=en-]");const last=inp[inp.length-1];last&&(last.focus(),last.select())});
+  a.querySelector("#reset-ex").addEventListener("click",ev=>{const b=ev.target;if(!b.dataset.sure){b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน");return}
+    PROGS[cur]=JSON.parse(JSON.stringify(DEFAULT_PROGS[cur]));draft.ex={};saveProgs();save("gymdraft",draft);renderEx()});
+  box.appendChild(a);
+}
+
+/* ---------- rest timer ---------- */
+let rt={end:0,total:0,iv:null,beeped:false};let actx=null;
+function beep(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();[0,.25,.5].forEach(t=>{const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;g.gain.value=.15;o.connect(g);g.connect(actx.destination);o.start(actx.currentTime+t);o.stop(actx.currentTime+t+.15)})}catch(e){}try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}}
+function startRest(e,i,rows){
+  try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume()}catch(_){}
+  const secs=restFor(e);
+  const ex=PROGS[cur].ex;const k=ex.indexOf(e);
+  let next;
+  if(i+1<rows.length)next=`<b>${e.n}</b> ${t("เซ็ต")} ${i+2}/${rows.length}${rows[i+1].kg!==""?` · ${toDisp(rows[i+1].kg,e.u)} ${e.u||"kg"}`:""}`;
+  else if(ex[k+1])next=`${t("ท่าถัดไป")} <b>${ex[k+1].n}</b>`;
+  else next=`<b>${t("ครบทุกท่าแล้ว")}</b>`;
+  document.getElementById("rest-next").innerHTML=next;
+  rt={end:Date.now()+secs*1000,total:secs,iv:rt.iv,beeped:false};
+  document.getElementById("rest").hidden=false;document.querySelector(".wrap").classList.add("has-rest");
+  clearInterval(rt.iv);rt.iv=setInterval(tick,250);tick();
+}
+function tick(){const left=(rt.end-Date.now())/1000;const el=document.getElementById("rest-time");
+  el.textContent=left>0?fmt(left):t("ไปต่อ!");el.classList.toggle("done",left<=0);
+  document.getElementById("rest-fill").style.width=Math.max(0,Math.min(100,(1-left/rt.total)*100))+"%";
+  if(left<=0&&!rt.beeped){rt.beeped=true;beep()}
+  if(left<-20)stopRest()}
+function stopRest(){clearInterval(rt.iv);document.getElementById("rest").hidden=true;document.querySelector(".wrap").classList.remove("has-rest")}
+document.getElementById("rest-minus").addEventListener("click",()=>{rt.end-=15000;rt.total=Math.max(15,rt.total-15);tick()});
+document.getElementById("rest-plus").addEventListener("click",()=>{rt.end+=15000;rt.total+=15;rt.beeped=false;tick()});
+document.getElementById("rest-skip").addEventListener("click",stopRest);
+
+/* ---------- server API (Cloudflare Worker + D1) ---------- */
+const API={
+  async get(){const r=await fetch("/api/docs",{credentials:"same-origin"});if(r.status===401){const e=new Error("auth");e.code="auth";throw e}if(!r.ok)throw new Error(r.status);const j=await r.json();return{empty:!j.length,docs:j.map(d=>({id:d.id,data:()=>d.value}))}},
+  doc(id){const u="/api/docs/"+encodeURIComponent(id);return{
+    set:v=>fetch(u,{method:"PUT",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify(v)}).then(r=>{if(!r.ok)throw new Error(r.status)}),
+    delete:()=>fetch(u,{method:"DELETE",credentials:"same-origin"}).then(r=>{if(!r.ok)throw new Error(r.status)})}}
+};
+function downloadBlob(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000)}
+async function shareFile(blob,name){try{const f=new File([blob],name,{type:blob.type||"image/png"});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});return true}}catch(e){if(e&&e.name==="AbortError")return true}return false}
+function showLogin(){document.getElementById("login").hidden=false;setTimeout(()=>document.getElementById("pin").focus(),50)}
+document.getElementById("login-form").addEventListener("submit",async ev=>{ev.preventDefault();const pin=document.getElementById("pin").value;
+  const r=await fetch("/api/login",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({pin})});
+  if(r.ok)location.reload();else{document.getElementById("login-err").hidden=false}});
+
+/* ---------- push notifications ---------- */
+const b64uToU8=s=>{s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";return Uint8Array.from(atob(s),c=>c.charCodeAt(0))};
+async function pushState(){const el=document.getElementById("push-state"),btn=document.getElementById("push-on"),test=document.getElementById("push-test");
+  if(!("serviceWorker" in navigator)||!("PushManager" in window)){el.textContent=t("เครื่องนี้ยังไม่รองรับการแจ้งเตือน (iPhone: เพิ่มลงหน้าโฮมก่อน)");btn.hidden=true;test.hidden=true;return}
+  const reg=await navigator.serviceWorker.ready;const sub=await reg.pushManager.getSubscription();
+  el.textContent=sub?t("เปิดแจ้งเตือนมื้ออาหารแล้ว 🔔"):t("ยังไม่เปิดแจ้งเตือน");btn.textContent=sub?t("ปิดแจ้งเตือน"):t("เปิดแจ้งเตือน");test.hidden=!sub}
+document.getElementById("push-on").addEventListener("click",async()=>{try{
+  const reg=await navigator.serviceWorker.ready;const cur=await reg.pushManager.getSubscription();
+  if(cur){await fetch("/api/push/unsubscribe",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({endpoint:cur.endpoint})});await cur.unsubscribe();return pushState()}
+  if(await Notification.requestPermission()!=="granted"){toast(t("ไม่ได้รับอนุญาตแจ้งเตือน"));return}
+  const {key}=await (await fetch("/api/push/key",{credentials:"same-origin"})).json();if(!key){toast("VAPID key missing");return}
+  const sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64uToU8(key)});
+  await fetch("/api/push/subscribe",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify(sub)});
+  toast(t("เปิดแจ้งเตือนแล้ว 🔔"));pushState()}catch(e){toast(String(e.message||e))}});
+document.getElementById("push-test").addEventListener("click",async()=>{const r=await fetch("/api/push/test",{method:"POST",credentials:"same-origin"});const j=await r.json();toast(j.sent?t("ส่งทดสอบแล้ว"):t("ไม่มีเครื่องที่รับแจ้งเตือน"))});
+if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").then(pushState).catch(()=>{})}else{pushState()}
+
+/* ---------- import JSON ---------- */
+document.getElementById("import").addEventListener("click",()=>document.getElementById("import-file").click());
+document.getElementById("import-file").addEventListener("change",async ev=>{const f=ev.target.files[0];if(!f)return;
+  try{const data=JSON.parse(await f.text());const r=await fetch("/api/import",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify(data)});
+  const j=await r.json();if(!r.ok)throw new Error(j.error||r.status);try{["mealcheck","gymlog","progs","gymdraft","restcfg","scheme"].forEach(k=>localStorage.removeItem(k))}catch(e){}toast(`${t("นำเข้าแล้ว")} ${j.imported}`);setTimeout(()=>location.reload(),800)}catch(e){toast(t("นำเข้าไม่สำเร็จ")+": "+(e.message||e))}});
+
+/* ---------- cloud sync ---------- */
+let col=null,dirty=new Set(),syncT=null,syncing=false,syncedLogs={};
+const logId=l=>`g-${l.date}-${l.prog}`;
+function syncMsg(t){document.getElementById("sync").textContent=t}
+let foodDirty=new Set();
+function markDirty(k){if(k==="mealcheck")foodDirty.add(DAY);if(!col)return;dirty.add(k);clearTimeout(syncT);syncT=setTimeout(flush,800)}
+async function flush(){
+  if(syncing){syncT=setTimeout(flush,500);return}
+  syncing=true;const keys=[...dirty];dirty.clear();
+  try{
+    for(const k of keys){
+      if(k==="mealcheck"){const ds=[...foodDirty];foodDirty.clear();for(const dd of ds)await col.doc("f-"+dd).set({date:dd,...food[dd]})}
+      if(k==="gymlog"){
+        const now2={};logs.forEach(l=>now2[logId(l)]=JSON.stringify(l));
+        for(const id in now2)if(syncedLogs[id]!==now2[id]){await col.doc(id).set(JSON.parse(now2[id]));syncedLogs[id]=now2[id]}
+        for(const id in syncedLogs)if(!(id in now2)){await col.doc(id).delete();delete syncedLogs[id]}
+      }
+      if(k==="restcfg"||k==="gymdraft"||k==="progs"||k==="unit")await col.doc("settings").set({restCfg,draft,progs:PROGS,unit,scheme:3});
+    }
+    syncMsg(t("ซิงก์แล้ว ✓"));
+  }catch(e){keys.forEach(k=>dirty.add(k));syncMsg(t("ซิงก์ไม่สำเร็จ"))}
+  syncing=false;
+}
+(async()=>{
+  const timer=setTimeout(()=>{if(!col)syncMsg(t("ออฟไลน์ · เก็บในเครื่องนี้"))},10000);
+  try{
+    const c=API;let snap;
+    try{snap=await c.get()}catch(e){clearTimeout(timer);if(e&&e.code==="auth"){showLogin();syncMsg(t("ออฟไลน์ · เก็บในเครื่องนี้"));return}throw e}
+    clearTimeout(timer);
+    const toUpload=new Set();
+    if(snap.empty){toUpload.add("gymlog");toUpload.add("restcfg");}
+    const seenF=new Set();
+    snap.docs.forEach(d=>{const v=JSON.parse(JSON.stringify(d.data()||{}));
+      if(d.id.startsWith("f-")){const {date,...rest}=v;food[date]=rest;seenF.add(date)}
+      else if(d.id.startsWith("g-")){const i=logs.findIndex(l=>logId(l)===d.id);if(i>=0)logs[i]=v;else logs.push(v);syncedLogs[d.id]=JSON.stringify(v)}
+      else if(d.id==="settings"){Object.assign(restCfg,v.restCfg||{});if(v.progs){PROGS=v.progs;if((v.scheme||1)<3){to5x5();toUpload.add("progs")}}if(v.unit)unit=v.unit;if(v.draft&&v.draft.prog&&!draft.prog)draft=v.draft}
+    });
+    logs.sort((a,b)=>a.date.localeCompare(b.date));
+    food[TODAY]=food[TODAY]||{done:{},tags:{}};
+    col=c;
+    // ย้ายข้อมูลเดิมในเครื่องที่ยังไม่เคยอยู่บนบัญชี
+    for(const date of Object.keys(food))if(!seenF.has(date)&&Object.keys(food[date].done||{}).length){await c.doc("f-"+date).set({date,...food[date]})}
+    if(logs.some(l=>!syncedLogs[logId(l)]))toUpload.add("gymlog");
+    try{localStorage.setItem("mealcheck",JSON.stringify(food));localStorage.setItem("gymlog",JSON.stringify(logs))}catch(e){}
+    toUpload.forEach(k=>dirty.add(k));if(dirty.size)await flush();
+    syncMsg(t("ซิงก์แล้ว ✓"));
+    autoCommitOld();
+    if(!PROGS[cur])cur=nextProg();cur=draft.prog&&PROGS[draft.prog]?draft.prog:nextProg();updUnitBtn();renderFood();renderGym();
+  }catch(e){clearTimeout(timer);syncMsg(t("ออฟไลน์ · เก็บในเครื่องนี้"))}
+})();
+
+/* ---------- export ---------- */
+document.getElementById("export").addEventListener("click",async()=>{
+  const data=JSON.stringify({exportedAt:new Date().toISOString(),weightUnitStored:"kg",displayUnit:unit,food,gymLogs:logs,programs:PROGS,restSettings:restCfg},null,2);
+  const name=`fitness-log-${TODAY}.json`;
+  downloadBlob(new Blob([data],{type:"application/json"}),name);toast(t("ส่งไฟล์แล้ว"));return;
+  const box=document.getElementById("export-box");box.hidden=false;box.value=data;box.select();
+  try{await navigator.clipboard.writeText(data);toast(t("คัดลอก JSON แล้ว"))}catch(e){toast("Copy from the box")}
+});
+
+
+
+/* ---------- muscle map ---------- */
+const MUS={ // id: [primary, secondary]
+ "chest-press":[["chest"],["delt","tri"]],"incline-db":[["chest","delt"],["tri"]],"pec-fly":[["chest"],["delt"]],
+ "db-shoulder-press":[["delt"],["tri","traps"]],"cable-lat-raise":[["delt"],[]],"cable-oh-tri":[["tri"],[]],
+ "lat-pulldown":[["lats"],["bi","rear"]],"wide-cable-row":[["lats","traps","rear"],["bi"]],"seated-cable-row":[["lats","traps"],["bi","rear"]],
+ "reverse-fly":[["rear"],["traps"]],"machine-curl":[["bi"],["fore"]],"abdominal":[["abs"],["obl"]],
+ "squat":[["quad","glute"],["ham","add"]],"leg-curl":[["ham"],["calf"]],"leg-ext":[["quad"],[]],
+ "hip-abd":[["abd"],["glute"]],"hip-add":[["add"],[]],"seated-calf":[["calf"],[]],"woodchop":[["obl"],["abs"]]};
+const KW=[["chest","chest"],["press","chest"],["fly","chest"],["shoulder","delt"],["lateral","delt"],["tricep","tri"],["curl","bi"],["bicep","bi"],["row","lats"],["pull","lats"],["squat","quad"],["lunge","quad"],["leg ext","quad"],["deadlift","ham"],["rdl","ham"],["calf","calf"],["crunch","abs"],["ab","abs"],["plank","abs"],["glute","glute"],["hip","glute"]];
+function musOf(e){if(MUS[e.id])return MUS[e.id];const n=(e.n||"").toLowerCase();const p=[...new Set(KW.filter(([k])=>n.includes(k)).map(([,m])=>m))].slice(0,2);return [p,[]]}
+const FRONT=[["delt","ellipse",30,40,7,6],["delt","ellipse",70,40,7,6],["chest","ellipse",42,49,9,7],["chest","ellipse",58,49,9,7],
+ ["bi","ellipse",24,60,4.5,10],["bi","ellipse",76,60,4.5,10],["fore","ellipse",21,82,3.5,11],["fore","ellipse",79,82,3.5,11],
+ ["abs","rect",43,58,14,30],["obl","ellipse",37,72,3.5,11],["obl","ellipse",63,72,3.5,11],
+ ["quad","ellipse",42,122,7.5,21],["quad","ellipse",58,122,7.5,21],["add","ellipse",48,112,2.5,12],["add","ellipse",52,112,2.5,12],["calf","ellipse",42,165,5,12],["calf","ellipse",58,165,5,12]];
+const BACK=[["traps","poly","50,30 38,38 44,52 56,52 62,38"],["rear","ellipse",30,40,7,6],["rear","ellipse",70,40,7,6],["lats","ellipse",39,63,8,13],["lats","ellipse",61,63,8,13],
+ ["tri","ellipse",24,60,4.5,10],["tri","ellipse",76,60,4.5,10],["fore","ellipse",21,82,3.5,11],["fore","ellipse",79,82,3.5,11],
+ ["glute","ellipse",42,99,8.5,9],["glute","ellipse",58,99,8.5,9],["abd","ellipse",32,98,3.5,8],["abd","ellipse",68,98,3.5,8],
+ ["ham","ellipse",42,128,7,18],["ham","ellipse",58,128,7,18],["calf","ellipse",42,165,6,12],["calf","ellipse",58,165,6,12]];
+function bodySVG(prim,sec,h=44){
+  const P=new Set(prim),S=new Set(sec);const col=m=>P.has(m)?"#e8a46a":S.has(m)?"#7a5a40":"#2f2e2b";
+  const base=`<circle cx="50" cy="14" r="9" fill="#3a3936"/><rect x="45" y="22" width="10" height="8" fill="#3a3936"/><path d="M30 34 L70 34 L64 92 L36 92Z" fill="#33322f"/><path d="M36 90 L64 90 L62 182 L52 182 L50 112 L48 182 L38 182Z" fill="#33322f"/><path d="M24 36 L30 36 L26 96 L17 96Z M70 36 L76 36 L83 96 L74 96Z" fill="#33322f"/>`;
+  const shp=(a,dx)=>a.map(([m,k,...v])=>k==="ellipse"?`<ellipse cx="${v[0]+dx}" cy="${v[1]}" rx="${v[2]}" ry="${v[3]}" fill="${col(m)}"/>`:k==="rect"?`<rect x="${v[0]+dx}" y="${v[1]}" width="${v[2]}" height="${v[3]}" rx="3" fill="${col(m)}"/>`:`<polygon points="${v[0].split(" ").map(pt=>{const [x,y]=pt.split(",");return (+x+dx)+","+y}).join(" ")}" fill="${col(m)}"/>`).join("");
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 190" height="${h}" width="${Math.round(h*210/190)}" aria-hidden="true" style="flex:none"><g>${base}${shp(FRONT,0)}</g><g transform="translate(110,0)">${base}</g>${shp(BACK,110)}</svg>`;
+}
+function musUnion(list){const p=new Set(),s=new Set();list.forEach(e=>{const [a,b]=musOf(e);a.forEach(x=>p.add(x));b.forEach(x=>s.add(x))});p.forEach(x=>s.delete(x));return [[...p],[...s]]}
+
+/* ---------- progress + achievements ---------- */
+let calM=null;
+function workoutDays(){return [...new Set(logs.map(l=>l.date))].sort()}
+function weekKey(ds){const d=new Date(ds+"T12:00:00");const day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return dkey(d)}
+function weekStreak(){const wk=new Set(logs.map(l=>weekKey(l.date)));let d=new Date(TODAY+"T12:00:00");let k=weekKey(TODAY);if(!wk.has(k)){d.setDate(d.getDate()-7);k=weekKey(dkey(d))}let n=0;while(wk.has(k)){n++;d.setDate(d.getDate()-7);k=weekKey(dkey(d))}return n}
+function bestStreak(){const wk=[...new Set(logs.map(l=>weekKey(l.date)))].sort();let best=0,c=0,prev=null;wk.forEach(w=>{if(prev){const p=new Date(prev+"T12:00:00");p.setDate(p.getDate()+7);c=dkey(p)===w?c+1:1}else c=1;best=Math.max(best,c);prev=w});return best}
+const volOf=l=>Object.values(l.ex).flat().reduce((a,s)=>a+(+s.kg||0)*(+s.reps||0),0);
+function renderProgress(){
+  const days=workoutDays(),streak=weekStreak(),best=bestStreak();
+  const ym=(calM||DAY).slice(0,7);const monthCount=days.filter(d=>d.startsWith(ym)).length;
+  document.getElementById("stats").innerHTML=[[days.length,t("วันที่เล่น")],[streak,t("สัปดาห์ติดกัน")],[monthCount,t("เดือนนี้")]].map(([v,l])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join("");
+  const [Y,M]=ym.split("-").map(Number);const first=new Date(Y,M-1,1);const lead=(first.getDay()+6)%7;const n=new Date(Y,M,0).getDate();
+  document.getElementById("cal-title").textContent=first.toLocaleDateString(LOC(),{month:"long",year:"numeric"});
+  const set=new Set(days);const dows=lang==="th"?["จ","อ","พ","พฤ","ศ","ส","อา"]:["M","T","W","T","F","S","S"];
+  let h=dows.map(d=>`<span class="dow">${d}</span>`).join("")+"<span></span>".repeat(lead);
+  for(let i=1;i<=n;i++){const ds=`${ym}-${String(i).padStart(2,"0")}`;h+=`<button class="d in${set.has(ds)?" on":""}${ds===TODAY?" today":""}${ds===DAY?" sel":""}" data-ds="${ds}" ${ds>TODAY?"disabled":""} aria-label="${ds}">${i}</button>`}
+  document.getElementById("cal-grid").innerHTML=h;
+  document.querySelectorAll("#cal-grid [data-ds]").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.ds===DAY)return;DAY=b.dataset.ds;draft.ex={};picked=false;renderAll()}));
+  const total=days.length,vol=logs.reduce((a,l)=>a+volOf(l),0);
+  const B=[["🥇",t("ครั้งแรก"),total>=1],["🔥","5 "+t("วันที่เล่น"),total>=5],["💪","10 "+t("วันที่เล่น"),total>=10],["🏅","25 "+t("วันที่เล่น"),total>=25],["🏆","50 "+t("วันที่เล่น"),total>=50],["👑","100 "+t("วันที่เล่น"),total>=100],["💎","250 "+t("วันที่เล่น"),total>=250],
+    ["📅","2 "+t("สัปดาห์"),best>=2],["⚡","4 "+t("สัปดาห์"),best>=4],["🌙","8 "+t("สัปดาห์"),best>=8],["☀️","12 "+t("สัปดาห์"),best>=12],["🌋","26 "+t("สัปดาห์"),best>=26],
+    ["🧱","10,000 kg "+t("ยกรวม"),vol>=1e4],["🏔️","50,000 kg "+t("ยกรวม"),vol>=5e4],["🚀","100,000 kg "+t("ยกรวม"),vol>=1e5]];
+  if(document.getElementById("badges"))document.getElementById("badges").innerHTML=B.map(([i,l,ok])=>`<div class="badge ${ok?"got":"lock"}"><i>${i}</i><small>${l}</small></div>`).join("");
+}
+document.getElementById("cal-prev").addEventListener("click",()=>{const [y,m]=(calM||DAY).slice(0,7).split("-").map(Number);const d=new Date(y,m-2,1);calM=dkey(d);renderProgress()});
+document.getElementById("cal-next").addEventListener("click",()=>{const [y,m]=(calM||DAY).slice(0,7).split("-").map(Number);const d=new Date(y,m,1);calM=dkey(d);renderProgress()});
+
+/* ---------- share card (canvas → PNG) ---------- */
+let shareBlob=null,shareName="";
+async function svgImg(svg){const im=new Image();await new Promise((ok,no)=>{im.onload=ok;im.onerror=no;im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg)});return im}
+async function drawCard(l){
+  try{await document.fonts.ready}catch(e){}
+  const ids=Object.keys(l.ex);const W=1080,H=2340,P=80;
+  const grp=(s,u)=>{const out=[];s.forEach(q=>{const k=`${toDisp(q.kg,u)}${u} × ${q.reps}`;const last=out[out.length-1];if(last&&last.k===k)last.n++;else out.push({k,n:1})});return out.map(o=>o.n>1?`${o.k}  ×${o.n}`:o.k)};
+  const top=780,avail=H-top-150;const rowRaw=ids.map(id=>Math.max(2,grp(l.ex[id],uOf(id)).length)*52+70);
+  const fit=Math.min(1,avail/rowRaw.reduce((a,b)=>a+b,0));const rowH=rowRaw.map(r=>r*fit);
+  const c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
+  const sans='"IBM Plex Sans Thai",system-ui,sans-serif',mono='"IBM Plex Mono",monospace',serif='"Noto Serif Thai",Georgia,serif';
+  const BLUE="#3d7dff",GREEN="#2ad19a",FG="#f2f0ec",MUTED="#8a8780";
+  x.fillStyle="#000";x.fillRect(0,0,W,H);
+  x.strokeStyle="#262625";x.lineWidth=3;x.beginPath();x.roundRect?x.roundRect(30,30,W-60,H-60,48):x.rect(30,30,W-60,H-60);x.stroke();
+  // header
+  x.fillStyle=FG;x.font=`700 40px ${mono}`;x.fillText("FUEL & LIFT",P,P+70);
+  x.fillStyle=MUTED;x.font=`400 38px ${sans}`;
+  x.fillText(new Date(l.date+"T12:00:00").toLocaleDateString(LOC(),{month:"short",day:"numeric",year:"numeric"}),P,P+135);
+  const pname=(PROGS[l.prog]||{name:l.prog}).name;x.fillText(pname,P,P+185);
+  // ring + muscle map
+  const cx=W-P-160,cy=P+170,R=150;
+  const planned=ids.reduce((a,id)=>{for(const p of Object.values(PROGS)){const e=p.ex.find(q=>q.id===id);if(e)return a+e.s}return a+l.ex[id].length},0);
+  const sets=Object.values(l.ex).flat().length;
+  const wk=weekKey(l.date);const wkDays=new Set(logs.filter(q=>weekKey(q.date)===wk&&q.date<=l.date).map(q=>q.date)).size;
+  x.lineCap="round";
+  x.strokeStyle="#262a33";x.lineWidth=22;x.beginPath();x.arc(cx,cy,R,0,Math.PI*2);x.stroke();
+  x.strokeStyle=BLUE;x.beginPath();x.arc(cx,cy,R,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(1,sets/Math.max(1,planned)));x.stroke();
+  x.strokeStyle="#1d2b26";x.lineWidth=18;x.beginPath();x.arc(cx,cy,R-30,0,Math.PI*2);x.stroke();
+  x.strokeStyle=GREEN;x.beginPath();x.arc(cx,cy,R-30,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(1,wkDays/5));x.stroke();
+  x.textAlign="center";x.fillStyle=FG;x.font=`700 72px ${sans}`;x.fillText(`${wkDays}/5`,cx,cy+18);x.fillStyle=MUTED;x.font=`500 24px ${mono}`;x.fillText("THIS WEEK",cx,cy+58);x.textAlign="left";
+  // stats
+  const days=workoutDays().filter(d=>d<=l.date).length;
+  const vol=Math.round(volOf(l)).toLocaleString();
+  [[String(days),t("วันที่เล่น"),FG],[vol,"Volume kg",BLUE],[String(sets),"Sets",GREEN]].forEach(([v,lab,col],i)=>{
+    const mx=W/6+i*W/3;x.textAlign="center";x.fillStyle=col;x.font=`700 84px ${sans}`;x.fillText(v,mx,P+500);
+    x.font=`500 34px ${sans}`;x.fillText(lab,mx,P+555);x.textAlign="left"});
+  // rows
+  let y=top;const f=fit;
+  for(let k=0;k<ids.length;k++){const id=ids[k],u=uOf(id),s=l.ex[id];
+    const ex=Object.values(PROGS).flatMap(p=>p.ex).find(e=>e.id===id)||{id,n:exName(id,l)};
+    x.fillStyle=FG;x.font=`700 ${Math.round(40*f)}px ${sans}`;let nm=exName(id,l);while(x.measureText(nm).width>600&&nm.length>4)nm=nm.slice(0,-2);if(nm!==exName(id,l))nm+="…";x.fillText(nm,P,y+32*f);
+    const e1=Math.max(...s.map(q=>(+q.kg||0)*(1+(+q.reps||0)/30)));
+    x.fillStyle="#bdbab4";x.font=`400 ${Math.round(34*f)}px ${sans}`;x.fillText(`e1RM ${toDisp(Math.round(e1*10)/10,u)}${u}`,P,y+82*f);
+    x.textAlign="right";grp(s,u).forEach((tx,r)=>{x.fillStyle=FG;x.font=`400 ${Math.round(36*f)}px ${sans}`;x.fillText(tx,W-P,y+32*f+r*52*f)});x.textAlign="left";
+    y+=rowH[k]}
+  x.fillStyle=MUTED;x.font=`500 30px ${mono}`;x.textAlign="center";x.fillText(`🏆 ${weekStreak()} ${t("สัปดาห์ติดกัน").toUpperCase()}`,W/2,H-100);x.textAlign="left";
+  return new Promise(r=>c.toBlob(b=>r(b),"image/png"));
+}
+async function openShare(l){
+  if(!l){toast(t("ยังไม่มีบันทึก"));return}
+  shareBlob=await drawCard(l);shareName=`workout-${l.date}-${l.prog}.png`;
+  const img=document.getElementById("share-img");if(img.src)URL.revokeObjectURL(img.src);img.src=URL.createObjectURL(shareBlob);
+  document.getElementById("share-hint").hidden=true;document.getElementById("open-ig").hidden=true;document.getElementById("open-ig-web").hidden=true;document.getElementById("share-modal").hidden=false;
+}
+document.getElementById("share-last").addEventListener("click",()=>{
+  const ds=logs.filter(l=>l.date===DAY);
+  if(!ds.length){toast(t("วันนี้ไม่มีบันทึกเวท"));return}
+  if(ds.length===1){openShare(ds[0]);return}
+  const ex={},names={};ds.forEach(l=>{Object.assign(ex,l.ex);Object.assign(names,l.names||{})});
+  openShare({date:DAY,prog:ds.map(l=>(PROGS[l.prog]||{name:l.prog}).name).join(" + "),ex,names});
+});
+document.getElementById("share-close").addEventListener("click",()=>document.getElementById("share-modal").hidden=true);
+async function storyBlob(){
+  const im=new Image();const url=URL.createObjectURL(shareBlob);await new Promise(r=>{im.onload=r;im.src=url});
+  const W=1080,H=1920,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
+  const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"#141414");g.addColorStop(1,"#000");x.fillStyle=g;x.fillRect(0,0,W,H);
+  const sc=Math.min((W-80)/im.width,(H-360)/im.height,1);const w=im.width*sc,h=im.height*sc;
+  x.drawImage(im,(W-w)/2,(H-h)/2,w,h);URL.revokeObjectURL(url);
+  return new Promise(r=>c.toBlob(b=>r(b),"image/png"));
+}
+document.getElementById("share-story").addEventListener("click",async()=>{
+  const b=await storyBlob();const name=shareName.replace(".png","-story.png");
+  if(await shareFile(b,name))return;
+  downloadBlob(b,name);toast(t("บันทึกแล้ว เปิด IG เพื่อลง Story"));document.getElementById("open-ig").hidden=false;document.getElementById("open-ig-web").hidden=false;return;
+  const img=document.getElementById("share-img");URL.revokeObjectURL(img.src);img.src=URL.createObjectURL(b);
+  const h=document.getElementById("share-hint");h.textContent=t("กดค้างที่รูปเพื่อบันทึก");h.hidden=false;
+});
+document.getElementById("share-save").addEventListener("click",async()=>{
+  if(await shareFile(shareBlob,shareName))return;
+  downloadBlob(shareBlob,shareName);toast(t("รูปถูกส่งแล้ว"));return;
+  const h=document.getElementById("share-hint");h.textContent=t("กดค้างที่รูปเพื่อบันทึก");h.hidden=false;
+});
+
+/* ---------- tabs ---------- */
+function show(v){
+  document.getElementById("v-food").hidden=v!=="food";document.getElementById("v-gym").hidden=v!=="gym";
+  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.v===v));
+  document.getElementById("h1").textContent=v==="food"?t("วันนี้กินครบหรือยัง"):t("เวทวันนี้");
+}
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{location.hash=t.dataset.v}));
+window.addEventListener("hashchange",()=>show(location.hash==="#gym"?"gym":"food"));
+function renderAll(){applyStatic();document.getElementById("today-btn").hidden=DAY===TODAY;document.getElementById("save-day").textContent="→ "+new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"numeric"});document.getElementById("date").textContent=new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{weekday:"long",day:"numeric",month:"long",year:"numeric"})+(DAY===TODAY?"":" · "+(lang==="th"?"ย้อนหลัง":"Backfill"));updUnitBtn();renderFood();renderGym();show(location.hash==="#gym"?"gym":"food")}
+document.getElementById("lang").addEventListener("click",()=>{lang=lang==="th"?"en":"th";try{localStorage.setItem("lang",lang)}catch(e){}renderAll()});
+autoCommitOld();
+document.querySelectorAll("#sessions").forEach(()=>{});
+document.getElementById("today-btn").addEventListener("click",()=>{DAY=TODAY;draft.ex={};renderAll()});
+renderAll();
+</script>
+
+</body></html>

@@ -1,0 +1,11 @@
+{
+  "name": "fuel-lift-log",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "vapid": "node scripts/gen-vapid.mjs"
+  },
+  "devDependencies": { "wrangler": "^4.40.0" }
+}
