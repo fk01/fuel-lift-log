@@ -33,12 +33,22 @@ export default {
 
 /* ---------------- DB ---------------- */
 let ready = false;
+// ค่าตั้งเก็บใน D1 (ตาราง config) ใช้แทน Secret ใน Dashboard ได้ — Secret ใน Dashboard ถ้ามีจะมีผลก่อน
+async function conf(env) {
+  if (env.__conf) return env.__conf;
+  const out = {};
+  try { const { results } = await env.DB.prepare("SELECT k, v FROM config").all(); for (const r of results) out[r.k] = r.v; } catch (e) {}
+  for (const k of ["ACCESS_PIN", "PIN_HASH", "VAPID_PUBLIC_KEY", "VAPID_PRIVATE_JWK", "VAPID_SUBJECT"]) if (env[k]) out[k] = env[k];
+  env.__conf = out;
+  return out;
+}
 async function init(env) {
   if (ready) return;
   await env.DB.batch([
     env.DB.prepare("CREATE TABLE IF NOT EXISTS docs (id TEXT PRIMARY KEY, value TEXT NOT NULL, updated INTEGER NOT NULL)"),
     env.DB.prepare("CREATE TABLE IF NOT EXISTS subs (endpoint TEXT PRIMARY KEY, sub TEXT NOT NULL, created INTEGER NOT NULL)"),
     env.DB.prepare("CREATE TABLE IF NOT EXISTS sent (key TEXT PRIMARY KEY, ts INTEGER NOT NULL)"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS config (k TEXT PRIMARY KEY, v TEXT NOT NULL)"),
     env.DB.prepare("CREATE TABLE IF NOT EXISTS creds (id TEXT PRIMARY KEY, pk TEXT NOT NULL, alg INTEGER NOT NULL, name TEXT, created INTEGER NOT NULL)"),
     env.DB.prepare("CREATE TABLE IF NOT EXISTS challenges (c TEXT PRIMARY KEY, kind TEXT NOT NULL, ts INTEGER NOT NULL)"),
   ]);
@@ -51,8 +61,9 @@ async function api(req, env, url) {
 
   if (p === "/api/login" && m === "POST") {
     const { pin } = await req.json().catch(() => ({}));
-    if (!env.ACCESS_PIN) return json({ error: "ACCESS_PIN is not set" }, 500);
-    if (String(pin || "").trim() !== String(env.ACCESS_PIN).trim()) return json({ error: "wrong pin" }, 401);
+    const c = await conf(env);
+    if (!c.ACCESS_PIN && !c.PIN_HASH) return json({ error: "ACCESS_PIN is not set" }, 500);
+    if ((await hashPin(String(pin || "").trim())) !== (await token(env))) return json({ error: "wrong pin" }, 401);
     const tok = await token(env);
     return json({ ok: true }, 200, {
       "Set-Cookie": `${COOKIE}=${tok}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=31536000`,
@@ -143,7 +154,7 @@ async function api(req, env, url) {
     return json({ ok: true, imported: stmts.length });
   }
 
-  if (p === "/api/push/key" && m === "GET") return json({ key: env.VAPID_PUBLIC_KEY || "" });
+  if (p === "/api/push/key" && m === "GET") return json({ key: (await conf(env)).VAPID_PUBLIC_KEY || "" });
   if (p === "/api/push/subscribe" && m === "POST") {
     const sub = await req.json();
     if (!sub || !sub.endpoint || !sub.keys) return json({ error: "bad subscription" }, 400);
@@ -165,12 +176,17 @@ async function api(req, env, url) {
 }
 
 /* ---------------- auth ---------------- */
-async function token(env) {
-  const d = await crypto.subtle.digest("SHA-256", enc(`${String(env.ACCESS_PIN).trim()}:fuel-lift-log`));
+async function hashPin(pin) {
+  const d = await crypto.subtle.digest("SHA-256", enc(`${pin}:fuel-lift-log`));
   return b64u(new Uint8Array(d));
 }
+async function token(env) {
+  const c = await conf(env);
+  return c.ACCESS_PIN ? hashPin(String(c.ACCESS_PIN).trim()) : c.PIN_HASH;
+}
 async function authed(req, env) {
-  if (!env.ACCESS_PIN) return false;
+  const c0 = await conf(env);
+  if (!c0.ACCESS_PIN && !c0.PIN_HASH) return false;
   const c = (req.headers.get("Cookie") || "").split(/;\s*/).find((x) => x.startsWith(COOKIE + "="));
   return !!c && c.slice(COOKIE.length + 1) === (await token(env));
 }
@@ -226,12 +242,13 @@ async function remind(env) {
 }
 
 async function broadcast(env, msg) {
-  if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_JWK) return 0;
+  const c = await conf(env);
+  if (!c.VAPID_PUBLIC_KEY || !c.VAPID_PRIVATE_JWK) return 0;
   const { results } = await env.DB.prepare("SELECT endpoint, sub FROM subs").all();
   let n = 0;
   for (const r of results) {
     try {
-      const status = await sendPush(env, JSON.parse(r.sub), JSON.stringify(msg));
+      const status = await sendPush(c, JSON.parse(r.sub), JSON.stringify(msg));
       if (status === 404 || status === 410) await env.DB.prepare("DELETE FROM subs WHERE endpoint = ?1").bind(r.endpoint).run();
       else if (status < 300) n++;
     } catch (e) { console.log("push error", e); }
