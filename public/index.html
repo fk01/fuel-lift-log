@@ -293,7 +293,7 @@ const dkey=d=>{const t=new Date(d.getTime()-d.getTimezoneOffset()*60000);return 
 let TODAY=dkey(now);
 let lang=(()=>{try{return localStorage.getItem("lang")||"en"}catch(e){return "en"}})();
 const LOC=()=>lang==="th"?"th-TH":"en-GB";
-const EN={"เลือกรูปพื้นหลัง":"Background photo","เซฟ":"Save","เวทเทรนนิ่ง":"Weight training","คาร์ดิโอ":"Cardio","ใส่ระยะ / เวลา":"Add distance / time","บันทึกการวิ่ง":"Log run","ระยะ (km)":"Distance (km)","เวลา (ชม:นาที:วิ)":"Time (h:mm:ss)","แชร์การ์ด":"Share card","แบบพื้นใส":"Transparent","ระยะทาง":"Distance","เวลา":"Time","ใส่ระยะและเวลาก่อน":"Enter distance and time first","ลบ":"Delete","บันทึกแล้ว":"Logged","แตะเพื่อบันทึก":"Tap to log","ยกเลิกแล้ว":"Removed","อาหาร":"Food","เวท":"Workout","แคลอรี":"Calories","โปรตีน":"Protein","วันนี้":"Today","วิ่ง":"Run","ตีแบด":"Badminton","เวทค่ำ":"Late workout","โปรตีน 7 วัน":"Protein · 7 days","ล้างวันนี้":"Clear today","โปรแกรม":"Program","บันทึก":"Save workout","ล้าง":"Clear","ประวัติ":"History","ข้อมูล":"Data","พัก":"Rest","พร้อม":"Ready",
+const EN={"เปิดรูปไม่ได้":"Could not open photo","สร้างการ์ดไม่สำเร็จ":"Could not create card","เลือกรูปพื้นหลัง":"Background photo","เซฟ":"Save","เวทเทรนนิ่ง":"Weight training","คาร์ดิโอ":"Cardio","ใส่ระยะ / เวลา":"Add distance / time","บันทึกการวิ่ง":"Log run","ระยะ (km)":"Distance (km)","เวลา (ชม:นาที:วิ)":"Time (h:mm:ss)","แชร์การ์ด":"Share card","แบบพื้นใส":"Transparent","ระยะทาง":"Distance","เวลา":"Time","ใส่ระยะและเวลาก่อน":"Enter distance and time first","ลบ":"Delete","บันทึกแล้ว":"Logged","แตะเพื่อบันทึก":"Tap to log","ยกเลิกแล้ว":"Removed","อาหาร":"Food","เวท":"Workout","แคลอรี":"Calories","โปรตีน":"Protein","วันนี้":"Today","วิ่ง":"Run","ตีแบด":"Badminton","เวทค่ำ":"Late workout","โปรตีน 7 วัน":"Protein · 7 days","ล้างวันนี้":"Clear today","โปรแกรม":"Program","บันทึก":"Save workout","ล้าง":"Clear","ประวัติ":"History","ข้อมูล":"Data","พัก":"Rest","พร้อม":"Ready",
 "วันนี้กินครบหรือยัง":"Meals","เวทวันนี้":"Workout",
 "เช้า":"Breakfast","กลางวัน":"Lunch","บ่าย":"Afternoon","วิตามินหลังมื้อเช้า":"Vitamins after breakfast","วิตามินหลังมื้อเย็น":"Vitamins after dinner","วิตามินชุดเช้า":"Morning vitamins","วิตามินชุดเย็น":"Evening vitamins","เย็น (มื้อสุดท้าย)":"Dinner (last meal)","หลังเวท / ก่อนนอน":"Post-workout / bedtime","หลังวิ่ง":"Post-run","เติมหลังวิ่ง":"Run refuel","เพิ่มวันแบด":"Badminton extra",
 "Iso Soy 2 สกู๊ป + Mass 2 สกู๊ป ชงน้ำ":"Iso Soy 2 scoops + Mass 2 scoops, water","กล้วย 2 ลูก":"2 bananas","ข้าวกล้อง 150 g":"Brown rice 150 g","เนื้อวัว 90% 100 g":"Lean beef 90% 100 g","ไข่ต้ม 1 + ผัก 1-2 ถ้วย":"1 boiled egg + 1-2 cups veg","อัลมอนด์ / ถั่วอบ 1 กำมือ (~25 g)":"Almonds / nuts, 1 handful (~25 g)","ปลาหรืออกไก่ 100 g":"Fish or chicken breast 100 g","Iso Soy 2 สกู๊ป ชงน้ำ":"Iso Soy 2 scoops, water","Mass 2 สกู๊ป ชงน้ำ":"Mass 2 scoops, water","กล้วย 1 ลูก (กินพร้อมมื้อเย็น)":"1 banana (with dinner)",
@@ -443,7 +443,7 @@ async function drawRun(d,clear){try{await document.fonts.ready}catch(e){}
   const W=1080,H=1920,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
   const sans='"IBM Plex Sans Thai",system-ui,sans-serif',OR="#fc5200",FG="#fff";
   if(runPhoto&&!clear){const im=runPhoto,sc=Math.max(W/im.width,H/im.height),w=im.width*sc,hh=im.height*sc;
-    x.filter="grayscale(1) contrast(1.1) brightness(.8)";x.drawImage(im,(W-w)/2,(H-hh)/2,w,hh);x.filter="none";
+    x.drawImage(im,(W-w)/2,(H-hh)/2,w,hh);const px=x.getImageData(0,0,W,H),q=px.data;for(let i=0;i<q.length;i+=4){let v=(q[i]*.3+q[i+1]*.59+q[i+2]*.11);v=Math.max(0,Math.min(255,(v-128)*1.1+128))*.8;q[i]=q[i+1]=q[i+2]=v}x.putImageData(px,0,0);
     const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"rgba(0,0,0,.35)");g.addColorStop(.55,"rgba(0,0,0,.1)");g.addColorStop(1,"rgba(0,0,0,.45)");x.fillStyle=g;x.fillRect(0,0,W,H)}
   else if(!clear){const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"#1c1c1c");g.addColorStop(1,"#050505");x.fillStyle=g;x.fillRect(0,0,W,H)}
   x.shadowColor="rgba(0,0,0,.6)";x.shadowBlur=14;x.textAlign="center";
@@ -453,12 +453,15 @@ async function drawRun(d,clear){try{await document.fonts.ready}catch(e){}
   const im=HERO_IMG[tierOf(lvOf(heroXP()))];if(im.complete){x.imageSmoothingEnabled=false;x.drawImage(im,W/2-80,y-30,160,160)}
   x.fillStyle=OR;x.font=`800 italic 44px ${sans}`;x.fillText("FUEL & LIFT",W/2,y+190);
   x.fillStyle="rgba(255,255,255,.75)";x.font=`500 26px ${sans}`;x.fillText(new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"numeric"}),W/2,y+235);
-  return new Promise(r=>c.toBlob(b=>r(b),"image/png"))}
+  const jpg=runPhoto&&!clear;return new Promise((r,no)=>c.toBlob(b=>b?r(b):no(new Error("toBlob")),jpg?"image/jpeg":"image/png",.9))}
 document.getElementById("run-photo").addEventListener("change",async ev=>{const f=ev.target.files[0];if(!f){runPhoto=null;return}
-  const im=new Image();im.src=URL.createObjectURL(f);await new Promise(r=>im.onload=r);runPhoto=im;document.getElementById("run-photo-n").textContent="✓ "+f.name.slice(0,24)});
-async function shareRun(clear){const d=saveRun();if(!d){toast(t("ใส่ระยะและเวลาก่อน"));return}
+  try{const im=new Image();const u=URL.createObjectURL(f);await new Promise((r,no)=>{im.onload=r;im.onerror=()=>no(new Error("decode"));im.src=u});
+  const M=1600,s=Math.min(1,M/Math.max(im.naturalWidth,im.naturalHeight)),cv=document.createElement("canvas");cv.width=Math.round(im.naturalWidth*s);cv.height=Math.round(im.naturalHeight*s);
+  cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);URL.revokeObjectURL(u);runPhoto=cv;}catch(e){runPhoto=null;toast(t("เปิดรูปไม่ได้")+" "+(e.message||e));return}document.getElementById("run-photo-n").textContent="✓ "+f.name.slice(0,24)});
+async function shareRun(clear){try{await shareRun2(clear)}catch(e){toast(t("สร้างการ์ดไม่สำเร็จ")+": "+(e.message||e))}}
+async function shareRun2(clear){const d=saveRun();if(!d){toast(t("ใส่ระยะและเวลาก่อน"));return}
   document.getElementById("run-modal").hidden=true;
-  shareBlob=await drawRun(d,clear);shareName=`run-${DAY}${clear?"-overlay":""}.png`;
+  shareBlob=await drawRun(d,clear);shareName=`run-${DAY}${clear?"-overlay":""}.${runPhoto&&!clear?"jpg":"png"}`;
   const img=document.getElementById("share-img");if(img.src)URL.revokeObjectURL(img.src);img.src=URL.createObjectURL(shareBlob);
   document.getElementById("share-hint").hidden=true;document.getElementById("open-ig").hidden=true;document.getElementById("open-ig-web").hidden=true;document.getElementById("share-modal").hidden=false}
 document.getElementById("run-km").addEventListener("input",runPrev);document.getElementById("run-time").addEventListener("input",runPrev);
@@ -908,7 +911,7 @@ async function storyBlob(){
   return new Promise(r=>c.toBlob(b=>r(b),"image/png"));
 }
 document.getElementById("share-story").addEventListener("click",async()=>{
-  const b=await storyBlob();const name=shareName.replace(".png","-story.png");
+  const b=await storyBlob();const name=shareName.replace(/\.(png|jpg)$/,"-story.png");
   if(await shareFile(b,name))return;
   downloadBlob(b,name);toast(t("บันทึกแล้ว เปิด IG เพื่อลง Story"));document.getElementById("open-ig").hidden=false;document.getElementById("open-ig-web").hidden=false;return;
   const img=document.getElementById("share-img");URL.revokeObjectURL(img.src);img.src=URL.createObjectURL(b);
