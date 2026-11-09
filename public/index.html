@@ -72,7 +72,10 @@ h2{font-size:1.05rem;margin:0}
 .sets input[type=number]{width:100%;min-width:0;box-sizing:border-box;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:6px;padding:7px 6px;font-family:var(--f-num);font-size:.95rem;text-align:center}
 .sets input[type=checkbox]{width:22px;height:22px;justify-self:center;accent-color:var(--accent)}
 .sets .warm{font-size:.7rem;color:var(--warn);text-align:center}
-.prog-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.prog-pick{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.prog-pick .prog{grid-column:span 2;min-width:0}.prog-pick .prog.cardio{grid-column:span 3;grid-template-columns:auto 1fr;text-align:left;align-items:center;column-gap:10px;padding:10px 12px}
+.prog.cardio .ic{grid-row:span 2;font-size:1.4rem}.prog.cardio[aria-pressed="true"]{border-color:var(--up)}.prog.cardio[aria-pressed="true"] small{color:var(--up)}
+.prog b,.prog small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .prog{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:4px;padding:12px 6px;font:inherit;cursor:pointer;display:grid;gap:2px;text-align:center}
 .prog b{font-family:var(--f-display);font-weight:400;font-size:1.15rem}
 .prog small{color:var(--muted);font-size:.72rem}
@@ -274,7 +277,7 @@ const dkey=d=>{const t=new Date(d.getTime()-d.getTimezoneOffset()*60000);return 
 let TODAY=dkey(now);
 let lang=(()=>{try{return localStorage.getItem("lang")||"en"}catch(e){return "en"}})();
 const LOC=()=>lang==="th"?"th-TH":"en-GB";
-const EN={"อาหาร":"Food","เวท":"Workout","แคลอรี":"Calories","โปรตีน":"Protein","วันนี้":"Today","วิ่ง":"Run","ตีแบด":"Badminton","เวทค่ำ":"Late workout","โปรตีน 7 วัน":"Protein · 7 days","ล้างวันนี้":"Clear today","โปรแกรม":"Program","บันทึก":"Save workout","ล้าง":"Clear","ประวัติ":"History","ข้อมูล":"Data","พัก":"Rest","พร้อม":"Ready",
+const EN={"บันทึกแล้ว":"Logged","แตะเพื่อบันทึก":"Tap to log","ยกเลิกแล้ว":"Removed","อาหาร":"Food","เวท":"Workout","แคลอรี":"Calories","โปรตีน":"Protein","วันนี้":"Today","วิ่ง":"Run","ตีแบด":"Badminton","เวทค่ำ":"Late workout","โปรตีน 7 วัน":"Protein · 7 days","ล้างวันนี้":"Clear today","โปรแกรม":"Program","บันทึก":"Save workout","ล้าง":"Clear","ประวัติ":"History","ข้อมูล":"Data","พัก":"Rest","พร้อม":"Ready",
 "วันนี้กินครบหรือยัง":"Meals","เวทวันนี้":"Workout",
 "เช้า":"Breakfast","กลางวัน":"Lunch","บ่าย":"Afternoon","วิตามินหลังมื้อเช้า":"Vitamins after breakfast","วิตามินหลังมื้อเย็น":"Vitamins after dinner","วิตามินชุดเช้า":"Morning vitamins","วิตามินชุดเย็น":"Evening vitamins","เย็น (มื้อสุดท้าย)":"Dinner (last meal)","หลังเวท / ก่อนนอน":"Post-workout / bedtime","หลังวิ่ง":"Post-run","เติมหลังวิ่ง":"Run refuel","เพิ่มวันแบด":"Badminton extra",
 "Iso Soy 2 สกู๊ป + Mass 2 สกู๊ป ชงน้ำ":"Iso Soy 2 scoops + Mass 2 scoops, water","กล้วย 2 ลูก":"2 bananas","ข้าวกล้อง 150 g":"Brown rice 150 g","เนื้อวัว 90% 100 g":"Lean beef 90% 100 g","ไข่ต้ม 1 + ผัก 1-2 ถ้วย":"1 boiled egg + 1-2 cups veg","อัลมอนด์ / ถั่วอบ 1 กำมือ (~25 g)":"Almonds / nuts, 1 handful (~25 g)","ปลาหรืออกไก่ 100 g":"Fish or chicken breast 100 g","Iso Soy 2 สกู๊ป ชงน้ำ":"Iso Soy 2 scoops, water","Mass 2 สกู๊ป ชงน้ำ":"Mass 2 scoops, water","กล้วย 1 ลูก (กินพร้อมมื้อเย็น)":"1 banana (with dinner)",
@@ -399,6 +402,9 @@ function renderProgs(){
     const b=document.createElement("button");b.className="prog";b.id="p-"+k;b.setAttribute("aria-pressed",picked&&k===cur);
     b.innerHTML=`<b>${p.name}</b><small>${t(p.sub)}</small><small class="${k===nx?"next":""}">${k===nx?t("คิวถัดไป"):last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small>`;
     b.addEventListener("click",()=>{if(picked&&cur===k){cancelProg();return}if(cur!==k){draft.ex={}}cur=k;draft.prog=k;picked=true;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});box.appendChild(b)});
+  [["run","🏃","วิ่ง"],["bad","🏸","ตีแบด"]].forEach(([k,ic,lb])=>{const on=!!fs().tags[k];const b=document.createElement("button");b.className="prog cardio";b.setAttribute("aria-pressed",on);
+    b.innerHTML=`<span class="ic">${ic}</span><b>${t(lb)}</b><small>${on?"✓ "+t("บันทึกแล้ว")+" +50 XP":t("แตะเพื่อบันทึก")}</small>`;
+    b.addEventListener("click",()=>{const tg=fs().tags;tg[k]=!tg[k];save("mealcheck",food);try{renderFood()}catch(e){}renderGym();toast(tg[k]?t(lb)+" ✓":t("ยกเลิกแล้ว"))});box.appendChild(b)});
 }
 function renderEx(){
   const box=document.getElementById("exs");box.innerHTML="";
@@ -548,7 +554,7 @@ function renderEdit(box){
 /* ---------- pixel hero ---------- */
 const HERO_IMG=[1,2,3].map(n=>{const i=new Image();i.src="/hero-"+n+".png";return i});
 function heroXP(){let n=0;logs.forEach(l=>Object.values(l.ex).forEach(s=>s.forEach(x=>{if(+x.reps>0)n++})));
-  if(draft&&draft.ex)Object.values(draft.ex).forEach(s=>s.forEach(x=>{if(x.ok)n++}));return n*10}
+  if(draft&&draft.ex)Object.values(draft.ex).forEach(s=>s.forEach(x=>{if(x.ok)n++}));let c=0;Object.values(food).forEach(d=>{const g=d&&d.tags||{};if(g.run)c++;if(g.bad)c++});return n*10+c*50}
 function lvOf(xp){let L=1;while(xp>=25*L*(L+1))L++;return L}
 function tierOf(L){return L<5?0:L<12?1:2}
 function drawHero(cv,tier,pose,f){const c=cv.getContext("2d"),W=cv.width,H=cv.height,im=HERO_IMG[tier];c.imageSmoothingEnabled=false;c.clearRect(0,0,W,H);
