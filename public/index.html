@@ -78,7 +78,7 @@ h2{font-size:1.05rem;margin:0}
 .run-pace{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:10px}.run-pace small{color:var(--muted)}.run-pace b{font-family:var(--f-num);font-size:1.6rem;color:#fc5200}
 .run-in .actions{flex-wrap:wrap}
 .prog-pick{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
-.prog-pick .prog{grid-column:span 2;min-width:0}.prog-pick .prog.cardio{grid-column:span 3;grid-template-columns:auto 1fr;text-align:left;align-items:center;column-gap:10px;padding:10px 12px}
+.prog-pick .prog{grid-column:span 3;min-width:0}.prog-pick .prog.cardio{grid-column:span 3;grid-template-columns:auto 1fr;text-align:left;align-items:center;column-gap:10px;padding:10px 12px}
 .prog.cardio .ic{grid-row:span 2;font-size:1.4rem}.prog.cardio[aria-pressed="true"]{border-color:var(--up)}.prog.cardio[aria-pressed="true"] small{color:var(--up)}
 .prog b,.prog small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .prog{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:4px;padding:12px 6px;font:inherit;cursor:pointer;display:grid;gap:2px;text-align:center}
@@ -297,7 +297,7 @@ const EN={"เปิดรูปไม่ได้":"Could not open photo","ส�
 "วันนี้กินครบหรือยัง":"Meals","เวทวันนี้":"Workout",
 "เช้า":"Breakfast","กลางวัน":"Lunch","บ่าย":"Afternoon","วิตามินหลังมื้อเช้า":"Vitamins after breakfast","วิตามินหลังมื้อเย็น":"Vitamins after dinner","วิตามินชุดเช้า":"Morning vitamins","วิตามินชุดเย็น":"Evening vitamins","เย็น (มื้อสุดท้าย)":"Dinner (last meal)","หลังเวท / ก่อนนอน":"Post-workout / bedtime","หลังวิ่ง":"Post-run","เติมหลังวิ่ง":"Run refuel","เพิ่มวันแบด":"Badminton extra",
 "Iso Soy 2 สกู๊ป + Mass 2 สกู๊ป ชงน้ำ":"Iso Soy 2 scoops + Mass 2 scoops, water","กล้วย 2 ลูก":"2 bananas","ข้าวกล้อง 150 g":"Brown rice 150 g","เนื้อวัว 90% 100 g":"Lean beef 90% 100 g","ไข่ต้ม 1 + ผัก 1-2 ถ้วย":"1 boiled egg + 1-2 cups veg","อัลมอนด์ / ถั่วอบ 1 กำมือ (~25 g)":"Almonds / nuts, 1 handful (~25 g)","ปลาหรืออกไก่ 100 g":"Fish or chicken breast 100 g","Iso Soy 2 สกู๊ป ชงน้ำ":"Iso Soy 2 scoops, water","Mass 2 สกู๊ป ชงน้ำ":"Mass 2 scoops, water","กล้วย 1 ลูก (กินพร้อมมื้อเย็น)":"1 banana (with dinner)",
-"อก · ไหล่ข้าง · หลังแขน":"Chest · side delts · triceps","หลัง · หลังไหล่ · หน้าแขน":"Back · rear delts · biceps","ขา · แกนกลาง":"Legs · core",
+"อก · ไหล่ข้าง · หลังแขน":"Chest · side delts · triceps","หลัง · หลังไหล่ · หน้าแขน":"Back · rear delts · biceps","ขา · แกนกลาง":"Legs · core","อ. · อก ไหล่ + ต้นขา":"Tue · chest, delts + thighs","พ. · หลัง แขน + ขาหลัง":"Wed · back, arms + hamstrings","ส. · Squat + อก ไหล่ น่อง":"Sat · squat + chest, delts, calves","อา. · หลัง แขน + ขาใน แกนกลาง":"Sun · back, arms + adductors, core",
 "ครบทุกมื้อแล้ว ✅":"All meals done ✅","คิวถัดไป":"Up next","ล่าสุด":"Last","ยังไม่เคยเล่น":"Not yet","ยังไม่มีประวัติ":"No history","ลอง":"Try","ดูวิธีเล่น":"How-to","แก้ไข":"Edit","วอม":"Warm-up","เซ็ต":"Set","ครั้ง":"Reps","ท่า":"exercises","วอลุ่ม":"Volume","สูงสุด":"Max","ลบรายการนี้":"Delete","กดอีกครั้งเพื่อยืนยัน":"Tap again to confirm","ลบแล้ว":"Deleted","ยังไม่ได้กรอกน้ำหนักและจำนวนครั้ง":"Enter weight and reps first","บันทึกแล้ว ✅":"Saved ✅","เสร็จแล้ว":"Done","แก้ไขท่า":"Edit exercises","ชื่อท่า":"Exercise name","อุปกรณ์":"Equipment","ช่วงครั้ง":"Rep range","เครื่อง":"Machine","ดัมเบล/บาร์":"Dumbbell/bar","เคเบิล":"Cable","ลิงก์วิธีเล่น (YouTube / TikTok)":"How-to link (YouTube / TikTok)","หน่วย":"Unit","ท่าหลัก":"Main lift","ลบท่า":"Delete","เสร็จ":"Done","ลิงก์ต้องขึ้นต้นด้วย https://":"Link must start with https://","ลบท่าแล้ว":"Exercise deleted","เพิ่มท่า":"Add exercise","คืนค่าเริ่มต้น":"Reset to default","ท่าใหม่":"New exercise","ท่าถัดไป":"Next","ครบทุกท่าแล้ว":"All done","ไปต่อ!":"Go!","ซิงก์แล้ว ✓":"Synced ✓","ซิงก์ไม่สำเร็จ":"Sync failed","ออฟไลน์ · เก็บในเครื่องนี้":"Offline · saved on this device","ส่งไฟล์แล้ว":"File sent","คัดลอก JSON แล้ว":"JSON copied","ย้ายวัน":"Change date","ย้ายวันแล้ว":"Date changed","แก้เซ็ต":"Edit sets","แก้แล้วกด Save":"Edit, then tap Save","บันทึกเวทเมื่อวานให้แล้ว":"Auto-saved your last workout","นำเข้า JSON":"Import JSON","เพิ่งอัปเดตไป รออีกสักครู่":"Just updated, try again in a moment","อัปเดตแล้ว":"Updated","ตั้งค่า Face ID":"Set up Face ID","ตั้งค่าแล้ว":"Ready","ยังไม่ได้ตั้งค่า":"Not set up","ตั้งค่า Face ID แล้ว":"Face ID is set up","แจ้งเตือน":"Reminders","เปิดแจ้งเตือน":"Turn on reminders","ปิดแจ้งเตือน":"Turn off reminders","ส่งทดสอบ":"Send test","เปิดแจ้งเตือนมื้ออาหารแล้ว 🔔":"Meal reminders are on 🔔","ยังไม่เปิดแจ้งเตือน":"Reminders are off","เครื่องนี้ยังไม่รองรับการแจ้งเตือน (iPhone: เพิ่มลงหน้าโฮมก่อน)":"Not supported here. On iPhone, add to Home Screen first.","ไม่ได้รับอนุญาตแจ้งเตือน":"Notifications not allowed","เปิดแจ้งเตือนแล้ว 🔔":"Reminders on 🔔","ส่งทดสอบแล้ว":"Test sent","ไม่มีเครื่องที่รับแจ้งเตือน":"No subscribed device","นำเข้าแล้ว":"Imported","นำเข้าไม่สำเร็จ":"Import failed","เลือกวัน":"Pick a date","ผลงาน":"Achievements","บันทึกแล้ว เปิด IG เพื่อลง Story":"Saved. Open Instagram to post the Story","วันนี้ไม่มีบันทึกเวท":"No workout saved on this date","แชร์ล่าสุด":"Share latest","แชร์":"Share","บันทึกรูป":"Save image","ปิด":"Close","วันที่เล่น":"Workout days","สัปดาห์ติดกัน":"Week streak","เดือนนี้":"This month","ยังไม่มีบันทึก":"Nothing to share yet","รูปถูกส่งแล้ว":"Image saved","กดค้างที่รูปเพื่อบันทึก":"Long-press the image to save","ครั้งแรก":"First workout","ครั้ง":"Reps","สัปดาห์":"weeks","ยกรวม":"lifted","เลือกโปรแกรม":"Pick a program","กรอกน้ำหนัก":"Log your sets","เลือกโปรแกรมด้านบนก่อน":"Pick a program above to start","เลือกประเภทวัน":"Day type","ติ๊กมื้อที่กินแล้ว":"Tick meals eaten","ขาดโปรตีน":"Protein left","ถัดไป":"Next","ถึงเป้าแล้ว":"Target reached","เหลือ":"left"};
 const t=k=>lang==="th"?k:(EN[k]??k);
 const thDate=(s,o)=>new Date(s+"T12:00:00").toLocaleDateString(LOC(),o);
@@ -367,32 +367,44 @@ document.getElementById("reset").addEventListener("click",()=>{fs().done={};save
 
 /* ---------- GYM ---------- */
 const DEFAULT_PROGS={
- push:{name:"Push",sub:"อก · ไหล่ข้าง · หลังแขน",ex:[
+ push:{name:"Push A",sub:"อ. · อก ไหล่ + ต้นขา",ex:[
   {id:"chest-press",n:"Chest Press Machine",z:"🔩",s:5,r:"5",main:1},
   {id:"incline-db",n:"Incline Dumbbell Press",z:"🏋️",s:5,r:"5"},
   {id:"db-shoulder-press",n:"Dumbbell Shoulder Press",z:"🏋️",s:5,r:"5"},
   {id:"cable-lat-raise",n:"Cable Side Lateral Raise",z:"🔗",s:5,r:"5"},
   {id:"cable-oh-tri",n:"Cable Overhead Triceps Extension",z:"🔗",s:5,r:"5"},
-  {id:"pec-fly",n:"Peck Deck Fly",z:"🔩",s:5,r:"5"}]},
- pull:{name:"Pull",sub:"หลัง · หลังไหล่ · หน้าแขน",ex:[
+  {id:"leg-ext",n:"Leg Extension",z:"🔩",s:3,r:"5"},
+  {id:"hip-abd",n:"Hip Abduction (Outer Thigh)",z:"🔩",s:3,r:"5"}]},
+ pull:{name:"Pull A",sub:"พ. · หลัง แขน + ขาหลัง",ex:[
   {id:"lat-pulldown",n:"Lat Pulldown",z:"🔩",s:5,r:"5",main:1},
   {id:"wide-cable-row",n:"Wide Grip Seated Cable Row",z:"🔗",s:5,r:"5"},
+  {id:"reverse-fly",n:"Reverse Peck Deck Fly",z:"🔩",s:5,r:"5"},
+  {id:"machine-curl",n:"Machine Biceps Curl",z:"🔩",s:5,r:"5"},
+  {id:"leg-curl",n:"Leg Curl",z:"🔩",s:3,r:"5"},
+  {id:"abdominal",n:"Crunch Machine (Abdominal Machine)",z:"🔩",s:5,r:"5"}]},
+ push2:{name:"Push B",sub:"ส. · Squat + อก ไหล่ น่อง",ex:[
+  {id:"squat",n:"Squat",z:"🏋️",s:3,r:"5",main:1},
+  {id:"chest-press",n:"Chest Press Machine",z:"🔩",s:5,r:"5",main:1},
+  {id:"pec-fly",n:"Peck Deck Fly",z:"🔩",s:5,r:"5"},
+  {id:"db-shoulder-press",n:"Dumbbell Shoulder Press",z:"🏋️",s:5,r:"5"},
+  {id:"cable-lat-raise",n:"Cable Side Lateral Raise",z:"🔗",s:5,r:"5"},
+  {id:"cable-oh-tri",n:"Cable Overhead Triceps Extension",z:"🔗",s:5,r:"5"},
+  {id:"seated-calf",n:"Seated Calf Raise",z:"🔩",s:3,r:"5"}]},
+ pull2:{name:"Pull B",sub:"อา. · หลัง แขน + ขาใน แกนกลาง",ex:[
+  {id:"lat-pulldown",n:"Lat Pulldown",z:"🔩",s:5,r:"5",main:1},
   {id:"seated-cable-row",n:"Seated Cable Row",z:"🔗",s:5,r:"5"},
   {id:"reverse-fly",n:"Reverse Peck Deck Fly",z:"🔩",s:5,r:"5"},
   {id:"machine-curl",n:"Machine Biceps Curl",z:"🔩",s:5,r:"5"},
-  {id:"abdominal",n:"Crunch Machine (Abdominal Machine)",z:"🔩",s:5,r:"5"}]},
- legs:{name:"Legs",sub:"ขา · แกนกลาง",ex:[
-  {id:"squat",n:"Squat",z:"🏋️",s:3,r:"5",main:1},
-  {id:"leg-curl",n:"Leg Curl",z:"🔩",s:3,r:"5"},
-  {id:"leg-ext",n:"Leg Extension",z:"🔩",s:3,r:"5"},
-  {id:"hip-abd",n:"Hip Abduction (Outer Thigh)",z:"🔩",s:3,r:"5"},
   {id:"hip-add",n:"Hip Adduction (Inner Thigh)",z:"🔩",s:3,r:"5"},
-  {id:"seated-calf",n:"Seated Calf Raise",z:"🔩",s:3,r:"5"},
   {id:"woodchop",n:"Cable Wood Chop",z:"🔗",s:5,r:"5"}]},
 };
+/* ตารางสัปดาห์: จ.=วิ่ง 10K · อ.=Push A · พ.=Pull A · พฤ.=แบด · ศ.=พัก · ส.=Push B · อา.=Pull B (ขากระจายทุกวันเวท) */
+const WEEK={1:"run",2:"push",3:"pull",4:"bad",6:"push2",0:"pull2"};
+const SCHEME=4;
+const progName=k=>(PROGS[k]||{name:k==="legs"?"Legs":k}).name;
 let PROGS=load("progs",null)||JSON.parse(JSON.stringify(DEFAULT_PROGS));
 function to5x5(){const keep={};Object.values(PROGS).forEach(p=>p.ex.forEach(e=>keep[e.id]=e));PROGS=JSON.parse(JSON.stringify(DEFAULT_PROGS));Object.values(PROGS).forEach(p=>p.ex.forEach(e=>{const o=keep[e.id];if(o){if(o.u)e.u=o.u;if(o.link)e.link=o.link}}))}
-if(load("scheme",1)<3){to5x5();try{localStorage.setItem("progs",JSON.stringify(PROGS));localStorage.setItem("scheme","3")}catch(e){};var _clearDraft=true}
+if(load("scheme",1)<SCHEME){to5x5();try{localStorage.setItem("progs",JSON.stringify(PROGS));localStorage.setItem("scheme",String(SCHEME))}catch(e){};var _clearDraft=true}
 let unit=load("unit","kg");let editing=false;let editId=null;let picked=false;
 const LB=2.20462;
 const toDisp=(kg,u)=>kg===""||kg==null?"":u!=="lb"?+kg:Math.round(kg*LB*2)/2;
@@ -406,13 +418,15 @@ function fmt(s){s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+":"+String(s%
 let logs=load("gymlog",[]);           // [{date,prog,ex:{id:[{kg,reps}]}}]
 let draft=load("gymdraft",{});
 if(typeof _clearDraft!=="undefined"){draft={prog:draft.prog}}        // {prog, ex:{id:[{kg,reps,ok}]}}
-function nextProg(){const order=["push","pull","legs"];const last={};logs.forEach(l=>{last[l.prog]=l.date});
-  return order.slice().sort((a,b)=>(last[a]||"0").localeCompare(last[b]||"0"))[0]}
-let cur=draft.prog||nextProg();
+function planFor(ds){return WEEK[new Date(ds+"T12:00:00").getDay()]||null}
+function nextProg(){const wd=new Date(DAY+"T12:00:00").getDay();
+  for(let i=0;i<7;i++){const k=WEEK[(wd+i)%7];if(PROGS[k]&&!(i===0&&logs.some(l=>l.date===DAY&&l.prog===k)))return k}
+  return Object.keys(PROGS)[0]}
+let cur=draft.prog&&PROGS[draft.prog]?draft.prog:nextProg();
 function lastFor(id){for(let i=logs.length-1;i>=0;i--){if(logs[i].date>DAY)continue;const s=logs[i].ex[id];if(s&&s.length)return{date:logs[i].date,sets:s}}return null}
 function best(sets){return sets.reduce((m,s)=>Math.max(m,+s.kg||0),0)}
 function renderProgs(){
-  const nx=nextProg();const box=document.getElementById("progs");box.innerHTML="";
+  const pl=planFor(DAY);const nx=pl==="run"||pl==="bad"?null:nextProg();const box=document.getElementById("progs");box.innerHTML="";
   const hd=s=>{const d=document.createElement("div");d.className="pick-h";d.textContent=t(s);box.appendChild(d)};
   hd("เวทเทรนนิ่ง");
   Object.entries(PROGS).forEach(([k,p])=>{
@@ -423,10 +437,10 @@ function renderProgs(){
   hd("คาร์ดิโอ");
   const tg=fs().tags,rd=tg.runData;
   const run=document.createElement("button");run.className="prog cardio";run.setAttribute("aria-pressed",!!tg.run);
-  run.innerHTML=`<span class="ic">🏃</span><b>${t("วิ่ง")}</b><small>${tg.run?(rd&&rd.km?`${rd.km} km · ${fmtPace(rd.sec/rd.km)}/km`:"✓ "+t("บันทึกแล้ว")):t("ใส่ระยะ / เวลา")}</small>`;
+  run.innerHTML=`<span class="ic">🏃</span><b>${t("วิ่ง")}</b><small>${tg.run?(rd&&rd.km?`${rd.km} km · ${fmtPace(rd.sec/rd.km)}/km`:"✓ "+t("บันทึกแล้ว")):pl==="run"?`<span class="next">${t("คิวถัดไป")} · 10 km</span>`:t("ใส่ระยะ / เวลา")}</small>`;
   run.addEventListener("click",openRun);box.appendChild(run);
   const bad=document.createElement("button");bad.className="prog cardio";bad.setAttribute("aria-pressed",!!tg.bad);
-  bad.innerHTML=`<span class="ic">🏸</span><b>${t("ตีแบด")}</b><small>${tg.bad?"✓ "+t("บันทึกแล้ว")+" +50 XP":t("แตะเพื่อบันทึก")}</small>`;
+  bad.innerHTML=`<span class="ic">🏸</span><b>${t("ตีแบด")}</b><small>${tg.bad?"✓ "+t("บันทึกแล้ว")+" +50 XP":pl==="bad"?`<span class="next">${t("คิวถัดไป")}</span>`:t("แตะเพื่อบันทึก")}</small>`;
   bad.addEventListener("click",()=>{tg.bad=!tg.bad;save("mealcheck",food);try{renderFood()}catch(e){}renderGym();toast(tg.bad?t("ตีแบด")+" ✓":t("ยกเลิกแล้ว"))});box.appendChild(bad);
 }
 /* ---------- run log + strava-style card ---------- */
@@ -515,17 +529,17 @@ function renderSessions(){
   const box=document.getElementById("sessions");box.innerHTML="";
   if(!logs.length){box.innerHTML=`<p class="note">—</p>`;return}
   [...logs].reverse().slice(0,10).forEach((l,ri)=>{
-    const idx=logs.length-1-ri;const p=PROGS[l.prog]||{name:l.prog};
+    const idx=logs.length-1-ri;const p={name:progName(l.prog)};
     const d=document.createElement("details");d.className="ex log";
     const vol=Object.values(l.ex).flat().reduce((a,s)=>a+(+s.kg||0)*(+s.reps||0),0);
     d.innerHTML=`<summary><b>${thDate(l.date,{weekday:"short",day:"numeric",month:"short"})}</b> · ${p.name} · ${Object.keys(l.ex).length} ${t("ท่า")} · ${t("วอลุ่ม")} ${Math.round(vol).toLocaleString()} kg</summary>
       <table>${Object.keys(l.ex).map(id=>`<tr><td>${exName(id,l)}</td><td>${l.ex[id].map(s=>`${toDisp(s.kg,uOf(id))}×${s.reps}`).join(" · ")} ${uOf(id)}</td></tr>`).join("")}</table>
-      <div class="actions" style="margin-top:8px;align-items:center"><label style="display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:2px 10px">📅<input type="date" data-mv value="${l.date}" max="${TODAY}" aria-label="${t("ย้ายวัน")}" style="background:none;color:var(--fg);border:0;min-width:9.5em;min-height:26px;font-family:var(--f-num);font-size:.8rem"></label><button class="btn sm" data-ed>✎ ${t("แก้เซ็ต")}</button><button class="btn sm" data-sh>↗ ${t("แชร์")}</button><button class="btn sm ghost" data-rm>${t("ลบรายการนี้")}</button></div>`;
+      <div class="actions" style="margin-top:8px;align-items:center"><label style="display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:2px 10px">📅<input type="date" data-mv value="${l.date}" max="${TODAY}" aria-label="${t("ย้ายวัน")}" style="background:none;color:var(--fg);border:0;min-width:9.5em;min-height:26px;font-family:var(--f-num);font-size:.8rem"></label>${PROGS[l.prog]?`<button class="btn sm" data-ed>✎ ${t("แก้เซ็ต")}</button>`:""}<button class="btn sm" data-sh>↗ ${t("แชร์")}</button><button class="btn sm ghost" data-rm>${t("ลบรายการนี้")}</button></div>`;
     d.querySelector("[data-sh]").addEventListener("click",()=>openShare(l));
     d.querySelector("[data-mv]").addEventListener("change",ev=>{const v=ev.target.value;if(!v||v>TODAY||v===l.date)return;
       const clash=logs.findIndex(x=>x!==l&&x.date===v&&x.prog===l.prog);if(clash>=0)logs.splice(clash,1);
       l.date=v;logs.sort((a,b)=>a.date.localeCompare(b.date));save("gymlog",logs);renderGym();toast(t("ย้ายวันแล้ว"))});
-    d.querySelector("[data-ed]").addEventListener("click",()=>{DAY=l.date;cur=l.prog;editId=null;editing=false;picked=true;
+    d.querySelector("[data-ed]")?.addEventListener("click",()=>{DAY=l.date;cur=l.prog;editId=null;editing=false;picked=true;
       draft={prog:l.prog,ex:{}};Object.entries(l.ex).forEach(([id,sets])=>draft.ex[id]=sets.map(s=>({kg:s.kg,reps:String(s.reps),ok:true})));
       save("gymdraft",draft);renderAll();window.scrollTo({top:0,behavior:"smooth"});toast(t("แก้แล้วกด Save"))});
     d.querySelector("[data-rm]").addEventListener("click",ev=>{const b=ev.target;
@@ -741,7 +755,7 @@ async function flush(){
         for(const id in now2)if(syncedLogs[id]!==now2[id]){await col.doc(id).set(JSON.parse(now2[id]));syncedLogs[id]=now2[id]}
         for(const id in syncedLogs)if(!(id in now2)){await col.doc(id).delete();delete syncedLogs[id]}
       }
-      if(k==="restcfg"||k==="gymdraft"||k==="progs"||k==="unit")await col.doc("settings").set({restCfg,draft,progs:PROGS,unit,scheme:3});
+      if(k==="restcfg"||k==="gymdraft"||k==="progs"||k==="unit")await col.doc("settings").set({restCfg,draft,progs:PROGS,unit,scheme:SCHEME});
     }
     syncMsg(t("ซิงก์แล้ว ✓"));
   }catch(e){keys.forEach(k=>dirty.add(k));syncMsg(t("ซิงก์ไม่สำเร็จ"))}
@@ -759,7 +773,7 @@ async function cloudLoad(){
     snap.docs.forEach(d=>{const v=JSON.parse(JSON.stringify(d.data()||{}));
       if(d.id.startsWith("f-")){const {date,...rest}=v;food[date]=rest;seenF.add(date)}
       else if(d.id.startsWith("g-")){const i=logs.findIndex(l=>logId(l)===d.id);if(i>=0)logs[i]=v;else logs.push(v);syncedLogs[d.id]=JSON.stringify(v)}
-      else if(d.id==="settings"){Object.assign(restCfg,v.restCfg||{});if(v.progs){PROGS=v.progs;if((v.scheme||1)<3){to5x5();toUpload.add("progs")}}if(v.unit)unit=v.unit;if(v.draft&&v.draft.prog&&!draft.prog)draft=v.draft}
+      else if(d.id==="settings"){Object.assign(restCfg,v.restCfg||{});if(v.progs){PROGS=v.progs;if((v.scheme||1)<SCHEME){to5x5();toUpload.add("progs")}}if(v.unit)unit=v.unit;if(v.draft&&v.draft.prog&&!draft.prog)draft=v.draft}
     });
     logs.sort((a,b)=>a.date.localeCompare(b.date));
     food[TODAY]=food[TODAY]||{done:{},tags:{}};
@@ -858,7 +872,7 @@ async function drawCard(l){
   x.fillStyle=FG;x.font=`700 40px ${mono}`;x.fillText("FUEL & LIFT",P,P+70);
   x.fillStyle=MUTED;x.font=`400 38px ${sans}`;
   x.fillText(new Date(l.date+"T12:00:00").toLocaleDateString(LOC(),{month:"short",day:"numeric",year:"numeric"}),P,P+135);
-  const pname=(PROGS[l.prog]||{name:l.prog}).name;x.fillText(pname,P,P+185);
+  const pname=progName(l.prog);x.fillText(pname,P,P+185);
   // ring + muscle map
   const cx=W-P-160,cy=P+170,R=150;
   const planned=ids.reduce((a,id)=>{for(const p of Object.values(PROGS)){const e=p.ex.find(q=>q.id===id);if(e)return a+e.s}return a+l.ex[id].length},0);
@@ -899,7 +913,7 @@ document.getElementById("share-last").addEventListener("click",()=>{
   if(!ds.length){toast(t("วันนี้ไม่มีบันทึกเวท"));return}
   if(ds.length===1){openShare(ds[0]);return}
   const ex={},names={};ds.forEach(l=>{Object.assign(ex,l.ex);Object.assign(names,l.names||{})});
-  openShare({date:DAY,prog:ds.map(l=>(PROGS[l.prog]||{name:l.prog}).name).join(" + "),ex,names});
+  openShare({date:DAY,prog:ds.map(l=>progName(l.prog)).join(" + "),ex,names});
 });
 document.getElementById("share-close").addEventListener("click",()=>document.getElementById("share-modal").hidden=true);
 async function storyBlob(){
