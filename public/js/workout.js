@@ -44,9 +44,9 @@ function renderEx(){
   });
 }
 function exHistory(id){const u=uOf(id);
-  const h=logs.filter(l=>l.ex[id]&&l.ex[id].length).slice(-8).reverse();
+  const all=logs.filter(l=>l.ex[id]&&l.ex[id].length),h=all.slice(-1);   // latest only; the rest lives in the chart
   if(!h.length)return"";
-  return `<details class="log"><summary>${t("ประวัติ")} (${h.length})</summary><button class="btn sm" data-chart="${id}" style="margin-top:6px">📈 ${t("ดูกราฟ")}</button><table>${h.map(l=>`<tr><td>${thDate(l.date,{day:"numeric",month:"short"})}</td><td>${l.ex[id].map(s=>`${toDisp(s.kg,u)}×${s.reps}`).join(" · ")} ${u}</td><td>${t("สูงสุด")} ${toDisp(best(l.ex[id]),u)}</td></tr>`).join("")}</table></details>`;
+  return `<details class="log"><summary>${t("ประวัติ")} (${all.length})</summary><button class="btn sm" data-chart="${id}" style="margin-top:6px">📈 ${t("ดูกราฟ")}</button><table>${h.map(l=>`<tr><td>${thDate(l.date,{day:"numeric",month:"short"})}</td><td>${l.ex[id].map(s=>`${toDisp(s.kg,u)}×${s.reps}`).join(" · ")} ${u}</td><td>${t("สูงสุด")} ${toDisp(best(l.ex[id]),u)}</td></tr>`).join("")}</table></details>`;
 }
 function renderSessions(){
   if(typeof renderHistChart==="function")renderHistChart();
