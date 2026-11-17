@@ -19,7 +19,7 @@ const DEFAULT_PROGS={
   {id:"leg-curl",n:"Leg Curl",z:"🔩",s:3,r:"5"},
   {id:"abdominal",n:"Crunch Machine (Abdominal Machine)",z:"🔩",s:5,r:"5"}]},
  push2:{name:"Push B",sub:"ส. · Squat + อก ไหล่ น่อง",ex:[
-  {id:"squat",n:"Squat",z:"🏋️",s:3,r:"5",main:1},
+  {id:"squat",n:"Squat",z:"🏋️",s:3,r:"5"},
   {id:"chest-press",n:"Chest Press Machine",z:"🔩",s:5,r:"5",main:1},
   {id:"pec-fly",n:"Peck Deck Fly",z:"🔩",s:5,r:"5"},
   {id:"db-shoulder-press",n:"Dumbbell Shoulder Press",z:"🏋️",s:5,r:"5"},
@@ -50,7 +50,7 @@ const fromDisp=(v,u)=>v===""?"":u!=="lb"?+v:Math.round(v/LB*1000)/1000;
 function uOf(id){for(const p of Object.values(PROGS)){const e=p.ex.find(x=>x.id===id);if(e)return e.u||"kg"}return "kg"}
 function exName(id,l){if(l&&l.names&&l.names[id])return l.names[id];for(const p of Object.values(PROGS)){const e=p.ex.find(x=>x.id===id);if(e)return e.n}return id}
 let restCfg=load("restcfg",{});
-function restDefault(e){return e.main?150:(["cable-lat-raise","seated-calf","woodchop","hip-abd","hip-add","abdominal"].includes(e.id)?60:90)}
+function restDefault(e){return e.main||e.id==="squat"?150:(["cable-lat-raise","seated-calf","woodchop","hip-abd","hip-add","abdominal"].includes(e.id)?60:90)}
 function restFor(e){return restCfg[e.id]??restDefault(e)}
 function fmt(s){s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
 let logs=load("gymlog",[]);           // [{date,prog,ex:{id:[{kg,reps}]}}]
