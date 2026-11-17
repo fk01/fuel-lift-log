@@ -18,6 +18,11 @@ document.getElementById("lang").addEventListener("click",()=>{lang=lang==="th"?"
 /* ---------- lock page scroll while a full-screen modal is open (iOS scrolled the page behind it) ---------- */
 (()=>{const sync=()=>document.documentElement.classList.toggle("modal-open",[...document.querySelectorAll(".modal:not(.pad)")].some(m=>!m.hidden));
   const mo=new MutationObserver(sync);document.querySelectorAll(".modal").forEach(m=>mo.observe(m,{attributes:true,attributeFilter:["hidden"]}));sync()})();
+/* ---------- app height: home-screen iOS can report a viewport shorter than the screen, so size the shell from the screen itself ---------- */
+(()=>{const st=navigator.standalone===true||matchMedia("(display-mode: standalone)").matches;document.documentElement.classList.toggle("standalone",st);
+  const fit=()=>{const portrait=innerHeight>=innerWidth,full=portrait?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);
+    const h=st?Math.max(innerHeight,full):innerHeight;document.documentElement.style.setProperty("--app-h",h+"px")};
+  fit();addEventListener("resize",fit);addEventListener("orientationchange",()=>setTimeout(fit,300))})();
 /* ---------- startup ---------- */
 pkState();
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").then(pushState).catch(()=>{})}else{pushState()}

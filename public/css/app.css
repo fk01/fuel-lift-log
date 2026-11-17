@@ -203,12 +203,12 @@ html,body{height:100%;overflow:hidden;overscroll-behavior:none}
 .menu-row{display:flex;align-items:center;gap:12px;padding:14px;background:none;border:0;border-top:1px solid var(--line);color:var(--fg);font:inherit;text-align:left;cursor:pointer}
 .menu-row:first-child{border-top:0}.menu-row .mi{font-size:1.3rem;width:1.6em;text-align:center}.menu-row .mt{display:grid;gap:2px;flex:1;min-width:0}
 .menu-row .mt small{color:var(--muted);font-size:.78rem}.menu-row .mc{color:var(--muted);font-size:1.3rem}
-/* iOS standalone sometimes reports a viewport shorter than the screen, leaving a gap under fixed bars.
-   Anchor the shell to the large viewport (the full screen) instead, and let the tab bar's background run past its bottom edge. */
-:root{--tabh:calc(62px + env(safe-area-inset-bottom,0px))}
-@supports (height:100lvh){
-  .wrap{bottom:auto;height:calc(100lvh - var(--tabh))}
-  .tabbar{bottom:auto;top:calc(100lvh - var(--tabh))}
-  .rest{bottom:auto;top:calc(100lvh - var(--tabh));transform:translateY(-100%)}
-}
+/* the shell is sized from --app-h, set in app.js from the real screen height (iOS home-screen apps can report a shorter viewport) */
+:root{--app-h:100vh;--tabpb:max(env(safe-area-inset-bottom,0px),8px);--tabh:calc(56px + var(--tabpb))}
+html.standalone{--tabpb:max(env(safe-area-inset-bottom,0px),26px)}
+.wrap{top:env(safe-area-inset-top,0px)!important;bottom:auto!important;height:calc(var(--app-h) - var(--tabh) - env(safe-area-inset-top,0px));padding-top:12px!important}
+.tabbar{bottom:auto!important;top:calc(var(--app-h) - var(--tabh));height:var(--tabh);box-sizing:border-box;padding-top:4px!important;padding-bottom:var(--tabpb)!important;align-items:start}
+.tabbar .tab{padding:4px 0}
+.rest{bottom:auto!important;top:calc(var(--app-h) - var(--tabh));transform:translateY(-100%)}
 .tabbar::after{content:"";position:absolute;left:0;right:0;top:100%;height:200px;background:inherit}
+.totals{top:-12px!important}
