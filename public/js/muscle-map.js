@@ -9,7 +9,7 @@ const MUS={ // id: [primary, secondary]
  "squat":[["quad","glute"],["ham","add"]],"leg-curl":[["ham"],["calf"]],"leg-ext":[["quad"],[]],
  "hip-abd":[["abd"],["glute"]],"hip-add":[["add"],[]],"seated-calf":[["calf"],[]],"woodchop":[["obl"],["abs"]]};
 const KW=[["chest","chest"],["press","chest"],["fly","chest"],["shoulder","delt"],["lateral","delt"],["tricep","tri"],["curl","bi"],["bicep","bi"],["row","lats"],["pull","lats"],["squat","quad"],["lunge","quad"],["leg ext","quad"],["deadlift","ham"],["rdl","ham"],["calf","calf"],["crunch","abs"],["ab","abs"],["plank","abs"],["glute","glute"],["hip","glute"]];
-function musOf(e){if(MUS[e.id])return MUS[e.id];const n=(e.n||"").toLowerCase();const p=[...new Set(KW.filter(([k])=>n.includes(k)).map(([,m])=>m))].slice(0,2);return [p,[]]}
+function musOf(e){if(MUS[e.id])return MUS[e.id];const n=(e.n||"").toLowerCase();const p=[...new Set(KW.filter(([k])=>n.includes(k)).map(([,m])=>m))].slice(0,2);return [e.g&&GROUP_MUS[e.g]?GROUP_MUS[e.g]:p,[]]}
 const FRONT=[["delt","ellipse",30,40,7,6],["delt","ellipse",70,40,7,6],["chest","ellipse",42,49,9,7],["chest","ellipse",58,49,9,7],
  ["bi","ellipse",24,60,4.5,10],["bi","ellipse",76,60,4.5,10],["fore","ellipse",21,82,3.5,11],["fore","ellipse",79,82,3.5,11],
  ["abs","rect",43,58,14,30],["obl","ellipse",37,72,3.5,11],["obl","ellipse",63,72,3.5,11],
