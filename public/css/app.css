@@ -105,7 +105,7 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
 .rest-next{font-size:.85rem;color:var(--muted);text-align:right;min-width:0}
 .rest-next b{color:var(--fg);font-weight:500}
 .rest .track{height:3px}
-.wrap.has-rest{padding-bottom:150px}
+.wrap.has-rest{padding-bottom:calc(220px + env(safe-area-inset-bottom,0px))!important}
 .hero{display:flex;align-items:center;gap:14px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--accent-soft)}
 .hero canvas,.rest canvas{image-rendering:pixelated;flex:none}
 .hero-i{flex:1;min-width:0;display:grid;gap:6px}
@@ -186,3 +186,16 @@ html.modal-open,html.modal-open body{overflow:hidden;overscroll-behavior:none}
 .howto[open]>summary small{color:inherit;opacity:.75}
 .howto img{width:100%;max-width:280px;display:block;margin:8px auto;border-radius:8px;background:#fff}
 .howto ol{margin:0;padding-left:1.2em;font-size:.85rem;opacity:.85}
+
+/* bottom tab bar + menu rows (app-style navigation) */
+.wrap{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:14;display:grid;grid-template-columns:repeat(4,1fr);background:#0e0e0df2;backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+.tabbar .tab{border:0;background:none;color:var(--muted);display:grid;justify-items:center;gap:2px;padding:6px 0;border-radius:10px;font:inherit;cursor:pointer}
+.tabbar .tab span{font-size:1.25rem;line-height:1;filter:grayscale(1);opacity:.7}
+.tabbar .tab small{font-family:var(--f-num);font-size:.62rem;letter-spacing:.06em;text-transform:uppercase}
+.tabbar .tab[aria-selected="true"]{color:var(--fg)}.tabbar .tab[aria-selected="true"] span{filter:none;opacity:1}
+.rest{bottom:calc(62px + env(safe-area-inset-bottom,0px))}
+.menu{display:grid;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.menu-row{display:flex;align-items:center;gap:12px;padding:14px;background:none;border:0;border-top:1px solid var(--line);color:var(--fg);font:inherit;text-align:left;cursor:pointer}
+.menu-row:first-child{border-top:0}.menu-row .mi{font-size:1.3rem;width:1.6em;text-align:center}.menu-row .mt{display:grid;gap:2px;flex:1;min-width:0}
+.menu-row .mt small{color:var(--muted);font-size:.78rem}.menu-row .mc{color:var(--muted);font-size:1.3rem}

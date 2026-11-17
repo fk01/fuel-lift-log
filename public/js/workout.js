@@ -96,15 +96,13 @@ setInterval(()=>{const nd=dkey(new Date());if(nd===TODAY)return;
   const prev=TODAY;TODAY=nd;autoCommitOld();if(DAY===prev){DAY=nd;draft.ex=draft.ex||{}}renderAll()},60000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&dkey(new Date())!==TODAY){const prev=TODAY;TODAY=dkey(new Date());autoCommitOld();if(DAY===prev)DAY=TODAY;renderAll()}});
 document.getElementById("clear-w").addEventListener("click",()=>{draft={prog:cur};save("gymdraft",draft);renderGym()});
-let folded=(()=>{try{return localStorage.getItem("calFolded")==="1"}catch(e){return false}})();
-function applyFold(){document.getElementById("step1").classList.toggle("folded",folded);document.getElementById("fold-btn").textContent="📅 "+(folded?"▸":"▾");document.getElementById("fold-btn").setAttribute("aria-expanded",!folded)}
-document.getElementById("fold-btn").addEventListener("click",()=>{folded=!folded;try{localStorage.setItem("calFolded",folded?"1":"0")}catch(e){}if(!folded)document.getElementById("step1").classList.remove("compact");applyFold()});
-applyFold();
+// calendar moved to the Stats tab; the 📅 button jumps there
+document.getElementById("fold-btn").textContent="📅";document.getElementById("fold-btn").addEventListener("click",()=>{location.hash="stats"});
 function cancelProg(){picked=false;chosen=false;editing=false;editId=null;draft.ex={};save("gymdraft",draft);stopRest&&stopRest();updUnitBtn();renderGym()}
 document.getElementById("cancel-prog").addEventListener("click",cancelProg);
 function renderGym(){try{renderProgress()}catch(e){}try{renderHero()}catch(e){}
   ["step3","step4"].forEach(id=>document.getElementById(id).hidden=!picked&&!editing);
-  document.getElementById("step1").classList.toggle("compact",(picked||editing)&&!document.getElementById("v-gym").hidden);document.getElementById("hist-sec").hidden=picked||editing;
+  document.getElementById("step1").classList.toggle("compact",(picked||editing)&&!document.getElementById("v-gym").hidden);document.getElementById("step2").hidden=picked||editing;
   // resume a workout only if sets were actually logged (weights alone are pre-filled from last time)
   if(!picked&&draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.ok||x.reps!==""&&x.reps!=null)))picked=true;
   document.getElementById("pick-hint").hidden=picked;document.getElementById("exs").hidden=!picked&&!editing;

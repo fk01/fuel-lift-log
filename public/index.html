@@ -8,30 +8,19 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Fuel & Lift">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=925156">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=930249">
 <title>Fuel &amp; Lift Log</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+Thai:wght@400;500&display=swap">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*{-webkit-tap-highlight-color:transparent}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
-<link rel="stylesheet" href="/css/app.css?v=925156">
+<link rel="stylesheet" href="/css/app.css?v=930249">
 </head><body>
 
 <div class="wrap">
   <header>
     <div style="display:flex;justify-content:space-between;gap:12px;align-items:start"><h1 id="h1"></h1><span style="display:flex;gap:6px"><button class="btn sm" id="reload-btn" aria-label="Refresh" onclick="doRefresh()">↻</button><button class="btn sm" id="lang" aria-label="Language">TH</button></span></div>
   </header>
-  <div class="tabs" role="tablist">
-    <button class="tab" role="tab" id="tab-food" data-v="food" data-i="อาหาร" data-pre="🍽️ ">🍽️ อาหาร</button>
-    <button class="tab" role="tab" id="tab-gym" data-v="gym" data-i="เวท" data-pre="🏋️ ">🏋️ เวท</button>
-  </div>
   <section class="stepbox" id="step1"><div class="step"><span class="num" id="sn-1">1</span><span class="step-t" data-i="เลือกวัน">เลือกวัน</span><span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;min-width:0"><button class="btn sm" id="fold-btn" aria-label="Show or hide calendar">📅 ▾</button><button class="btn sm" id="today-btn" hidden data-i="วันนี้">วันนี้</button><button class="btn sm primary" id="share-last" data-i="แชร์" data-pre="↗ ">↗ แชร์</button></span></div>
     <input type="hidden" id="day"><div class="date" id="date" style="margin:0"></div>
-    <div class="fold">
-      <div class="stats" id="stats"></div>
-      <div class="cal">
-        <div class="cal-head"><button class="btn sm" id="cal-prev" aria-label="Previous month">‹</button><b id="cal-title"></b><button class="btn sm" id="cal-next" aria-label="Next month">›</button></div>
-        <div class="cal-grid" id="cal-grid"></div>
-      </div>
-    </div>
   </section>
 
   <!-- FOOD -->
@@ -66,7 +55,7 @@
   <div id="v-gym" class="stack" style="gap:16px" hidden>
     <section class="hero" id="hero"><canvas id="hero-cv" width="64" height="64" style="width:80px;height:80px"></canvas><div class="hero-i"><div class="hero-l"><b id="hero-lv">Lv 1</b><span id="hero-tier"></span></div><div class="track"><div class="fill" id="hero-fill"></div></div><div class="hero-l"><span id="hero-xp"></span><span id="hero-next"></span></div></div></section>
     <section class="stepbox" id="step2">
-      <div class="step"><span class="num" id="sn-2">2</span><span class="step-t" data-i="เลือกโปรแกรม">เลือกโปรแกรม</span><span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;min-width:0"><button class="btn sm" id="lib-open" data-i="คลังท่า" data-pre="📚 ">📚 คลังท่า</button><button class="btn sm" id="pm-open" data-i="จัดการโปรแกรม" data-pre="⚙ ">⚙ จัดการโปรแกรม</button></span></div>
+      <div class="step"><span class="num" id="sn-2">2</span><span class="step-t" data-i="เลือกโปรแกรม">เลือกโปรแกรม</span></div>
       <div class="prog-pick" id="progs"></div>
       <div class="actions" id="start-row" hidden><button class="btn primary" id="start-w" style="padding:14px;font-size:.9rem;flex:1">▶ เริ่มออก</button><button class="btn" id="edit-w" style="padding:14px;font-size:.9rem" data-i="แก้โปรแกรม" data-pre="✎ ">✎ แก้โปรแกรม</button></div>
     </section>
@@ -83,6 +72,18 @@
       <button class="btn ghost" id="clear-w" data-i="ล้าง">ล้าง</button>
       </div>
     </section>
+  </div>
+
+  <!-- PROGRESS -->
+  <div id="v-stats" class="stack" style="gap:18px" hidden>
+    <div class="stack" style="gap:10px">
+      <div class="stats" id="stats"></div>
+      <div class="cal">
+        <div class="cal-head"><button class="btn sm" id="cal-prev" aria-label="Previous month">‹</button><b id="cal-title"></b><button class="btn sm" id="cal-next" aria-label="Next month">›</button></div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+    </div>
+
     <section id="hist-sec" class="stack">
       <div class="row-head" style="align-items:center"><div class="label" style="margin:0" data-i="ประวัติ">ประวัติ</div>
         <div class="chips" id="hist-mode"><button class="chip" data-m="chart" data-i="กราฟ" data-pre="📈 ">📈 กราฟ</button><button class="chip" data-m="list" data-i="รายการ" data-pre="☰ ">☰ รายการ</button></div></div>
@@ -91,6 +92,12 @@
     </section>
   </div>
 
+  <!-- MORE -->
+  <div id="v-more" class="stack" style="gap:18px" hidden>
+    <section class="menu">
+      <button class="menu-row" id="lib-open"><span class="mi">📚</span><span class="mt"><b data-i="คลังท่า">คลังท่า</b><small data-i="สร้าง แก้ไข ดูวิธีเล่น">สร้าง แก้ไข ดูวิธีเล่น</small></span><span class="mc">›</span></button>
+      <button class="menu-row" id="pm-open"><span class="mi">⚙</span><span class="mt"><b data-i="จัดการโปรแกรม">จัดการโปรแกรม</b><small data-i="ท่าในแต่ละโปรแกรม · JSON">ท่าในแต่ละโปรแกรม · JSON</small></span><span class="mc">›</span></button>
+    </section>
   <section class="rules" style="display:grid;gap:8px">
     <div class="label" style="margin:0" data-i="ข้อมูล">ข้อมูล</div>
     <p class="note" id="sync"></p>
@@ -103,7 +110,14 @@
     <div class="actions"><button class="btn sm primary" id="push-on" data-i="เปิดแจ้งเตือน">เปิดแจ้งเตือน</button><button class="btn sm" id="push-test" hidden data-i="ส่งทดสอบ">ส่งทดสอบ</button></div>
     <textarea id="export-box" hidden readonly rows="6" style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;font-family:var(--f-num);font-size:.75rem"></textarea>
   </section>
+  </div>
 </div>
+<nav class="tabbar" role="tablist">
+  <button class="tab" role="tab" id="tab-food" data-v="food"><span>🍽️</span><small data-i="อาหาร">อาหาร</small></button>
+  <button class="tab" role="tab" id="tab-gym" data-v="gym"><span>🏋️</span><small data-i="เวท">เวท</small></button>
+  <button class="tab" role="tab" id="tab-stats" data-v="stats"><span>📈</span><small data-i="สถิติ">สถิติ</small></button>
+  <button class="tab" role="tab" id="tab-more" data-v="more"><span>☰</span><small data-i="เพิ่มเติม">เพิ่มเติม</small></button>
+</nav>
 <div class="toast" id="toast" hidden></div>
 <div id="ptr" aria-hidden="true"><span id="ptr-i">↓</span></div>
 <div class="modal" id="login" hidden role="dialog" aria-modal="true" aria-label="Login">
@@ -174,26 +188,26 @@
   </div>
 </div>
 
-<script src="/js/core.js?v=925156"></script>
-<script src="/js/food.js?v=925156"></script>
-<script src="/js/programs.js?v=925156"></script>
-<script src="/js/run.js?v=925156"></script>
-<script src="/js/workout.js?v=925156"></script>
-<script src="/js/exercise-edit.js?v=925156"></script>
-<script src="/js/exercise-library.js?v=925156"></script>
-<script src="/js/program-manager.js?v=925156"></script>
-<script src="/js/hero.js?v=925156"></script>
-<script src="/js/rest-timer.js?v=925156"></script>
-<script src="/js/auth.js?v=925156"></script>
-<script src="/js/push.js?v=925156"></script>
-<script src="/js/data-io.js?v=925156"></script>
-<script src="/js/sync.js?v=925156"></script>
-<script src="/js/muscle-map.js?v=925156"></script>
-<script src="/js/progress.js?v=925156"></script>
-<script src="/js/history-chart.js?v=925156"></script>
-<script src="/js/share-card.js?v=925156"></script>
-<script src="/js/number-pad.js?v=925156"></script>
-<script src="/js/refresh.js?v=925156"></script>
-<script src="/js/app.js?v=925156"></script>
+<script src="/js/core.js?v=930249"></script>
+<script src="/js/food.js?v=930249"></script>
+<script src="/js/programs.js?v=930249"></script>
+<script src="/js/run.js?v=930249"></script>
+<script src="/js/workout.js?v=930249"></script>
+<script src="/js/exercise-edit.js?v=930249"></script>
+<script src="/js/exercise-library.js?v=930249"></script>
+<script src="/js/program-manager.js?v=930249"></script>
+<script src="/js/hero.js?v=930249"></script>
+<script src="/js/rest-timer.js?v=930249"></script>
+<script src="/js/auth.js?v=930249"></script>
+<script src="/js/push.js?v=930249"></script>
+<script src="/js/data-io.js?v=930249"></script>
+<script src="/js/sync.js?v=930249"></script>
+<script src="/js/muscle-map.js?v=930249"></script>
+<script src="/js/progress.js?v=930249"></script>
+<script src="/js/history-chart.js?v=930249"></script>
+<script src="/js/share-card.js?v=930249"></script>
+<script src="/js/number-pad.js?v=930249"></script>
+<script src="/js/refresh.js?v=930249"></script>
+<script src="/js/app.js?v=930249"></script>
 
 </body></html>

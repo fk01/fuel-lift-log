@@ -23,7 +23,7 @@ function renderProgress(){
   let h=dows.map(d=>`<span class="dow">${d}</span>`).join("")+"<span></span>".repeat(lead);
   for(let i=1;i<=n;i++){const ds=`${ym}-${String(i).padStart(2,"0")}`;h+=`<button class="d in${set.has(ds)?" on":""}${ds===TODAY?" today":""}${ds===DAY?" sel":""}" data-ds="${ds}" ${ds>TODAY?"disabled":""} aria-label="${ds}"><span>${i}</span>${calTag(ds)}</button>`}
   document.getElementById("cal-grid").innerHTML=h;
-  document.querySelectorAll("#cal-grid [data-ds]").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.ds===DAY)return;DAY=b.dataset.ds;draft.ex={};picked=false;renderAll()}));
+  document.querySelectorAll("#cal-grid [data-ds]").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.ds!==DAY){DAY=b.dataset.ds;draft.ex={};picked=false;renderAll()}location.hash=lastMain}));
   const total=days.length,vol=logs.reduce((a,l)=>a+volOf(l),0);
   const B=[["🥇",t("ครั้งแรก"),total>=1],["🔥","5 "+t("วันที่เล่น"),total>=5],["💪","10 "+t("วันที่เล่น"),total>=10],["🏅","25 "+t("วันที่เล่น"),total>=25],["🏆","50 "+t("วันที่เล่น"),total>=50],["👑","100 "+t("วันที่เล่น"),total>=100],["💎","250 "+t("วันที่เล่น"),total>=250],
     ["📅","2 "+t("สัปดาห์"),best>=2],["⚡","4 "+t("สัปดาห์"),best>=4],["🌙","8 "+t("สัปดาห์"),best>=8],["☀️","12 "+t("สัปดาห์"),best>=12],["🌋","26 "+t("สัปดาห์"),best>=26],

@@ -83,4 +83,4 @@ document.querySelectorAll("#hist-mode .chip").forEach(c=>c.addEventListener("cli
 document.getElementById("exs").addEventListener("click",ev=>{const b=ev.target.closest("[data-chart]");if(!b)return;histEx=b.dataset.chart;histPop=true;
   document.getElementById("chart-modal").hidden=false;renderHistChart()});
 document.getElementById("chart-close").addEventListener("click",()=>{histPop=false;document.getElementById("chart-modal").hidden=true;document.getElementById("chart-body").innerHTML="";renderHistChart()});
-window.addEventListener("resize",()=>{if(histPop||histMode==="chart"&&!document.getElementById("v-gym").hidden)renderHistChart()});
+window.addEventListener("resize",()=>{if(histPop||histMode==="chart"&&!document.getElementById("v-stats").hidden)renderHistChart()});
