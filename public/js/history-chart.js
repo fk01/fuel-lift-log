@@ -50,10 +50,14 @@ function lineChart(box,pts,unit){
     const tw=tip.offsetWidth,left=Math.max(0,Math.min(r.width-tw,x(p)*r.width/W-tw/2));tip.style.left=left+"px";tip.style.top=(y(p.v)*r.height/H>90?4:H-B-tip.offsetHeight-4)+"px"};
   svg.addEventListener("pointermove",show);svg.addEventListener("pointerdown",show);svg.addEventListener("pointerleave",hide);
 }
+let histPop=false;   // true while the chart is shown in the pop-up (opened from an exercise card)
 function renderHistChart(){
+  if(histPop)return renderHistInto(document.getElementById("chart-body"));
   const sec=document.getElementById("hist-chart"),list=document.getElementById("sessions");
   document.querySelectorAll("#hist-mode .chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.m===histMode));
   sec.hidden=histMode!=="chart";list.hidden=histMode==="chart";if(sec.hidden)return;
+  renderHistInto(sec)}
+function renderHistInto(sec){
   const ids=histIds();if(!ids.length){sec.innerHTML=`<p class="note">—</p>`;return}
   if(histEx!=="all"&&!ids.includes(histEx)){const l=logs[logs.length-1];histEx=Object.keys(l.ex).find(id=>l.ex[id].length)||ids[0]}
   const byG={};ids.forEach(id=>{const x={id,n:exName(id)};(byG[groupOf(x)]=byG[groupOf(x)]||[]).push(x)});
@@ -76,6 +80,7 @@ function renderHistChart(){
     .map(([v,l])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join("");
   lineChart(plot,pts,unit)}
 document.querySelectorAll("#hist-mode .chip").forEach(c=>c.addEventListener("click",()=>{histMode=c.dataset.m;try{localStorage.setItem("histmode",histMode)}catch(e){}renderHistChart()}));
-document.getElementById("exs").addEventListener("click",ev=>{const b=ev.target.closest("[data-chart]");if(!b)return;histEx=b.dataset.chart;histMode="chart";renderHistChart();
-  document.getElementById("hist-sec").scrollIntoView({behavior:"smooth",block:"start"})});
-window.addEventListener("resize",()=>{if(histMode==="chart"&&!document.getElementById("v-gym").hidden)renderHistChart()});
+document.getElementById("exs").addEventListener("click",ev=>{const b=ev.target.closest("[data-chart]");if(!b)return;histEx=b.dataset.chart;histPop=true;
+  document.getElementById("chart-modal").hidden=false;renderHistChart()});
+document.getElementById("chart-close").addEventListener("click",()=>{histPop=false;document.getElementById("chart-modal").hidden=true;document.getElementById("chart-body").innerHTML="";renderHistChart()});
+window.addEventListener("resize",()=>{if(histPop||histMode==="chart"&&!document.getElementById("v-gym").hidden)renderHistChart()});

@@ -108,7 +108,7 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
 .step .num.done{background:var(--accent);color:var(--on-accent)}
 .step-t{font-family:var(--f-display);font-size:1.1rem}
 .stepbox.locked{opacity:.4;pointer-events:none}
-#hist-chart{--series:#4f93f5}
+#hist-chart,#chart-body{--series:#4f93f5}
 .hc-tip{position:absolute;pointer-events:none;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;display:grid;gap:1px;font-size:.75rem;color:var(--muted);max-width:240px;z-index:2}
 .hc-tip b{font-family:var(--f-num);font-size:.95rem;color:var(--fg)}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
