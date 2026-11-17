@@ -100,7 +100,8 @@ document.getElementById("cancel-prog").addEventListener("click",cancelProg);
 function renderGym(){try{renderProgress()}catch(e){}try{renderHero()}catch(e){}
   ["step3","step4"].forEach(id=>document.getElementById(id).hidden=!picked&&!editing);
   document.getElementById("step1").classList.toggle("compact",(picked||editing)&&!document.getElementById("v-gym").hidden);document.getElementById("hist-sec").hidden=picked||editing;
-  if(!picked&&draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.kg!==""||x.ok)))picked=true;
+  // resume a workout only if sets were actually logged (weights alone are pre-filled from last time)
+  if(!picked&&draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.ok||x.reps!==""&&x.reps!=null)))picked=true;
   document.getElementById("pick-hint").hidden=picked;document.getElementById("exs").hidden=!picked&&!editing;
   document.getElementById("step4").classList.toggle("locked",!picked);
   document.getElementById("sn-2").classList.toggle("done",picked);document.getElementById("sn-3").classList.toggle("done",picked&&draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.ok)));
