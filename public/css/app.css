@@ -175,3 +175,12 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
 @keyframes ptrspin{to{transform:rotate(360deg)}}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.fill{transition:none}}
+/* exercise "How to" demo (GIF + steps from ex101) */
+.howto{margin:6px 0}
+.howto>summary{display:inline-flex;gap:6px;align-items:center;cursor:pointer;list-style:none;padding:6px 12px;border:1px solid var(--up);border-radius:999px;color:var(--up);font-size:.8rem;font-weight:600}
+.howto>summary::-webkit-details-marker{display:none}
+.howto>summary small{color:var(--muted,#999);font-weight:400}
+.howto[open]>summary{background:var(--up);color:var(--bg)}
+.howto[open]>summary small{color:inherit;opacity:.75}
+.howto img{width:100%;max-width:280px;display:block;margin:8px auto;border-radius:8px;background:#fff}
+.howto ol{margin:0;padding-left:1.2em;font-size:.85rem;opacity:.85}

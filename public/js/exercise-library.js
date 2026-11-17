@@ -21,7 +21,14 @@ let CAT=null,catLoading=false,libQ="";
 const lc=s=>(s||"").trim().toLowerCase();
 const catOf=x=>CAT&&CAT.find(c=>c.id===x.id||(c.as&&lc(c.as)===lc(x.n)));   // own entry, or one attached to this exercise by name
 function loadCat(){if(CAT||catLoading)return;catLoading=true;
-  fetch("/data/ex101.json").then(r=>r.ok?r.json():[]).catch(()=>[]).then(d=>{CAT=Array.isArray(d)?d:[];catLoading=false;if(!document.getElementById("lib-modal").hidden)renderLib()})}
+  fetch("/data/ex101.json").then(r=>r.ok?r.json():[]).catch(()=>[]).then(d=>{CAT=Array.isArray(d)?d:[];catLoading=false;
+    if(!document.getElementById("lib-modal").hidden)renderLib();else try{renderGym()}catch(_){}})}
+// collapsible "How to" block (GIF + steps) for an exercise; "" when it has no demo
+function howTo(x){const cat=catOf(x),gif=x.gif||(cat&&cat.gif);if(!gif)return "";
+  return `<details class="howto"><summary>▶ ${t("วิธีเล่น")}${cat?` <small>${esc(cat.t)} · ${esc(cat.e)}</small>`:""}</summary>
+    <img src="${esc(gif)}" alt="" loading="lazy">
+    ${cat&&cat.s.length?`<ol>${cat.s.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>`:""}</details>`}
+setTimeout(loadCat,0);
 function adoptCat(c){let x=EXLIB.find(q=>q.id===c.id);if(!x){x=libPick(c);EXLIB.push(x);save("exlib",EXLIB)}return x}
 function ensureLib(){let ch=false;const have=new Set(EXLIB.map(x=>x.id));
   [PROGS,DEFAULT_PROGS].forEach(P=>Object.values(P).forEach(p=>p.ex.forEach(e=>{if(!have.has(e.id)){have.add(e.id);EXLIB.push(libPick(e));ch=true}})));return ch}
@@ -43,11 +50,7 @@ function libForm(x){
   const c=document.createElement("div");c.className="ex";const used=libUsed(x.id);
   const fld="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px;font:inherit";
   const sel="background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:7px;font:inherit;min-width:0";
-  const cat=catOf(x),gif=x.gif||(cat&&cat.gif);
-  const demo=gif?`<details${cat&&cat.s.length?"":" open"} style="margin:6px 0"><summary class="zone">${t("วิธีเล่น")}${cat?" · "+esc(cat.t)+" · "+esc(cat.e):""}</summary>
-    <img src="${esc(gif)}" alt="" loading="lazy" style="width:100%;max-width:280px;display:block;margin:6px auto;border-radius:8px;background:#fff">
-    ${cat&&cat.s.length?`<ol class="note" style="margin:0;padding-left:1.2em">${cat.s.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>`:""}</details>`:"";
-  c.innerHTML=demo+`<input data-f="n" value="${esc(x.n)}" placeholder="${t("ชื่อท่า")}" aria-label="${t("ชื่อท่า")}" style="${fld}">
+  c.innerHTML=howTo(x)+`<input data-f="n" value="${esc(x.n)}" placeholder="${t("ชื่อท่า")}" aria-label="${t("ชื่อท่า")}" style="${fld}">
     <div class="sets" style="grid-template-columns:1fr 1fr 4.5em"><span class="h">${t("กล้ามเนื้อ")}</span><span class="h">${t("อุปกรณ์")}</span><span class="h">${t("หน่วย")}</span>
       <select data-f="g" aria-label="${t("กล้ามเนื้อ")}" style="${sel}">${GROUPS.map(([v,l])=>`<option value="${v}" ${groupOf(x)===v?"selected":""}>${t(l)}</option>`).join("")}</select>
       <select data-f="z" aria-label="${t("อุปกรณ์")}" style="${sel}">${[["🔩","🔩 "+t("เครื่อง")],["🏋️","🏋️ "+t("ดัมเบล/บาร์")],["🔗","🔗 "+t("เคเบิล")]].map(([v,l])=>`<option value="${v}" ${x.z===v?"selected":""}>${l}</option>`).join("")}</select>
