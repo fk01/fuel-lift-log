@@ -108,8 +108,7 @@ function renderGym(){try{renderProgress()}catch(e){}try{renderHero()}catch(e){}
   document.getElementById("sn-1").classList.add("done");
   const sb=document.getElementById("start-w"),row=document.getElementById("start-row");row.hidden=picked||editing||!chosen||!PROGS[cur];if(!row.hidden)sb.textContent=`▶ ${t("เริ่มออก")} · ${PROGS[cur].name}`;
   renderProgs();renderEx();renderSessions();document.getElementById("step4").hidden=editing||!picked}
-document.getElementById("edit-w").addEventListener("click",()=>{if(!PROGS[cur])return;pmTab="ui";renderPM();document.getElementById("pm-modal").hidden=false;
-  const i=Object.keys(PROGS).indexOf(cur),card=document.querySelectorAll("#pm-body > .ex")[i];if(card)setTimeout(()=>card.scrollIntoView({block:"start"}),30)});
+document.getElementById("edit-w").addEventListener("click",()=>{if(!PROGS[cur])return;pmOnly=cur;renderPM();document.getElementById("pm-modal").hidden=false;window.scrollTo(0,0)});
 document.getElementById("start-w").addEventListener("click",()=>{if(!PROGS[cur])return;draft.prog=cur;picked=true;chosen=false;save("gymdraft",draft);renderGym();
   setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});
 

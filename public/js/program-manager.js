@@ -5,7 +5,7 @@ Object.assign(EN,{"จัดการโปรแกรม":"Manage programs","�
   "แก้ท่า":"Edit exercises","เพิ่มโปรแกรม":"Add program","ลบโปรแกรม":"Delete program","โปรแกรมใหม่":"New program","บันทึก JSON":"Save JSON",
   "บันทึกโปรแกรมแล้ว":"Programs saved","ต้องมีอย่างน้อย 1 โปรแกรม":"Keep at least one program","คัดลอก":"Copy","ย้ายโปรแกรม":"Program order","ท่าหลักห้ามลบหรือเปลี่ยน":"main lift can't be removed or changed",
   "แก้ JSON แล้วกดบันทึก · ท่าที่ไม่มีในคลังจะถูกสร้างให้":"Edit and save · exercises not in the library are created"});
-let pmTab="ui";
+let pmTab="ui",pmOnly=null;   // pmOnly: program key when opened from "Edit workout" — show just that program
 const pmFld="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px;font:inherit";
 function progsToJson(){const out={};Object.entries(PROGS).forEach(([k,p])=>{out[k]={name:p.name,sub:p.sub||"",ex:p.ex.map(e=>{const o={id:e.id,n:e.n,s:e.s,r:e.r};if(e.main)o.main=true;return o})}});return JSON.stringify(out,null,2)}
 // parse + validate JSON text into PROGS; exercises are matched by id, then by name, else created in the library
@@ -52,6 +52,8 @@ function pmExRows(box,k){const list=PROGS[k].ex;box.innerHTML="";
         list.splice(i,1);if(draft.ex)delete draft.ex[e.id];saveProgs();pmExRows(box,k);renderGym()})}
     box.appendChild(r)})}
 function renderPM(){
+  if(pmOnly&&!PROGS[pmOnly])pmOnly=null;if(pmOnly)pmTab="ui";
+  document.getElementById("pm-tabs").hidden=!!pmOnly;document.getElementById("pm-title").textContent=pmOnly?`✎ ${PROGS[pmOnly].name}`:t("จัดการโปรแกรม");
   document.querySelectorAll("#pm-tabs .chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.tab===pmTab));
   const box=document.getElementById("pm-body");box.innerHTML="";
   if(pmTab==="json"){
@@ -65,13 +67,13 @@ function renderPM(){
       try{const {progs,newLib}=jsonToProgs(box.querySelector("#pm-json").value);pmCommit(progs,newLib);err.hidden=true;renderPM();renderGym();toast(t("บันทึกโปรแกรมแล้ว"))}
       catch(e){err.textContent=e.message;err.hidden=false}});
     return}
-  const keys=Object.keys(PROGS);
+  const all=Object.keys(PROGS),keys=pmOnly?[pmOnly]:all;
   keys.forEach((k,i)=>{const p=PROGS[k];const c=document.createElement("div");c.className="ex";
     c.innerHTML=`<input data-f="name" value="${esc(p.name)}" aria-label="${t("ชื่อโปรแกรม")}" style="${pmFld};font-family:var(--f-display);font-size:1.05rem">
       <input data-f="sub" value="${esc(p.sub||"")}" placeholder="${t("คำอธิบาย")}" aria-label="${t("คำอธิบาย")}" style="${pmFld};font-size:.85rem">
       <div class="stack pm-ex" style="gap:6px"></div>
       <button class="btn sm" data-add style="justify-self:start">+ ${t("เพิ่มท่า")}</button>
-      <div class="actions" style="align-items:center;border-top:1px solid var(--line);padding-top:8px"><span class="note" style="align-self:center">${t("ย้ายโปรแกรม")}</span><button class="btn sm" data-up ${i===0?"disabled":""}>↑</button><button class="btn sm" data-down ${i===keys.length-1?"disabled":""}>↓</button>
+      <div class="actions" style="align-items:center;border-top:1px solid var(--line);padding-top:8px" ${pmOnly?"hidden":""}><span class="note" style="align-self:center">${t("ย้ายโปรแกรม")}</span><button class="btn sm" data-up ${i===0?"disabled":""}>↑</button><button class="btn sm" data-down ${i===keys.length-1?"disabled":""}>↓</button>
         <button class="btn sm ghost" data-del>${t("ลบโปรแกรม")}</button></div>`;
     const on=(s,ev,fn)=>c.querySelector(s).addEventListener(ev,fn);
     pmExRows(c.querySelector(".pm-ex"),k);
@@ -87,7 +89,7 @@ function renderPM(){
   const a=document.createElement("button");a.className="btn primary";a.textContent="+ "+t("เพิ่มโปรแกรม");
   a.addEventListener("click",()=>{const k="p"+Date.now().toString(36);PROGS[k]={name:t("โปรแกรมใหม่"),sub:"",ex:[]};saveProgs();renderPM();renderGym();
     const ins=document.querySelectorAll('#pm-body [data-f="name"]');const l=ins[ins.length-1];if(l){l.scrollIntoView({block:"center"});l.focus();l.select()}});
-  box.appendChild(a)}
-document.getElementById("pm-open").addEventListener("click",()=>{renderPM();document.getElementById("pm-modal").hidden=false});
+  if(!pmOnly)box.appendChild(a)}
+document.getElementById("pm-open").addEventListener("click",()=>{pmOnly=null;renderPM();document.getElementById("pm-modal").hidden=false});
 document.getElementById("pm-close").addEventListener("click",()=>{document.getElementById("pm-modal").hidden=true;renderGym()});
 document.querySelectorAll("#pm-tabs .chip").forEach(c=>c.addEventListener("click",()=>{pmTab=c.dataset.tab;renderPM()}));
