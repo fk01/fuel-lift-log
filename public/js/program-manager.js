@@ -7,7 +7,7 @@ Object.assign(EN,{"จัดการโปรแกรม":"Manage programs","�
   "แก้ JSON แล้วกดบันทึก · ท่าที่ไม่มีในคลังจะถูกสร้างให้":"Edit and save · exercises not in the library are created"});
 let pmTab="ui",pmOnly=null,pmFromList=false;   // pmOnly: program key when opened from "Edit workout" — show just that program
 const pmFld="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px;font:inherit";
-function progsToJson(){const out={};Object.entries(PROGS).forEach(([k,p])=>{out[k]={name:p.name,sub:p.sub||"",ex:p.ex.map(e=>{const o={id:e.id,n:e.n,s:e.s,r:e.r};if(e.main)o.main=true;return o})}});return JSON.stringify(out,null,2)}
+function progsToJson(){const out={};Object.entries(PROGS).forEach(([k,p])=>{out[k]={name:p.name,sub:p.sub||"",ex:p.ex.map(e=>{const o={id:e.id,n:e.n,s:e.s,r:e.r};if(e.main)o.main=true;if(e.alt)o.alt=e.alt;return o})}});return JSON.stringify(out,null,2)}
 // parse + validate JSON text into PROGS; exercises are matched by id, then by name, else created in the library
 function jsonToProgs(txt){
   let d;try{d=JSON.parse(txt)}catch(e){throw new Error("JSON: "+e.message)}
@@ -27,7 +27,7 @@ function jsonToProgs(txt){
         if(GROUPS.some(g=>g[0]===e.g))lib.g=e.g;if(e.u==="lb")lib.u="lb";newLib.push(lib)}
       if(seen.has(lib.id))throw new Error(`"${k}": ${lib.n} ×2`);seen.add(lib.id);
       const s=Math.round(+e.s||5);if(s<1||s>10)throw new Error(`"${k}" ${lib.n}: s 1–10`);
-      const o={...libPick(lib),s,r:String(e.r??"5").trim()||"5"};if(e.main)o.main=1;return o})}});
+      const o={...libPick(lib),s,r:String(e.r??"5").trim()||"5"};if(e.main)o.main=1;if(e.alt)o.alt=String(e.alt);return o})}});
   // locked main lifts must stay in their Push/Pull program as main
   Object.entries(PROGS).forEach(([k,p])=>p.ex.forEach(e=>{if(!isLocked(k,e))return;
     const n=out[k]&&out[k].ex.find(x=>x.id===e.id);if(!n)throw new Error(`🔒 ${p.name}: ${e.n} — ${t("ท่าหลักห้ามลบหรือเปลี่ยน")}`);n.main=1}));

@@ -1,6 +1,7 @@
 // workout.js — set logging, session history, saving a workout
 // Classic script: shares globals with the other files in /js (load order is set in index.html).
 let foldPref={};   // manual fold/unfold per exercise id; without one, a card folds once every set is ticked
+const altName=id=>(EXLIB.find(q=>q.id===id)||{}).n||(exName(id)!==id?exName(id):"");
 function renderEx(){
   const box=document.getElementById("exs");box.innerHTML="";
   if(editing){renderEdit(box);return}
@@ -12,7 +13,7 @@ function renderEx(){
     const card=document.createElement("div");card.className="ex";
     let lastTxt=last?`${t("ล่าสุด")} ${thDate(last.date,{day:"numeric",month:"short"})}: ${last.sets.map(s=>`${toDisp(s.kg,u)}×${s.reps}`).join(" · ")} ${u}`:t("ยังไม่มีประวัติ");
     if(hitAll)lastTxt+=` <span class="up">↑ ${t("ลอง")} ${u==="kg"?"+2.5 kg":"+5 lb"}</span>`;
-    card.innerHTML=`<div class="row-head"><span class="ex-name" data-fold role="button" tabindex="0" aria-label="${t("ย่อ/ขยาย")} ${esc(e.n)}" style="display:flex;gap:8px;align-items:center;cursor:pointer"><span class="fold-i"></span><span>${e.z} ${e.n}${safeUrl(e.link)?` <a href="${esc(safeUrl(e.link))}" target="_blank" rel="noopener" style="color:var(--up);font-size:.8rem;white-space:nowrap">▶ ${t("ดูวิธีเล่น")}</a>`:""}</span></span><span style="display:flex;gap:8px;align-items:center"><span class="macro">${e.s} × ${e.r}${HEAVY.includes(e.id)?` · ${t("วอม")}`:""} · <b style="color:var(--fg)">${u}</b></span><button class="btn sm" data-edit aria-label="${t("แก้ไข")} ${esc(e.n)}">✎ ${t("แก้ไข")}</button></span></div>
+    card.innerHTML=`<div class="row-head"><span class="ex-name" data-fold role="button" tabindex="0" aria-label="${t("ย่อ/ขยาย")} ${esc(e.n)}" style="display:flex;gap:8px;align-items:center;cursor:pointer"><span class="fold-i"></span><span>${e.z} ${e.n}${safeUrl(e.link)?` <a href="${esc(safeUrl(e.link))}" target="_blank" rel="noopener" style="color:var(--up);font-size:.8rem;white-space:nowrap">▶ ${t("ดูวิธีเล่น")}</a>`:""}</span></span><span style="display:flex;gap:8px;align-items:center"><span class="macro">${e.s} × ${e.r}${HEAVY.includes(e.id)?` · ${t("วอม")}`:""} · <b style="color:var(--fg)">${u}</b></span>${e.alt&&altName(e.alt)?`<button class="btn sm" data-alt>⇄ ${esc(altName(e.alt))}</button>`:""}<button class="btn sm" data-edit aria-label="${t("แก้ไข")} ${esc(e.n)}">✎ ${t("แก้ไข")}</button></span></div>
       <div class="last fold-sum"></div>
       <div class="row-head"><div class="last">${lastTxt}</div><div class="restset">⏱ <button data-rm-rest aria-label="− ${e.n}">−</button><b>${fmt(restFor(e))}</b><button data-add-rest aria-label="+ ${e.n}">+</button></div></div>
       ${HEAVY.includes(e.id)?`<div class="zone">${t("วอม")}: 50% × 8 · 75% × 3</div>`:""}
@@ -34,6 +35,9 @@ function renderEx(){
         delete foldPref[e.id];foldCard();try{renderHero()}catch(_){}if(r.ok)startRest(e,i,rows)});
     });
     const setRest=d=>{restCfg[e.id]=Math.max(15,Math.min(600,restFor(e)+d));save("restcfg",restCfg);card.querySelector(".restset b").textContent=fmt(restCfg[e.id])};
+    card.querySelector("[data-alt]")?.addEventListener("click",()=>{   // swap this slot with its alternate (e.g. Chest Press ⇄ Peck Deck Fly)
+      const list=PROGS[cur].ex,i=list.indexOf(e),x=EXLIB.find(q=>q.id===e.alt)||{id:e.alt,n:exName(e.alt),z:"🔩"};if(i<0)return;
+      const n={...libPick(x),s:e.s,r:e.r,alt:e.id};if(e.main)n.main=1;list[i]=n;if(draft.ex)delete draft.ex[e.id];saveProgs();save("gymdraft",draft);renderGym();toast("⇄ "+n.n)});
     card.querySelector("[data-edit]").addEventListener("click",()=>{editId=e.id;renderEx()});
     card.querySelector("[data-unit]").addEventListener("click",()=>{libUpdate(e.id,{u:u==="kg"?"lb":"kg"});renderEx()});
     card.querySelector("[data-rm-rest]").addEventListener("click",()=>setRest(-15));

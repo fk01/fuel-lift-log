@@ -3,7 +3,7 @@
 /* ---------- GYM ---------- */
 const DEFAULT_PROGS={
  push:{name:"Push A",sub:"อ. · อก ไหล่ + ต้นขา",ex:[
-  {id:"chest-press",n:"Chest Press Machine",z:"🔩",s:5,r:"5"},
+  {id:"chest-press",n:"Chest Press Machine",z:"🔩",s:5,r:"5",alt:"pec-fly"},
   {id:"incline-db",n:"Incline Dumbbell Press",z:"🏋️",s:5,r:"5",main:1},
   {id:"db-shoulder-press",n:"Dumbbell Shoulder Press",z:"🏋️",s:5,r:"5",main:1},
   {id:"cable-lat-raise",n:"Cable Side Lateral Raise",z:"🔗",s:5,r:"5",main:1},
@@ -20,7 +20,7 @@ const DEFAULT_PROGS={
   {id:"abdominal",n:"Crunch Machine (Abdominal Machine)",z:"🔩",s:5,r:"5"}]},
  push2:{name:"Push B",sub:"ส. · Squat + อก ไหล่ น่อง",ex:[
   {id:"squat",n:"Squat",z:"🏋️",s:3,r:"5"},
-  {id:"pec-fly",n:"Peck Deck Fly",z:"🔩",s:5,r:"5"},
+  {id:"pec-fly",n:"Peck Deck Fly",z:"🔩",s:5,r:"5",alt:"chest-press"},
   {id:"incline-db",n:"Incline Dumbbell Press",z:"🏋️",s:5,r:"5",main:1},
   {id:"db-shoulder-press",n:"Dumbbell Shoulder Press",z:"🏋️",s:5,r:"5",main:1},
   {id:"cable-lat-raise",n:"Cable Side Lateral Raise",z:"🔗",s:5,r:"5",main:1},
