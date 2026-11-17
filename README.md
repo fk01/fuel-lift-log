@@ -4,11 +4,45 @@
 
 ## โครงสร้าง
 ```
-public/           หน้าเว็บ (index.html, sw.js, manifest, icons)
-src/worker.js     API, ล็อกอิน PIN, cron แจ้งเตือน, Web Push
+public/
+  index.html            โครงหน้าเว็บ (HTML อย่างเดียว) + ลำดับการโหลดสคริปต์
+  css/app.css           สไตล์ทั้งหมด
+  js/                   โค้ดหน้าเว็บ แยกไฟล์ตามฟีเจอร์
+    core.js             localStorage, วันที่, ข้อความสองภาษา, toast
+    food.js             เช็กลิสต์มื้ออาหาร แคลอรี/โปรตีน
+    programs.js         โปรแกรมเวท ตารางรายสัปดาห์ ตัวเลือกโปรแกรม
+    run.js              บันทึกการวิ่ง + การ์ดแชร์
+    workout.js          กรอกเซ็ต ประวัติ บันทึกเวท
+    exercise-edit.js    แก้ไขท่า / หน่วย
+    hero.js             ตัวละครพิกเซล
+    rest-timer.js       จับเวลาพัก
+    auth.js             เรียก API, ล็อกอิน PIN / Face ID
+    push.js             ตั้งค่าแจ้งเตือน
+    data-io.js          นำเข้า / ส่งออก JSON
+    sync.js             ซิงก์ข้อมูลกับ Worker
+    muscle-map.js       แผนที่กล้ามเนื้อ
+    progress.js         XP เลเวล เหรียญรางวัล
+    share-card.js       การ์ดแชร์ผลเวท
+    number-pad.js       แผงจิ้มตัวเลข (ไม่ใช้คีย์บอร์ด)
+    refresh.js          รีเฟรช / ดึงลงเพื่อรีเฟรช
+    app.js              แท็บ, renderAll, เริ่มทำงาน (ต้องโหลดท้ายสุด)
+  sw.js, manifest, icons
+src/
+  worker.js             จุดเริ่ม Worker (fetch + cron)
+  api.js                ตัวกระจาย route: route สาธารณะ → ตรวจล็อกอิน → route ที่เหลือ
+  routes/               session.js (ล็อกอิน), passkey.js, docs.js (ข้อมูล + import), push.js
+  auth.js               แฮช PIN, token, cookie
+  passkey.js            ตัวช่วย WebAuthn
+  db.js                 สร้างตาราง D1, อ่านค่าตั้ง
+  reminders.js          cron แจ้งเตือนมื้ออาหาร + broadcast
+  webpush.js            Web Push (VAPID + aes128gcm)
+  ratelimit.js, utils.js, config.js (ค่าคงที่ + ตาราง REMINDERS)
 scripts/gen-vapid.mjs   สร้างคีย์ VAPID
-wrangler.jsonc    ค่าตั้ง Worker
+wrangler.jsonc          ค่าตั้ง Worker
 ```
+
+ไฟล์ใน `public/js` เป็นสคริปต์ธรรมดา (ไม่ใช่ ES module) ใช้ตัวแปรร่วมกัน ลำดับการโหลดกำหนดใน `index.html`
+ส่วน `src/` เป็น ES module ที่ wrangler รวมไฟล์ให้ตอน deploy ไม่ต้องมีขั้นตอน build เพิ่ม
 
 ## ติดตั้งครั้งแรก
 
@@ -61,7 +95,7 @@ Cron รันทุก 15 นาที แปลงเป็นเวลาไ�
 | 19:00 (เวทค่ำ 18:00) | มื้อเย็น |
 | 19:15 (เวทค่ำ 18:15) | วิตามินหลังมื้อเย็น |
 
-แก้เวลาหรือข้อความได้ที่ `REMINDERS` ใน `src/worker.js`
+แก้เวลาหรือข้อความได้ที่ `REMINDERS` ใน `src/config.js`
 
 ## รันในเครื่อง
 ```bash
