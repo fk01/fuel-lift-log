@@ -76,6 +76,10 @@ h2{font-size:1.05rem;margin:0}
 .prog-ex .nm{font-style:normal;min-width:0;overflow-wrap:anywhere}
 .prog-ex .ss{color:var(--muted);font-family:var(--f-num)}
 .prog-ex .mg{grid-column:2;justify-self:start;font-style:normal;font-size:.62rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 6px;margin:1px 0 2px}
+.pm-li{display:flex;gap:8px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:8px 10px}
+.pm-open{flex:1;min-width:0;display:grid;gap:2px;text-align:left;background:none;border:0;color:var(--fg);font:inherit;cursor:pointer;padding:4px 0}
+.pm-open b{font-family:var(--f-display);font-weight:400;font-size:1.1rem}.pm-open small{color:var(--muted);font-size:.75rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pm-li-act{display:flex;gap:4px;flex:none}
 .pm-row{border-top:1px solid var(--line);padding-top:6px;display:grid;gap:4px}
 .pm-top{display:grid;grid-template-columns:1.4em minmax(0,1fr);gap:4px;font-size:.85rem;align-items:baseline}
 .pm-top .no{font-family:var(--f-num);font-weight:400;font-size:.72rem;color:var(--muted);text-align:right}.pm-top .mg{font-style:normal;font-size:.62rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 6px;white-space:nowrap}
