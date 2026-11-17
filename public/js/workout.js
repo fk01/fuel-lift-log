@@ -28,7 +28,7 @@ function renderEx(){
     });
     const setRest=d=>{restCfg[e.id]=Math.max(15,Math.min(600,restFor(e)+d));save("restcfg",restCfg);card.querySelector(".restset b").textContent=fmt(restCfg[e.id])};
     card.querySelector("[data-edit]").addEventListener("click",()=>{editId=e.id;renderEx()});
-    card.querySelector("[data-unit]").addEventListener("click",()=>{e.u=u==="kg"?"lb":"kg";saveProgs();renderEx()});
+    card.querySelector("[data-unit]").addEventListener("click",()=>{libUpdate(e.id,{u:u==="kg"?"lb":"kg"});renderEx()});
     card.querySelector("[data-rm-rest]").addEventListener("click",()=>setRest(-15));
     card.querySelector("[data-add-rest]").addEventListener("click",()=>setRest(15));
     card.querySelector("[data-add]").addEventListener("click",()=>{const l=rows[rows.length-1];rows.push({kg:l?.kg??"",reps:"",ok:false});save("gymdraft",draft);renderEx()});

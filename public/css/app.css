@@ -70,6 +70,7 @@ h2{font-size:1.05rem;margin:0}
 .prog b{font-family:var(--f-display);font-weight:400;font-size:1.15rem}
 .prog small{color:var(--muted);font-size:.72rem}
 .prog[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.prog.lib-row{text-align:left;padding:10px 12px}.prog.lib-row b{font-family:var(--f-body);font-weight:500;font-size:.95rem}
 .prog .next{color:var(--up)}
 .prog .next{color:var(--accent);font-weight:500}
 .rules{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:10px 14px;font-size:.85rem;color:var(--muted)}

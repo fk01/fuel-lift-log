@@ -33,7 +33,7 @@ export async function docsRoutes(req, env, url) {
     const put = (id, v) => stmts.push(env.DB.prepare("INSERT INTO docs (id, value, updated) VALUES (?1, ?2, ?3) ON CONFLICT(id) DO UPDATE SET value = ?2, updated = ?3").bind(id, JSON.stringify(v), Date.now()));
     for (const [date, v] of Object.entries(data.food || {})) if (/^\d{4}-\d\d-\d\d$/.test(date)) put("f-" + date, { date, ...v });
     for (const l of data.gymLogs || []) put(`g-${l.date}-${l.prog}`, l);
-    if (data.programs || data.restSettings) put("settings", { restCfg: data.restSettings || {}, draft: {}, progs: data.programs, unit: data.displayUnit || "kg", scheme: 3 });
+    if (data.programs || data.restSettings) put("settings", { restCfg: data.restSettings || {}, draft: {}, progs: data.programs, lib: data.exerciseLibrary, unit: data.displayUnit || "kg", scheme: 3 });
     if (stmts.length) await env.DB.batch(stmts);
     return json({ ok: true, imported: stmts.length });
   }

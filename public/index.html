@@ -66,7 +66,7 @@
   <div id="v-gym" class="stack" style="gap:16px" hidden>
     <section class="hero" id="hero"><canvas id="hero-cv" width="64" height="64" style="width:80px;height:80px"></canvas><div class="hero-i"><div class="hero-l"><b id="hero-lv">Lv 1</b><span id="hero-tier"></span></div><div class="track"><div class="fill" id="hero-fill"></div></div><div class="hero-l"><span id="hero-xp"></span><span id="hero-next"></span></div></div></section>
     <section class="stepbox">
-      <div class="step"><span class="num" id="sn-2">2</span><span class="step-t" data-i="เลือกโปรแกรม">เลือกโปรแกรม</span></div>
+      <div class="step"><span class="num" id="sn-2">2</span><span class="step-t" data-i="เลือกโปรแกรม">เลือกโปรแกรม</span><button class="btn sm" id="lib-open" style="margin-left:auto" data-i="คลังท่า" data-pre="📚 ">📚 คลังท่า</button></div>
       <div class="prog-pick" id="progs"></div>
     </section>
     <section class="stepbox" id="step3">
@@ -121,6 +121,13 @@
     <div class="actions"><button class="btn ghost" id="pad-clear" data-i="ล้าง">ล้าง</button><button class="btn primary" id="pad-done" style="flex:1" data-i="เสร็จ">เสร็จ</button></div>
   </div>
 </div>
+<div class="modal" id="lib-modal" hidden role="dialog" aria-modal="true" aria-label="Exercise library">
+  <div class="modal-in" style="align-self:start">
+    <div class="row-head" style="align-items:center"><div class="label" style="margin:0" id="lib-title">คลังท่า</div><button class="btn sm" id="lib-close" data-i="ปิด">ปิด</button></div>
+    <button class="btn primary" id="lib-new" data-i="สร้างท่าใหม่" data-pre="+ ">+ สร้างท่าใหม่</button>
+    <div class="stack" id="lib-list"></div>
+  </div>
+</div>
 <div class="modal" id="run-modal" hidden role="dialog" aria-modal="true" aria-label="Run">
   <div class="modal-in run-in">
     <div class="label" style="margin:0">🏃 <span data-i="บันทึกการวิ่ง">บันทึกการวิ่ง</span></div>
@@ -155,6 +162,7 @@
 <script src="/js/run.js"></script>
 <script src="/js/workout.js"></script>
 <script src="/js/exercise-edit.js"></script>
+<script src="/js/exercise-library.js"></script>
 <script src="/js/hero.js"></script>
 <script src="/js/rest-timer.js"></script>
 <script src="/js/auth.js"></script>
