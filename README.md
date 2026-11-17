@@ -15,6 +15,7 @@ public/
     workout.js          กรอกเซ็ต ประวัติ บันทึกเวท
     exercise-edit.js    แก้รายการท่าในโปรแกรม (เลือกจากคลังท่า)
     exercise-library.js คลังท่า: สร้าง / แก้ไข / ลบท่า
+    program-manager.js  จัดการโปรแกรม (แบบปุ่ม หรือแก้เป็น JSON)
     hero.js             ตัวละครพิกเซล
     rest-timer.js       จับเวลาพัก
     auth.js             เรียก API, ล็อกอิน PIN / Face ID
