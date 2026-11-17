@@ -7,6 +7,12 @@ function weekKey(ds){const d=new Date(ds+"T12:00:00");const day=(d.getDay()+6)%7
 function weekStreak(){const wk=new Set(logs.map(l=>weekKey(l.date)));let d=new Date(TODAY+"T12:00:00");let k=weekKey(TODAY);if(!wk.has(k)){d.setDate(d.getDate()-7);k=weekKey(dkey(d))}let n=0;while(wk.has(k)){n++;d.setDate(d.getDate()-7);k=weekKey(dkey(d))}return n}
 function bestStreak(){const wk=[...new Set(logs.map(l=>weekKey(l.date)))].sort();let best=0,c=0,prev=null;wk.forEach(w=>{if(prev){const p=new Date(prev+"T12:00:00");p.setDate(p.getDate()+7);c=dkey(p)===w?c+1:1}else c=1;best=Math.max(best,c);prev=w});return best}
 const volOf=l=>Object.values(l.ex).flat().reduce((a,s)=>a+(+s.kg||0)*(+s.reps||0),0);
+// small label under a calendar day: programs logged that day (+ run/badminton); future days show the weekly plan, faded
+function calTag(ds){const tg=(food[ds]||{}).tags||{};
+  const done=logs.filter(l=>l.date===ds).map(l=>progName(l.prog));if(tg.run)done.push("🏃");if(tg.bad)done.push("🏸");
+  if(done.length)return `<small>${esc(done.join(" "))}</small>`;
+  if(ds<=TODAY)return "";const pl=planFor(ds);
+  return pl?`<small class="plan">${pl==="run"?"🏃":pl==="bad"?"🏸":esc(progName(pl))}</small>`:""}
 function renderProgress(){
   const days=workoutDays(),streak=weekStreak(),best=bestStreak();
   const ym=(calM||DAY).slice(0,7);const monthCount=days.filter(d=>d.startsWith(ym)).length;
@@ -15,7 +21,7 @@ function renderProgress(){
   document.getElementById("cal-title").textContent=first.toLocaleDateString(LOC(),{month:"long",year:"numeric"});
   const set=new Set(days);const dows=lang==="th"?["จ","อ","พ","พฤ","ศ","ส","อา"]:["M","T","W","T","F","S","S"];
   let h=dows.map(d=>`<span class="dow">${d}</span>`).join("")+"<span></span>".repeat(lead);
-  for(let i=1;i<=n;i++){const ds=`${ym}-${String(i).padStart(2,"0")}`;h+=`<button class="d in${set.has(ds)?" on":""}${ds===TODAY?" today":""}${ds===DAY?" sel":""}" data-ds="${ds}" ${ds>TODAY?"disabled":""} aria-label="${ds}">${i}</button>`}
+  for(let i=1;i<=n;i++){const ds=`${ym}-${String(i).padStart(2,"0")}`;h+=`<button class="d in${set.has(ds)?" on":""}${ds===TODAY?" today":""}${ds===DAY?" sel":""}" data-ds="${ds}" ${ds>TODAY?"disabled":""} aria-label="${ds}"><span>${i}</span>${calTag(ds)}</button>`}
   document.getElementById("cal-grid").innerHTML=h;
   document.querySelectorAll("#cal-grid [data-ds]").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.ds===DAY)return;DAY=b.dataset.ds;draft.ex={};picked=false;renderAll()}));
   const total=days.length,vol=logs.reduce((a,l)=>a+volOf(l),0);

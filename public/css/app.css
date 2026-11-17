@@ -122,6 +122,9 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
 .cal-grid .dow{color:var(--muted);font-size:.65rem}
 .cal-grid .d{aspect-ratio:1;max-width:100%;display:grid;place-items:center;border-radius:50%;color:var(--muted)}
 .cal-grid .d.in{color:var(--fg)}
+.cal-grid .d{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1.1}
+.cal-grid .d small{font-family:var(--f-body);font-size:.55rem;line-height:1.1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px}
+.cal-grid .d small.plan{opacity:.55}.cal-grid .d:disabled small.plan{opacity:1;color:var(--muted)}
 .cal-grid .d.on{background:var(--accent);color:var(--on-accent);font-weight:500}
 .cal-grid button.d{border:0;background:none;font:inherit;cursor:pointer;padding:0;width:100%}
 .cal-grid .d.sel{outline:2px dashed var(--up);outline-offset:2px;color:var(--up);font-weight:700}
