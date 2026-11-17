@@ -251,3 +251,8 @@ h1{font-family:system-ui,-apple-system,"IBM Plex Sans Thai",sans-serif;font-weig
 .pc-ex{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;color:var(--muted)}
 .prog.open .pc-ex{display:none}
 .prog-pick .prog.cardio{grid-column:auto!important;padding:12px!important}
+
+/* breathing room between the last item and the tab bar */
+.wrap{padding-bottom:calc(40px + 24px)!important}
+.wrap>div:not([hidden])>:last-child{margin-bottom:8px}
+#vpinfo{font-family:var(--f-num);font-size:.7rem;color:var(--muted);word-break:break-all;user-select:all}

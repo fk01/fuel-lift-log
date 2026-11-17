@@ -29,6 +29,11 @@ document.getElementById("lang").addEventListener("click",()=>{lang=lang==="th"?"
   const fit=()=>{const portrait=innerHeight>=innerWidth,full=portrait?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);
     const h=st?Math.max(innerHeight,full):innerHeight;document.documentElement.style.setProperty("--app-h",h+"px")};
   fit();addEventListener("resize",fit);addEventListener("orientationchange",()=>setTimeout(fit,300))})();
+/* screen-size readout in More → Data (to tune the shell on real iPhones) */
+function vpInfo(){const el=document.getElementById("vpinfo");if(!el)return;const pr=v=>{const d=document.createElement("div");d.style.cssText="position:fixed;left:-9px;top:0;width:1px;height:"+v;document.body.appendChild(d);const h=d.getBoundingClientRect().height;d.remove();return Math.round(h)};
+  const sb=(()=>{const d=document.createElement("div");d.style.cssText="position:fixed;left:-9px;width:1px;height:env(safe-area-inset-bottom,0px)";document.body.appendChild(d);const h=d.getBoundingClientRect().height;d.remove();return Math.round(h)})();
+  el.textContent=`vp ${innerWidth}×${innerHeight} · vv ${Math.round(visualViewport?visualViewport.height:0)} · scr ${screen.width}×${screen.height} · svh ${pr("100svh")} dvh ${pr("100dvh")} lvh ${pr("100lvh")} · sab ${sb} · app-h ${getComputedStyle(document.documentElement).getPropertyValue("--app-h")} · sa ${document.documentElement.classList.contains("standalone")?1:0}`}
+addEventListener("hashchange",()=>{if(location.hash==="#more")vpInfo()});setTimeout(vpInfo,500);
 /* ---------- startup ---------- */
 pkState();
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").then(pushState).catch(()=>{})}else{pushState()}
