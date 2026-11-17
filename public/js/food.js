@@ -58,5 +58,5 @@ function renderFood(){renderFoodHist();
     const el=document.createElement("div");el.className="day"+(p2!==null&&p2>=P_TARGET?" hit":"");
     el.innerHTML=`${d.toLocaleDateString(LOC(),{weekday:"short"})}<b>${p2===null?"–":p2}</b>`;h.appendChild(el)}
 }
-document.querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>{const t=fs().tags;t[c.dataset.k]=!t[c.dataset.k];save("mealcheck",food);renderFood()}));
+document.querySelectorAll(".chip[data-k]").forEach(c=>c.addEventListener("click",()=>{const t=fs().tags;t[c.dataset.k]=!t[c.dataset.k];save("mealcheck",food);renderFood()}));
 document.getElementById("reset").addEventListener("click",()=>{fs().done={};save("mealcheck",food);renderFood()});
