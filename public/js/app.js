@@ -13,7 +13,13 @@ function show(v){if(!VIEWS.includes(v))v="food";curView=v;if(v==="food"||v==="gy
 const viewOf=()=>location.hash.slice(1)||"food";
 document.querySelectorAll(".tabbar .tab").forEach(b=>b.addEventListener("click",()=>{if(location.hash==="#"+b.dataset.v)show(b.dataset.v);else location.hash=b.dataset.v}));
 window.addEventListener("hashchange",()=>show(viewOf()));
-function renderAll(){applyStatic();document.getElementById("today-btn").hidden=DAY===TODAY;document.getElementById("save-day").textContent="→ "+new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"numeric"});document.getElementById("date").textContent=new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{weekday:"long",day:"numeric",month:"long",year:"numeric"})+(DAY===TODAY?"":" · "+(lang==="th"?"ย้อนหลัง":"Backfill"));updUnitBtn();renderFood();renderGym();show(viewOf())}
+// week strip: the 7 days of the selected date's week; dot = workout / run / badminton logged
+function renderWeek(){const box=document.getElementById("week");if(!box)return;const d0=new Date(DAY+"T12:00:00");const off=(d0.getDay()+6)%7;
+  const days=[...Array(7)].map((_,i)=>{const d=new Date(d0);d.setDate(d0.getDate()-off+i);return dkey(d)});
+  box.innerHTML=days.map(ds=>{const d=new Date(ds+"T12:00:00"),tg=(food[ds]||{}).tags||{},did=logs.some(l=>l.date===ds)||tg.run||tg.bad;
+    return `<button class="wd${ds===DAY?" sel":""}${ds===TODAY?" today":""}" data-ds="${ds}" ${ds>TODAY?"disabled":""}><small>${d.toLocaleDateString(LOC(),{weekday:"narrow"})}</small><b>${d.getDate()}</b><i class="${did?"on":""}"></i></button>`}).join("");
+  box.querySelectorAll("[data-ds]").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.ds===DAY)return;DAY=b.dataset.ds;draft.ex={};picked=false;renderAll()}))}
+function renderAll(){applyStatic();try{renderWeek()}catch(e){}document.getElementById("today-btn").hidden=DAY===TODAY;document.getElementById("save-day").textContent="→ "+new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"numeric"});document.getElementById("date").textContent=new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{weekday:"short",day:"numeric",month:"long"})+(DAY===TODAY?"":" · "+(lang==="th"?"ย้อนหลัง":"Backfill"));updUnitBtn();renderFood();renderGym();show(viewOf())}
 document.getElementById("lang").addEventListener("click",()=>{lang=lang==="th"?"en":"th";try{localStorage.setItem("lang",lang)}catch(e){}renderAll()});
 /* ---------- lock page scroll while a full-screen modal is open (iOS scrolled the page behind it) ---------- */
 (()=>{const sync=()=>document.documentElement.classList.toggle("modal-open",[...document.querySelectorAll(".modal:not(.pad)")].some(m=>!m.hidden));

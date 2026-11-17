@@ -72,7 +72,11 @@ function renderProgs(){
   Object.entries(PROGS).forEach(([k,p])=>{
     const last=[...logs].reverse().find(l=>l.prog===k);
     const b=document.createElement("button");b.className="prog";b.id="p-"+k;b.setAttribute("aria-pressed",(picked||chosen)&&k===cur);
-    b.innerHTML=`<b>${p.name}</b><small>${t(p.sub)}</small><small class="${k===nx?"next":""}">${k===nx?t("คิวถัดไป"):last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small><small>${p.ex.length} ${t("ท่า")}</small><ul class="prog-ex">${p.ex.map((e,n)=>`<li><b class="no">${n+1}</b><em class="nm">${e.z} ${esc(e.n)}</em><span class="ss">${e.s}×${e.r}</span><i class="mg">${groupName(groupOf(e))}</i></li>`).join("")}</ul>`;
+    const groups=[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", "),open=(picked||chosen)&&k===cur;
+    b.innerHTML=`<span class="pc-top"><b>${esc(p.name)}</b>${k===nx?`<em class="pc-tag">${t("คิวถัดไป")}</em>`:""}</span><small>${esc(groups)}</small>
+      <small>${p.ex.length} ${t("ท่า")}${p.ex[0]?` | ${esc(p.ex[0].n)} ${t("และอื่นๆ")}`:""}</small>
+      <small class="pc-when">${last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small>
+      <ul class="prog-ex"${open?"":" hidden"}>${p.ex.map((e,n)=>`<li><b class="no">${n+1}</b><em class="nm">${e.z} ${esc(e.n)}</em><span class="ss">${e.s}×${e.r}</span><i class="mg">${groupName(groupOf(e))}</i></li>`).join("")}</ul>`;
     b.addEventListener("click",()=>{if(!picked){if(chosen&&cur===k){chosen=false;renderGym();return}if(cur!==k){draft.ex={}}cur=k;draft.prog=k;chosen=true;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("start-row").scrollIntoView({behavior:"smooth",block:"center"}),50);return}
       if(cur===k){cancelProg();return}draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});box.appendChild(b)});
   hd("คาร์ดิโอ");

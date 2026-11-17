@@ -212,3 +212,23 @@ html.standalone{--tabpb:max(env(safe-area-inset-bottom,0px),26px)}
 .rest{bottom:auto!important;top:calc(var(--app-h) - var(--tabh));transform:translateY(-100%)}
 .tabbar::after{content:"";position:absolute;left:0;right:0;top:100%;height:200px;background:inherit}
 .totals{top:-12px!important}
+
+/* --- app-style refresh: week strip, routine cards, floating tab bar --- */
+#step1 .date{font-family:var(--f-body);text-transform:none;letter-spacing:0;font-size:1.15rem;color:var(--fg);font-weight:600;margin:0;min-width:0}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:6px}
+.wd{display:grid;justify-items:center;gap:4px;padding:8px 0 6px;border:0;border-radius:14px;background:none;color:var(--muted);font:inherit;cursor:pointer}
+.wd small{font-family:var(--f-num);font-size:.7rem}.wd b{font-family:var(--f-num);font-weight:500;font-size:1.05rem;color:var(--fg)}
+.wd i{width:5px;height:5px;border-radius:50%;background:transparent}.wd i.on{background:var(--up)}
+.wd.sel{background:var(--surface);outline:1px solid var(--line)}.wd.today b{color:var(--up)}.wd:disabled{opacity:.35;cursor:default}
+.prog-pick{grid-template-columns:1fr!important}.prog-pick .prog,.prog-pick .prog.cardio{grid-column:auto!important}
+.prog-pick .prog:not(.cardio){text-align:left;padding:14px 16px;border-radius:16px;gap:4px}
+.prog-pick .prog:not(.cardio) .pc-top{display:flex;align-items:center;gap:8px}
+.prog-pick .prog:not(.cardio) .pc-top b{font-family:var(--f-body);font-weight:600;font-size:1.1rem}
+.pc-tag{font-style:normal;font-size:.68rem;font-family:var(--f-num);letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--up);border-radius:999px;padding:2px 8px}
+.prog-pick .prog small{white-space:normal}
+.prog-pick .prog.cardio{border-radius:16px}
+.tabbar{left:14px!important;right:14px!important;border:1px solid var(--line);border-radius:26px;background:#1a1a19f2!important;padding:6px!important;height:62px!important;
+  top:calc(var(--app-h) - 62px - var(--tabpb))!important;align-items:center!important}
+.tabbar::after{display:none}
+.tabbar .tab{border-radius:20px;padding:6px 0}.tabbar .tab[aria-selected="true"]{background:#2a2927}
+:root{--tabh:calc(62px + var(--tabpb) + 6px)}
