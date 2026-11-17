@@ -106,10 +106,12 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
 .restset b{color:var(--fg);font-weight:500;min-width:3.2em;text-align:center;font-variant-numeric:tabular-nums}
 .restset button{width:28px;height:28px;border:1px solid var(--line);background:none;color:var(--fg);border-radius:999px;font:inherit;cursor:pointer;line-height:1}
 .stepbox{display:grid;gap:12px;padding-top:4px}
-.step{display:flex;align-items:center;gap:10px}
+.step{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.step .btn{white-space:nowrap}.step-t{white-space:nowrap}
 .step .num{width:24px;height:24px;border-radius:50%;border:1px solid var(--accent);display:grid;place-items:center;font-family:var(--f-num);font-size:.75rem;flex:none}
 .step .num.done{background:var(--accent);color:var(--on-accent)}
 .step-t{font-family:var(--f-display);font-size:1.1rem}
+.step-toggle{cursor:pointer}.step-toggle .step-t::after{content:" ▾";color:var(--muted);font-size:.8rem}
+.stepbox.collapsed .step-t::after{content:" ▸"}.stepbox.collapsed>*:not(.step){display:none!important}
 .stepbox.locked{opacity:.4;pointer-events:none}
 #hist-chart,#chart-body{--series:#4f93f5}
 .hc-tip{position:absolute;pointer-events:none;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;display:grid;gap:1px;font-size:.75rem;color:var(--muted);max-width:240px;z-index:2}

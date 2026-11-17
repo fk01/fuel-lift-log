@@ -106,3 +106,11 @@ function renderGym(){try{renderProgress()}catch(e){}try{renderHero()}catch(e){}
   document.getElementById("sn-2").classList.toggle("done",picked);document.getElementById("sn-3").classList.toggle("done",picked&&draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.ok)));
   document.getElementById("sn-1").classList.add("done");
   renderProgs();renderEx();renderSessions();document.getElementById("step4").hidden=editing||!picked}
+
+/* ---------- collapsible step sections (Pick a program / Log your sets) ---------- */
+let stepFold=load("stepfold",{});
+["step2","step3"].forEach(id=>{const sec=document.getElementById(id),head=sec.querySelector(".step");
+  const apply=()=>{const f=!!stepFold[id];sec.classList.toggle("collapsed",f);head.setAttribute("aria-expanded",!f)};
+  head.classList.add("step-toggle");head.setAttribute("role","button");head.tabIndex=0;
+  const tog=ev=>{if(ev.target.closest("button,a,input"))return;stepFold[id]=!stepFold[id];save("stepfold",stepFold);apply()};
+  head.addEventListener("click",tog);head.addEventListener("keydown",ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();tog(ev)}});apply()});
