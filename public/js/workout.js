@@ -46,9 +46,10 @@ function renderEx(){
 function exHistory(id){const u=uOf(id);
   const h=logs.filter(l=>l.ex[id]&&l.ex[id].length).slice(-8).reverse();
   if(!h.length)return"";
-  return `<details class="log"><summary>${t("ประวัติ")} (${h.length})</summary><table>${h.map(l=>`<tr><td>${thDate(l.date,{day:"numeric",month:"short"})}</td><td>${l.ex[id].map(s=>`${toDisp(s.kg,u)}×${s.reps}`).join(" · ")} ${u}</td><td>${t("สูงสุด")} ${toDisp(best(l.ex[id]),u)}</td></tr>`).join("")}</table></details>`;
+  return `<details class="log"><summary>${t("ประวัติ")} (${h.length})</summary><button class="btn sm" data-chart="${id}" style="margin-top:6px">📈 ${t("ดูกราฟ")}</button><table>${h.map(l=>`<tr><td>${thDate(l.date,{day:"numeric",month:"short"})}</td><td>${l.ex[id].map(s=>`${toDisp(s.kg,u)}×${s.reps}`).join(" · ")} ${u}</td><td>${t("สูงสุด")} ${toDisp(best(l.ex[id]),u)}</td></tr>`).join("")}</table></details>`;
 }
 function renderSessions(){
+  if(typeof renderHistChart==="function")renderHistChart();
   const box=document.getElementById("sessions");box.innerHTML="";
   if(!logs.length){box.innerHTML=`<p class="note">—</p>`;return}
   [...logs].reverse().slice(0,10).forEach((l,ri)=>{

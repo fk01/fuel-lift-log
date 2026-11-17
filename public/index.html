@@ -82,8 +82,10 @@
       <button class="btn ghost" id="clear-w" data-i="ล้าง">ล้าง</button>
       </div>
     </section>
-    <section id="hist-sec">
-      <div class="label" data-i="ประวัติ">ประวัติ</div>
+    <section id="hist-sec" class="stack">
+      <div class="row-head" style="align-items:center"><div class="label" style="margin:0" data-i="ประวัติ">ประวัติ</div>
+        <div class="chips" id="hist-mode"><button class="chip" data-m="chart" data-i="กราฟ" data-pre="📈 ">📈 กราฟ</button><button class="chip" data-m="list" data-i="รายการ" data-pre="☰ ">☰ รายการ</button></div></div>
+      <div class="stack" id="hist-chart" hidden></div>
       <div class="stack" id="sessions"></div>
     </section>
   </div>
@@ -172,6 +174,7 @@
 <script src="/js/sync.js"></script>
 <script src="/js/muscle-map.js"></script>
 <script src="/js/progress.js"></script>
+<script src="/js/history-chart.js"></script>
 <script src="/js/share-card.js"></script>
 <script src="/js/number-pad.js"></script>
 <script src="/js/refresh.js"></script>

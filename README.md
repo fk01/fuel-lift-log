@@ -23,6 +23,7 @@ public/
     sync.js             ซิงก์ข้อมูลกับ Worker
     muscle-map.js       แผนที่กล้ามเนื้อ
     progress.js         XP เลเวล เหรียญรางวัล
+    history-chart.js    กราฟประวัติการยก (น้ำหนักสูงสุด / 1RM / วอลุ่ม)
     share-card.js       การ์ดแชร์ผลเวท
     number-pad.js       แผงจิ้มตัวเลข (ไม่ใช้คีย์บอร์ด)
     refresh.js          รีเฟรช / ดึงลงเพื่อรีเฟรช
