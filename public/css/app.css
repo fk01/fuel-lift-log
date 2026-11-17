@@ -76,6 +76,11 @@ h2{font-size:1.05rem;margin:0}
 .prog-ex .nm{font-style:normal;min-width:0;overflow-wrap:anywhere}
 .prog-ex .ss{color:var(--muted);font-family:var(--f-num)}
 .prog-ex .mg{grid-column:2;justify-self:start;font-style:normal;font-size:.62rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 6px;margin:1px 0 2px}
+.pm-row{border-top:1px solid var(--line);padding-top:6px;display:grid;gap:4px}
+.pm-top{display:grid;grid-template-columns:1.4em minmax(0,1fr);gap:4px;font-size:.85rem;align-items:baseline}
+.pm-top .no{font-family:var(--f-num);font-weight:400;font-size:.72rem;color:var(--muted);text-align:right}.pm-top .mg{font-style:normal;font-size:.62rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 6px;white-space:nowrap}
+.pm-ctl{display:flex;gap:6px;align-items:center;padding-left:1.7em;flex-wrap:wrap}.pm-ctl span{color:var(--muted)}
+.pm-ctl input{width:3.6em;box-sizing:border-box;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:6px;padding:6px 4px;font-family:var(--f-num);text-align:center}
 .prog-ex{list-style:none;margin:6px 0 0;padding:6px 0 0;border-top:1px solid var(--line);display:grid;gap:3px;text-align:left;font-size:.72rem;color:var(--fg);min-width:0}
 .prog[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
 .prog.lib-row{text-align:left;padding:10px 12px}.prog.lib-row b{font-family:var(--f-body);font-weight:500;font-size:.95rem}

@@ -3,7 +3,7 @@
 /* ---------- program manager ---------- */
 Object.assign(EN,{"จัดการโปรแกรม":"Manage programs","แบบปุ่ม":"Form","แบบ JSON":"JSON","ชื่อโปรแกรม":"Program name","คำอธิบาย":"Description",
   "แก้ท่า":"Edit exercises","เพิ่มโปรแกรม":"Add program","ลบโปรแกรม":"Delete program","โปรแกรมใหม่":"New program","บันทึก JSON":"Save JSON",
-  "บันทึกโปรแกรมแล้ว":"Programs saved","ต้องมีอย่างน้อย 1 โปรแกรม":"Keep at least one program","คัดลอก":"Copy","ท่าหลักห้ามลบหรือเปลี่ยน":"main lift can't be removed or changed",
+  "บันทึกโปรแกรมแล้ว":"Programs saved","ต้องมีอย่างน้อย 1 โปรแกรม":"Keep at least one program","คัดลอก":"Copy","ย้ายโปรแกรม":"Program order","ท่าหลักห้ามลบหรือเปลี่ยน":"main lift can't be removed or changed",
   "แก้ JSON แล้วกดบันทึก · ท่าที่ไม่มีในคลังจะถูกสร้างให้":"Edit and save · exercises not in the library are created"});
 let pmTab="ui";
 const pmFld="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px;font:inherit";
@@ -34,6 +34,23 @@ function jsonToProgs(txt){
   return{progs:out,newLib}}
 function pmCommit(P,newLib){PROGS=P;if(newLib&&newLib.length){EXLIB.push(...newLib);save("exlib",EXLIB)}
   if(!PROGS[cur]){cur=nextProg();picked=false;editing=false;draft.ex={};save("gymdraft",draft)}saveProgs()}
+// inline exercise rows inside the program form: sets / reps (tap pad), reorder, swap from library, remove; locked main lifts can't be swapped or removed
+function pmExRows(box,k){const list=PROGS[k].ex;box.innerHTML="";
+  list.forEach((e,i)=>{const lock=isLocked(k,e);const r=document.createElement("div");r.className="pm-row";
+    r.innerHTML=`<div class="pm-top"><b class="no">${i+1}</b><span class="nm">${lock?"🔒 ":""}${e.z} ${esc(e.n)} <i class="mg">${groupName(groupOf(e))}</i></span></div>
+      <div class="pm-ctl"><input type="number" readonly inputmode="none" data-pad="sets" value="${e.s}" aria-label="${esc(e.n)} ${t("เซ็ต")}"><span>×</span>
+        <input readonly inputmode="none" data-pad="rng" value="${esc(e.r)}" aria-label="${esc(e.n)} ${t("ช่วงครั้ง")}">
+        <button class="btn sm" data-up ${i===0?"disabled":""} aria-label="up">↑</button><button class="btn sm" data-down ${i===list.length-1?"disabled":""} aria-label="down">↓</button>
+        ${lock?"":`<button class="btn sm" data-swap aria-label="${t("เปลี่ยนท่า")}">⇄</button><button class="btn sm ghost" data-rm aria-label="${t("ลบท่า")}">✕</button>`}</div>`;
+    const q=s=>r.querySelector(s);
+    q('[data-pad="sets"]').addEventListener("change",ev=>{e.s=Math.max(1,Math.min(10,+ev.target.value||1));if(draft.ex)delete draft.ex[e.id];saveProgs();renderGym()});
+    q('[data-pad="rng"]').addEventListener("change",ev=>{e.r=ev.target.value.trim()||e.r;saveProgs();renderGym()});
+    const mv=d=>{list.splice(i+d,0,list.splice(i,1)[0]);saveProgs();pmExRows(box,k);renderGym()};
+    q("[data-up]").addEventListener("click",()=>mv(-1));q("[data-down]").addEventListener("click",()=>mv(1));
+    if(!lock){q("[data-swap]").addEventListener("click",()=>openLib({skip:new Set(list.map(x=>x.id)),onPick:x=>{const n={...libPick(x),s:e.s,r:e.r};if(e.main)n.main=1;list[i]=n;if(draft.ex)delete draft.ex[e.id];saveProgs();renderPM()}}));
+      q("[data-rm]").addEventListener("click",ev=>{const b=ev.currentTarget;if(!b.dataset.sure){b.dataset.sure=1;b.textContent=t("ลบ")+"?";return}
+        list.splice(i,1);if(draft.ex)delete draft.ex[e.id];saveProgs();pmExRows(box,k);renderGym()})}
+    box.appendChild(r)})}
 function renderPM(){
   document.querySelectorAll("#pm-tabs .chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.tab===pmTab));
   const box=document.getElementById("pm-body");box.innerHTML="";
@@ -52,10 +69,13 @@ function renderPM(){
   keys.forEach((k,i)=>{const p=PROGS[k];const c=document.createElement("div");c.className="ex";
     c.innerHTML=`<input data-f="name" value="${esc(p.name)}" aria-label="${t("ชื่อโปรแกรม")}" style="${pmFld};font-family:var(--f-display);font-size:1.05rem">
       <input data-f="sub" value="${esc(p.sub||"")}" placeholder="${t("คำอธิบาย")}" aria-label="${t("คำอธิบาย")}" style="${pmFld};font-size:.85rem">
-      <ul class="prog-ex" style="margin:0">${p.ex.map((e,n)=>`<li><b class="no">${n+1}</b><em class="nm">${isLocked(k,e)?"🔒 ":""}${e.z} ${esc(e.n)}</em><span class="ss">${e.s}×${e.r}</span><i class="mg">${groupName(groupOf(e))}</i></li>`).join("")}</ul>
-      <div class="actions"><button class="btn sm" data-up ${i===0?"disabled":""}>↑</button><button class="btn sm" data-down ${i===keys.length-1?"disabled":""}>↓</button>
-        <button class="btn sm ghost" data-del>${t("ลบโปรแกรม")}</button><button class="btn sm primary" data-ex style="margin-left:auto">✎ ${t("แก้ท่า")}</button></div>`;
+      <div class="stack pm-ex" style="gap:6px"></div>
+      <button class="btn sm" data-add style="justify-self:start">+ ${t("เพิ่มท่า")}</button>
+      <div class="actions" style="align-items:center;border-top:1px solid var(--line);padding-top:8px"><span class="note" style="align-self:center">${t("ย้ายโปรแกรม")}</span><button class="btn sm" data-up ${i===0?"disabled":""}>↑</button><button class="btn sm" data-down ${i===keys.length-1?"disabled":""}>↓</button>
+        <button class="btn sm ghost" data-del>${t("ลบโปรแกรม")}</button></div>`;
     const on=(s,ev,fn)=>c.querySelector(s).addEventListener(ev,fn);
+    pmExRows(c.querySelector(".pm-ex"),k);
+    on("[data-add]","click",()=>openLib({skip:new Set(p.ex.map(q=>q.id)),onPick:x=>{p.ex.push({...libPick(x),s:3,r:"5"});saveProgs();renderPM()}}));
     on('[data-f="name"]',"change",ev=>{p.name=ev.target.value.trim()||p.name;saveProgs();renderGym()});
     on('[data-f="sub"]',"change",ev=>{p.sub=ev.target.value.trim();saveProgs();renderGym()});
     const move=d=>{const o={};const ks=keys.slice();ks.splice(i+d,0,ks.splice(i,1)[0]);ks.forEach(x=>o[x]=PROGS[x]);PROGS=o;saveProgs();renderPM();renderGym()};
@@ -63,9 +83,6 @@ function renderPM(){
     on("[data-del]","click",ev=>{const b=ev.target;if(p.ex.some(e=>isLocked(k,e))){toast("🔒 "+t("ท่าหลักห้ามลบหรือเปลี่ยน"));return}if(keys.length<2){toast(t("ต้องมีอย่างน้อย 1 โปรแกรม"));return}
       if(!b.dataset.sure){b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน");return}
       const o={...PROGS};delete o[k];pmCommit(o);renderPM();renderGym()});
-    on("[data-ex]","click",()=>{document.getElementById("pm-modal").hidden=true;
-      if(cur!==k)draft.ex={};cur=k;draft.prog=k;picked=true;editing=true;editId=null;save("gymdraft",draft);updUnitBtn();renderGym();
-      setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});
     box.appendChild(c)});
   const a=document.createElement("button");a.className="btn primary";a.textContent="+ "+t("เพิ่มโปรแกรม");
   a.addEventListener("click",()=>{const k="p"+Date.now().toString(36);PROGS[k]={name:t("โปรแกรมใหม่"),sub:"",ex:[]};saveProgs();renderPM();renderGym();
