@@ -13,7 +13,16 @@ const MUS_GROUP={chest:"chest",lats:"back",traps:"back",delt:"shoulder",rear:"sh
 const GROUP_MUS={chest:["chest"],back:["lats"],shoulder:["delt"],arms:["bi","tri"],legs:["quad","ham"],core:["abs"]};
 const groupOf=x=>x.g||MUS_GROUP[musOf({id:x.id,n:x.n})[0][0]]||"other";
 const groupName=g=>t((GROUPS.find(q=>q[0]===g)||GROUPS[6])[1]);
-const libPick=e=>{const o={id:e.id,n:e.n,z:e.z||"🔩"};if(e.g)o.g=e.g;if(e.u)o.u=e.u;if(e.link)o.link=e.link;return o};
+const libPick=e=>{const o={id:e.id,n:e.n,z:e.z||"🔩"};if(e.g)o.g=e.g;if(e.u)o.u=e.u;if(e.link)o.link=e.link;if(e.gif)o.gif=e.gif;return o};
+// ex101 catalog (public/data/ex101.json, built by scripts/import-ex101.mjs): read-only, merged into the library view;
+// an entry is copied into EXLIB only when picked or edited, so synced settings stay small.
+Object.assign(EN,{"ค้นหาท่า":"Search exercises","กำลังโหลดท่า…":"Loading exercises…","แสดง":"Showing","พิมพ์เพื่อค้นหาเพิ่ม":"type to narrow down","วิธีเล่น":"How to"});
+let CAT=null,catLoading=false,libQ="";
+const lc=s=>(s||"").trim().toLowerCase();
+const catOf=x=>CAT&&CAT.find(c=>c.id===x.id||(c.as&&lc(c.as)===lc(x.n)));   // own entry, or one attached to this exercise by name
+function loadCat(){if(CAT||catLoading)return;catLoading=true;
+  fetch("/data/ex101.json").then(r=>r.ok?r.json():[]).catch(()=>[]).then(d=>{CAT=Array.isArray(d)?d:[];catLoading=false;if(!document.getElementById("lib-modal").hidden)renderLib()})}
+function adoptCat(c){let x=EXLIB.find(q=>q.id===c.id);if(!x){x=libPick(c);EXLIB.push(x);save("exlib",EXLIB)}return x}
 function ensureLib(){let ch=false;const have=new Set(EXLIB.map(x=>x.id));
   [PROGS,DEFAULT_PROGS].forEach(P=>Object.values(P).forEach(p=>p.ex.forEach(e=>{if(!have.has(e.id)){have.add(e.id);EXLIB.push(libPick(e));ch=true}})));return ch}
 if(ensureLib())try{localStorage.setItem("exlib",JSON.stringify(EXLIB))}catch(e){}
@@ -23,7 +32,7 @@ function libUpdate(id,patch){const x=EXLIB.find(q=>q.id===id);if(x)Object.assign
 
 let libMode=null,libEdit=null,libGroup="all";         // libMode: null = manage, {skip:Set,onPick:fn} = pick for a program
 const libNamed=x=>!!(x.n&&x.n.trim());
-function openLib(mode){libMode=mode||null;libEdit=null;libGroup="all";renderLib();document.getElementById("lib-modal").hidden=false}
+function openLib(mode){libMode=mode||null;libEdit=null;libGroup="all";libQ="";const q=document.getElementById("lib-q");if(q){q.value="";q.placeholder=t("ค้นหาท่า")}loadCat();renderLib();document.getElementById("lib-modal").hidden=false}
 function closeLib(){const n=EXLIB.length;EXLIB=EXLIB.filter(libNamed);if(EXLIB.length!==n)save("exlib",EXLIB);
   libEdit=null;libMode=null;document.getElementById("lib-modal").hidden=true;renderGym()}
 function libDone(x){
@@ -34,7 +43,11 @@ function libForm(x){
   const c=document.createElement("div");c.className="ex";const used=libUsed(x.id);
   const fld="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px;font:inherit";
   const sel="background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:7px;font:inherit;min-width:0";
-  c.innerHTML=`<input data-f="n" value="${esc(x.n)}" placeholder="${t("ชื่อท่า")}" aria-label="${t("ชื่อท่า")}" style="${fld}">
+  const cat=catOf(x),gif=x.gif||(cat&&cat.gif);
+  const demo=gif?`<details${cat&&cat.s.length?"":" open"} style="margin:6px 0"><summary class="zone">${t("วิธีเล่น")}${cat?" · "+esc(cat.t)+" · "+esc(cat.e):""}</summary>
+    <img src="${esc(gif)}" alt="" loading="lazy" style="width:100%;max-width:280px;display:block;margin:6px auto;border-radius:8px;background:#fff">
+    ${cat&&cat.s.length?`<ol class="note" style="margin:0;padding-left:1.2em">${cat.s.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>`:""}</details>`:"";
+  c.innerHTML=demo+`<input data-f="n" value="${esc(x.n)}" placeholder="${t("ชื่อท่า")}" aria-label="${t("ชื่อท่า")}" style="${fld}">
     <div class="sets" style="grid-template-columns:1fr 1fr 4.5em"><span class="h">${t("กล้ามเนื้อ")}</span><span class="h">${t("อุปกรณ์")}</span><span class="h">${t("หน่วย")}</span>
       <select data-f="g" aria-label="${t("กล้ามเนื้อ")}" style="${sel}">${GROUPS.map(([v,l])=>`<option value="${v}" ${groupOf(x)===v?"selected":""}>${t(l)}</option>`).join("")}</select>
       <select data-f="z" aria-label="${t("อุปกรณ์")}" style="${sel}">${[["🔩","🔩 "+t("เครื่อง")],["🏋️","🏋️ "+t("ดัมเบล/บาร์")],["🔗","🔗 "+t("เคเบิล")]].map(([v,l])=>`<option value="${v}" ${x.z===v?"selected":""}>${l}</option>`).join("")}</select>
@@ -57,7 +70,11 @@ function libForm(x){
 function renderLib(){
   document.getElementById("lib-title").textContent=t(libMode?"เลือกท่า":"คลังท่า");
   const box=document.getElementById("lib-list");box.innerHTML="";
-  const all=EXLIB.filter(x=>x.id===libEdit||!libMode||!libMode.skip.has(x.id));
+  const mine=EXLIB.filter(x=>x.id===libEdit||!libMode||!libMode.skip.has(x.id));
+  const haveId=new Set(EXLIB.map(x=>x.id)),haveN=new Set(EXLIB.map(x=>(x.n||"").trim().toLowerCase()));
+  const extra=(CAT||[]).filter(c=>!c.as&&!haveId.has(c.id)&&!haveN.has(c.n.toLowerCase())).map(c=>Object.assign({cat:1},c));
+  const q=libQ.trim().toLowerCase(),hit=x=>!q||x.id===libEdit||[x.n,x.t,x.e].some(s=>s&&s.toLowerCase().includes(q));
+  const all=mine.concat(extra).filter(hit);
   const count={};all.forEach(x=>{const g=groupOf(x);count[g]=(count[g]||0)+1});
   const chips=document.getElementById("lib-groups");chips.innerHTML="";
   [["all","ทั้งหมด"],...GROUPS].forEach(([g,l])=>{if(g!=="all"&&!count[g])return;const b=document.createElement("button");b.className="chip";b.setAttribute("aria-pressed",libGroup===g);
@@ -65,9 +82,15 @@ function renderLib(){
   const order=g=>GROUPS.findIndex(q=>q[0]===g);
   const items=all.filter(x=>x.id===libEdit||libGroup==="all"||groupOf(x)===libGroup).sort((a,b)=>order(groupOf(a))-order(groupOf(b))||(a.n||"").localeCompare(b.n||""));
   const hint=document.createElement("p");hint.className="note";
-  hint.textContent=t(!all.length?"ไม่มีท่าอื่นให้เลือก สร้างท่าใหม่ได้เลย":!items.length?"ไม่มีท่าในหมวดนี้":libMode?"แตะท่าเพื่อเลือก":"แตะท่าเพื่อแก้ไข");box.appendChild(hint);
+  const MAX=80,shown=items.filter(x=>!x.cat).concat(items.filter(x=>x.cat)).slice(0,MAX).sort((a,b)=>order(groupOf(a))-order(groupOf(b))||(a.cat||0)-(b.cat||0)||(a.n||"").localeCompare(b.n||""));
+  hint.textContent=t(!all.length?"ไม่มีท่าอื่นให้เลือก สร้างท่าใหม่ได้เลย":!items.length?"ไม่มีท่าในหมวดนี้":libMode?"แตะท่าเพื่อเลือก":"แตะท่าเพื่อแก้ไข")
+    +(items.length>MAX?` · ${t("แสดง")} ${MAX}/${items.length} — ${t("พิมพ์เพื่อค้นหาเพิ่ม")}`:"")+(catLoading?" · "+t("กำลังโหลดท่า…"):"");box.appendChild(hint);
   let lastG=null;
-  items.forEach(x=>{const g=groupOf(x);if(libGroup==="all"&&g!==lastG){lastG=g;const h=document.createElement("div");h.className="pick-h";h.textContent=groupName(g);box.appendChild(h)}
+  shown.forEach(x=>{
+    if(x.cat){const g=groupOf(x);if(libGroup==="all"&&g!==lastG){lastG=g;const h=document.createElement("div");h.className="pick-h";h.textContent=groupName(g);box.appendChild(h)}
+      const b=document.createElement("button");b.className="prog lib-row";b.style.cssText="display:flex;gap:10px;align-items:center;text-align:left";
+      b.innerHTML=`<img src="${esc(x.gif||"")}" alt="" loading="lazy" width="48" height="48" style="border-radius:6px;background:#fff;flex:none;object-fit:cover"><span><b>${x.z} ${esc(x.n)}</b><small style="display:block">${groupName(g)} · ${esc(x.t)} · ${esc(x.e)}</small></span>`;
+      b.addEventListener("click",()=>{const y=adoptCat(x);if(libMode){const m=libMode;closeLib();m.onPick(y)}else{libEdit=y.id;renderLib()}});box.appendChild(b);return}const g=groupOf(x);if(libGroup==="all"&&g!==lastG){lastG=g;const h=document.createElement("div");h.className="pick-h";h.textContent=groupName(g);box.appendChild(h)}
     if(x.id===libEdit){box.appendChild(libForm(x));return}
     const used=libUsed(x.id);const b=document.createElement("button");b.className="prog lib-row";
     b.innerHTML=`<b>${x.z||"🔩"} ${esc(x.n)}</b><small>${groupName(groupOf(x))} · ${(x.u||"kg")} · ${used.length?esc(used.join(", ")):t("ยังไม่ได้ใช้ในโปรแกรม")}</small>`;
@@ -76,4 +99,5 @@ document.getElementById("lib-new").addEventListener("click",()=>{
   EXLIB=EXLIB.filter(libNamed);const x={id:"c"+Date.now().toString(36),n:"",z:"🔩"};if(libGroup!=="all")x.g=libGroup;EXLIB.push(x);libEdit=x.id;renderLib();
   const inp=document.querySelector('#lib-list [data-f="n"]');if(inp){inp.scrollIntoView({block:"center"});inp.focus()}});
 document.getElementById("lib-close").addEventListener("click",closeLib);
+document.getElementById("lib-q").addEventListener("input",ev=>{libQ=ev.target.value;renderLib()});
 document.getElementById("lib-open").addEventListener("click",()=>openLib());

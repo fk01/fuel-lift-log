@@ -1,0 +1,23 @@
+{
+  "_": "ex101 exercises to ship. Key = ex101 id. Value = name of an existing exercise in this app to attach the GIF/how-to to, or null to add it as a new library exercise. Rebuild: node scripts/import-ex101.mjs",
+  "0194": "Cable Overhead Triceps Extension",
+  "0178": "Cable Side Lateral Raise",
+  "0230": "Cable Wood Chop",
+  "0577": "Chest Press Machine",
+  "1452": "Crunch Machine (Abdominal Machine)",
+  "0032": "Deadlift",
+  "0405": "Dumbbell Shoulder Press",
+  "0597": "Hip Abduction (Outer Thigh)",
+  "0598": "Hip Adduction (Inner Thigh)",
+  "0314": "Incline Dumbbell Press",
+  "0198": "Lat Pulldown",
+  "1348": "Lat Row",
+  "0586": "Leg Curl",
+  "0585": "Leg Extension",
+  "0575": "Machine Biceps Curl",
+  "0596": "Peck Deck Fly",
+  "0602": "Reverse Peck Deck Fly",
+  "0861": "Seated Cable Row",
+  "0594": "Seated Calf Raise",
+  "0043": "Squat"
+}
