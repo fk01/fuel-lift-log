@@ -70,7 +70,7 @@ function renderSessions(){
       l.date=v;logs.sort((a,b)=>a.date.localeCompare(b.date));save("gymlog",logs);renderGym();toast(t("ย้ายวันแล้ว"))});
     d.querySelector("[data-ed]")?.addEventListener("click",()=>{DAY=l.date;cur=l.prog;editId=null;editing=false;picked=true;
       draft={prog:l.prog,ex:{}};Object.entries(l.ex).forEach(([id,sets])=>draft.ex[id]=sets.map(s=>({kg:s.kg,reps:String(s.reps),ok:true})));
-      save("gymdraft",draft);renderAll();window.scrollTo({top:0,behavior:"smooth"});toast(t("แก้แล้วกด Save"))});
+      save("gymdraft",draft);renderAll();scrollAppTop(true);toast(t("แก้แล้วกด Save"))});
     d.querySelector("[data-rm]").addEventListener("click",ev=>{const b=ev.target;
       if(b.dataset.sure){logs.splice(idx,1);save("gymlog",logs);renderGym();toast(t("ลบแล้ว"))}else{b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน")}});
     box.appendChild(d);

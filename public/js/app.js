@@ -8,7 +8,7 @@ function show(v){if(!VIEWS.includes(v))v="food";curView=v;if(v==="food"||v==="gy
   VIEWS.forEach(x=>document.getElementById("v-"+x).hidden=x!==v);
   document.getElementById("step1").hidden=!(v==="food"||v==="gym");
   document.querySelectorAll(".tabbar .tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
-  document.getElementById("h1").textContent=t(TITLES[v]);window.scrollTo(0,0);
+  document.getElementById("h1").textContent=t(TITLES[v]);scrollAppTop();
   if(v==="stats")try{renderHistChart()}catch(e){}}
 const viewOf=()=>location.hash.slice(1)||"food";
 document.querySelectorAll(".tabbar .tab").forEach(b=>b.addEventListener("click",()=>{if(location.hash==="#"+b.dataset.v)show(b.dataset.v);else location.hash=b.dataset.v}));

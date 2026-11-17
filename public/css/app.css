@@ -105,7 +105,7 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
 .rest-next{font-size:.85rem;color:var(--muted);text-align:right;min-width:0}
 .rest-next b{color:var(--fg);font-weight:500}
 .rest .track{height:3px}
-.wrap.has-rest{padding-bottom:calc(220px + env(safe-area-inset-bottom,0px))!important}
+.wrap.has-rest{padding-bottom:150px!important}
 .hero{display:flex;align-items:center;gap:14px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--accent-soft)}
 .hero canvas,.rest canvas{image-rendering:pixelated;flex:none}
 .hero-i{flex:1;min-width:0;display:grid;gap:6px}
@@ -166,7 +166,7 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
 .pad-g button{min-height:46px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:8px;font-family:var(--f-num);font-size:1rem;cursor:pointer;padding:0 2px;touch-action:manipulation}
 .pad-g button:active{background:var(--accent-soft);border-color:var(--accent)}.pad-g button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
 .pad-g .minus{color:var(--warn)}.pad-g .plus{color:var(--up)}
-html.modal-open,html.modal-open body{overflow:hidden;overscroll-behavior:none}
+html.modal-open,html.modal-open body,html.modal-open .wrap{overflow:hidden;overscroll-behavior:none}
 .modal{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .modal-in{max-width:420px;width:100%;display:grid;gap:12px}
 .modal-in img{width:auto;max-width:100%;max-height:calc(100dvh - 190px);justify-self:center;object-fit:contain;border-radius:8px;border:1px solid var(--line)}
@@ -188,7 +188,11 @@ html.modal-open,html.modal-open body{overflow:hidden;overscroll-behavior:none}
 .howto ol{margin:0;padding-left:1.2em;font-size:.85rem;opacity:.85}
 
 /* bottom tab bar + menu rows (app-style navigation) */
-.wrap{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+/* app shell: the page itself never scrolls (iOS shifted fixed bars when it did); .wrap is the scroll area above the tab bar */
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+:root{padding:0!important}
+.wrap{position:fixed;top:0;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom,0px));overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+  padding-top:calc(16px + env(safe-area-inset-top,0px))!important;padding-bottom:32px!important}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:14;display:grid;grid-template-columns:repeat(4,1fr);background:#0e0e0df2;backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
 .tabbar .tab{border:0;background:none;color:var(--muted);display:grid;justify-items:center;gap:2px;padding:6px 0;border-radius:10px;font:inherit;cursor:pointer}
 .tabbar .tab span{font-size:1.25rem;line-height:1;filter:grayscale(1);opacity:.7}
