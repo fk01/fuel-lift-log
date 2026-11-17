@@ -12,7 +12,7 @@ const DEFAULT_PROGS={
   {id:"leg-curl",n:"Leg Curl",z:"🔩",s:3,r:"5"}]},
  pull:{name:"Pull A",sub:"พ. · หลัง แขน + Squat แกนกลาง",ex:[
   {id:"lat-pulldown",n:"Lat Pulldown",z:"🔩",s:5,r:"5",main:1},
-  {id:"wide-cable-row",n:"Wide Grip Seated Cable Row",z:"🔗",s:5,r:"5",main:1},
+  {id:"wide-cable-row",n:"Lat Row",z:"🔗",s:5,r:"5",main:1},
   {id:"seated-cable-row",n:"Seated Cable Row",z:"🔗",s:5,r:"5",main:1},
   {id:"squat",n:"Squat",z:"🏋️",s:3,r:"5"},
   {id:"reverse-fly",n:"Reverse Peck Deck Fly",z:"🔩",s:5,r:"5"},
@@ -29,7 +29,7 @@ const DEFAULT_PROGS={
   {id:"hip-abd",n:"Hip Abduction (Outer Thigh)",z:"🔩",s:3,r:"5"}]},
  pull2:{name:"Pull B",sub:"อา. · หลัง แขน + Deadlift แกนกลาง",ex:[
   {id:"lat-pulldown",n:"Lat Pulldown",z:"🔩",s:5,r:"5",main:1},
-  {id:"wide-cable-row",n:"Wide Grip Seated Cable Row",z:"🔗",s:5,r:"5",main:1},
+  {id:"wide-cable-row",n:"Lat Row",z:"🔗",s:5,r:"5",main:1},
   {id:"seated-cable-row",n:"Seated Cable Row",z:"🔗",s:5,r:"5",main:1},
   {id:"deadlift",n:"Deadlift",z:"🏋️",g:"legs",s:3,r:"5"},
   {id:"reverse-fly",n:"Reverse Peck Deck Fly",z:"🔩",s:5,r:"5"},
