@@ -68,9 +68,11 @@ h2{font-size:1.05rem;margin:0}
 .prog-pick .prog{grid-column:span 3;min-width:0}.prog-pick .prog.cardio{grid-column:span 3;grid-template-columns:auto 1fr;text-align:left;align-items:center;column-gap:10px;padding:10px 12px}
 .prog.cardio .ic{grid-row:span 2;font-size:1.4rem}.prog.cardio[aria-pressed="true"]{border-color:var(--up)}.prog.cardio[aria-pressed="true"] small{color:var(--up)}
 .prog b,.prog small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-.prog{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:4px;padding:12px 6px;font:inherit;cursor:pointer;display:grid;gap:2px;text-align:center}
+.prog{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:4px;padding:12px 6px;font:inherit;cursor:pointer;display:grid;gap:2px;align-content:start;text-align:center}
 .prog b{font-family:var(--f-display);font-weight:400;font-size:1.15rem}
 .prog small{color:var(--muted);font-size:.72rem}
+.prog-ex{list-style:none;margin:6px 0 0;padding:6px 0 0;border-top:1px solid var(--line);display:grid;gap:3px;text-align:left;font-size:.72rem;color:var(--fg);min-width:0}
+.prog-ex li{display:flex;gap:4px;min-width:0;line-height:1.3}.prog-ex li span{margin-left:auto;color:var(--muted);font-family:var(--f-num);flex:none}
 .prog[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
 .prog.lib-row{text-align:left;padding:10px 12px}.prog.lib-row b{font-family:var(--f-body);font-weight:500;font-size:.95rem}
 .prog .next{color:var(--up)}
