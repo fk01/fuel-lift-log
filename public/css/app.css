@@ -48,6 +48,8 @@ h2{font-size:1.05rem;margin:0}
 .btn.sm{padding:4px 10px;font-size:.8rem}
 .ex{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:12px 14px;display:grid;gap:8px}
 .ex-name{font-weight:500}
+.fold-i::before{content:"▾";color:var(--muted);font-size:.8rem}.ex.folded .fold-i::before{content:"▸"}
+.ex>.fold-sum{display:none}.ex.folded>.fold-sum{display:block}.ex.folded>*:not(:first-child):not(.fold-sum){display:none}.ex.folded{opacity:.75}
 .zone{font-size:.8rem;color:var(--muted)}
 .last{font-size:.8rem;color:var(--muted);font-family:var(--f-num);font-variant-numeric:tabular-nums}
 .last .up{color:var(--up)}
