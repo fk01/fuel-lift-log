@@ -17,7 +17,7 @@ async function flush(){
         for(const id in now2)if(syncedLogs[id]!==now2[id]){await col.doc(id).set(JSON.parse(now2[id]));syncedLogs[id]=now2[id]}
         for(const id in syncedLogs)if(!(id in now2)){await col.doc(id).delete();delete syncedLogs[id]}
       }
-      if(k==="restcfg"||k==="gymdraft"||k==="progs"||k==="unit"||k==="exlib")await col.doc("settings").set({restCfg,draft,progs:PROGS,lib:EXLIB,unit,scheme:SCHEME});
+      if(k==="restcfg"||k==="gymdraft"||k==="progs"||k==="unit"||k==="exlib")await col.doc("settings").set({restCfg,draft,progs:PROGS,lib:EXLIB,progsRev,unit,scheme:SCHEME});
     }
     syncMsg(t("ซิงก์แล้ว ✓"));
   }catch(e){keys.forEach(k=>dirty.add(k));syncMsg(t("ซิงก์ไม่สำเร็จ"))}
@@ -35,7 +35,7 @@ async function cloudLoad(){
     snap.docs.forEach(d=>{const v=JSON.parse(JSON.stringify(d.data()||{}));
       if(d.id.startsWith("f-")){const {date,...rest}=v;food[date]=rest;seenF.add(date)}
       else if(d.id.startsWith("g-")){const i=logs.findIndex(l=>logId(l)===d.id);if(i>=0)logs[i]=v;else logs.push(v);syncedLogs[d.id]=JSON.stringify(v)}
-      else if(d.id==="settings"){Object.assign(restCfg,v.restCfg||{});if(v.progs){PROGS=v.progs;if((v.scheme||1)<SCHEME){to5x5();toUpload.add("progs")}}if(Array.isArray(v.lib))EXLIB=v.lib;if(v.unit)unit=v.unit;if(v.draft&&v.draft.prog&&!draft.prog)draft=v.draft}
+      else if(d.id==="settings"){Object.assign(restCfg,v.restCfg||{});if(v.progs){PROGS=v.progs;if((v.scheme||1)<SCHEME){to5x5();toUpload.add("progs")}}if(Array.isArray(v.lib))EXLIB=v.lib;setProgsRev(+v.progsRev||0);if(v.unit)unit=v.unit;if(v.draft&&v.draft.prog&&!draft.prog)draft=v.draft}
     });
     logs.sort((a,b)=>a.date.localeCompare(b.date));
     food[TODAY]=food[TODAY]||{done:{},tags:{}};

@@ -17,9 +17,18 @@ export async function docsRoutes(req, env, url) {
     if (m === "PUT") {
       const body = await req.text();
       if (body.length > 900_000) return json({ error: "too large" }, 413);
-      JSON.parse(body);
+      let doc = JSON.parse(body), value = body;
+      // settings: never let a device with an older copy of the programs / exercise library overwrite a newer one
+      if (id === "settings" && doc && typeof doc === "object") {
+        const cur = await env.DB.prepare("SELECT value FROM docs WHERE id = ?1").bind(id).first();
+        const old = cur ? JSON.parse(cur.value) : null;
+        if (old && (+old.progsRev || 0) > (+doc.progsRev || 0)) {
+          doc = { ...doc, progs: old.progs, lib: old.lib, progsRev: old.progsRev, scheme: old.scheme ?? doc.scheme };
+          value = JSON.stringify(doc);
+        }
+      }
       await env.DB.prepare("INSERT INTO docs (id, value, updated) VALUES (?1, ?2, ?3) ON CONFLICT(id) DO UPDATE SET value = ?2, updated = ?3")
-        .bind(id, body, Date.now()).run();
+        .bind(id, value, Date.now()).run();
       return json({ ok: true });
     }
     if (m === "DELETE") {

@@ -2,7 +2,10 @@
 // Classic script: shares globals with the other files in /js (load order is set in index.html).
 /* ---------- storage ---------- */
 function load(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}}
-function save(k,v){if(k==="gymdraft"&&v&&v.ex&&Object.keys(v.ex).length&&typeof DAY!=="undefined"){v.day=DAY;v.prog=v.prog||cur}try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(typeof markDirty==="function")markDirty(k)}
+// progsRev: when programs / exercise library were last edited on this device; the server keeps whichever copy is newer
+let progsRev=(()=>{try{return +localStorage.getItem("progsrev")||0}catch(e){return 0}})();
+function setProgsRev(r){progsRev=r;try{localStorage.setItem("progsrev",String(r))}catch(e){}}
+function save(k,v){if(k==="progs"||k==="exlib")setProgsRev(Date.now());if(k==="gymdraft"&&v&&v.ex&&Object.keys(v.ex).length&&typeof DAY!=="undefined"){v.day=DAY;v.prog=v.prog||cur}try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(typeof markDirty==="function")markDirty(k)}
 const now=new Date();
 const dkey=d=>{const t=new Date(d.getTime()-d.getTimezoneOffset()*60000);return t.toISOString().slice(0,10)};
 let TODAY=dkey(now);
