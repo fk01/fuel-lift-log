@@ -25,12 +25,13 @@ const DEFAULT_PROGS={
   {id:"cable-lat-raise",n:"Cable Side Lateral Raise",z:"🔗",s:5,r:"5"},
   {id:"cable-oh-tri",n:"Cable Overhead Triceps Extension",z:"🔗",s:5,r:"5"},
   {id:"seated-calf",n:"Seated Calf Raise",z:"🔩",s:3,r:"5"}]},
- pull2:{name:"Pull B",sub:"อา. · หลัง แขน + ขาใน แกนกลาง",ex:[
+ pull2:{name:"Pull B",sub:"อา. · หลัง แขน + ขาใน ขานอก แกนกลาง",ex:[
   {id:"lat-pulldown",n:"Lat Pulldown",z:"🔩",s:5,r:"5",main:1},
   {id:"seated-cable-row",n:"Seated Cable Row",z:"🔗",s:5,r:"5"},
   {id:"reverse-fly",n:"Reverse Peck Deck Fly",z:"🔩",s:5,r:"5"},
   {id:"machine-curl",n:"Machine Biceps Curl",z:"🔩",s:5,r:"5"},
   {id:"hip-add",n:"Hip Adduction (Inner Thigh)",z:"🔩",s:3,r:"5"},
+  {id:"hip-abd",n:"Hip Abduction (Outer Thigh)",z:"🔩",s:3,r:"5"},
   {id:"woodchop",n:"Cable Wood Chop",z:"🔗",s:5,r:"5"}]},
 };
 /* ตารางสัปดาห์: จ.=วิ่ง 10K · อ.=Push A · พ.=Pull A · พฤ.=แบด · ศ.=พัก · ส.=Push B · อา.=Pull B (ขากระจายทุกวันเวท) */
