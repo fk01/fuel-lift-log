@@ -52,7 +52,7 @@ function renderPM(){
   keys.forEach((k,i)=>{const p=PROGS[k];const c=document.createElement("div");c.className="ex";
     c.innerHTML=`<input data-f="name" value="${esc(p.name)}" aria-label="${t("ชื่อโปรแกรม")}" style="${pmFld};font-family:var(--f-display);font-size:1.05rem">
       <input data-f="sub" value="${esc(p.sub||"")}" placeholder="${t("คำอธิบาย")}" aria-label="${t("คำอธิบาย")}" style="${pmFld};font-size:.85rem">
-      <ul class="prog-ex" style="margin:0">${p.ex.map(e=>`<li>${isLocked(k,e)?"🔒 ":""}${e.z} ${esc(e.n)} <i class="mg">${groupName(groupOf(e))}</i><span>${e.s}×${e.r}</span></li>`).join("")}</ul>
+      <ul class="prog-ex" style="margin:0">${p.ex.map((e,n)=>`<li><b class="no">${n+1}</b><em class="nm">${isLocked(k,e)?"🔒 ":""}${e.z} ${esc(e.n)}</em><span class="ss">${e.s}×${e.r}</span><i class="mg">${groupName(groupOf(e))}</i></li>`).join("")}</ul>
       <div class="actions"><button class="btn sm" data-up ${i===0?"disabled":""}>↑</button><button class="btn sm" data-down ${i===keys.length-1?"disabled":""}>↓</button>
         <button class="btn sm ghost" data-del>${t("ลบโปรแกรม")}</button><button class="btn sm primary" data-ex style="margin-left:auto">✎ ${t("แก้ท่า")}</button></div>`;
     const on=(s,ev,fn)=>c.querySelector(s).addEventListener(ev,fn);
