@@ -146,6 +146,15 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
 .badge.lock{opacity:.35;filter:grayscale(1)}
 .badge.got{border-color:var(--up)}
 .modal{position:fixed;inset:0;z-index:30;background:#000;display:grid;place-items:center;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow:auto}
+[data-pad]{cursor:pointer;caret-color:transparent}
+.modal.pad{z-index:40;background:rgba(0,0,0,.6);place-items:end center;padding-top:16px}
+.pad-in{max-width:420px;width:100%;box-sizing:border-box;display:grid;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
+.pad-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.pad-top small{color:var(--muted);font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pad-top b{font-family:var(--f-num);font-size:2rem;font-weight:600;white-space:nowrap}
+.pad-g{display:grid;gap:6px}
+.pad-g button{min-height:46px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:8px;font-family:var(--f-num);font-size:1rem;cursor:pointer;padding:0 2px;touch-action:manipulation}
+.pad-g button:active{background:var(--accent-soft);border-color:var(--accent)}.pad-g button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.pad-g .minus{color:var(--warn)}.pad-g .plus{color:var(--up)}
 .modal-in{max-width:420px;width:100%;display:grid;gap:12px}
 .modal-in img{width:auto;max-width:100%;max-height:calc(100dvh - 190px);justify-self:center;object-fit:contain;border-radius:8px;border:1px solid var(--line)}
 #ptr{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:25;width:40px;height:40px;margin-left:-20px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;color:var(--fg);font-family:var(--f-num);transform:translateY(-80px);opacity:0;transition:transform .2s,opacity .2s;pointer-events:none}
@@ -256,11 +265,19 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
     <button class="btn" type="button" id="passkey-login" hidden>🙂 Face ID</button>
   </form>
 </div>
+<div class="modal pad" id="pad" hidden role="dialog" aria-modal="true" aria-label="Number picker">
+  <div class="pad-in">
+    <div class="pad-top"><small id="pad-t"></small><b id="pad-v">–</b></div>
+    <div class="pad-g" id="pad-chips"></div>
+    <div class="pad-g" id="pad-steps"></div>
+    <div class="actions"><button class="btn ghost" id="pad-clear" data-i="ล้าง">ล้าง</button><button class="btn primary" id="pad-done" style="flex:1" data-i="เสร็จ">เสร็จ</button></div>
+  </div>
+</div>
 <div class="modal" id="run-modal" hidden role="dialog" aria-modal="true" aria-label="Run">
   <div class="modal-in run-in">
     <div class="label" style="margin:0">🏃 <span data-i="บันทึกการวิ่ง">บันทึกการวิ่ง</span></div>
-    <div class="run-f"><label><span data-i="ระยะ (km)">ระยะ (km)</span><input id="run-km" type="number" inputmode="decimal" step="0.01" min="0" placeholder="10.00"></label>
-    <label><span data-i="เวลา (ชม:นาที:วิ)">เวลา (ชม:นาที:วิ)</span><input id="run-time" inputmode="numeric" placeholder="58:30"></label></div>
+    <div class="run-f"><label><span data-i="ระยะ (km)">ระยะ (km)</span><input id="run-km" type="text" readonly inputmode="none" data-pad="km" placeholder="10.00"></label>
+    <label><span data-i="เวลา (ชม:นาที:วิ)">เวลา (ชม:นาที:วิ)</span><input id="run-time" type="text" readonly inputmode="none" data-pad="time" placeholder="58:30"></label></div>
     <label class="btn sm" style="justify-self:start;cursor:pointer">📷 <span data-i="เลือกรูปพื้นหลัง">เลือกรูปพื้นหลัง</span><input id="run-photo" type="file" accept="image/*" hidden></label><small id="run-photo-n" style="color:var(--muted);margin-top:-8px"></small>
     <div class="run-pace"><small>Pace</small><b id="run-pace">– /km</b></div>
     <div class="actions"><button class="btn primary" id="run-save" data-i="เซฟ">เซฟ</button><button class="btn" id="run-share" style="background:#fc5200;border:0;color:#fff" data-i="แชร์การ์ด">แชร์การ์ด</button><button class="btn" id="run-overlay" data-i="แบบพื้นใส">แบบพื้นใส</button></div>
@@ -499,7 +516,7 @@ function renderEx(){
       <div class="row-head"><div class="last">${lastTxt}</div><div class="restset">⏱ <button data-rm-rest aria-label="− ${e.n}">−</button><b>${fmt(restFor(e))}</b><button data-add-rest aria-label="+ ${e.n}">+</button></div></div>
       ${e.main?`<div class="zone">${t("วอม")}: 50% × 8 · 75% × 3</div>`:""}
       <div class="sets"><span class="h">${t("เซ็ต")}</span><button class="h" data-unit aria-label="${t("หน่วย")} ${e.n}" style="border:1px solid var(--line);background:none;color:var(--fg);border-radius:999px;font-family:var(--f-num);font-size:.72rem;cursor:pointer;padding:2px 0">${u} ⇄</button><span class="h">${t("ครั้ง")}</span><span class="h">✓</span>
-      ${rows.map((r,i)=>`<span class="n">${i+1}</span><input type="number" inputmode="decimal" step="0.5" min="0" id="kg-${e.id}-${i}" value="${toDisp(r.kg,u)}" placeholder="${u}" aria-label="${e.n} ${i+1} weight"><input type="number" inputmode="numeric" min="0" id="rp-${e.id}-${i}" value="${r.reps}" placeholder="${e.r}" aria-label="${e.n} ${i+1} reps"><input type="checkbox" id="ok-${e.id}-${i}" ${r.ok?"checked":""} aria-label="${i+1} done">`).join("")}
+      ${rows.map((r,i)=>`<span class="n">${i+1}</span><input type="number" readonly inputmode="none" data-pad="kg" id="kg-${e.id}-${i}" value="${toDisp(r.kg,u)}" placeholder="${u}" aria-label="${e.n} ${i+1} weight"><input type="number" readonly inputmode="none" data-pad="reps" id="rp-${e.id}-${i}" value="${r.reps}" placeholder="${e.r}" aria-label="${e.n} ${i+1} reps"><input type="checkbox" id="ok-${e.id}-${i}" ${r.ok?"checked":""} aria-label="${i+1} done">`).join("")}
       </div>
       <div class="actions"><button class="btn sm" data-add>+ ${t("เซ็ต")}</button>${rows.length>1?`<button class="btn sm ghost" data-del>− ${t("เซ็ต")}</button>`:""}</div>
       ${exHistory(e.id)}`;
@@ -595,8 +612,8 @@ function editCard(box,e,i){
     c.innerHTML=`<input id="en-${e.id}" value="${esc(e.n)}" aria-label="${t("ชื่อท่า")}" style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px;font:inherit">
       <div class="sets" style="grid-template-columns:1fr 1fr 1fr"><span class="h">${t("อุปกรณ์")}</span><span class="h">${t("เซ็ต")}</span><span class="h">${t("ช่วงครั้ง")}</span>
       <select id="ez-${e.id}" style="background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:7px;font:inherit">${[["🔩","🔩 "+t("เครื่อง")],["🏋️","🏋️ "+t("ดัมเบล/บาร์")],["🔗","🔗 "+t("เคเบิล")]].map(([v,t])=>`<option value="${v}" ${e.z===v?"selected":""}>${t}</option>`).join("")}</select>
-      <input type="number" min="1" max="10" id="es-${e.id}" value="${e.s}" aria-label="${t("เซ็ต")}">
-      <input id="er-${e.id}" value="${esc(e.r)}" aria-label="${t("ช่วงครั้ง")}" style="min-width:0;box-sizing:border-box;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:6px;padding:7px 6px;font-family:var(--f-num);text-align:center"></div>
+      <input type="number" readonly inputmode="none" data-pad="sets" id="es-${e.id}" value="${e.s}" aria-label="${t("เซ็ต")}">
+      <input id="er-${e.id}" readonly inputmode="none" data-pad="rng" value="${esc(e.r)}" aria-label="${t("ช่วงครั้ง")}" style="min-width:0;box-sizing:border-box;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:6px;padding:7px 6px;font-family:var(--f-num);text-align:center"></div>
       <input id="el-${e.id}" type="url" inputmode="url" value="${esc(e.link||"")}" placeholder="${t("ลิงก์วิธีเล่น (YouTube / TikTok)")}" aria-label="link" style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px;font:inherit;font-size:.85rem">
       <label class="zone" style="display:flex;gap:8px;align-items:center">${t("หน่วย")} <select id="eu-${e.id}" style="background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px;font:inherit"><option value="kg" ${(e.u||"kg")==="kg"?"selected":""}>kg</option><option value="lb" ${e.u==="lb"?"selected":""}>lb</option></select></label>
       <label class="zone" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="em-${e.id}" ${e.main?"checked":""} style="accent-color:var(--accent)"> ${t("ท่าหลัก")}</label>
@@ -947,6 +964,42 @@ async function doRefresh(){
   refreshing=true;lastRefresh=Date.now();
   try{clearTimeout(syncT);if(dirty.size)await flush();await cloudLoad();toast(t("อัปเดตแล้ว"))}catch(e){toast(t("ซิงก์ไม่สำเร็จ"))}finally{refreshing=false}
 }
+
+/* ---------- tap-only number picker (no keyboard) ---------- */
+const seq=n=>Array.from({length:n},(_,i)=>i+1);
+const PAD={
+  kg:{steps:[1,2.5,5,10],sib:1},
+  reps:{chips:seq(20),cols:5,steps:[1]},
+  sets:{chips:seq(10),cols:5},
+  rng:{chips:["5","6","8","10","12","15","5-8","6-10","8-12","10-15","12-15","15-20"],cols:4,text:1},
+  km:{steps:[.01,.1,1],chips:[3,5,10,21.1],cols:4,def:10,fix:2},
+  time:{steps:[1,10,60,600],lab:["1s","10s","1m","10m"],def:3600,time:1}
+};
+let pad=null;
+function padFmt(){const c=pad.c,v=pad.v;if(v===null||v==="")return "";return c.text?String(v):c.time?fmtDur(v):c.fix?(+v).toFixed(c.fix):String(v)}
+function padShow(){document.getElementById("pad-v").textContent=padFmt()||"–";
+  document.querySelectorAll("#pad-chips button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===String(pad.v)))}
+function padCommit(){if(!pad||!pad.dirty)return;pad.dirty=false;const el=pad.el;el.value=padFmt();
+  el.dispatchEvent(new Event("input",{bubbles:true}));el.dispatchEvent(new Event("change",{bubbles:true}))}
+function padClose(){padCommit();pad=null;document.getElementById("pad").hidden=true}
+function openPad(el){const c=PAD[el.dataset.pad];if(!c)return;el.blur();
+  const raw=el.value.trim();let v=raw===""?null:c.text?raw:c.time?parseDur(raw):+raw;if(!c.text&&v!==null&&!isFinite(v))v=null;
+  pad={el,c,v,dirty:false};if(v===null&&c.def!=null){pad.v=c.def;pad.dirty=true}
+  const lab=el.closest("label");document.getElementById("pad-t").textContent=el.getAttribute("aria-label")||(lab&&lab.querySelector("span")?lab.querySelector("span").textContent:"");
+  let chips=(c.chips||[]).slice();
+  if(c.sib){const g=el.closest(".sets");if(g)chips=[...new Set([...g.querySelectorAll(`[data-pad="${el.dataset.pad}"]`)].map(x=>x.value).filter(x=>x!==""))].slice(0,8)}
+  const cb=document.getElementById("pad-chips");cb.hidden=!chips.length;cb.style.gridTemplateColumns=`repeat(${c.cols||Math.min(4,chips.length||1)},minmax(0,1fr))`;
+  cb.innerHTML=chips.map(x=>`<button type="button" data-v="${x}">${x}</button>`).join("");
+  const st=c.steps||[],sb=document.getElementById("pad-steps");sb.hidden=!st.length;sb.style.gridTemplateColumns=`repeat(${st.length===1?2:st.length||1},minmax(0,1fr))`;
+  sb.innerHTML=[-1,1].map(sg=>st.map((d,i)=>`<button type="button" class="${sg<0?"minus":"plus"}" data-d="${sg*d}">${sg<0?"−":"+"}${c.lab?c.lab[i]:d}</button>`).join("")).join("");
+  padShow();document.getElementById("pad").hidden=false}
+document.addEventListener("click",ev=>{const el=ev.target.closest&&ev.target.closest("input[data-pad]");if(el){ev.preventDefault();openPad(el)}});
+document.getElementById("pad-chips").addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b||!pad)return;pad.v=pad.c.text?b.dataset.v:+b.dataset.v;pad.dirty=true;padClose()});
+document.getElementById("pad-steps").addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b||!pad)return;
+  pad.v=Math.max(0,Math.round(((+pad.v||0)+ +b.dataset.d)*100)/100);pad.dirty=true;padCommit();padShow()});
+document.getElementById("pad-clear").addEventListener("click",()=>{if(!pad)return;pad.v=null;pad.dirty=true;padClose()});
+document.getElementById("pad-done").addEventListener("click",padClose);
+document.getElementById("pad").addEventListener("click",ev=>{if(ev.target.id==="pad")padClose()});
 
 /* ---------- pull to refresh ---------- */
 (()=>{const el=document.getElementById("ptr"),ic=document.getElementById("ptr-i");let y0=null,dy=0;const MAX=110,TRIG=80;
