@@ -2,38 +2,38 @@
 // Classic script: shares globals with the other files in /js (load order is set in index.html).
 /* ---------- GYM ---------- */
 const DEFAULT_PROGS={
- push:{name:"Push A",sub:"อ. · อก ไหล่ + ต้นขา",ex:[
+ push:{name:"Push A",sub:"อ. · อก ไหล่ + ต้นขาหน้า ขาหลัง",ex:[
   {id:"chest-press",n:"Chest Press Machine",z:"🔩",s:5,r:"5",alt:"pec-fly"},
   {id:"incline-db",n:"Incline Dumbbell Press",z:"🏋️",s:5,r:"5",main:1},
   {id:"db-shoulder-press",n:"Dumbbell Shoulder Press",z:"🏋️",s:5,r:"5",main:1},
   {id:"cable-lat-raise",n:"Cable Side Lateral Raise",z:"🔗",s:5,r:"5",main:1},
   {id:"cable-oh-tri",n:"Cable Overhead Triceps Extension",z:"🔗",s:5,r:"5",main:1},
-  {id:"leg-ext",n:"Leg Extension",z:"🔩",s:3,r:"5"}]},
- pull:{name:"Pull A",sub:"พ. · หลัง แขน + Squat ขาหลัง",ex:[
+  {id:"leg-ext",n:"Leg Extension",z:"🔩",s:3,r:"5"},
+  {id:"leg-curl",n:"Leg Curl",z:"🔩",s:3,r:"5"}]},
+ pull:{name:"Pull A",sub:"พ. · หลัง แขน + Squat แกนกลาง",ex:[
   {id:"lat-pulldown",n:"Lat Pulldown",z:"🔩",s:5,r:"5",main:1},
   {id:"wide-cable-row",n:"Wide Grip Seated Cable Row",z:"🔗",s:5,r:"5",main:1},
   {id:"seated-cable-row",n:"Seated Cable Row",z:"🔗",s:5,r:"5",main:1},
   {id:"squat",n:"Squat",z:"🏋️",s:3,r:"5"},
   {id:"reverse-fly",n:"Reverse Peck Deck Fly",z:"🔩",s:5,r:"5"},
   {id:"machine-curl",n:"Machine Biceps Curl",z:"🔩",s:5,r:"5"},
-  {id:"leg-curl",n:"Leg Curl",z:"🔩",s:3,r:"5"},
   {id:"abdominal",n:"Crunch Machine (Abdominal Machine)",z:"🔩",s:5,r:"5"}]},
- push2:{name:"Push B",sub:"ส. · อก ไหล่ + น่อง",ex:[
+ push2:{name:"Push B",sub:"ส. · อก ไหล่ + น่อง ขาใน ขานอก",ex:[
   {id:"pec-fly",n:"Peck Deck Fly",z:"🔩",s:5,r:"5",alt:"chest-press"},
   {id:"incline-db",n:"Incline Dumbbell Press",z:"🏋️",s:5,r:"5",main:1},
   {id:"db-shoulder-press",n:"Dumbbell Shoulder Press",z:"🏋️",s:5,r:"5",main:1},
   {id:"cable-lat-raise",n:"Cable Side Lateral Raise",z:"🔗",s:5,r:"5",main:1},
   {id:"cable-oh-tri",n:"Cable Overhead Triceps Extension",z:"🔗",s:5,r:"5",main:1},
-  {id:"seated-calf",n:"Seated Calf Raise",z:"🔩",s:3,r:"5"}]},
- pull2:{name:"Pull B",sub:"อา. · หลัง แขน + Deadlift ขาใน ขานอก แกนกลาง",ex:[
+  {id:"seated-calf",n:"Seated Calf Raise",z:"🔩",s:3,r:"5"},
+  {id:"hip-add",n:"Hip Adduction (Inner Thigh)",z:"🔩",s:3,r:"5"},
+  {id:"hip-abd",n:"Hip Abduction (Outer Thigh)",z:"🔩",s:3,r:"5"}]},
+ pull2:{name:"Pull B",sub:"อา. · หลัง แขน + Deadlift แกนกลาง",ex:[
   {id:"lat-pulldown",n:"Lat Pulldown",z:"🔩",s:5,r:"5",main:1},
   {id:"wide-cable-row",n:"Wide Grip Seated Cable Row",z:"🔗",s:5,r:"5",main:1},
   {id:"seated-cable-row",n:"Seated Cable Row",z:"🔗",s:5,r:"5",main:1},
   {id:"deadlift",n:"Deadlift",z:"🏋️",g:"legs",s:3,r:"5"},
   {id:"reverse-fly",n:"Reverse Peck Deck Fly",z:"🔩",s:5,r:"5"},
   {id:"machine-curl",n:"Machine Biceps Curl",z:"🔩",s:5,r:"5"},
-  {id:"hip-add",n:"Hip Adduction (Inner Thigh)",z:"🔩",s:3,r:"5"},
-  {id:"hip-abd",n:"Hip Abduction (Outer Thigh)",z:"🔩",s:3,r:"5"},
   {id:"woodchop",n:"Cable Wood Chop",z:"🔗",s:5,r:"5"}]},
 };
 /* ตารางสัปดาห์: จ.=วิ่ง 10K · อ.=Push A · พ.=Pull A · พฤ.=แบด · ศ.=พัก · ส.=Push B · อา.=Pull B (ขากระจายทุกวันเวท) */
