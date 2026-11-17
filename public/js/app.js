@@ -10,6 +10,9 @@ document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{loc
 window.addEventListener("hashchange",()=>show(location.hash==="#gym"?"gym":"food"));
 function renderAll(){applyStatic();document.getElementById("today-btn").hidden=DAY===TODAY;document.getElementById("save-day").textContent="→ "+new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"numeric"});document.getElementById("date").textContent=new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{weekday:"long",day:"numeric",month:"long",year:"numeric"})+(DAY===TODAY?"":" · "+(lang==="th"?"ย้อนหลัง":"Backfill"));updUnitBtn();renderFood();renderGym();show(location.hash==="#gym"?"gym":"food")}
 document.getElementById("lang").addEventListener("click",()=>{lang=lang==="th"?"en":"th";try{localStorage.setItem("lang",lang)}catch(e){}renderAll()});
+/* ---------- lock page scroll while a full-screen modal is open (iOS scrolled the page behind it) ---------- */
+(()=>{const sync=()=>document.documentElement.classList.toggle("modal-open",[...document.querySelectorAll(".modal:not(.pad)")].some(m=>!m.hidden));
+  const mo=new MutationObserver(sync);document.querySelectorAll(".modal").forEach(m=>mo.observe(m,{attributes:true,attributeFilter:["hidden"]}));sync()})();
 /* ---------- startup ---------- */
 pkState();
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").then(pushState).catch(()=>{})}else{pushState()}

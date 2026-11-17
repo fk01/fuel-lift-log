@@ -166,6 +166,8 @@ details.log summary{cursor:pointer;font-size:.85rem;color:var(--accent)}
 .pad-g button{min-height:46px;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:8px;font-family:var(--f-num);font-size:1rem;cursor:pointer;padding:0 2px;touch-action:manipulation}
 .pad-g button:active{background:var(--accent-soft);border-color:var(--accent)}.pad-g button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
 .pad-g .minus{color:var(--warn)}.pad-g .plus{color:var(--up)}
+html.modal-open,html.modal-open body{overflow:hidden;overscroll-behavior:none}
+.modal{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .modal-in{max-width:420px;width:100%;display:grid;gap:12px}
 .modal-in img{width:auto;max-width:100%;max-height:calc(100dvh - 190px);justify-self:center;object-fit:contain;border-radius:8px;border:1px solid var(--line)}
 #ptr{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:25;width:40px;height:40px;margin-left:-20px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;color:var(--fg);font-family:var(--f-num);transform:translateY(-80px);opacity:0;transition:transform .2s,opacity .2s;pointer-events:none}

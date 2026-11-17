@@ -24,6 +24,7 @@ function loadCat(){if(CAT||catLoading)return;catLoading=true;
   fetch("/data/ex101.json").then(r=>r.ok?r.json():[]).catch(()=>[]).then(d=>{CAT=Array.isArray(d)?d:[];catLoading=false;
     if(!document.getElementById("lib-modal").hidden)renderLib();else try{renderGym()}catch(_){}})}
 // collapsible "How to" block (GIF + steps) for an exercise; "" when it has no demo
+const gifOf=x=>x.gif||((catOf(x)||{}).gif)||"";
 function howTo(x){const cat=catOf(x),gif=x.gif||(cat&&cat.gif);if(!gif)return "";
   return `<details class="howto"><summary>▶ ${t("วิธีเล่น")}${cat?` <small>${esc(cat.t)} · ${esc(cat.e)}</small>`:""}</summary>
     <img src="${esc(gif)}" alt="" loading="lazy">
@@ -55,7 +56,7 @@ function libForm(x){
       <select data-f="g" aria-label="${t("กล้ามเนื้อ")}" style="${sel}">${GROUPS.map(([v,l])=>`<option value="${v}" ${groupOf(x)===v?"selected":""}>${t(l)}</option>`).join("")}</select>
       <select data-f="z" aria-label="${t("อุปกรณ์")}" style="${sel}">${[["🔩","🔩 "+t("เครื่อง")],["🏋️","🏋️ "+t("ดัมเบล/บาร์")],["🔗","🔗 "+t("เคเบิล")]].map(([v,l])=>`<option value="${v}" ${x.z===v?"selected":""}>${l}</option>`).join("")}</select>
       <select data-f="u" aria-label="${t("หน่วย")}" style="${sel}"><option value="kg" ${(x.u||"kg")==="kg"?"selected":""}>kg</option><option value="lb" ${x.u==="lb"?"selected":""}>lb</option></select></div>
-    <input data-f="link" type="url" inputmode="url" value="${esc(x.link||"")}" placeholder="${t("ลิงก์วิธีเล่น (YouTube / TikTok)")}" aria-label="link" style="${fld};font-size:.85rem">
+    <input data-f="link" ${gifOf(x)&&!x.link?"hidden":""} type="url" inputmode="url" value="${esc(x.link||"")}" placeholder="${t("ลิงก์วิธีเล่น (YouTube / TikTok)")}" aria-label="link" style="${fld};font-size:.85rem">
     <div class="zone">${used.length?t("ใช้ใน")+": "+used.map(esc).join(", "):t("ยังไม่ได้ใช้ในโปรแกรม")}</div>
     <div class="actions"><button class="btn sm ghost" data-del>${t("ลบท่า")}</button><button class="btn sm primary" data-done style="margin-left:auto">${t("เสร็จ")}</button></div>`;
   const on=(s,ev,fn)=>c.querySelector(s).addEventListener(ev,fn);
@@ -96,7 +97,8 @@ function renderLib(){
       b.addEventListener("click",()=>{const y=adoptCat(x);if(libMode){const m=libMode;closeLib();m.onPick(y)}else{libEdit=y.id;renderLib()}});box.appendChild(b);return}const g=groupOf(x);if(libGroup==="all"&&g!==lastG){lastG=g;const h=document.createElement("div");h.className="pick-h";h.textContent=groupName(g);box.appendChild(h)}
     if(x.id===libEdit){box.appendChild(libForm(x));return}
     const used=libUsed(x.id);const b=document.createElement("button");b.className="prog lib-row";
-    b.innerHTML=`<b>${x.z||"🔩"} ${esc(x.n)}</b><small>${groupName(groupOf(x))} · ${(x.u||"kg")} · ${used.length?esc(used.join(", ")):t("ยังไม่ได้ใช้ในโปรแกรม")}</small>`;
+    const th=gifOf(x);if(th)b.style.cssText="display:flex;gap:10px;align-items:center;text-align:left";
+    b.innerHTML=th?`<img src="${esc(th)}" alt="" loading="lazy" width="48" height="48" style="border-radius:6px;background:#fff;flex:none;object-fit:cover"><span style="display:grid;gap:2px;min-width:0"><b>${x.z||"🔩"} ${esc(x.n)}</b><small>${groupName(groupOf(x))} · ${(x.u||"kg")} · ${used.length?esc(used.join(", ")):t("ยังไม่ได้ใช้ในโปรแกรม")}</small></span>`:`<b>${x.z||"🔩"} ${esc(x.n)}</b><small>${groupName(groupOf(x))} · ${(x.u||"kg")} · ${used.length?esc(used.join(", ")):t("ยังไม่ได้ใช้ในโปรแกรม")}</small>`;
     b.addEventListener("click",()=>{if(libMode){const m=libMode;closeLib();m.onPick(x)}else{libEdit=x.id;renderLib()}});box.appendChild(b)})}
 document.getElementById("lib-new").addEventListener("click",()=>{
   EXLIB=EXLIB.filter(libNamed);const x={id:"c"+Date.now().toString(36),n:"",z:"🔩"};if(libGroup!=="all")x.g=libGroup;EXLIB.push(x);libEdit=x.id;renderLib();
