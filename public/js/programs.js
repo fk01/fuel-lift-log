@@ -8,28 +8,28 @@ const DEFAULT_PROGS={
   {id:"db-shoulder-press",n:"Dumbbell Shoulder Press",z:"🏋️",s:5,r:"5",main:1},
   {id:"cable-lat-raise",n:"Cable Side Lateral Raise",z:"🔗",s:5,r:"5",main:1},
   {id:"cable-oh-tri",n:"Cable Overhead Triceps Extension",z:"🔗",s:5,r:"5",main:1},
-  {id:"leg-ext",n:"Leg Extension",z:"🔩",s:3,r:"5"},
-  {id:"hip-abd",n:"Hip Abduction (Outer Thigh)",z:"🔩",s:3,r:"5"}]},
- pull:{name:"Pull A",sub:"พ. · หลัง แขน + ขาหลัง",ex:[
+  {id:"leg-ext",n:"Leg Extension",z:"🔩",s:3,r:"5"}]},
+ pull:{name:"Pull A",sub:"พ. · หลัง แขน + Squat ขาหลัง",ex:[
   {id:"lat-pulldown",n:"Lat Pulldown",z:"🔩",s:5,r:"5",main:1},
   {id:"wide-cable-row",n:"Wide Grip Seated Cable Row",z:"🔗",s:5,r:"5",main:1},
   {id:"seated-cable-row",n:"Seated Cable Row",z:"🔗",s:5,r:"5",main:1},
+  {id:"squat",n:"Squat",z:"🏋️",s:3,r:"5"},
   {id:"reverse-fly",n:"Reverse Peck Deck Fly",z:"🔩",s:5,r:"5"},
   {id:"machine-curl",n:"Machine Biceps Curl",z:"🔩",s:5,r:"5"},
   {id:"leg-curl",n:"Leg Curl",z:"🔩",s:3,r:"5"},
   {id:"abdominal",n:"Crunch Machine (Abdominal Machine)",z:"🔩",s:5,r:"5"}]},
- push2:{name:"Push B",sub:"ส. · Squat + อก ไหล่ น่อง",ex:[
-  {id:"squat",n:"Squat",z:"🏋️",s:3,r:"5"},
+ push2:{name:"Push B",sub:"ส. · อก ไหล่ + น่อง",ex:[
   {id:"pec-fly",n:"Peck Deck Fly",z:"🔩",s:5,r:"5",alt:"chest-press"},
   {id:"incline-db",n:"Incline Dumbbell Press",z:"🏋️",s:5,r:"5",main:1},
   {id:"db-shoulder-press",n:"Dumbbell Shoulder Press",z:"🏋️",s:5,r:"5",main:1},
   {id:"cable-lat-raise",n:"Cable Side Lateral Raise",z:"🔗",s:5,r:"5",main:1},
   {id:"cable-oh-tri",n:"Cable Overhead Triceps Extension",z:"🔗",s:5,r:"5",main:1},
   {id:"seated-calf",n:"Seated Calf Raise",z:"🔩",s:3,r:"5"}]},
- pull2:{name:"Pull B",sub:"อา. · หลัง แขน + ขาใน ขานอก แกนกลาง",ex:[
+ pull2:{name:"Pull B",sub:"อา. · หลัง แขน + Deadlift ขาใน ขานอก แกนกลาง",ex:[
   {id:"lat-pulldown",n:"Lat Pulldown",z:"🔩",s:5,r:"5",main:1},
   {id:"wide-cable-row",n:"Wide Grip Seated Cable Row",z:"🔗",s:5,r:"5",main:1},
   {id:"seated-cable-row",n:"Seated Cable Row",z:"🔗",s:5,r:"5",main:1},
+  {id:"deadlift",n:"Deadlift",z:"🏋️",g:"legs",s:3,r:"5"},
   {id:"reverse-fly",n:"Reverse Peck Deck Fly",z:"🔩",s:5,r:"5"},
   {id:"machine-curl",n:"Machine Biceps Curl",z:"🔩",s:5,r:"5"},
   {id:"hip-add",n:"Hip Adduction (Inner Thigh)",z:"🔩",s:3,r:"5"},
@@ -51,7 +51,7 @@ function uOf(id){for(const p of Object.values(PROGS)){const e=p.ex.find(x=>x.id=
 function exName(id,l){if(l&&l.names&&l.names[id])return l.names[id];for(const p of Object.values(PROGS)){const e=p.ex.find(x=>x.id===id);if(e)return e.n}return id}
 let restCfg=load("restcfg",{});
 // rest by movement, not by "main": heavy compounds 2:30, small isolation 1:00, everything else 1:30
-const HEAVY=["chest-press","incline-db","db-shoulder-press","squat","lat-pulldown","wide-cable-row","seated-cable-row"];
+const HEAVY=["chest-press","incline-db","db-shoulder-press","squat","deadlift","lat-pulldown","wide-cable-row","seated-cable-row"];
 function restDefault(e){return HEAVY.includes(e.id)?150:["cable-lat-raise","seated-calf","woodchop","hip-abd","hip-add","abdominal"].includes(e.id)?60:90}
 function restFor(e){return restCfg[e.id]??restDefault(e)}
 function fmt(s){s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}

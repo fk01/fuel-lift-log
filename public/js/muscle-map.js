@@ -6,7 +6,7 @@ const MUS={ // id: [primary, secondary]
  "db-shoulder-press":[["delt"],["tri","traps"]],"cable-lat-raise":[["delt"],[]],"cable-oh-tri":[["tri"],[]],
  "lat-pulldown":[["lats"],["bi","rear"]],"wide-cable-row":[["lats","traps","rear"],["bi"]],"seated-cable-row":[["lats","traps"],["bi","rear"]],
  "reverse-fly":[["rear"],["traps"]],"machine-curl":[["bi"],["fore"]],"abdominal":[["abs"],["obl"]],
- "squat":[["quad","glute"],["ham","add"]],"leg-curl":[["ham"],["calf"]],"leg-ext":[["quad"],[]],
+ "squat":[["quad","glute"],["ham","add"]],"deadlift":[["ham","glute"],["lats","traps","fore"]],"leg-curl":[["ham"],["calf"]],"leg-ext":[["quad"],[]],
  "hip-abd":[["abd"],["glute"]],"hip-add":[["add"],[]],"seated-calf":[["calf"],[]],"woodchop":[["obl"],["abs"]]};
 const KW=[["chest","chest"],["press","chest"],["fly","chest"],["shoulder","delt"],["lateral","delt"],["tricep","tri"],["curl","bi"],["bicep","bi"],["row","lats"],["pull","lats"],["squat","quad"],["lunge","quad"],["leg ext","quad"],["deadlift","ham"],["rdl","ham"],["calf","calf"],["crunch","abs"],["ab","abs"],["plank","abs"],["glute","glute"],["hip","glute"]];
 function musOf(e){if(MUS[e.id])return MUS[e.id];const n=(e.n||"").toLowerCase();const p=[...new Set(KW.filter(([k])=>n.includes(k)).map(([,m])=>m))].slice(0,2);return [e.g&&GROUP_MUS[e.g]?GROUP_MUS[e.g]:p,[]]}
