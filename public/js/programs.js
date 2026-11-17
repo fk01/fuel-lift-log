@@ -67,7 +67,7 @@ function renderProgs(){
   Object.entries(PROGS).forEach(([k,p])=>{
     const last=[...logs].reverse().find(l=>l.prog===k);
     const b=document.createElement("button");b.className="prog";b.id="p-"+k;b.setAttribute("aria-pressed",picked&&k===cur);
-    b.innerHTML=`<b>${p.name}</b><small>${t(p.sub)}</small><small class="${k===nx?"next":""}">${k===nx?t("คิวถัดไป"):last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small><ul class="prog-ex">${p.ex.map(e=>`<li>${e.z} ${esc(e.n)} <span>${e.s}×${e.r}</span></li>`).join("")}</ul>`;
+    b.innerHTML=`<b>${p.name}</b><small>${t(p.sub)}</small><small class="${k===nx?"next":""}">${k===nx?t("คิวถัดไป"):last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small><ul class="prog-ex">${p.ex.map(e=>`<li>${e.z} ${esc(e.n)} <i class="mg mg-${groupOf(e)}">${groupName(groupOf(e))}</i><span>${e.s}×${e.r}</span></li>`).join("")}</ul>`;
     b.addEventListener("click",()=>{if(picked&&cur===k){cancelProg();return}if(cur!==k){draft.ex={}}cur=k;draft.prog=k;picked=true;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});box.appendChild(b)});
   hd("คาร์ดิโอ");
   const tg=fs().tags,rd=tg.runData;
