@@ -83,7 +83,7 @@ function commitDraft(day,prog){
 }
 document.getElementById("save-w").addEventListener("click",()=>{
   if(!commitDraft(DAY,cur)){toast(t("ยังไม่ได้กรอกน้ำหนักและจำนวนครั้ง"));return}
-  cur=nextProg();picked=false;renderGym();const just=logs.find(l=>l.date===DAY);toast(t("บันทึกแล้ว ✅"));if(just)openShare(just);
+  cur=nextProg();picked=false;chosen=false;renderGym();const just=logs.find(l=>l.date===DAY);toast(t("บันทึกแล้ว ✅"));if(just)openShare(just);
 });
 /* auto-save unsaved workout when the day ends */
 function autoCommitOld(){if(draft.day&&draft.day<TODAY&&commitDraft(draft.day,draft.prog||cur)){cur=nextProg();toast(t("บันทึกเวทเมื่อวานให้แล้ว"));return true}return false}
@@ -95,7 +95,7 @@ let folded=(()=>{try{return localStorage.getItem("calFolded")==="1"}catch(e){ret
 function applyFold(){document.getElementById("step1").classList.toggle("folded",folded);document.getElementById("fold-btn").textContent="📅 "+(folded?"▸":"▾");document.getElementById("fold-btn").setAttribute("aria-expanded",!folded)}
 document.getElementById("fold-btn").addEventListener("click",()=>{folded=!folded;try{localStorage.setItem("calFolded",folded?"1":"0")}catch(e){}if(!folded)document.getElementById("step1").classList.remove("compact");applyFold()});
 applyFold();
-function cancelProg(){picked=false;editing=false;editId=null;draft.ex={};save("gymdraft",draft);stopRest&&stopRest();updUnitBtn();renderGym()}
+function cancelProg(){picked=false;chosen=false;editing=false;editId=null;draft.ex={};save("gymdraft",draft);stopRest&&stopRest();updUnitBtn();renderGym()}
 document.getElementById("cancel-prog").addEventListener("click",cancelProg);
 function renderGym(){try{renderProgress()}catch(e){}try{renderHero()}catch(e){}
   ["step3","step4"].forEach(id=>document.getElementById(id).hidden=!picked&&!editing);
@@ -105,7 +105,10 @@ function renderGym(){try{renderProgress()}catch(e){}try{renderHero()}catch(e){}
   document.getElementById("step4").classList.toggle("locked",!picked);
   document.getElementById("sn-2").classList.toggle("done",picked);document.getElementById("sn-3").classList.toggle("done",picked&&draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.ok)));
   document.getElementById("sn-1").classList.add("done");
+  const sb=document.getElementById("start-w");sb.hidden=picked||editing||!chosen||!PROGS[cur];if(!sb.hidden)sb.textContent=`▶ ${t("เริ่มออก")} · ${PROGS[cur].name}`;
   renderProgs();renderEx();renderSessions();document.getElementById("step4").hidden=editing||!picked}
+document.getElementById("start-w").addEventListener("click",()=>{if(!PROGS[cur])return;draft.prog=cur;picked=true;chosen=false;save("gymdraft",draft);renderGym();
+  setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});
 
 /* ---------- collapsible step sections (Pick a program / Log your sets) ---------- */
 let stepFold=load("stepfold",{});

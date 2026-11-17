@@ -43,7 +43,7 @@ const progName=k=>(PROGS[k]||{name:k==="legs"?"Legs":k}).name;
 let PROGS=load("progs",null)||JSON.parse(JSON.stringify(DEFAULT_PROGS));
 function to5x5(){const keep={};Object.values(PROGS).forEach(p=>p.ex.forEach(e=>keep[e.id]=e));PROGS=JSON.parse(JSON.stringify(DEFAULT_PROGS));Object.values(PROGS).forEach(p=>p.ex.forEach(e=>{const o=keep[e.id];if(o){if(o.u)e.u=o.u;if(o.link)e.link=o.link}}))}
 if(load("scheme",1)<SCHEME){to5x5();try{localStorage.setItem("progs",JSON.stringify(PROGS));localStorage.setItem("scheme",String(SCHEME))}catch(e){};var _clearDraft=true}
-let unit=load("unit","kg");let editing=false;let editId=null;let picked=false;
+let unit=load("unit","kg");let editing=false;let editId=null;let picked=false;let chosen=false;   // chosen = a program card is selected; picked = workout started (steps 3 & 4 shown)
 const LB=2.20462;
 const toDisp=(kg,u)=>kg===""||kg==null?"":u!=="lb"?+kg:Math.round(kg*LB*2)/2;
 const fromDisp=(v,u)=>v===""?"":u!=="lb"?+v:Math.round(v/LB*1000)/1000;
@@ -69,9 +69,10 @@ function renderProgs(){
   hd("เวทเทรนนิ่ง");
   Object.entries(PROGS).forEach(([k,p])=>{
     const last=[...logs].reverse().find(l=>l.prog===k);
-    const b=document.createElement("button");b.className="prog";b.id="p-"+k;b.setAttribute("aria-pressed",picked&&k===cur);
+    const b=document.createElement("button");b.className="prog";b.id="p-"+k;b.setAttribute("aria-pressed",(picked||chosen)&&k===cur);
     b.innerHTML=`<b>${p.name}</b><small>${t(p.sub)}</small><small class="${k===nx?"next":""}">${k===nx?t("คิวถัดไป"):last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small><small>${p.ex.length} ${t("ท่า")}</small><ul class="prog-ex">${p.ex.map((e,n)=>`<li><b class="no">${n+1}</b><em class="nm">${e.z} ${esc(e.n)}</em><span class="ss">${e.s}×${e.r}</span><i class="mg">${groupName(groupOf(e))}</i></li>`).join("")}</ul>`;
-    b.addEventListener("click",()=>{if(picked&&cur===k){cancelProg();return}if(cur!==k){draft.ex={}}cur=k;draft.prog=k;picked=true;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});box.appendChild(b)});
+    b.addEventListener("click",()=>{if(!picked){if(chosen&&cur===k){chosen=false;renderGym();return}if(cur!==k){draft.ex={}}cur=k;draft.prog=k;chosen=true;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("start-w").scrollIntoView({behavior:"smooth",block:"center"}),50);return}
+      if(cur===k){cancelProg();return}draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});box.appendChild(b)});
   hd("คาร์ดิโอ");
   const tg=fs().tags,rd=tg.runData;
   const run=document.createElement("button");run.className="prog cardio";run.setAttribute("aria-pressed",!!tg.run);
