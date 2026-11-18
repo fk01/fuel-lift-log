@@ -266,3 +266,13 @@ html.reserved-bottom{--tabpb:8px}
 .btn.warn{color:var(--warn)!important;border-color:var(--warn)!important}
 .wrap.has-rest .wo-bar{display:none}
 .tabbar .tab.live{position:relative}.tabbar .tab.live::after{content:"";position:absolute;top:4px;left:calc(50% + 12px);width:8px;height:8px;border-radius:50%;background:var(--up)}
+
+/* Facebook-style: tab bar slides away while scrolling, comes back when scrolling stops.
+   Content runs the full height under the bar; its bottom padding keeps the last item clear of the bar. */
+.wrap{height:calc(var(--app-h) - env(safe-area-inset-top,0px))!important;padding-bottom:calc(var(--tabh) + 56px)!important}
+.tabbar,.rest{transition:transform .25s ease}
+html.bar-hide .tabbar{transform:translateY(calc(100% + 2px))}
+html.bar-hide .rest{transform:translateY(calc(-100% + var(--tabh)))}
+.wo-bar{bottom:-56px;transition:bottom .25s ease}
+html.bar-hide .wo-bar{bottom:calc(-56px - var(--tabh))}
+.tabbar{background:#151514f2!important;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}

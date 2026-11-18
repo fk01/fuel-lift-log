@@ -35,6 +35,11 @@ function vpInfo(){const el=document.getElementById("vpinfo");if(!el)return;const
   const sb=(()=>{const d=document.createElement("div");d.style.cssText="position:fixed;left:-9px;width:1px;height:env(safe-area-inset-bottom,0px)";document.body.appendChild(d);const h=d.getBoundingClientRect().height;d.remove();return Math.round(h)})();
   el.textContent=`vp ${innerWidth}×${innerHeight} · vv ${Math.round(visualViewport?visualViewport.height:0)} · scr ${screen.width}×${screen.height} · svh ${pr("100svh")} dvh ${pr("100dvh")} lvh ${pr("100lvh")} · sab ${sb} · app-h ${getComputedStyle(document.documentElement).getPropertyValue("--app-h")} · sa ${document.documentElement.classList.contains("standalone")?1:0}`}
 addEventListener("hashchange",()=>{if(location.hash==="#more")vpInfo()});setTimeout(vpInfo,500);
+/* ---------- hide the tab bar while scrolling, show it again when scrolling stops ---------- */
+(()=>{const w=document.querySelector(".wrap"),r=document.documentElement;let last=0,tm=null;
+  w.addEventListener("scroll",()=>{const y=w.scrollTop,d=y-last;last=y;
+    if(y<=10)r.classList.remove("bar-hide");else if(Math.abs(d)>3)r.classList.add("bar-hide");
+    clearTimeout(tm);tm=setTimeout(()=>r.classList.remove("bar-hide"),350)},{passive:true})})();
 /* ---------- startup ---------- */
 pkState();
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").then(pushState).catch(()=>{})}else{pushState()}
