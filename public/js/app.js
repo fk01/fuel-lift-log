@@ -26,8 +26,9 @@ document.getElementById("lang").addEventListener("click",()=>{lang=lang==="th"?"
   const mo=new MutationObserver(sync);document.querySelectorAll(".modal").forEach(m=>mo.observe(m,{attributes:true,attributeFilter:["hidden"]}));sync()})();
 /* ---------- app height: home-screen iOS can report a viewport shorter than the screen, so size the shell from the screen itself ---------- */
 (()=>{const st=navigator.standalone===true||matchMedia("(display-mode: standalone)").matches;document.documentElement.classList.toggle("standalone",st);
-  const fit=()=>{const portrait=innerHeight>=innerWidth,full=portrait?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);
-    const h=st?Math.max(innerHeight,full):innerHeight;document.documentElement.style.setProperty("--app-h",h+"px")};
+  // use the visible height; if iOS already keeps a strip below the web view (home-screen apps), skip our own home-indicator padding
+  const fit=()=>{const r=document.documentElement,full=innerHeight>=innerWidth?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);
+    r.style.setProperty("--app-h",innerHeight+"px");r.classList.toggle("reserved-bottom",st&&full-innerHeight>40);try{vpInfo()}catch(e){}};
   fit();addEventListener("resize",fit);addEventListener("orientationchange",()=>setTimeout(fit,300))})();
 /* screen-size readout in More → Data (to tune the shell on real iPhones) */
 function vpInfo(){const el=document.getElementById("vpinfo");if(!el)return;const pr=v=>{const d=document.createElement("div");d.style.cssText="position:fixed;left:-9px;top:0;width:1px;height:"+v;document.body.appendChild(d);const h=d.getBoundingClientRect().height;d.remove();return Math.round(h)};
