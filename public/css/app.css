@@ -417,3 +417,4 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 #food-hist .chips.seg{grid-template-columns:repeat(4,1fr)}
 #food-hist details.log{display:block!important;padding:12px 14px!important}#food-hist details.log[open]>table{margin-top:8px}
 .fh-tg{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--muted);justify-content:flex-end}.fh-tg i{width:16px;border-top:2px dashed var(--fg)}
+.fh-tg i{width:10px!important;height:10px;border:0!important;border-radius:3px;margin-left:6px}.fh-tg i.ok{background:var(--up)}.fh-tg i.no{background:var(--series,#4f93f5)}

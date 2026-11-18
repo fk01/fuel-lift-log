@@ -22,7 +22,7 @@ function mealList(){const t=fs().tags;const l=MEALS.map(m=>({...m}));if(t.late){
 function dayP(day){const d=food[day];if(!d)return null;let p=0;[...MEALS,EXTRAS.run,EXTRAS.bad].forEach(m=>{if(d.done[m.id])p+=m.p});return p}
 let fhMetric="p",fhRange=7,fhAll=false;const K_GOAL=2032;
 const addDays=(ds,n)=>{const d=new Date(ds+"T12:00:00");d.setDate(d.getDate()+n);return d};
-Object.assign(EN,{"ถึงเป้า":"Hit target","เป้า":"Target","ดูทั้งหมด":"Show all","ย่อ":"Show less"});
+Object.assign(EN,{"ถึงเป้า":"Hit target","ยังไม่ถึง":"Below","เป้า":"Target","ดูทั้งหมด":"Show all","ย่อ":"Show less"});
 function renderFoodHist(){
   const box=document.getElementById("food-hist");box.innerHTML="";
   const all30=Object.keys(food).filter(d=>food[d]&&Object.values(food[d].done||{}).some(Boolean)).sort().reverse().slice(0,60);
@@ -34,8 +34,8 @@ function renderFoodHist(){
   const card=document.createElement("div");card.className="card stack";card.style.gap="8px";
   card.innerHTML=`<div class="chips seg">${[["p","โปรตีน"],["k","แคลอรี"]].map(([k,l])=>`<button class="chip" data-fm="${k}" aria-pressed="${fhMetric===k}">${t(l)}</button>`).join("")}${[[7,"1 สัปดาห์"],[30,"1 เดือน"]].map(([k,l])=>`<button class="chip" data-fr="${k}" aria-pressed="${fhRange===k}">${t(l)}</button>`).join("")}</div>
     <div class="row-head"><span class="vol-h" style="margin:0"><small>${t("เฉลี่ยต่อวัน")}</small><b>${avg.toLocaleString()} <small>${fhMetric==="p"?"g":"kcal"}</small></b></span><span class="vol-h" style="margin:0;text-align:right"><small>${t("ถึงเป้า")}</small><b>${hit}<small> / ${n}</small></b></span></div>
-    <div class="fh-tg"><i></i>${t("เป้า")} ${tg} ${fhMetric==="p"?"g":"kcal"}</div><svg viewBox="0 0 ${W} ${H+16}" width="100%">${vals.map((v,i)=>{const X=i*(bw+gap),h=v?Math.max(3,H-Y(v)):3;return `<rect x="${X.toFixed(1)}" y="${(H-h).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="${Math.min(4,bw/2)}" fill="${!v?"var(--line)":v>=tg?"var(--up)":"var(--series,#4f93f5)"}"><title>${days7[i]}: ${v}</title></rect>${n<=7||i%7===n%7-1?`<text x="${(X+bw/2).toFixed(1)}" y="${H+12}" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="var(--f-num)">${n<=7?new Date(days7[i]+"T12:00:00").toLocaleDateString(LOC(),{weekday:"narrow"}):new Date(days7[i]+"T12:00:00").getDate()}</text>`:""}`}).join("")}
-      <line x1="0" x2="${W}" y1="${Y(tg)}" y2="${Y(tg)}" stroke="#0e0e0d" stroke-width="4"/><line x1="0" x2="${W}" y1="${Y(tg)}" y2="${Y(tg)}" stroke="#ece8e1" stroke-width="1.5" stroke-dasharray="5 4"/></svg>`;
+    <div class="fh-tg"><i class="ok"></i>${t("ถึงเป้า")} ≥ ${tg} ${fhMetric==="p"?"g":"kcal"}<i class="no"></i>${t("ยังไม่ถึง")}</div><svg viewBox="0 0 ${W} ${H+16}" width="100%">${vals.map((v,i)=>{const X=i*(bw+gap),h=v?Math.max(3,H-Y(v)):3;return `<rect x="${X.toFixed(1)}" y="${(H-h).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="${Math.min(4,bw/2)}" fill="${!v?"var(--line)":v>=tg?"var(--up)":"var(--series,#4f93f5)"}"><title>${days7[i]}: ${v}</title></rect>${n<=7||i%7===n%7-1?`<text x="${(X+bw/2).toFixed(1)}" y="${H+12}" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="var(--f-num)">${n<=7?new Date(days7[i]+"T12:00:00").toLocaleDateString(LOC(),{weekday:"narrow"}):new Date(days7[i]+"T12:00:00").getDate()}</text>`:""}`}).join("")}
+      </svg>`;
   card.querySelectorAll("[data-fm]").forEach(b=>b.addEventListener("click",()=>{fhMetric=b.dataset.fm;renderFoodHist()}));
   card.querySelectorAll("[data-fr]").forEach(b=>b.addEventListener("click",()=>{fhRange=+b.dataset.fr;renderFoodHist()}));
   box.appendChild(card);
