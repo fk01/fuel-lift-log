@@ -31,7 +31,7 @@ function renderEx(){
     rows.forEach((r,i)=>{
       card.querySelector(`#kg-${e.id}-${i}`).addEventListener("input",ev=>{r.kg=fromDisp(ev.target.value,u);save("gymdraft",draft)});
       card.querySelector(`#rp-${e.id}-${i}`).addEventListener("input",ev=>{r.reps=ev.target.value;save("gymdraft",draft)});
-      card.querySelector(`#ok-${e.id}-${i}`).addEventListener("change",ev=>{r.ok=ev.target.checked;
+      card.querySelector(`#ok-${e.id}-${i}`).addEventListener("change",ev=>{r.ok=ev.target.checked;updWoBar();
         if(r.ok&&!r.reps){r.reps=e.r.split("-")[0];card.querySelector(`#rp-${e.id}-${i}`).value=r.reps}save("gymdraft",draft);
         delete foldPref[e.id];foldCard();try{renderHero()}catch(_){}if(r.ok)startRest(e,i,rows)});
     });
@@ -69,7 +69,7 @@ function renderSessions(){
       const clash=logs.findIndex(x=>x!==l&&x.date===v&&x.prog===l.prog);if(clash>=0)logs.splice(clash,1);
       l.date=v;logs.sort((a,b)=>a.date.localeCompare(b.date));save("gymlog",logs);renderGym();toast(t("ย้ายวันแล้ว"))});
     d.querySelector("[data-ed]")?.addEventListener("click",()=>{DAY=l.date;cur=l.prog;editId=null;editing=false;picked=true;
-      draft={prog:l.prog,ex:{}};Object.entries(l.ex).forEach(([id,sets])=>draft.ex[id]=sets.map(s=>({kg:s.kg,reps:String(s.reps),ok:true})));
+      draft={prog:l.prog,ex:{},started:1,day:l.date,fromHist:1};Object.entries(l.ex).forEach(([id,sets])=>draft.ex[id]=sets.map(s=>({kg:s.kg,reps:String(s.reps),ok:true})));
       save("gymdraft",draft);renderAll();scrollAppTop(true);toast(t("แก้แล้วกด Save"))});
     d.querySelector("[data-rm]").addEventListener("click",ev=>{const b=ev.target;
       if(b.dataset.sure){logs.splice(idx,1);save("gymlog",logs);renderGym();toast(t("ลบแล้ว"))}else{b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน")}});
@@ -87,32 +87,38 @@ function commitDraft(day,prog){
   save("gymlog",logs);draft={};save("gymdraft",draft);return true;
 }
 document.getElementById("save-w").addEventListener("click",()=>{
-  if(!commitDraft(DAY,cur)){toast(t("ยังไม่ได้กรอกน้ำหนักและจำนวนครั้ง"));return}
-  cur=nextProg();picked=false;chosen=false;renderGym();const just=logs.find(l=>l.date===DAY);toast(t("บันทึกแล้ว ✅"));if(just)openShare(just);
+  const back=draft.fromHist;if(!commitDraft(DAY,cur)){toast(t("ยังไม่ได้กรอกน้ำหนักและจำนวนครั้ง"));return}
+  stopRest&&stopRest();if(back){DAY=TODAY}cur=nextProg();picked=false;chosen=false;editing=false;editId=null;renderAll();const just=logs.find(l=>l.date===DAY);toast(t("บันทึกแล้ว ✅"));if(just)openShare(just);
 });
 /* auto-save unsaved workout when the day ends */
 function autoCommitOld(){if(draft.day&&draft.day<TODAY&&commitDraft(draft.day,draft.prog||cur)){cur=nextProg();toast(t("บันทึกเวทเมื่อวานให้แล้ว"));return true}return false}
 setInterval(()=>{const nd=dkey(new Date());if(nd===TODAY)return;
   const prev=TODAY;TODAY=nd;autoCommitOld();if(DAY===prev){DAY=nd;draft.ex=draft.ex||{}}renderAll()},60000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&dkey(new Date())!==TODAY){const prev=TODAY;TODAY=dkey(new Date());autoCommitOld();if(DAY===prev)DAY=TODAY;renderAll()}});
-document.getElementById("clear-w").addEventListener("click",()=>{draft={prog:cur};save("gymdraft",draft);renderGym()});
 // calendar moved to the Stats tab; the 📅 button jumps there
 document.getElementById("fold-btn").textContent="📅";document.getElementById("fold-btn").addEventListener("click",()=>{location.hash="stats"});
-function cancelProg(){picked=false;chosen=false;editing=false;editId=null;draft.ex={};save("gymdraft",draft);stopRest&&stopRest();updUnitBtn();renderGym()}
-document.getElementById("cancel-prog").addEventListener("click",cancelProg);
+function woProgress(){const ex=draft.ex||{};let done=0,total=0;(PROGS[cur]?PROGS[cur].ex:[]).forEach(e=>{const r=ex[e.id]||[];total+=r.length||e.s;done+=r.filter(x=>x.ok).length});return{done,total,any:Object.values(ex).some(r=>r.some(x=>x.ok||x.reps!==""&&x.reps!=null))}}
+function updWoBar(){const c=document.getElementById("wo-count");if(!c)return;const p=woProgress();c.textContent=`${p.done}/${p.total}`;
+  document.getElementById("tab-gym").classList.toggle("live",picked)}
+function cancelProg(){const back=draft.fromHist;picked=false;chosen=false;editing=false;editId=null;draft={prog:cur};save("gymdraft",draft);stopRest&&stopRest();updUnitBtn();if(back){DAY=TODAY;renderAll()}else renderGym()}
+// cancel: ask once (tap again within 3 s) when sets were already logged, so nothing is lost by accident
+document.getElementById("cancel-w").addEventListener("click",ev=>{const b=ev.currentTarget;
+  if(woProgress().any&&!b.dataset.sure){b.dataset.sure=1;b.querySelector("span").textContent=t("แตะอีกครั้งเพื่อทิ้ง");b.classList.add("warn");
+    clearTimeout(b._t);b._t=setTimeout(()=>{delete b.dataset.sure;b.classList.remove("warn");b.querySelector("span").textContent=t("ยกเลิก")},3000);return}
+  delete b.dataset.sure;b.classList.remove("warn");b.querySelector("span").textContent=t("ยกเลิก");cancelProg();toast(t("ยกเลิกการออกแล้ว"))});
 function renderGym(){try{renderProgress()}catch(e){}try{renderHero()}catch(e){}
   ["step3","step4"].forEach(id=>document.getElementById(id).hidden=!picked&&!editing);
   document.getElementById("step1").classList.toggle("compact",(picked||editing)&&!document.getElementById("v-gym").hidden);document.getElementById("step2").hidden=picked||editing;
   // resume a workout only if sets were actually logged (weights alone are pre-filled from last time)
-  if(!picked&&draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.ok||x.reps!==""&&x.reps!=null)))picked=true;
+  if(!picked&&PROGS[draft.prog]&&(draft.started&&(draft.day||DAY)===DAY||draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.ok||x.reps!==""&&x.reps!=null)))){picked=true;cur=draft.prog}
   document.getElementById("pick-hint").hidden=picked;document.getElementById("exs").hidden=!picked&&!editing;
   document.getElementById("step4").classList.toggle("locked",!picked);
   document.getElementById("sn-2").classList.toggle("done",picked);document.getElementById("sn-3").classList.toggle("done",picked&&draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.ok)));
   document.getElementById("sn-1").classList.add("done");
   const sb=document.getElementById("start-w"),row=document.getElementById("start-row");row.hidden=picked||editing||!chosen||!PROGS[cur];if(!row.hidden)sb.textContent=`▶ ${t("เริ่มออก")} · ${PROGS[cur].name}`;
-  renderProgs();renderEx();renderSessions();document.getElementById("step4").hidden=editing||!picked}
+  renderProgs();renderEx();renderSessions();document.getElementById("step4").hidden=editing||!picked;updWoBar()}
 document.getElementById("edit-w").addEventListener("click",()=>{if(!PROGS[cur])return;pmOnly=cur;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false;window.scrollTo(0,0)});
-document.getElementById("start-w").addEventListener("click",()=>{if(!PROGS[cur])return;draft.prog=cur;picked=true;chosen=false;save("gymdraft",draft);renderGym();
+document.getElementById("start-w").addEventListener("click",()=>{if(!PROGS[cur])return;draft.prog=cur;draft.started=1;draft.day=DAY;picked=true;chosen=false;save("gymdraft",draft);renderGym();
   setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});
 
 /* ---------- collapsible step sections (Pick a program / Log your sets) ---------- */
