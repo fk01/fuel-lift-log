@@ -47,7 +47,7 @@ function openDay(ds){dayDs=ds;const d=food[ds]||{done:{},tags:{}},tg=d.tags||{},
     <small>${ls.length||tg.run||tg.bad?t("สิ่งที่ทำวันนั้น"):plan&&PROGS[plan]?t("ตามตาราง")+": "+esc(progName(plan)):t("ยังไม่มีบันทึก")}</small></div><ul class="prog-ex">${rows.join("")}</ul>`;
   document.getElementById("day-sheet").hidden=false}
 const closeDay=()=>{document.getElementById("day-sheet").hidden=true};
-const goDay=v=>{const ds=dayDs;closeDay();if(ds&&ds!==DAY){DAY=ds;draft.ex={};picked=false;renderAll()}location.hash=v};
+const goDay=v=>{const ds=dayDs;closeDay();weekOpen=false;wkMonth=null;try{renderWeek()}catch(e){}if(ds&&ds!==DAY){DAY=ds;draft.ex={};picked=false;renderAll()}location.hash=v};
 document.getElementById("day-sheet").addEventListener("click",ev=>{if(ev.target.id==="day-sheet")closeDay()});
-document.getElementById("day-gym").addEventListener("click",()=>goDay("gym"));
+document.getElementById("day-gym").addEventListener("click",()=>goDay(curView==="food"?"gym":"gym"));
 document.getElementById("day-food").addEventListener("click",()=>goDay("food"));

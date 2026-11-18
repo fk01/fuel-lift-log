@@ -19,8 +19,10 @@ let weekOpen=false,wkMonth=null;
 function renderWeek(){const box=document.getElementById("week");if(!box)return;const d0=new Date(DAY+"T12:00:00");const off=(d0.getDay()+6)%7;
   const dt=document.getElementById("date");dt.classList.add("date-tog");dt.setAttribute("aria-expanded",weekOpen);
   let days=[...Array(7)].map((_,i)=>{const d=new Date(d0);d.setDate(d0.getDate()-off+i);return dkey(d)});
-  box.classList.toggle("month",weekOpen);let head="";
-  if(weekOpen){const m=wkMonth||DAY.slice(0,7),[Y,M]=m.split("-").map(Number),first=new Date(Y,M-1,1),lead=(first.getDay()+6)%7,n=new Date(Y,M,0).getDate();
+  // expanded: show the full calendar (program labels, plan, day summary on tap) in place of the week strip
+  box.hidden=weekOpen;const hc=document.getElementById("hdr-cal");if(hc){hc.hidden=!weekOpen;if(weekOpen){if(!wkMonth){calM=DAY;wkMonth=DAY.slice(0,7)}try{renderProgress()}catch(e){}}}
+  box.classList.toggle("month",false);let head="";
+  if(false){const m=wkMonth||DAY.slice(0,7),[Y,M]=m.split("-").map(Number),first=new Date(Y,M-1,1),lead=(first.getDay()+6)%7,n=new Date(Y,M,0).getDate();
     days=[...Array(lead)].map(()=>null).concat([...Array(n)].map((_,i)=>`${m}-${String(i+1).padStart(2,"0")}`));
     head=`<div class="wk-h"><button class="btn sm" data-mv="-1" aria-label="prev">‹</button><b>${first.toLocaleDateString(LOC(),{month:"long",year:"numeric"})}</b><button class="btn sm" data-mv="1" aria-label="next">›</button></div>`+
       [0,1,2,3,4,5,6].map(i=>`<small class="wk-dow">${new Date(2024,0,1+i).toLocaleDateString(LOC(),{weekday:"narrow"})}</small>`).join("")}
