@@ -113,3 +113,14 @@ document.getElementById("lib-new").addEventListener("click",()=>{
 document.getElementById("lib-close").addEventListener("click",closeLib);
 document.getElementById("lib-q").addEventListener("input",ev=>{libQ=ev.target.value;renderLib()});
 document.getElementById("lib-open").addEventListener("click",()=>openLib());
+
+/* ---------- muscle picker for one exercise (opened from the exercise editors) ---------- */
+function openMusPick(id,name,after){const x=EXLIB.find(q=>q.id===id)||{id,n:name};
+  const draw=b=>{const [p,s]=musOf(x);b.querySelector(".mus-fig").innerHTML=bodySVG(p,s,170);
+    b.querySelectorAll("[data-mus]").forEach(c=>{const m=c.dataset.mus;c.className="chip mchip "+(p.includes(m)?"p":s.includes(m)?"s":"")})};
+  openGen("💪 "+esc(name),`<small class="note">${t("แตะ 1 ครั้ง = หลัก, 2 = รอง, 3 = ไม่โดน")}</small><div class="mus-fig"></div>
+    <div class="chips">${MUS_KEYS.map(m=>`<button class="chip mchip" data-mus="${m}">${t(MUS_NAME[m])}</button>`).join("")}</div>
+    <button class="btn primary" data-gen-close>${t("เสร็จ")}</button>`,b=>{draw(b);
+    b.querySelectorAll("[data-mus]").forEach(c=>c.addEventListener("click",()=>{const [p0,s0]=musOf(x),m=c.dataset.mus;let p=p0.filter(q=>q!==m),s=s0.filter(q=>q!==m);
+      if(p0.includes(m))s.push(m);else if(!s0.includes(m))p.push(m);
+      if(!EXLIB.some(q=>q.id===id)){EXLIB.push({...x});}libUpdate(id,{mp:p,ms:s});x.mp=p;x.ms=s;draw(b);if(after)after()}))})}

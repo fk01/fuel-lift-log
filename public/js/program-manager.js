@@ -37,14 +37,15 @@ function pmCommit(P,newLib){PROGS=P;if(newLib&&newLib.length){EXLIB.push(...newL
 // inline exercise rows inside the program form: sets / reps (tap pad), reorder, swap from library, remove; locked main lifts can't be swapped or removed
 function pmExRows(box,k){const list=PROGS[k].ex;box.innerHTML="";
   list.forEach((e,i)=>{const lock=isLocked(k,e);const r=document.createElement("div");r.className="pm-row";
-    r.innerHTML=`<div class="pm-top"><b class="no">${i+1}</b><span class="nm">${lock?"🔒 ":""}${e.z} ${esc(e.n)} <i class="mg">${groupName(groupOf(e))}</i></span></div>
+    r.innerHTML=`<div class="pm-top"><b class="no">${i+1}</b><span class="nm">${lock?"🔒 ":""}${e.z} ${esc(e.n)} <i class="mg">${musOf(e)[0].map(m=>t(MUS_NAME[m])).join(", ")||groupName(groupOf(e))}</i></span></div>
       <div class="pm-ctl"><input type="number" readonly inputmode="none" data-pad="sets" value="${e.s}" aria-label="${esc(e.n)} ${t("เซ็ต")}"><span>×</span>
         <input readonly inputmode="none" data-pad="rng" value="${esc(e.r)}" aria-label="${esc(e.n)} ${t("ช่วงครั้ง")}">
         <button class="btn sm" data-up ${i===0?"disabled":""} aria-label="up">↑</button><button class="btn sm" data-down ${i===list.length-1?"disabled":""} aria-label="down">↓</button>
-        ${lock?"":`<button class="btn sm" data-swap aria-label="${t("เปลี่ยนท่า")}">⇄</button><button class="btn sm ghost" data-rm aria-label="${t("ลบท่า")}">✕</button>`}</div>`;
+        <button class="btn sm" data-mus-ed aria-label="${t("กล้ามที่โดน")}">💪</button>${lock?"":`<button class="btn sm" data-swap aria-label="${t("เปลี่ยนท่า")}">⇄</button><button class="btn sm ghost" data-rm aria-label="${t("ลบท่า")}">✕</button>`}</div>`;
     const q=s=>r.querySelector(s);
     q('[data-pad="sets"]').addEventListener("change",ev=>{e.s=Math.max(1,Math.min(10,+ev.target.value||1));if(draft.ex)delete draft.ex[e.id];saveProgs();renderGym()});
     q('[data-pad="rng"]').addEventListener("change",ev=>{e.r=ev.target.value.trim()||e.r;saveProgs();renderGym()});
+    q("[data-mus-ed]").addEventListener("click",()=>openMusPick(e.id,e.n,()=>pmExRows(box,k)));
     const mv=d=>{list.splice(i+d,0,list.splice(i,1)[0]);saveProgs();pmExRows(box,k);renderGym()};
     q("[data-up]").addEventListener("click",()=>mv(-1));q("[data-down]").addEventListener("click",()=>mv(1));
     if(!lock){q("[data-swap]").addEventListener("click",()=>openLib({skip:new Set(list.map(x=>x.id)),onPick:x=>{const n={...libPick(x),s:e.s,r:e.r};if(e.main)n.main=1;list[i]=n;if(draft.ex)delete draft.ex[e.id];saveProgs();renderPM()}}));

@@ -56,10 +56,10 @@ function renderRecovery(){const box=document.getElementById("rec-card");if(!box)
   const ago=m=>lt[m]?Math.round((now-ds2d(lt[m]))/864e5):null,state=d=>d==null?0:d<=1?1:d<=2?2:3;
   const C=["#2f2e2b","#e07a6a","#d9a46c","#7cc47a"];
   const rows=Object.keys(MUS_NAME).filter(m=>lt[m]).sort((a,b)=>ago(a)-ago(b)).map(m=>{const d=ago(m);
-    return `<button class="rec-t" data-m="${m}" aria-pressed="${recSel===m}"><b><span>${t(MUS_NAME[m])}</span><small style="color:${C[state(d)]}">${d===0?t("วันนี้"):d+" "+t("วันก่อน")}</small></b><em>${(recLast[m]||[]).map(n=>`<u data-fix="${esc(n)}">${esc(n)}</u>`).join(" · ")}</em></button>`}).join("");
-  box.innerHTML=`<div class="rec-wrap"><div class="rec-fig">${bodySVG([],[],250,m=>recSel&&m!==recSel?(lt[m]?"#3a3936":null):C[state(ago(m))])}</div><div class="rec-list">${rows||`<p class="note">${t("ยังไม่มีบันทึก")}</p>`}</div></div>
+    return `<button class="rec-t" data-m="${m}" aria-pressed="${recSel===m}"><b><span>${t(MUS_NAME[m])}</span><small style="color:${C[state(d)]}">${d===0?t("วันนี้"):d+" "+t("วันก่อน")}</small></b><em>${(recLast[m]||[]).map(esc).join(" · ")}</em></button>`}).join("");
+  box.innerHTML=`<div class="rec-wrap"><div class="rec-fig">${bodySVG([],[],170,m=>recSel&&m!==recSel?(lt[m]?"#3a3936":null):C[state(ago(m))])}</div><div class="rec-list">${rows||`<p class="note">${t("ยังไม่มีบันทึก")}</p>`}</div></div>
     <div class="rec-leg"><span><i style="background:${C[1]}"></i>${t("เพิ่งเล่น")}</span><span><i style="background:${C[2]}"></i>${t("กำลังฟื้น")}</span><span><i style="background:${C[3]}"></i>${t("พร้อม")}</span></div>
-    <p class="note" style="margin:0">${t("แตะกล้ามเพื่อดูบนหุ่น")}</p>`}
+`}
 /* ---------- generic bottom sheet ---------- */
 function openGen(title,html,after){document.getElementById("gen-body").innerHTML=`<div class="sheet-h"><b>${title}</b></div>${html}`;document.getElementById("gen-sheet").hidden=false;if(after)after(document.getElementById("gen-body"))}
 document.getElementById("gen-sheet").addEventListener("click",ev=>{if(ev.target.id==="gen-sheet"||ev.target.closest("[data-gen-close]"))document.getElementById("gen-sheet").hidden=true});
@@ -91,4 +91,4 @@ renderBody=function(){const box=document.getElementById("body-card");if(!box)ret
         if(Object.keys(r).length<2)return;BODY=BODY.filter(x=>x.d!==TODAY);BODY.push(r);save("body",BODY);document.getElementById("gen-sheet").hidden=true;renderBody();toast("✓")})})})};
 
 document.getElementById("rec-card").addEventListener("click",ev=>{const f=ev.target.closest("[data-fix]");if(f){const x=EXLIB.find(q=>q.n===f.dataset.fix);if(x){openLib();libEdit=x.id;renderLib();setTimeout(()=>{const e=document.querySelector("#lib-list .mus-pick");if(e)e.scrollIntoView({block:"center"})},60)}return}const b=ev.target.closest(".rec-t");if(!b)return;recSel=recSel===b.dataset.m?null:b.dataset.m;renderRecovery()});
-Object.assign(EN,{"แตะกล้ามเพื่อดูบนหุ่น":"Tap a muscle to highlight it · tap an exercise to fix its muscles"});
+Object.assign(EN,{"แตะกล้ามเพื่อดูบนหุ่น":"Tap a muscle to highlight it · set muscles per exercise in Edit workout (💪)"});
