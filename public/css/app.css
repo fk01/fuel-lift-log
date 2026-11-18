@@ -309,3 +309,14 @@ html.bar-hide .tabbar{transform:translateY(calc(100% + var(--pillgap) + 8px))}
 @keyframes drawerIn{from{transform:translateX(-100%)}to{transform:none}}
 .drawer-h{display:flex;justify-content:space-between;align-items:center}.drawer-h b{font-family:system-ui,-apple-system,sans-serif;font-size:1.4rem;font-weight:800}
 #bad-ok{flex:1;padding:14px}#bad-cancel{padding:14px 16px}
+
+/* cleaner section titles: no step numbers or collapse arrows; system font like the rest of the app chrome */
+.step .num{display:none!important}
+.step-t{font-family:system-ui,-apple-system,"IBM Plex Sans Thai",sans-serif!important;font-weight:700;font-size:1.2rem!important}
+.step-toggle .step-t::after{content:none!important}
+.stepbox.collapsed>*{display:revert}
+.sec-t{font-family:system-ui,-apple-system,"IBM Plex Sans Thai",sans-serif;font-weight:700;font-size:1.2rem;margin:6px 0 2px}
+.stat b{font-family:system-ui,-apple-system,sans-serif!important;font-weight:700}
+.cal-head b{font-family:system-ui,-apple-system,sans-serif!important;font-weight:700}
+#fold-btn{display:none}
+#day-gym{flex:1;padding:14px}#day-food{padding:14px 16px}

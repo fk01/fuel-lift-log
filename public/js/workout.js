@@ -116,15 +116,12 @@ function renderGym(){try{renderProgress()}catch(e){}try{renderHero()}catch(e){}
   document.getElementById("sn-2").classList.toggle("done",picked);document.getElementById("sn-3").classList.toggle("done",picked&&draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.ok)));
   document.getElementById("sn-1").classList.add("done");
   const sb=document.getElementById("start-w"),row=document.getElementById("start-row");row.hidden=picked||editing||!chosen||!PROGS[cur];if(!row.hidden)sb.textContent=`▶ ${t("เริ่มออก")} · ${PROGS[cur].name}`;
+  const t3=document.querySelector("#step3 .step-t");if(t3)t3.textContent=PROGS[cur]&&picked?`${PROGS[cur].name} · ${t("กำลังเล่น")}`:t("กรอกน้ำหนัก");
   renderProgs();renderEx();renderSessions();document.getElementById("step4").hidden=editing||!picked;updWoBar()}
 document.getElementById("edit-w").addEventListener("click",()=>{if(!PROGS[cur])return;pmOnly=cur;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false;window.scrollTo(0,0)});
 document.getElementById("start-w").addEventListener("click",()=>{if(!PROGS[cur])return;draft.prog=cur;draft.started=1;draft.day=DAY;picked=true;chosen=false;save("gymdraft",draft);renderGym();
   setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});
 
 /* ---------- collapsible step sections (Pick a program / Log your sets) ---------- */
-let stepFold=load("stepfold",{});
-["step2","step3"].forEach(id=>{const sec=document.getElementById(id),head=sec.querySelector(".step");
-  const apply=()=>{const f=!!stepFold[id];sec.classList.toggle("collapsed",f);head.setAttribute("aria-expanded",!f)};
-  head.classList.add("step-toggle");head.setAttribute("role","button");head.tabIndex=0;
-  const tog=ev=>{if(ev.target.closest("button,a,input"))return;stepFold[id]=!stepFold[id];save("stepfold",stepFold);apply()};
-  head.addEventListener("click",tog);head.addEventListener("keydown",ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();tog(ev)}});apply()});
+// step sections are plain headed sections now (no collapse, no numbers)
+try{localStorage.removeItem("stepfold")}catch(e){}

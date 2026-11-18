@@ -23,7 +23,7 @@ function renderProgress(){
   let h=dows.map(d=>`<span class="dow">${d}</span>`).join("")+"<span></span>".repeat(lead);
   for(let i=1;i<=n;i++){const ds=`${ym}-${String(i).padStart(2,"0")}`;h+=`<button class="d in${set.has(ds)?" on":""}${ds===TODAY?" today":""}${ds===DAY?" sel":""}" data-ds="${ds}" ${ds>TODAY?"disabled":""} aria-label="${ds}"><span>${i}</span>${calTag(ds)}</button>`}
   document.getElementById("cal-grid").innerHTML=h;
-  document.querySelectorAll("#cal-grid [data-ds]").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.ds!==DAY){DAY=b.dataset.ds;draft.ex={};picked=false;renderAll()}location.hash=lastMain}));
+  document.querySelectorAll("#cal-grid [data-ds]").forEach(b=>b.addEventListener("click",()=>openDay(b.dataset.ds)));
   const total=days.length,vol=logs.reduce((a,l)=>a+volOf(l),0);
   const B=[["🥇",t("ครั้งแรก"),total>=1],["🔥","5 "+t("วันที่เล่น"),total>=5],["💪","10 "+t("วันที่เล่น"),total>=10],["🏅","25 "+t("วันที่เล่น"),total>=25],["🏆","50 "+t("วันที่เล่น"),total>=50],["👑","100 "+t("วันที่เล่น"),total>=100],["💎","250 "+t("วันที่เล่น"),total>=250],
     ["📅","2 "+t("สัปดาห์"),best>=2],["⚡","4 "+t("สัปดาห์"),best>=4],["🌙","8 "+t("สัปดาห์"),best>=8],["☀️","12 "+t("สัปดาห์"),best>=12],["🌋","26 "+t("สัปดาห์"),best>=26],
@@ -32,3 +32,22 @@ function renderProgress(){
 }
 document.getElementById("cal-prev").addEventListener("click",()=>{const [y,m]=(calM||DAY).slice(0,7).split("-").map(Number);const d=new Date(y,m-2,1);calM=dkey(d);renderProgress()});
 document.getElementById("cal-next").addEventListener("click",()=>{const [y,m]=(calM||DAY).slice(0,7).split("-").map(Number);const d=new Date(y,m,1);calM=dkey(d);renderProgress()});
+
+/* ---------- tap a calendar day → summary sheet (what was done), then open it in Workout or Food ---------- */
+let dayDs=null;
+function openDay(ds){dayDs=ds;const d=food[ds]||{done:{},tags:{}},tg=d.tags||{},ls=logs.filter(l=>l.date===ds);
+  const all=[...MEALS,EXTRAS.run,EXTRAS.bad],eaten=all.filter(m=>(d.done||{})[m.id]),k=eaten.reduce((a,m)=>a+m.k,0),p=eaten.reduce((a,m)=>a+m.p,0);
+  const rows=[];
+  ls.forEach(l=>{const n=Object.values(l.ex).reduce((a,s)=>a+s.length,0);rows.push(`<li><b class="no">🏋️</b><em class="nm">${esc(progName(l.prog))}</em><span class="ss">${Object.keys(l.ex).length} ${t("ท่า")} · ${n} ${t("เซ็ต")}</span></li>`)});
+  if(tg.run){const r=tg.runData;rows.push(`<li><b class="no">🏃</b><em class="nm">${t("วิ่ง")}</em><span class="ss">${r&&r.km?`${r.km} km · ${fmtPace(r.sec/r.km)}/km`:"✓"}</span></li>`)}
+  if(tg.bad)rows.push(`<li><b class="no">🏸</b><em class="nm">${t("ตีแบด")}</em><span class="ss">✓</span></li>`);
+  rows.push(`<li><b class="no">🍽️</b><em class="nm">${t("อาหาร")}</em><span class="ss">${k} kcal · P${p}</span></li>`);
+  const plan=planFor(ds);
+  document.getElementById("day-body").innerHTML=`<div class="sheet-h"><b>${thDate(ds,{weekday:"long",day:"numeric",month:"long"})}</b>
+    <small>${ls.length||tg.run||tg.bad?t("สิ่งที่ทำวันนั้น"):plan&&PROGS[plan]?t("ตามตาราง")+": "+esc(progName(plan)):t("ยังไม่มีบันทึก")}</small></div><ul class="prog-ex">${rows.join("")}</ul>`;
+  document.getElementById("day-sheet").hidden=false}
+const closeDay=()=>{document.getElementById("day-sheet").hidden=true};
+const goDay=v=>{const ds=dayDs;closeDay();if(ds&&ds!==DAY){DAY=ds;draft.ex={};picked=false;renderAll()}location.hash=v};
+document.getElementById("day-sheet").addEventListener("click",ev=>{if(ev.target.id==="day-sheet")closeDay()});
+document.getElementById("day-gym").addEventListener("click",()=>goDay("gym"));
+document.getElementById("day-food").addEventListener("click",()=>goDay("food"));
