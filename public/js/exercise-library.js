@@ -13,10 +13,10 @@ const MUS_GROUP={chest:"chest",lats:"back",traps:"back",delt:"shoulder",rear:"sh
 const GROUP_MUS={chest:["chest"],back:["lats"],shoulder:["delt"],arms:["bi","tri"],legs:["quad","ham"],core:["abs"]};
 const groupOf=x=>x.g||MUS_GROUP[musOf({id:x.id,n:x.n})[0][0]]||"other";
 const groupName=g=>t((GROUPS.find(q=>q[0]===g)||GROUPS[6])[1]);
-const libPick=e=>{const o={id:e.id,n:e.n,z:e.z||"🔩"};if(e.g)o.g=e.g;if(e.u)o.u=e.u;if(e.link)o.link=e.link;if(e.gif)o.gif=e.gif;return o};
+const libPick=e=>{const o={id:e.id,n:e.n,z:e.z||"🔩"};if(e.g)o.g=e.g;if(e.mp)o.mp=e.mp;if(e.ms)o.ms=e.ms;if(e.u)o.u=e.u;if(e.link)o.link=e.link;if(e.gif)o.gif=e.gif;return o};
 // ex101 catalog (public/data/ex101.json, built by scripts/import-ex101.mjs): read-only, merged into the library view;
 // an entry is copied into EXLIB only when picked or edited, so synced settings stay small.
-Object.assign(EN,{"ทุกอุปกรณ์":"All equipment","ค้นหาท่า":"Search exercises","กำลังโหลดท่า…":"Loading exercises…","แสดง":"Showing","พิมพ์เพื่อค้นหาเพิ่ม":"type to narrow down","วิธีเล่น":"How to"});
+Object.assign(EN,{"กล้ามที่โดน":"Muscles worked","แตะ 1 ครั้ง = หลัก, 2 = รอง, 3 = ไม่โดน":"tap: primary → secondary → off","ทุกอุปกรณ์":"All equipment","ค้นหาท่า":"Search exercises","กำลังโหลดท่า…":"Loading exercises…","แสดง":"Showing","พิมพ์เพื่อค้นหาเพิ่ม":"type to narrow down","วิธีเล่น":"How to"});
 let CAT=null,catLoading=false,libQ="";
 const lc=s=>(s||"").trim().toLowerCase();
 const catOf=x=>CAT&&CAT.find(c=>c.id===x.id||(c.as&&lc(c.as)===lc(x.n)));   // own entry, or one attached to this exercise by name
@@ -56,6 +56,9 @@ function libForm(x){
       <select data-f="g" aria-label="${t("กล้ามเนื้อ")}" style="${sel}">${GROUPS.map(([v,l])=>`<option value="${v}" ${groupOf(x)===v?"selected":""}>${t(l)}</option>`).join("")}</select>
       <select data-f="z" aria-label="${t("อุปกรณ์")}" style="${sel}">${[["🔩","🔩 "+t("เครื่อง")],["🏋️","🏋️ "+t("ดัมเบล/บาร์")],["🔗","🔗 "+t("เคเบิล")]].map(([v,l])=>`<option value="${v}" ${x.z===v?"selected":""}>${l}</option>`).join("")}</select>
       <select data-f="u" aria-label="${t("หน่วย")}" style="${sel}"><option value="kg" ${(x.u||"kg")==="kg"?"selected":""}>kg</option><option value="lb" ${x.u==="lb"?"selected":""}>lb</option></select></div>
+    <div class="mus-pick"><small>${t("กล้ามที่โดน")} · ${t("แตะ 1 ครั้ง = หลัก, 2 = รอง, 3 = ไม่โดน")}</small>
+      <div class="mus-fig">${bodySVG(...musOf(x),150)}</div>
+      <div class="chips">${MUS_KEYS.map(m=>{const [p,s]=musOf(x),st=p.includes(m)?"p":s.includes(m)?"s":"";return `<button class="chip mchip ${st}" data-mus="${m}">${t(MUS_NAME[m])}</button>`}).join("")}</div></div>
     <input data-f="link" ${gifOf(x)&&!x.link?"hidden":""} type="url" inputmode="url" value="${esc(x.link||"")}" placeholder="${t("ลิงก์วิธีเล่น (YouTube / TikTok)")}" aria-label="link" style="${fld};font-size:.85rem">
     <div class="zone">${used.length?t("ใช้ใน")+": "+used.map(esc).join(", "):t("ยังไม่ได้ใช้ในโปรแกรม")}</div>
     <div class="actions"><button class="btn sm ghost" data-del>${t("ลบท่า")}</button><button class="btn sm primary" data-done style="margin-left:auto">${t("เสร็จ")}</button></div>`;
@@ -65,6 +68,9 @@ function libForm(x){
   on('[data-f="z"]',"change",ev=>libUpdate(x.id,{z:ev.target.value}));
   on('[data-f="u"]',"change",ev=>libUpdate(x.id,{u:ev.target.value}));
   on('[data-f="link"]',"change",ev=>{const v=ev.target.value.trim();if(v&&!safeUrl(v)){toast(t("ลิงก์ต้องขึ้นต้นด้วย https://"));return}libUpdate(x.id,{link:v})});
+  c.querySelectorAll("[data-mus]").forEach(b=>b.addEventListener("click",()=>{const [p0,s0]=musOf(x),m=b.dataset.mus;let p=p0.filter(q=>q!==m),s=s0.filter(q=>q!==m);
+    if(p0.includes(m))s.push(m);else if(!s0.includes(m))p.push(m);
+    libUpdate(x.id,{mp:p,ms:s});const keep=libEdit;renderLib();libEdit=keep}));
   on("[data-done]","click",()=>libDone(x));
   on("[data-del]","click",ev=>{const b=ev.target;
     if(libUsed(x.id).length){toast(t("ยังใช้อยู่ในโปรแกรม ลบออกจากโปรแกรมก่อน"));return}
