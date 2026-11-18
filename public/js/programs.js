@@ -90,7 +90,7 @@ function renderProgs(){
   run.addEventListener("click",openRun);box.appendChild(run);
   const bad=document.createElement("button");bad.className="prog cardio";bad.setAttribute("aria-pressed",!!tg.bad);
   bad.innerHTML=`<span class="ic">🏸</span><b>${t("ตีแบด")}</b><small>${tg.bad?"✓ "+t("บันทึกแล้ว")+" +50 XP":pl==="bad"?`<span class="next">${t("คิวถัดไป")}</span>`:t("แตะเพื่อบันทึก")}</small>`;
-  bad.addEventListener("click",()=>{tg.bad=!tg.bad;save("mealcheck",food);try{renderFood()}catch(e){}renderGym();toast(tg.bad?t("ตีแบด")+" ✓":t("ยกเลิกแล้ว"))});box.appendChild(bad);
+  bad.addEventListener("click",openBad);box.appendChild(bad);
 }
 
 /* ---------- program sheet: tap a card → slide-up sheet with its exercises, Start and Edit (cards never move) ---------- */
@@ -109,3 +109,12 @@ document.getElementById("sheet-edit").addEventListener("click",()=>{const k=shee
   inn.addEventListener("touchstart",e=>{if(inn.scrollTop>0)return;y0=e.touches[0].clientY;dy=0;inn.style.transition="none"},{passive:true});
   inn.addEventListener("touchmove",e=>{if(y0===null)return;dy=Math.max(0,e.touches[0].clientY-y0);inn.style.transform=`translateY(${dy}px)`},{passive:true});
   inn.addEventListener("touchend",()=>{if(y0===null)return;inn.style.transition="";if(dy>90)closeSheet();else inn.style.transform="";y0=null})})();
+
+/* ---------- badminton: confirm before logging (or removing) ---------- */
+function openBad(){const on=!!fs().tags.bad,day=thDate(DAY,{weekday:"short",day:"numeric",month:"short"});
+  document.getElementById("bad-msg").textContent=on?`${t("ลบบันทึกตีแบดของ")} ${day}?`:`${t("บันทึกตีแบดของ")} ${day} · +50 XP`;
+  const ok=document.getElementById("bad-ok");ok.textContent=on?t("ลบ"):"✓ "+t("บันทึก");ok.classList.toggle("warn",on);document.getElementById("bad-modal").hidden=false}
+const closeBad=()=>{document.getElementById("bad-modal").hidden=true};
+document.getElementById("bad-cancel").addEventListener("click",closeBad);
+document.getElementById("bad-modal").addEventListener("click",ev=>{if(ev.target.id==="bad-modal")closeBad()});
+document.getElementById("bad-ok").addEventListener("click",()=>{const tg=fs().tags;tg.bad=!tg.bad;save("mealcheck",food);closeBad();try{renderFood()}catch(e){}renderGym();toast(tg.bad?t("ตีแบด")+" ✓ +50 XP":t("ยกเลิกแล้ว"))});

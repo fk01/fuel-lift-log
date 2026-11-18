@@ -308,3 +308,4 @@ html.bar-hide .tabbar{transform:translateY(calc(100% + var(--pillgap) + 8px))}
   padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(20px + env(safe-area-inset-bottom,0px));display:grid;align-content:start;gap:14px;animation:drawerIn .22s ease}
 @keyframes drawerIn{from{transform:translateX(-100%)}to{transform:none}}
 .drawer-h{display:flex;justify-content:space-between;align-items:center}.drawer-h b{font-family:system-ui,-apple-system,sans-serif;font-size:1.4rem;font-weight:800}
+#bad-ok{flex:1;padding:14px}#bad-cancel{padding:14px 16px}
