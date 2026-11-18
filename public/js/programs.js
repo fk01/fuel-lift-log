@@ -45,7 +45,7 @@ function to5x5(){const keep={};Object.values(PROGS).forEach(p=>p.ex.forEach(e=>k
 if(load("scheme",1)<SCHEME){to5x5();try{localStorage.setItem("progs",JSON.stringify(PROGS));localStorage.setItem("scheme",String(SCHEME))}catch(e){};var _clearDraft=true}
 let unit=load("unit","kg");let editing=false;let editId=null;let picked=false;let chosen=false;   // chosen = a program card is selected; picked = workout started (steps 3 & 4 shown)
 const LB=2.20462;
-const toDisp=(kg,u)=>kg===""||kg==null?"":u!=="lb"?+kg:Math.round(kg*LB*2)/2;
+const toDisp=(kg,u)=>kg===""||kg==null?"":u!=="lb"?Math.round(kg*100)/100:Math.round(kg*LB*2)/2;
 const fromDisp=(v,u)=>v===""?"":u!=="lb"?+v:Math.round(v/LB*1000)/1000;
 function uOf(id){for(const p of Object.values(PROGS)){const e=p.ex.find(x=>x.id===id);if(e)return e.u||"kg"}return "kg"}
 function exName(id,l){if(l&&l.names&&l.names[id])return l.names[id];for(const p of Object.values(PROGS)){const e=p.ex.find(x=>x.id===id);if(e)return e.n}return id}
@@ -95,10 +95,14 @@ function renderProgs(){
 
 /* ---------- program sheet: tap a card → slide-up sheet with its exercises, Start and Edit (cards never move) ---------- */
 let sheetK=null;
+// sets per muscle group (biggest first) and a rough duration: each set ≈ 40 s of work + its rest
+function groupSets(p){const m={};p.ex.forEach(e=>{const g=groupOf(e);m[g]=(m[g]||0)+e.s});return Object.entries(m).sort((a,b)=>b[1]-a[1])}
+function estMin(p){return Math.round(p.ex.reduce((a,e)=>a+e.s*(40+restFor(e)),0)/60/5)*5}
 function openSheet(k){const p=PROGS[k];if(!p)return;sheetK=k;const last=[...logs].reverse().find(l=>l.prog===k);
   document.getElementById("sheet-body").innerHTML=`<div class="sheet-h"><b>${esc(p.name)}</b><small>${esc(t(p.sub||""))}</small>
-    <small>${p.ex.length} ${t("ท่า")} · ${last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small></div>
-    <ul class="prog-ex">${p.ex.map((e,n)=>`<li><b class="no">${n+1}</b><em class="nm">${e.z} ${esc(e.n)}</em><span class="ss">${e.s}×${e.r}</span><i class="mg">${groupName(groupOf(e))}</i></li>`).join("")}</ul>`;
+    <small>${p.ex.length} ${t("ท่า")} · ~${estMin(p)} ${t("นาที")} · ${last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small></div>
+    <div class="mgsum">${groupSets(p).map(([g,n])=>`<span><b>${n}</b> ${t("เซ็ต")}<small>${groupName(g)}</small></span>`).join("")}</div>
+    <div class="sx">${p.ex.map(e=>{const gif=gifOf(e);return `<div class="sx-row">${gif?`<img src="${esc(gif)}" alt="" loading="lazy">`:`<span class="sx-ph">${e.z}</span>`}<span><b>${esc(e.n)}</b><small>${e.s} ${t("เซ็ต")} × ${esc(e.r)} · ${groupName(groupOf(e))}</small></span></div>`}).join("")}</div>`;
   const m=document.getElementById("prog-sheet");m.hidden=false;m.querySelector(".sheet-in").style.transform="";m.querySelector(".sheet-in").scrollTop=0}
 function closeSheet(){document.getElementById("prog-sheet").hidden=true;sheetK=null}
 document.getElementById("prog-sheet").addEventListener("click",ev=>{if(ev.target.id==="prog-sheet")closeSheet()});

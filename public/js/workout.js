@@ -13,7 +13,8 @@ function renderEx(){
     const card=document.createElement("div");card.className="ex";
     let lastTxt=last?`${t("ล่าสุด")} ${thDate(last.date,{day:"numeric",month:"short"})}: ${last.sets.map(s=>`${toDisp(s.kg,u)}×${s.reps}`).join(" · ")} ${u}`:t("ยังไม่มีประวัติ");
     if(hitAll)lastTxt+=` <span class="up">↑ ${t("ลอง")} ${u==="kg"?"+2.5 kg":"+5 lb"}</span>`;
-    card.innerHTML=`<div class="row-head"><span class="ex-name" data-fold role="button" tabindex="0" aria-label="${t("ย่อ/ขยาย")} ${esc(e.n)}" style="display:flex;gap:8px;align-items:center;cursor:pointer"><span class="fold-i"></span><span>${e.z} ${e.n}${safeUrl(e.link)?` <a href="${esc(safeUrl(e.link))}" target="_blank" rel="noopener" style="color:var(--up);font-size:.8rem;white-space:nowrap">▶ ${t("ดูวิธีเล่น")}</a>`:""}</span></span><span style="display:flex;gap:8px;align-items:center"><span class="macro">${e.s} × ${e.r}${HEAVY.includes(e.id)?` · ${t("วอม")}`:""} · <b style="color:var(--fg)">${u}</b></span>${e.alt&&altName(e.alt)?`<button class="btn sm" data-alt>⇄ ${esc(altName(e.alt))}</button>`:""}<button class="btn sm" data-edit aria-label="${t("แก้ไข")} ${esc(e.n)}">✎ ${t("แก้ไข")}</button></span></div>
+    const th=gifOf(e),e1=last?Math.round(Math.max(...last.sets.map(q=>(+q.kg||0)*(1+(+q.reps||0)/30)))*(u==="lb"?LB:1)):0;
+    card.innerHTML=`<div class="row-head">${th?`<img class="ex-th" src="${esc(th)}" alt="" loading="lazy">`:""}<span class="ex-name" data-fold role="button" tabindex="0" aria-label="${t("ย่อ/ขยาย")} ${esc(e.n)}" style="display:flex;gap:8px;align-items:center;cursor:pointer"><span class="fold-i"></span><span>${e.z} ${e.n}${safeUrl(e.link)?` <a href="${esc(safeUrl(e.link))}" target="_blank" rel="noopener" style="color:var(--up);font-size:.8rem;white-space:nowrap">▶ ${t("ดูวิธีเล่น")}</a>`:""}</span></span><span style="display:flex;gap:8px;align-items:center"><span class="macro">${e.s} × ${e.r}${HEAVY.includes(e.id)?` · ${t("วอม")}`:""} · <b style="color:var(--fg)">${u}</b></span>${e.alt&&altName(e.alt)?`<button class="btn sm" data-alt>⇄ ${esc(altName(e.alt))}</button>`:""}<button class="btn sm" data-edit aria-label="${t("แก้ไข")} ${esc(e.n)}">✎ ${t("แก้ไข")}</button></span></div>
       <div class="last fold-sum"></div>
       <div class="row-head"><div class="last">${lastTxt}</div><div class="restset">⏱ <button data-rm-rest aria-label="− ${e.n}">−</button><b>${fmt(restFor(e))}</b><button data-add-rest aria-label="+ ${e.n}">+</button></div></div>
       ${howTo(e)}
@@ -21,7 +22,7 @@ function renderEx(){
       <div class="sets"><span class="h">${t("เซ็ต")}</span><button class="h" data-unit aria-label="${t("หน่วย")} ${e.n}" style="border:1px solid var(--line);background:none;color:var(--fg);border-radius:999px;font-family:var(--f-num);font-size:.72rem;cursor:pointer;padding:2px 0">${u} ⇄</button><span class="h">${t("ครั้ง")}</span><span class="h">✓</span>
       ${rows.map((r,i)=>`<span class="n">${i+1}</span><input type="number" readonly inputmode="none" data-pad="kg" id="kg-${e.id}-${i}" value="${toDisp(r.kg,u)}" placeholder="${u}" aria-label="${e.n} ${i+1} weight"><input type="number" readonly inputmode="none" data-pad="reps" id="rp-${e.id}-${i}" value="${r.reps}" placeholder="${e.r}" aria-label="${e.n} ${i+1} reps"><input type="checkbox" id="ok-${e.id}-${i}" ${r.ok?"checked":""} aria-label="${i+1} done">`).join("")}
       </div>
-      <div class="actions"><button class="btn sm" data-add>+ ${t("เซ็ต")}</button>${rows.length>1?`<button class="btn sm ghost" data-del>− ${t("เซ็ต")}</button>`:""}</div>
+      <div class="actions"><button class="btn sm" data-add>+ ${t("เซ็ต")}</button>${last?`<button class="btn sm" data-load>↺ ${t("ใช้ค่าครั้งก่อน")}</button>`:""}<button class="btn sm" data-all>✓✓ ${t("ติ๊กทั้งหมด")}</button>${e1?`<span class="macro" style="margin-left:auto;align-self:center">e1RM ${e1} ${u}</span>`:""}${rows.length>1?`<button class="btn sm ghost" data-del>− ${t("เซ็ต")}</button>`:""}</div>
       ${exHistory(e.id)}`;
     const allOk=()=>rows.length>0&&rows.every(r=>r.ok);
     const foldCard=()=>{const f=foldPref[e.id]??allOk();card.classList.toggle("folded",f);card.querySelector("[data-fold]").setAttribute("aria-expanded",!f);
@@ -35,6 +36,10 @@ function renderEx(){
         if(r.ok&&!r.reps){r.reps=e.r.split("-")[0];card.querySelector(`#rp-${e.id}-${i}`).value=r.reps}save("gymdraft",draft);
         delete foldPref[e.id];foldCard();try{renderHero()}catch(_){}if(r.ok)startRest(e,i,rows)});
     });
+    card.querySelector("[data-load]")?.addEventListener("click",()=>{   // copy last session's weights and reps into this session
+      last.sets.forEach((q,i)=>{if(!rows[i])rows.push({kg:"",reps:"",ok:false});rows[i].kg=q.kg;rows[i].reps=String(q.reps)});save("gymdraft",draft);renderEx();toast("↺ "+e.n)});
+    card.querySelector("[data-all]").addEventListener("click",()=>{const fill=rows.filter(r=>!r.ok);if(!fill.length)return;
+      fill.forEach(r=>{r.ok=true;if(!r.reps)r.reps=e.r.split("-")[0];if(r.kg===""&&last&&last.sets[0])r.kg=last.sets[0].kg});save("gymdraft",draft);renderEx();updWoBar();try{renderHero()}catch(_){}});
     const setRest=d=>{restCfg[e.id]=Math.max(15,Math.min(600,restFor(e)+d));save("restcfg",restCfg);card.querySelector(".restset b").textContent=fmt(restCfg[e.id])};
     card.querySelector("[data-alt]")?.addEventListener("click",()=>{   // swap this slot with its alternate (e.g. Chest Press ⇄ Peck Deck Fly)
       const list=PROGS[cur].ex,i=list.indexOf(e),x=EXLIB.find(q=>q.id===e.alt)||{id:e.alt,n:exName(e.alt),z:"🔩"};if(i<0)return;
@@ -99,6 +104,9 @@ document.addEventListener("visibilitychange",()=>{if(!document.hidden&&dkey(new 
 document.getElementById("fold-btn").textContent="📅";document.getElementById("fold-btn").addEventListener("click",()=>{location.hash="stats"});
 function woProgress(){const ex=draft.ex||{};let done=0,total=0;(PROGS[cur]?PROGS[cur].ex:[]).forEach(e=>{const r=ex[e.id]||[];total+=r.length||e.s;done+=r.filter(x=>x.ok).length});return{done,total,any:Object.values(ex).some(r=>r.some(x=>x.ok||x.reps!==""&&x.reps!=null))}}
 function updWoBar(){const c=document.getElementById("wo-count");if(!c)return;const p=woProgress();c.textContent=`${p.done}/${p.total}`;
+  const top=document.getElementById("wo-top");top.hidden=!picked||editing;
+  const vol=Object.values(draft.ex||{}).flat().filter(r=>r.ok).reduce((a,r)=>a+(+r.kg||0)*(+r.reps||0),0);
+  document.getElementById("wo-vol").textContent=Math.round(vol).toLocaleString();document.getElementById("wo-sets").textContent=p.done;tickClock();
   document.getElementById("tab-gym").classList.toggle("live",picked)}
 function cancelProg(){const back=draft.fromHist;picked=false;chosen=false;editing=false;editId=null;draft={prog:cur};save("gymdraft",draft);stopRest&&stopRest();updUnitBtn();if(back){DAY=TODAY;renderAll()}else renderGym()}
 // cancel: ask once (tap again within 3 s) when sets were already logged, so nothing is lost by accident
@@ -106,7 +114,7 @@ document.getElementById("cancel-w").addEventListener("click",ev=>{const b=ev.cur
   if(woProgress().any&&!b.dataset.sure){b.dataset.sure=1;b.querySelector("span").textContent=t("แตะอีกครั้งเพื่อทิ้ง");b.classList.add("warn");
     clearTimeout(b._t);b._t=setTimeout(()=>{delete b.dataset.sure;b.classList.remove("warn");b.querySelector("span").textContent=t("ยกเลิก")},3000);return}
   delete b.dataset.sure;b.classList.remove("warn");b.querySelector("span").textContent=t("ยกเลิก");cancelProg();toast(t("ยกเลิกการออกแล้ว"))});
-function renderGym(){try{renderProgress()}catch(e){}try{renderHero()}catch(e){}
+function renderGym(){try{renderProgress()}catch(e){}try{renderStatsExtra()}catch(e){}try{renderHero()}catch(e){}
   ["step3","step4"].forEach(id=>document.getElementById(id).hidden=!picked&&!editing);
   document.getElementById("step1").classList.toggle("compact",(picked||editing)&&!document.getElementById("v-gym").hidden);document.getElementById("step2").hidden=picked||editing;
   // resume a workout only if sets were actually logged (weights alone are pre-filled from last time)
@@ -119,9 +127,16 @@ function renderGym(){try{renderProgress()}catch(e){}try{renderHero()}catch(e){}
   const t3=document.querySelector("#step3 .step-t");if(t3)t3.textContent=PROGS[cur]&&picked?`${PROGS[cur].name} · ${t("กำลังเล่น")}`:t("กรอกน้ำหนัก");
   renderProgs();renderEx();renderSessions();document.getElementById("step4").hidden=editing||!picked;updWoBar()}
 document.getElementById("edit-w").addEventListener("click",()=>{if(!PROGS[cur])return;pmOnly=cur;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false;window.scrollTo(0,0)});
-document.getElementById("start-w").addEventListener("click",()=>{if(!PROGS[cur])return;draft.prog=cur;draft.started=1;draft.day=DAY;picked=true;chosen=false;save("gymdraft",draft);renderGym();
+document.getElementById("start-w").addEventListener("click",()=>{if(!PROGS[cur])return;draft.prog=cur;draft.started=1;draft.day=DAY;draft.t0=Date.now();picked=true;chosen=false;save("gymdraft",draft);renderGym();
   setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});
 
 /* ---------- collapsible step sections (Pick a program / Log your sets) ---------- */
 // step sections are plain headed sections now (no collapse, no numbers)
 try{localStorage.removeItem("stepfold")}catch(e){}
+
+/* ---------- workout clock (from Start, kept in the draft so it survives reopening the app) ---------- */
+function tickClock(){const el=document.getElementById("wo-clock");if(!el)return;if(!picked){el.textContent="00:00";return}
+  if(!draft.t0){draft.t0=Date.now();save("gymdraft",draft)}const s=Math.max(0,Math.floor((Date.now()-draft.t0)/1000));
+  const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;el.textContent=(h?h+":"+String(m).padStart(2,"0"):String(m).padStart(2,"0"))+":"+String(x).padStart(2,"0")}
+setInterval(()=>{if(picked)tickClock()},1000);
+document.getElementById("wo-finish").addEventListener("click",()=>document.getElementById("save-w").click());
