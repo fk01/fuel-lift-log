@@ -407,3 +407,8 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 .bstat small{color:var(--muted);font-size:.68rem}.bstat i{font-style:normal;font-family:var(--f-num);font-size:.95rem}.bgoal{cursor:pointer}.bgoal b{font-size:.95rem}.bgoal em{font-style:normal;font-size:.66rem;color:var(--up)}
 .btab{width:100%;font-family:var(--f-num);font-size:.78rem;border-collapse:collapse}.btab th{color:var(--muted);font-weight:400;text-align:left;font-size:.68rem}.btab td,.btab th{padding:4px 3px;border-top:1px solid var(--line)}
 #b-d{box-sizing:border-box;width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg);font-family:var(--f-num);font-size:1rem}
+/* full-screen modals (library, manage programs, chart, run): clear the status bar / Dynamic Island,
+   keep side margins, and pin the title + Close row so it never scrolls away */
+.modal:not(.sheet):not(.drawer):not(.pad){padding:calc(env(safe-area-inset-top,0px) + 18px) max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 24px) max(16px,env(safe-area-inset-left,0px))!important;box-sizing:border-box}
+.modal:not(.sheet):not(.drawer):not(.pad)>.modal-in>.row-head:first-child{position:sticky;top:calc(-1 * (env(safe-area-inset-top,0px) + 18px));z-index:3;margin:calc(-1 * (env(safe-area-inset-top,0px) + 18px)) -16px 0;padding:calc(env(safe-area-inset-top,0px) + 14px) 16px 10px;background:#000e;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.modal:not(.sheet):not(.drawer):not(.pad)>.modal-in>.row-head:first-child .btn{padding:8px 16px}
