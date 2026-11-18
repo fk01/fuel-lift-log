@@ -14,11 +14,21 @@ const viewOf=()=>location.hash.slice(1)||"food";
 document.querySelectorAll(".tabbar .tab").forEach(b=>b.addEventListener("click",()=>{if(location.hash==="#"+b.dataset.v)show(b.dataset.v);else location.hash=b.dataset.v}));
 window.addEventListener("hashchange",()=>show(viewOf()));
 // week strip: the 7 days of the selected date's week; dot = workout / run / badminton logged
+// week strip; tap the date title to expand it into the whole month (and back)
+let weekOpen=false,wkMonth=null;
 function renderWeek(){const box=document.getElementById("week");if(!box)return;const d0=new Date(DAY+"T12:00:00");const off=(d0.getDay()+6)%7;
-  const days=[...Array(7)].map((_,i)=>{const d=new Date(d0);d.setDate(d0.getDate()-off+i);return dkey(d)});
-  box.innerHTML=days.map(ds=>{const d=new Date(ds+"T12:00:00"),tg=(food[ds]||{}).tags||{},did=logs.some(l=>l.date===ds)||tg.run||tg.bad;
-    return `<button class="wd${ds===DAY?" sel":""}${ds===TODAY?" today":""}" data-ds="${ds}" ${ds>TODAY?"disabled":""}><small>${d.toLocaleDateString(LOC(),{weekday:"narrow"})}</small><b>${d.getDate()}</b><i class="${did?"on":""}"></i></button>`}).join("");
-  box.querySelectorAll("[data-ds]").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.ds===DAY)return;DAY=b.dataset.ds;draft.ex={};picked=false;renderAll()}))}
+  const dt=document.getElementById("date");dt.classList.add("date-tog");dt.setAttribute("aria-expanded",weekOpen);
+  let days=[...Array(7)].map((_,i)=>{const d=new Date(d0);d.setDate(d0.getDate()-off+i);return dkey(d)});
+  box.classList.toggle("month",weekOpen);let head="";
+  if(weekOpen){const m=wkMonth||DAY.slice(0,7),[Y,M]=m.split("-").map(Number),first=new Date(Y,M-1,1),lead=(first.getDay()+6)%7,n=new Date(Y,M,0).getDate();
+    days=[...Array(lead)].map(()=>null).concat([...Array(n)].map((_,i)=>`${m}-${String(i+1).padStart(2,"0")}`));
+    head=`<div class="wk-h"><button class="btn sm" data-mv="-1" aria-label="prev">‹</button><b>${first.toLocaleDateString(LOC(),{month:"long",year:"numeric"})}</b><button class="btn sm" data-mv="1" aria-label="next">›</button></div>`+
+      [0,1,2,3,4,5,6].map(i=>`<small class="wk-dow">${new Date(2024,0,1+i).toLocaleDateString(LOC(),{weekday:"narrow"})}</small>`).join("")}
+  box.innerHTML=head+days.map(ds=>{if(!ds)return "<span></span>";const d=new Date(ds+"T12:00:00"),tg=(food[ds]||{}).tags||{},did=logs.some(l=>l.date===ds)||tg.run||tg.bad;
+    return `<button class="wd${ds===DAY?" sel":""}${ds===TODAY?" today":""}" data-ds="${ds}" ${ds>TODAY?"disabled":""}>${weekOpen?"":`<small>${d.toLocaleDateString(LOC(),{weekday:"narrow"})}</small>`}<b>${d.getDate()}</b><i class="${did?"on":""}"></i></button>`}).join("");
+  box.querySelectorAll("[data-ds]").forEach(b=>b.addEventListener("click",()=>{weekOpen=false;wkMonth=null;if(b.dataset.ds===DAY){renderWeek();return}DAY=b.dataset.ds;draft.ex={};picked=false;renderAll()}));
+  box.querySelectorAll("[data-mv]").forEach(b=>b.addEventListener("click",()=>{const [y,m]=(wkMonth||DAY.slice(0,7)).split("-").map(Number);wkMonth=dkey(new Date(y,m-1+(+b.dataset.mv),1)).slice(0,7);renderWeek()}))}
+document.getElementById("date").addEventListener("click",()=>{weekOpen=!weekOpen;wkMonth=null;renderWeek()});
 function renderAll(){applyStatic();try{renderWeek()}catch(e){}document.getElementById("today-btn").hidden=DAY===TODAY;document.getElementById("save-day").textContent="→ "+new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"numeric"});document.getElementById("date").textContent=new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{weekday:"short",day:"numeric",month:"long"})+(DAY===TODAY?"":" · "+(lang==="th"?"ย้อนหลัง":"Backfill"));updUnitBtn();renderFood();renderGym();show(viewOf())}
 document.getElementById("lang").addEventListener("click",()=>{lang=lang==="th"?"en":"th";try{localStorage.setItem("lang",lang)}catch(e){}renderAll()});
 /* ---------- lock page scroll while a full-screen modal is open (iOS scrolled the page behind it) ---------- */
