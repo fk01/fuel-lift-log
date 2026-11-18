@@ -387,3 +387,9 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 .rec-t b,.rec-t small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rec-det{display:grid;gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0 0 8px}
 .rec-det small{color:var(--muted);font-family:var(--f-num);font-size:.75rem}.rec-det .chip{font-size:.78rem;white-space:normal;text-align:left}
+
+.rec-wrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start}
+.rec-wrap .rec-list{display:grid;grid-template-columns:1fr!important;max-height:250px;overflow-y:auto;gap:6px;overscroll-behavior:contain}
+.rec-wrap .rec-t{padding:6px 8px;gap:1px}.rec-wrap .rec-t b{display:flex;justify-content:space-between;gap:6px;font-size:.8rem}
+.rec-wrap .rec-t b small{flex:none}.rec-wrap .rec-t em{white-space:normal;font-size:.7rem}
+.rec-leg{margin:8px 0 4px!important}
