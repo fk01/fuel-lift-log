@@ -39,7 +39,7 @@ const DEFAULT_PROGS={
 /* ตารางสัปดาห์: จ.=วิ่ง 10K · อ.=Push A · พ.=Pull A · พฤ.=แบด · ศ.=พัก · ส.=Push B · อา.=Pull B (ขากระจายทุกวันเวท) */
 const WEEK={1:"run",2:"push",3:"pull",4:"bad",6:"push2",0:"pull2"};
 const SCHEME=4;
-const progName=k=>(PROGS[k]||{name:k==="legs"?"Legs":k}).name;
+const progName=k=>k==="free"?t("ออกแบบอิสระ"):(PROGS[k]||{name:k==="legs"?"Legs":k}).name;
 let PROGS=load("progs",null)||JSON.parse(JSON.stringify(DEFAULT_PROGS));
 function to5x5(){const keep={};Object.values(PROGS).forEach(p=>p.ex.forEach(e=>keep[e.id]=e));PROGS=JSON.parse(JSON.stringify(DEFAULT_PROGS));Object.values(PROGS).forEach(p=>p.ex.forEach(e=>{const o=keep[e.id];if(o){if(o.u)e.u=o.u;if(o.link)e.link=o.link}}))}
 if(load("scheme",1)<SCHEME){to5x5();try{localStorage.setItem("progs",JSON.stringify(PROGS));localStorage.setItem("scheme",String(SCHEME))}catch(e){};var _clearDraft=true}
@@ -69,7 +69,7 @@ function renderProgs(){
   const pl=planFor(DAY);const nx=pl==="run"||pl==="bad"?null:nextProg();const box=document.getElementById("progs");box.innerHTML="";
   const hd=s=>{const d=document.createElement("div");d.className="pick-h";d.textContent=t(s);box.appendChild(d)};
   hd("เวทเทรนนิ่ง");
-  Object.entries(PROGS).forEach(([k,p])=>{
+  Object.entries(PROGS).filter(([k])=>k!=="free").forEach(([k,p])=>{
     const last=[...logs].reverse().find(l=>l.prog===k);
     const b=document.createElement("button");b.className="prog";b.id="p-"+k;b.setAttribute("aria-pressed",(picked||chosen)&&k===cur);
     const groups=[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", "),open=false;
@@ -101,8 +101,9 @@ function estMin(p){return Math.round(p.ex.reduce((a,e)=>a+e.s*(40+restFor(e)),0)
 function openSheet(k){const p=PROGS[k];if(!p)return;sheetK=k;const last=[...logs].reverse().find(l=>l.prog===k);
   document.getElementById("sheet-body").innerHTML=`<div class="sheet-h"><b>${esc(p.name)}</b><small>${esc(t(p.sub||""))}</small>
     <small>${p.ex.length} ${t("ท่า")} · ~${estMin(p)} ${t("นาที")} · ${last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small></div>
+    <div class="sheet-body-fig">${bodySVG(...musUnion(p.ex),110)}</div>
     <div class="mgsum">${groupSets(p).map(([g,n])=>`<span><b>${n}</b> ${t("เซ็ต")}<small>${groupName(g)}</small></span>`).join("")}</div>
-    <div class="sx">${p.ex.map(e=>{const gif=gifOf(e);return `<div class="sx-row">${gif?`<img src="${esc(gif)}" alt="" loading="lazy">`:`<span class="sx-ph">${e.z}</span>`}<span><b>${esc(e.n)}</b><small>${e.s} ${t("เซ็ต")} × ${esc(e.r)} · ${groupName(groupOf(e))}</small></span></div>`}).join("")}</div>`;
+    <div class="sx">${p.ex.map(e=>{const gif=gifOf(e);return `<div class="sx-row">${gif?`<img src="${esc(gif)}" alt="" loading="lazy">`:`<span class="sx-ph">${e.z}</span>`}<span class="sx-mini">${bodySVG(...musOf(e),30)}</span><span><b>${esc(e.n)}</b><small>${e.s} ${t("เซ็ต")} × ${esc(e.r)} · ${groupName(groupOf(e))}</small></span></div>`}).join("")}</div>`;
   const m=document.getElementById("prog-sheet");m.hidden=false;m.querySelector(".sheet-in").style.transform="";m.querySelector(".sheet-in").scrollTop=0}
 function closeSheet(){document.getElementById("prog-sheet").hidden=true;sheetK=null}
 document.getElementById("prog-sheet").addEventListener("click",ev=>{if(ev.target.id==="prog-sheet")closeSheet()});

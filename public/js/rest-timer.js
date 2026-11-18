@@ -6,7 +6,7 @@ function beep(){try{actx=actx||new (window.AudioContext||window.webkitAudioConte
 function startRest(e,i,rows){
   try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume()}catch(_){}
   const secs=restFor(e);
-  const ex=PROGS[cur].ex;const k=ex.indexOf(e);
+  const ex=sessEx();const k=ex.indexOf(e);
   let next;
   if(i+1<rows.length)next=`<b>${e.n}</b> ${t("เซ็ต")} ${i+2}/${rows.length}${rows[i+1].kg!==""?` · ${toDisp(rows[i+1].kg,e.u)} ${e.u||"kg"}`:""}`;
   else if(ex[k+1])next=`${t("ท่าถัดไป")} <b>${ex[k+1].n}</b>`;

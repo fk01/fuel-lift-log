@@ -7,7 +7,7 @@ Object.assign(EN,{"จัดการโปรแกรม":"Manage programs","�
   "แก้ JSON แล้วกดบันทึก · ท่าที่ไม่มีในคลังจะถูกสร้างให้":"Edit and save · exercises not in the library are created"});
 let pmTab="ui",pmOnly=null,pmFromList=false;   // pmOnly: program key when opened from "Edit workout" — show just that program
 const pmFld="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px;font:inherit";
-function progsToJson(){const out={};Object.entries(PROGS).forEach(([k,p])=>{out[k]={name:p.name,sub:p.sub||"",ex:p.ex.map(e=>{const o={id:e.id,n:e.n,s:e.s,r:e.r};if(e.main)o.main=true;if(e.alt)o.alt=e.alt;return o})}});return JSON.stringify(out,null,2)}
+function progsToJson(){const out={};Object.entries(PROGS).filter(([k])=>k!=="free").forEach(([k,p])=>{out[k]={name:p.name,sub:p.sub||"",ex:p.ex.map(e=>{const o={id:e.id,n:e.n,s:e.s,r:e.r};if(e.main)o.main=true;if(e.alt)o.alt=e.alt;return o})}});return JSON.stringify(out,null,2)}
 // parse + validate JSON text into PROGS; exercises are matched by id, then by name, else created in the library
 function jsonToProgs(txt){
   let d;try{d=JSON.parse(txt)}catch(e){throw new Error("JSON: "+e.message)}
@@ -69,7 +69,7 @@ function renderPM(){
     return}
   if(pmOnly)return pmEditOne(box,pmOnly);
   // list view: one compact row per program; tap a row to edit that program
-  const keys=Object.keys(PROGS);
+  const keys=Object.keys(PROGS).filter(k=>k!=="free");
   keys.forEach((k,i)=>{const p=PROGS[k];const r=document.createElement("div");r.className="pm-li";
     r.innerHTML=`<button class="pm-open" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}"><b>${esc(p.name)}</b><small>${esc(t(p.sub||""))}</small><small>${p.ex.length} ${t("ท่า")} ›</small></button>
       <div class="pm-li-act"><button class="btn sm" data-up ${i===0?"disabled":""} aria-label="up">↑</button><button class="btn sm" data-down ${i===keys.length-1?"disabled":""} aria-label="down">↓</button><button class="btn sm ghost" data-del aria-label="${t("ลบโปรแกรม")}">🗑</button></div>`;

@@ -48,7 +48,7 @@ addEventListener("hashchange",()=>{if(location.hash==="#more")vpInfo()});setTime
   d.addEventListener("click",ev=>{if(ev.target===d){close();return}const r=ev.target.closest(".menu-row");if(!r)return;
     if(r.dataset.go){close();location.hash=r.dataset.go;return}
     const a=r.dataset.act;if(a==="lib"){close();openLib()}else if(a==="pm"){close();pmOnly=null;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false}
-    else if(a==="lang"){document.getElementById("lang").click();open()}else if(a==="refresh"){close();doRefresh()}})})();
+    else if(a==="rm"){close();open1RM()}else if(a==="badges"){close();openBadges()}else if(a==="lang"){document.getElementById("lang").click();open()}else if(a==="refresh"){close();doRefresh()}})})();
 /* ---------- startup ---------- */
 pkState();
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").then(pushState).catch(()=>{})}else{pushState()}

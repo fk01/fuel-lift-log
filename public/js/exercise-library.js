@@ -16,7 +16,7 @@ const groupName=g=>t((GROUPS.find(q=>q[0]===g)||GROUPS[6])[1]);
 const libPick=e=>{const o={id:e.id,n:e.n,z:e.z||"🔩"};if(e.g)o.g=e.g;if(e.u)o.u=e.u;if(e.link)o.link=e.link;if(e.gif)o.gif=e.gif;return o};
 // ex101 catalog (public/data/ex101.json, built by scripts/import-ex101.mjs): read-only, merged into the library view;
 // an entry is copied into EXLIB only when picked or edited, so synced settings stay small.
-Object.assign(EN,{"ค้นหาท่า":"Search exercises","กำลังโหลดท่า…":"Loading exercises…","แสดง":"Showing","พิมพ์เพื่อค้นหาเพิ่ม":"type to narrow down","วิธีเล่น":"How to"});
+Object.assign(EN,{"ทุกอุปกรณ์":"All equipment","ค้นหาท่า":"Search exercises","กำลังโหลดท่า…":"Loading exercises…","แสดง":"Showing","พิมพ์เพื่อค้นหาเพิ่ม":"type to narrow down","วิธีเล่น":"How to"});
 let CAT=null,catLoading=false,libQ="";
 const lc=s=>(s||"").trim().toLowerCase();
 const catOf=x=>CAT&&CAT.find(c=>c.id===x.id||(c.as&&lc(c.as)===lc(x.n)));   // own entry, or one attached to this exercise by name
@@ -38,9 +38,9 @@ const libUsed=id=>Object.values(PROGS).filter(p=>p.ex.some(e=>e.id===id)).map(p=
 function libUpdate(id,patch){const x=EXLIB.find(q=>q.id===id);if(x)Object.assign(x,patch);
   Object.values(PROGS).forEach(p=>p.ex.forEach(e=>{if(e.id===id)Object.assign(e,patch)}));saveProgs();save("exlib",EXLIB)}
 
-let libMode=null,libEdit=null,libGroup="all";         // libMode: null = manage, {skip:Set,onPick:fn} = pick for a program
+let libMode=null,libEdit=null,libGroup="all",libEq="all";         // libMode: null = manage, {skip:Set,onPick:fn} = pick for a program
 const libNamed=x=>!!(x.n&&x.n.trim());
-function openLib(mode){libMode=mode||null;libEdit=null;libGroup="all";libQ="";const q=document.getElementById("lib-q");if(q){q.value="";q.placeholder=t("ค้นหาท่า")}loadCat();renderLib();document.getElementById("lib-modal").hidden=false}
+function openLib(mode){libMode=mode||null;libEdit=null;libGroup="all";libQ="";libEq="all";const q=document.getElementById("lib-q");if(q){q.value="";q.placeholder=t("ค้นหาท่า")}loadCat();renderLib();document.getElementById("lib-modal").hidden=false}
 function closeLib(){const n=EXLIB.length;EXLIB=EXLIB.filter(libNamed);if(EXLIB.length!==n)save("exlib",EXLIB);
   libEdit=null;libMode=null;document.getElementById("lib-modal").hidden=true;renderGym()}
 function libDone(x){
@@ -78,11 +78,12 @@ function renderLib(){
   const haveId=new Set(EXLIB.map(x=>x.id)),haveN=new Set(EXLIB.map(x=>(x.n||"").trim().toLowerCase()));
   const extra=(CAT||[]).filter(c=>!c.as&&!haveId.has(c.id)&&!haveN.has(c.n.toLowerCase())).map(c=>Object.assign({cat:1},c));
   const q=libQ.trim().toLowerCase(),hit=x=>!q||x.id===libEdit||[x.n,x.t,x.e].some(s=>s&&s.toLowerCase().includes(q));
-  const all=mine.concat(extra).filter(hit);
+  const all=mine.concat(extra).filter(hit).filter(x=>libEq==="all"||(x.z||"🔩")===libEq);
   const count={};all.forEach(x=>{const g=groupOf(x);count[g]=(count[g]||0)+1});
   const chips=document.getElementById("lib-groups");chips.innerHTML="";
   [["all","ทั้งหมด"],...GROUPS].forEach(([g,l])=>{if(g!=="all"&&!count[g])return;const b=document.createElement("button");b.className="chip";b.setAttribute("aria-pressed",libGroup===g);
     b.textContent=`${t(l)} ${g==="all"?all.length:count[g]}`;b.addEventListener("click",()=>{libGroup=g;renderLib()});chips.appendChild(b)});
+  const eq=document.getElementById("lib-eq");if(eq){eq.innerHTML="";[["all","ทุกอุปกรณ์"],["🔩","🔩 "+t("เครื่อง")],["🏋️","🏋️ "+t("ดัมเบล/บาร์")],["🔗","🔗 "+t("เคเบิล")]].forEach(([k,l])=>{const b=document.createElement("button");b.className="chip";b.setAttribute("aria-pressed",libEq===k);b.textContent=t(l);b.addEventListener("click",()=>{libEq=k;renderLib()});eq.appendChild(b)})}
   const order=g=>GROUPS.findIndex(q=>q[0]===g);
   const items=all.filter(x=>x.id===libEdit||libGroup==="all"||groupOf(x)===libGroup).sort((a,b)=>order(groupOf(a))-order(groupOf(b))||(a.n||"").localeCompare(b.n||""));
   const hint=document.createElement("p");hint.className="note";
