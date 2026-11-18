@@ -276,3 +276,16 @@ html.bar-hide .rest{transform:translateY(calc(-100% + var(--tabh)))}
 .wo-bar{bottom:-56px;transition:bottom .25s ease}
 html.bar-hide .wo-bar{bottom:calc(-56px - var(--tabh))}
 .tabbar{background:#151514f2!important;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+/* floating pill tab bar (icons only, rounded, inset from the edges) */
+:root{--pill:60px;--pillgap:max(var(--tabpb),10px);--tabh:calc(var(--pill) + var(--pillgap) + 4px)}
+html.reserved-bottom{--pillgap:10px}
+.tabbar{left:14px!important;right:14px!important;height:var(--pill)!important;top:calc(var(--app-h) - var(--pill) - var(--pillgap))!important;
+  padding:6px!important;border:1px solid #ffffff1a!important;border-radius:999px!important;background:#1e1e1dd9!important;
+  -webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);box-shadow:0 8px 24px #0008;align-items:stretch!important}
+.tabbar::after{display:none!important}
+.tabbar .tab{border-radius:999px;padding:0!important;align-content:center;justify-items:center}
+.tabbar .tab span{font-size:1.45rem}
+.tabbar .tab small{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tabbar .tab[aria-selected="true"]{background:#ffffff1f!important}
+.tabbar .tab.live::after{top:8px;left:calc(50% + 10px)}
+html.bar-hide .tabbar{transform:translateY(calc(100% + var(--pillgap) + 8px))}
