@@ -367,3 +367,9 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 .week.month{row-gap:2px}.wk-h{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;margin:2px 0 6px}.wk-h b{font-family:system-ui,-apple-system,sans-serif;font-weight:700}
 .wk-dow{text-align:center;color:var(--muted);font-family:var(--f-num);font-size:.7rem}
 .week.month .wd{padding:6px 0 4px}
+
+.body-fig{position:relative;display:inline-block;flex:none;vertical-align:middle}
+.body-fig img,.body-fig i{position:absolute;inset:0;width:100%;height:100%}
+.body-fig i{-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;opacity:.92}
+.ring-fig{top:14px}
+.sx-row .body-fig img,.ring .body-fig img{background:none!important;border-radius:0!important;object-fit:fill!important;width:100%!important;height:100%!important}

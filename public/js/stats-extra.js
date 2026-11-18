@@ -24,7 +24,7 @@ function renderVolume(){const box=document.getElementById("vol-card");if(!box)re
 function renderMuscleSets(){const box=document.getElementById("mset-card");if(!box)return;const today=ds2d(TODAY),mon=dkey(addD(today,-((today.getDay()+6)%7)));const n={};
   logs.filter(l=>l.date>=mon&&l.date<=TODAY).forEach(l=>Object.entries(l.ex).forEach(([id,s])=>{const g=groupOf(exOf(id,l));n[g]=(n[g]||0)+s.length}));
   box.innerHTML=`<div class="rings">${Object.entries(SET_TARGET).map(([g,tg])=>{const v=n[g]||0,f=Math.min(1,v/tg),r=26,C=2*Math.PI*r;
-    return `<div class="ring"><svg viewBox="0 0 64 64" width="64" height="64"><circle cx="32" cy="32" r="${r}" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="32" cy="32" r="${r}" fill="none" stroke="${v>=tg?"var(--up)":"var(--series,#4f93f5)"}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(C*f).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="ring-fig">${bodySVG(GROUP_MUS[g]||[],[],30)}</span><b>${groupName(g)}</b><small>${v} / ${tg} ${t("เซ็ต")}</small></div>`}).join("")}</div>`}
+    return `<div class="ring"><svg viewBox="0 0 64 64" width="64" height="64"><circle cx="32" cy="32" r="${r}" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="32" cy="32" r="${r}" fill="none" stroke="${v>=tg?"var(--up)":"var(--series,#4f93f5)"}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(C*f).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="ring-fig">${bodySVG(GROUP_MUS[g]||[],[],36)}</span><b>${groupName(g)}</b><small>${v} / ${tg} ${t("เซ็ต")}</small></div>`}).join("")}</div>`}
 function renderPRs(){const box=document.getElementById("pr-card");if(!box)return;const e1=s=>Math.max(...s.map(q=>(+q.kg||0)*(1+(+q.reps||0)/30)));
   const cut=dkey(addD(ds2d(TODAY),-30)),rows=[];
   HEAVY.forEach(id=>{const h=logs.filter(l=>l.ex[id]&&l.ex[id].length);if(!h.length)return;const recent=h.filter(l=>l.date>=cut),old=h.filter(l=>l.date<cut);
@@ -51,7 +51,7 @@ function lastTrained(){const out={};logs.filter(l=>l.date<=TODAY).forEach(l=>Obj
 function renderRecovery(){const box=document.getElementById("rec-card");if(!box)return;const lt=lastTrained(),now=ds2d(TODAY);
   const ago=m=>lt[m]?Math.round((now-ds2d(lt[m]))/864e5):null,state=d=>d==null?0:d<=1?1:d<=2?2:3;
   const C=["#2f2e2b","#e07a6a","#d9a46c","#7cc47a"];
-  box.innerHTML=`<div class="rec-fig">${bodySVG([],[],170,m=>C[state(ago(m))])}</div>
+  box.innerHTML=`<div class="rec-fig">${bodySVG([],[],300,m=>C[state(ago(m))])}</div>
     <div class="rec-leg"><span><i style="background:${C[1]}"></i>${t("เพิ่งเล่น")}</span><span><i style="background:${C[2]}"></i>${t("กำลังฟื้น")}</span><span><i style="background:${C[3]}"></i>${t("พร้อม")}</span></div>
     <div class="rec-list">${Object.keys(MUS_NAME).filter(m=>lt[m]).sort((a,b)=>ago(a)-ago(b)).map(m=>{const d=ago(m);return `<span><b>${t(MUS_NAME[m])}</b><small style="color:${C[state(d)]}">${d===0?t("วันนี้"):d+" "+t("วันก่อน")}</small></span>`}).join("")}</div>`}
 /* ---------- generic bottom sheet ---------- */

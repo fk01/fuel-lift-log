@@ -18,10 +18,11 @@ const BACK=[["traps","poly","50,30 38,38 44,52 56,52 62,38"],["rear","ellipse",3
  ["tri","ellipse",24,60,4.5,10],["tri","ellipse",76,60,4.5,10],["fore","ellipse",21,82,3.5,11],["fore","ellipse",79,82,3.5,11],
  ["glute","ellipse",42,99,8.5,9],["glute","ellipse",58,99,8.5,9],["abd","ellipse",32,98,3.5,8],["abd","ellipse",68,98,3.5,8],
  ["ham","ellipse",42,128,7,18],["ham","ellipse",58,128,7,18],["calf","ellipse",42,165,6,12],["calf","ellipse",58,165,6,12]];
+// anatomy figure: base illustration + one mask per muscle (public/img/mus/*.png), each tinted with CSS mask-image
+const MUS_KEYS=["chest","delt","rear","traps","lats","bi","tri","fore","abs","obl","quad","ham","glute","calf","abd","add"];
 function bodySVG(prim,sec,h=44,colFn){
-  const P=new Set(prim),S=new Set(sec);const col=colFn||(m=>P.has(m)?"#e8a46a":S.has(m)?"#7a5a40":"#2f2e2b");
-  const base=`<circle cx="50" cy="14" r="9" fill="#3a3936"/><rect x="45" y="22" width="10" height="8" fill="#3a3936"/><path d="M30 34 L70 34 L64 92 L36 92Z" fill="#33322f"/><path d="M36 90 L64 90 L62 182 L52 182 L50 112 L48 182 L38 182Z" fill="#33322f"/><path d="M24 36 L30 36 L26 96 L17 96Z M70 36 L76 36 L83 96 L74 96Z" fill="#33322f"/>`;
-  const shp=(a,dx)=>a.map(([m,k,...v])=>k==="ellipse"?`<ellipse cx="${v[0]+dx}" cy="${v[1]}" rx="${v[2]}" ry="${v[3]}" fill="${col(m)}"/>`:k==="rect"?`<rect x="${v[0]+dx}" y="${v[1]}" width="${v[2]}" height="${v[3]}" rx="3" fill="${col(m)}"/>`:`<polygon points="${v[0].split(" ").map(pt=>{const [x,y]=pt.split(",");return (+x+dx)+","+y}).join(" ")}" fill="${col(m)}"/>`).join("");
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 190" height="${h}" width="${Math.round(h*210/190)}" aria-hidden="true" style="flex:none"><g>${base}${shp(FRONT,0)}</g><g transform="translate(110,0)">${base}</g>${shp(BACK,110)}</svg>`;
+  const P=new Set(prim),S=new Set(sec),col=colFn||(m=>P.has(m)?"#e8a46a":S.has(m)?"#8a6040":null);
+  const w=Math.round(h*420/647);
+  return `<span class="body-fig" style="width:${w}px;height:${h}px" aria-hidden="true"><img src="/img/mus-base.png" alt="">${MUS_KEYS.map(m=>{const c=col(m);return c&&c!=="#2f2e2b"?`<i style="background:${c};-webkit-mask-image:url(/img/mus/${m}.png);mask-image:url(/img/mus/${m}.png)"></i>`:""}).join("")}</span>`;
 }
 function musUnion(list){const p=new Set(),s=new Set();list.forEach(e=>{const [a,b]=musOf(e);a.forEach(x=>p.add(x));b.forEach(x=>s.add(x))});p.forEach(x=>s.delete(x));return [[...p],[...s]]}
