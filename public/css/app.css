@@ -299,3 +299,12 @@ html.bar-hide .tabbar{transform:translateY(calc(100% + var(--pillgap) + 8px))}
 .sheet-h{display:grid;gap:3px}.sheet-h b{font-family:system-ui,-apple-system,"IBM Plex Sans Thai",sans-serif;font-size:1.3rem;font-weight:700}.sheet-h small{color:var(--muted)}
 .sheet-in .prog-ex{margin:0}
 .sheet-act{position:sticky;bottom:-18px;background:var(--surface);padding:8px 0 4px}.sheet-act #sheet-start{flex:1;padding:14px}.sheet-act #sheet-edit{padding:14px 16px}
+
+/* ☰ burger + left drawer */
+.burger{width:40px;height:40px;flex:none;display:grid;align-content:center;gap:5px;padding:0 9px;border:0;background:none;cursor:pointer}
+.burger i{display:block;height:2.5px;border-radius:2px;background:var(--fg)}
+.modal.drawer{background:#0009;place-items:stretch start;padding:0!important;z-index:36}
+.drawer-in{width:min(84vw,340px);height:100%;box-sizing:border-box;overflow:auto;background:var(--bg);border-right:1px solid var(--line);
+  padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(20px + env(safe-area-inset-bottom,0px));display:grid;align-content:start;gap:14px;animation:drawerIn .22s ease}
+@keyframes drawerIn{from{transform:translateX(-100%)}to{transform:none}}
+.drawer-h{display:flex;justify-content:space-between;align-items:center}.drawer-h b{font-family:system-ui,-apple-system,sans-serif;font-size:1.4rem;font-weight:800}

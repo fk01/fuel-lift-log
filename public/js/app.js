@@ -40,6 +40,15 @@ addEventListener("hashchange",()=>{if(location.hash==="#more")vpInfo()});setTime
   w.addEventListener("scroll",()=>{const y=w.scrollTop,d=y-last;last=y;
     if(y<=10)r.classList.remove("bar-hide");else if(Math.abs(d)>3)r.classList.add("bar-hide");
     clearTimeout(tm);tm=setTimeout(()=>r.classList.remove("bar-hide"),350)},{passive:true})})();
+/* ---------- ☰ side menu (top-left): every screen and tool in one place ---------- */
+(()=>{const d=document.getElementById("drawer"),btn=document.getElementById("menu-btn");
+  const open=()=>{document.getElementById("drawer-lang").textContent=lang==="th"?"ไทย":"English";d.hidden=false;btn.setAttribute("aria-expanded","true")};
+  const close=()=>{d.hidden=true;btn.setAttribute("aria-expanded","false")};
+  btn.addEventListener("click",open);document.getElementById("drawer-close").addEventListener("click",close);
+  d.addEventListener("click",ev=>{if(ev.target===d){close();return}const r=ev.target.closest(".menu-row");if(!r)return;
+    if(r.dataset.go){close();location.hash=r.dataset.go;return}
+    const a=r.dataset.act;if(a==="lib"){close();openLib()}else if(a==="pm"){close();pmOnly=null;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false}
+    else if(a==="lang"){document.getElementById("lang").click();open()}else if(a==="refresh"){close();doRefresh()}})})();
 /* ---------- startup ---------- */
 pkState();
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").then(pushState).catch(()=>{})}else{pushState()}
