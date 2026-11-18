@@ -47,13 +47,17 @@ addEventListener("hashchange",()=>{if(location.hash==="#stats")renderStatsExtra(
 const MUS_NAME={chest:"อก",delt:"ไหล่หน้า",rear:"ไหล่หลัง",traps:"บ่า",lats:"หลัง",bi:"หน้าแขน",tri:"หลังแขน",fore:"แขนท่อนล่าง",abs:"หน้าท้อง",obl:"ข้างลำตัว",quad:"ต้นขาหน้า",ham:"ต้นขาหลัง",glute:"ก้น",calf:"น่อง",abd:"ขานอก",add:"ขาใน"};
 Object.assign(EN,{"การฟื้นตัวของกล้ามเนื้อ":"Muscle recovery","พร้อม":"Ready","กำลังฟื้น":"Recovering","เพิ่งเล่น":"Just trained","วันก่อน":"d ago","วันนี้":"today",
   "อก":"Chest","ไหล่หน้า":"Front delts","ไหล่หลัง":"Rear delts","บ่า":"Traps","หลัง":"Back","หน้าแขน":"Biceps","หลังแขน":"Triceps","แขนท่อนล่าง":"Forearms","หน้าท้อง":"Abs","ข้างลำตัว":"Obliques","ต้นขาหน้า":"Quads","ต้นขาหลัง":"Hamstrings","ก้น":"Glutes","น่อง":"Calves","ขานอก":"Abductors","ขาใน":"Adductors"});
-function lastTrained(){const out={};logs.filter(l=>l.date<=TODAY).forEach(l=>Object.keys(l.ex).forEach(id=>musOf(exOf(id,l))[0].forEach(m=>{if(!out[m]||out[m]<l.date)out[m]=l.date})));return out}
+// last date each muscle was a primary target, plus which exercises hit it that day (shown on the tiles so the mapping can be checked)
+let recLast={};
+function lastTrained(){const out={},by={};logs.filter(l=>l.date<=TODAY).forEach(l=>Object.keys(l.ex).forEach(id=>{const x=exOf(id,l);musOf(x)[0].forEach(m=>{
+    if(!out[m]||out[m]<l.date){out[m]=l.date;by[m]=[]}if(out[m]===l.date&&!by[m].includes(x.n))by[m].push(x.n)})}));recLast=by;return out}
+let recSel=null;
 function renderRecovery(){const box=document.getElementById("rec-card");if(!box)return;const lt=lastTrained(),now=ds2d(TODAY);
   const ago=m=>lt[m]?Math.round((now-ds2d(lt[m]))/864e5):null,state=d=>d==null?0:d<=1?1:d<=2?2:3;
   const C=["#2f2e2b","#e07a6a","#d9a46c","#7cc47a"];
-  box.innerHTML=`<div class="rec-fig">${bodySVG([],[],300,m=>C[state(ago(m))])}</div>
+  box.innerHTML=`<div class="rec-fig">${bodySVG([],[],300,m=>recSel&&m!==recSel?(lt[m]?"#3a3936":null):C[state(ago(m))])}</div>
     <div class="rec-leg"><span><i style="background:${C[1]}"></i>${t("เพิ่งเล่น")}</span><span><i style="background:${C[2]}"></i>${t("กำลังฟื้น")}</span><span><i style="background:${C[3]}"></i>${t("พร้อม")}</span></div>
-    <div class="rec-list">${Object.keys(MUS_NAME).filter(m=>lt[m]).sort((a,b)=>ago(a)-ago(b)).map(m=>{const d=ago(m);return `<span><b>${t(MUS_NAME[m])}</b><small style="color:${C[state(d)]}">${d===0?t("วันนี้"):d+" "+t("วันก่อน")}</small></span>`}).join("")}</div>`}
+    <p class="note" style="margin:0 0 6px">${t("แตะกล้ามเพื่อดูบนหุ่น")}</p><div class="rec-list">${Object.keys(MUS_NAME).filter(m=>lt[m]).sort((a,b)=>ago(a)-ago(b)).map(m=>{const d=ago(m);return `<button class="rec-t" data-m="${m}" aria-pressed="${recSel===m}"><b>${t(MUS_NAME[m])}</b><small style="color:${C[state(d)]}">${d===0?t("วันนี้"):d+" "+t("วันก่อน")} · ${thDate(lt[m],{day:"numeric",month:"short"})}</small><em>${(recLast[m]||[]).map(esc).join(", ")}</em></button>`}).join("")}</div>`}
 /* ---------- generic bottom sheet ---------- */
 function openGen(title,html,after){document.getElementById("gen-body").innerHTML=`<div class="sheet-h"><b>${title}</b></div>${html}`;document.getElementById("gen-sheet").hidden=false;if(after)after(document.getElementById("gen-body"))}
 document.getElementById("gen-sheet").addEventListener("click",ev=>{if(ev.target.id==="gen-sheet"||ev.target.closest("[data-gen-close]"))document.getElementById("gen-sheet").hidden=true});
@@ -83,3 +87,6 @@ renderBody=function(){const box=document.getElementById("body-card");if(!box)ret
       <div class="actions sheet-act"><button class="btn" data-gen-close>${t("ยกเลิก")}</button><button class="btn primary" id="b-save" style="flex:1">✓ ${t("บันทึก")}</button></div>`,b=>{
       b.querySelector("#b-save").addEventListener("click",()=>{const r={d:TODAY};[["kg","#b-kg"],["mm","#b-mm"],["fat","#b-fat"]].forEach(([k,s])=>{const v=Math.round(+b.querySelector(s).value*10)/10;if(v>0)r[k]=v});
         if(Object.keys(r).length<2)return;BODY=BODY.filter(x=>x.d!==TODAY);BODY.push(r);save("body",BODY);document.getElementById("gen-sheet").hidden=true;renderBody();toast("✓")})})})};
+
+document.getElementById("rec-card").addEventListener("click",ev=>{const b=ev.target.closest(".rec-t");if(!b)return;recSel=recSel===b.dataset.m?null:b.dataset.m;renderRecovery()});
+Object.assign(EN,{"แตะกล้ามเพื่อดูบนหุ่น":"Tap a muscle to show it on the figure"});
