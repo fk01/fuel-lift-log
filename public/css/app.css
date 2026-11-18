@@ -382,3 +382,8 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 .mchip{font-size:.75rem;padding:4px 10px}.mchip.p{background:#e8a46a;border-color:#e8a46a;color:#111}.mchip.s{background:#8a6040;border-color:#8a6040;color:#fff}
 .rec-t u{text-decoration:underline dotted;text-underline-offset:2px}
 .mus-fig .body-fig img{background:none!important;border-radius:0!important;object-fit:fill!important;border:0!important}
+
+.rec-list{grid-template-columns:repeat(3,1fr)!important}.rec-t em{white-space:nowrap}
+.rec-t b,.rec-t small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rec-det{display:grid;gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0 0 8px}
+.rec-det small{color:var(--muted);font-family:var(--f-num);font-size:.75rem}.rec-det .chip{font-size:.78rem;white-space:normal;text-align:left}
