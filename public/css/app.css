@@ -416,3 +416,4 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 #food-hist details.log{padding:10px 14px}#food-hist details.log summary{font-size:.85rem}
 #food-hist .chips.seg{grid-template-columns:repeat(4,1fr)}
 #food-hist details.log{display:block!important;padding:12px 14px!important}#food-hist details.log[open]>table{margin-top:8px}
+.fh-tg{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--muted);justify-content:flex-end}.fh-tg i{width:16px;border-top:2px dashed var(--fg)}
