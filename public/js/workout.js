@@ -89,7 +89,7 @@ function renderSessions(){
 }
 function commitDraft(day,prog){
   const P=PROGS[prog];if(!P||!draft.ex)return false;
-  const all=P.ex.concat(draft.extra||[]),ex={};all.forEach(e=>{const s=(draft.ex[e.id]||[]).filter(r=>r.reps!==""&&r.kg!=="").map(r=>({kg:+r.kg,reps:+r.reps}));if(s.length)ex[e.id]=s});
+  const all=P.ex.concat(draft.extra||[]),ex={};all.forEach(e=>{const s=(draft.ex[e.id]||[]).filter(r=>r.ok&&r.reps!==""&&r.kg!=="").map(r=>({kg:+r.kg,reps:+r.reps}));if(s.length)ex[e.id]=s});
   if(!Object.keys(ex).length)return false;
   const i=logs.findIndex(l=>l.date===day&&l.prog===prog);
   const names={};all.forEach(e=>{if(ex[e.id])names[e.id]=e.n});
@@ -99,10 +99,17 @@ function commitDraft(day,prog){
   logs.sort((a,b)=>a.date.localeCompare(b.date));
   save("gymlog",logs);draft={};save("gymdraft",draft);return true;
 }
-document.getElementById("save-w").addEventListener("click",()=>{
-  const back=draft.fromHist;if(!commitDraft(DAY,cur)){toast(t("ยังไม่ได้กรอกน้ำหนักและจำนวนครั้ง"));return}
+// finishing with exercises left untouched: confirm once, listing what will be skipped
+function finishWorkout(){const left=sessEx().filter(e=>!((draft.ex||{})[e.id]||[]).some(r=>r.ok));
+  if(!sessEx().some(e=>((draft.ex||{})[e.id]||[]).some(r=>r.ok))){toast(t("ยังไม่ได้ติ๊กเซ็ตไหนเลย"));return}
+  if(left.length){openGen(t("จบวันนี้เลยไหม?"),`<p class="note">${t("ท่าที่ยังไม่ได้เล่นจะไม่ถูกบันทึก")}</p><ul class="prog-ex" style="margin:0">${left.map(e=>`<li><b class="no">–</b><em class="nm">${e.z} ${esc(e.n)}</em><span class="ss"></span></li>`).join("")}</ul>
+    <div class="actions sheet-act"><button class="btn" data-gen-close>${t("เล่นต่อ")}</button><button class="btn primary" id="fin-ok" style="flex:1">✓ ${t("บันทึกเท่าที่เล่น")}</button></div>`,b=>b.querySelector("#fin-ok").addEventListener("click",()=>{document.getElementById("gen-sheet").hidden=true;doSave()}));return}
+  doSave()}
+document.getElementById("save-w").addEventListener("click",finishWorkout);
+function doSave(){
+  const back=draft.fromHist;if(!commitDraft(DAY,cur)){toast(t("ยังไม่ได้ติ๊กเซ็ตไหนเลย"));return}
   stopRest&&stopRest();if(back){DAY=TODAY}cur=nextProg();picked=false;chosen=false;editing=false;editId=null;renderAll();const just=logs.find(l=>l.date===DAY);toast(t("บันทึกแล้ว ✅"));if(just)openShare(just);
-});
+}
 /* auto-save unsaved workout when the day ends */
 function autoCommitOld(){if(draft.day&&draft.day<TODAY&&commitDraft(draft.day,draft.prog||cur)){cur=nextProg();toast(t("บันทึกเวทเมื่อวานให้แล้ว"));return true}return false}
 setInterval(()=>{const nd=dkey(new Date());if(nd===TODAY)return;
@@ -147,7 +154,7 @@ function tickClock(){const el=document.getElementById("wo-clock");if(!el)return;
   if(!draft.t0){draft.t0=Date.now();save("gymdraft",draft)}const s=Math.max(0,Math.floor((Date.now()-draft.t0)/1000));
   const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;el.textContent=(h?h+":"+String(m).padStart(2,"0"):String(m).padStart(2,"0"))+":"+String(x).padStart(2,"0")}
 setInterval(()=>{if(picked)tickClock()},1000);
-document.getElementById("wo-finish").addEventListener("click",()=>document.getElementById("save-w").click());
+document.getElementById("wo-finish").addEventListener("click",finishWorkout);
 
 /* ---------- + add an exercise to the running workout (session only), and the empty "free" workout ---------- */
 document.getElementById("wo-add").addEventListener("click",()=>openLib({skip:new Set(sessEx().map(e=>e.id)),onPick:x=>{
