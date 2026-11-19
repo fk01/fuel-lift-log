@@ -8,11 +8,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Fuel & Lift">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=071800">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=072100">
 <title>Fuel &amp; Lift Log</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+Thai:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+Thai:wght@400;500&family=Share+Tech+Mono&family=Orbitron:wght@500;700&display=swap">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*{-webkit-tap-highlight-color:transparent}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
-<link rel="stylesheet" href="/css/app.css?v=071800">
+<link rel="stylesheet" href="/css/app.css?v=072100">
 </head><body>
 
 <div class="wrap">
@@ -32,12 +32,14 @@
   <!-- FOOD -->
   <div id="v-food" class="stack" style="gap:18px">
     <section class="totals" aria-label="Totals">
+      <button class="day-gear" id="day-gear" aria-label="ประเภทวัน" aria-expanded="false">⚙</button>
+      <div id="food-ring"></div>
       <div class="bar"><div class="bar-top"><span data-i="แคลอรี">แคลอรี</span><b id="kcal-t"></b></div><div class="track"><div class="fill" id="kcal-f"></div></div></div>
       <div class="bar"><div class="bar-top"><span data-i="โปรตีน">โปรตีน</span><b id="p-t"></b></div><div class="track"><div class="fill" id="p-f"></div></div></div>
       <p class="note" id="status"></p>
     </section>
     <button class="btn primary" id="food-add">+ <span data-i="บันทึกอาหาร">บันทึกอาหาร</span></button>
-    <section>
+    <section id="day-type" hidden>
       <div class="step" style="margin-bottom:8px"><span class="num">2</span><span class="step-t" data-i="เลือกประเภทวัน">เลือกประเภทวัน</span></div>
       <div class="chips">
         <button class="chip" id="t-run" data-k="run" aria-pressed="false" data-i="วิ่ง" data-pre="🏃 ">🏃 วิ่ง</button>
@@ -45,7 +47,7 @@
         <button class="chip" id="t-late" data-k="late" aria-pressed="false" data-i="เวทค่ำ" data-pre="🏋️ ">🏋️ เวทค่ำ</button>
       </div>
     </section>
-    <div class="step"><span class="num">3</span><span class="step-t" data-i="ติ๊กมื้อที่กินแล้ว">ติ๊กมื้อที่กินแล้ว</span></div>
+
     <section class="stack" id="meals"></section>
     <button class="btn ghost" id="reset" style="align-self:start" data-i="ล้างวันนี้">ล้างวันนี้</button>
   </div>
@@ -230,33 +232,34 @@
 <div class="rest" id="rest" hidden role="timer" aria-live="polite">
   <div class="rest-in">
     <div class="rest-top"><div><div class="label" style="margin:0" data-i="พัก">พัก</div><div class="rest-time" id="rest-time">1:30</div></div><canvas id="rest-cv" width="64" height="64" style="width:64px;height:64px"></canvas><div class="rest-next" id="rest-next"></div></div>
+    <svg class="rest-ring" viewBox="0 0 220 220" aria-hidden="true"><defs><linearGradient id="rg-g"><stop offset="0" stop-color="#2ee6ff"/><stop offset="1" stop-color="#3dff8c"/></linearGradient></defs><circle cx="110" cy="110" r="90" fill="none" stroke="var(--line)" stroke-width="10"/><circle id="rest-ring" cx="110" cy="110" r="90" fill="none" stroke="url(#rg-g)" stroke-width="10" stroke-linecap="round" stroke-dasharray="565" stroke-dashoffset="0" transform="rotate(-90 110 110)"/></svg>
     <div class="track"><div class="fill" id="rest-fill"></div></div>
     <div class="actions"><button class="btn sm" id="rest-minus">−15s</button><button class="btn sm" id="rest-plus">+15s</button><button class="btn sm primary" id="rest-skip" data-i="พร้อม">พร้อม</button></div>
   </div>
 </div>
 
-<script src="/js/core.js?v=071800"></script>
-<script src="/js/food.js?v=071800"></script>
-<script src="/js/locations.js?v=071800"></script>
-<script src="/js/programs.js?v=071800"></script>
-<script src="/js/run.js?v=071800"></script>
-<script src="/js/workout.js?v=071800"></script>
-<script src="/js/exercise-edit.js?v=071800"></script>
-<script src="/js/exercise-library.js?v=071800"></script>
-<script src="/js/program-manager.js?v=071800"></script>
-<script src="/js/hero.js?v=071800"></script>
-<script src="/js/rest-timer.js?v=071800"></script>
-<script src="/js/auth.js?v=071800"></script>
-<script src="/js/push.js?v=071800"></script>
-<script src="/js/data-io.js?v=071800"></script>
-<script src="/js/sync.js?v=071800"></script>
-<script src="/js/muscle-map.js?v=071800"></script>
-<script src="/js/progress.js?v=071800"></script>
-<script src="/js/history-chart.js?v=071800"></script>
-<script src="/js/stats-extra.js?v=071800"></script>
-<script src="/js/share-card.js?v=071800"></script>
-<script src="/js/number-pad.js?v=071800"></script>
-<script src="/js/refresh.js?v=071800"></script>
-<script src="/js/app.js?v=071800"></script>
+<script src="/js/core.js?v=072100"></script>
+<script src="/js/food.js?v=072100"></script>
+<script src="/js/locations.js?v=072100"></script>
+<script src="/js/programs.js?v=072100"></script>
+<script src="/js/run.js?v=072100"></script>
+<script src="/js/workout.js?v=072100"></script>
+<script src="/js/exercise-edit.js?v=072100"></script>
+<script src="/js/exercise-library.js?v=072100"></script>
+<script src="/js/program-manager.js?v=072100"></script>
+<script src="/js/hero.js?v=072100"></script>
+<script src="/js/rest-timer.js?v=072100"></script>
+<script src="/js/auth.js?v=072100"></script>
+<script src="/js/push.js?v=072100"></script>
+<script src="/js/data-io.js?v=072100"></script>
+<script src="/js/sync.js?v=072100"></script>
+<script src="/js/muscle-map.js?v=072100"></script>
+<script src="/js/progress.js?v=072100"></script>
+<script src="/js/history-chart.js?v=072100"></script>
+<script src="/js/stats-extra.js?v=072100"></script>
+<script src="/js/share-card.js?v=072100"></script>
+<script src="/js/number-pad.js?v=072100"></script>
+<script src="/js/refresh.js?v=072100"></script>
+<script src="/js/app.js?v=072100"></script>
 
 </body></html>
