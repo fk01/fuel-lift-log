@@ -5,7 +5,7 @@ Object.assign(EN,{"วันนี้ออกที่ไหน?":"Where today?
   "ลิงก์ Google Maps":"Google Maps link","ใช้ตำแหน่งปัจจุบัน":"Use current location","ดัมเบลหนักสุด (kg)":"Heaviest dumbbell (kg)","บันทึก":"Save","แผนที่":"Map",
   "ต้องมีอย่างน้อย 1 สถานที่":"Keep at least one place","ไม่มีท่าแทน → ตัดออก":"No substitute → removed","คัดลอก":"Copy","ย้าย":"Move","คัดลอก แล้วแก้ต่อ":"Copy, then edit",
   "ย้าย แล้วแก้ต่อ":"Move, then edit","ไม่มีสถานที่อื่น":"No other place","ท่าหลักย้ายไม่ได้ ใช้คัดลอกแทน":"Locked lifts can't move — copy instead","ยังไม่เคยเล่นที่นี่":"Not trained here yet",
-  "ที่นี่":"Here","ยิม":"Gym","คอนโด":"Condo","สถานที่":"Place","เปลี่ยน":"Change","วันนี้…":"Today…","ออกกำลังกาย":"Train","พัก":"Rest","แนะนำ":"Suggested","ตามตาราง":"Scheduled","นอกตาราง — เลือกเองได้":"Off schedule — pick anything","กล้ามฟื้นครบแล้ว":"All recovered","พักวันนี้":"Resting today","ให้กล้ามได้ฟื้น — กลับมาพรุ่งนี้":"Let your muscles recover — back tomorrow","เปลี่ยนใจ ออกกำลังกาย":"Changed my mind — train","พักแทน":"Rest instead","ไปที่ไหน?":"Where to?","กลับ":"Back","เลือกโปรแกรม":"Pick a program","ไม่มีโปรแกรมในตารางวันนี้ที่นี่":"Nothing scheduled here today","ดูโปรแกรม":"See programs","วันพัก · ออกได้ถ้าอยากออก":"Rest day · train if you like","หาตำแหน่งไม่ได้":"Couldn't get location",
+  "ที่นี่":"Here","ยิม":"Gym","คอนโด":"Condo","สถานที่":"Place","เปลี่ยน":"Change","วันนี้…":"Today…","ออกกำลังกาย":"Train","พัก":"Rest","แนะนำ":"Suggested","ตามตาราง":"Scheduled","นอกตาราง — เลือกเองได้":"Off schedule — pick anything","กล้ามฟื้นครบแล้ว":"All recovered","พักวันนี้":"Resting today","ให้กล้ามได้ฟื้น — กลับมาพรุ่งนี้":"Let your muscles recover — back tomorrow","เปลี่ยนใจ ออกกำลังกาย":"Changed my mind — train","พักแทน":"Rest instead","ไปที่ไหน?":"Where to?","กลับ":"Back","ออก":"Train","เลือกโปรแกรม":"Pick a program","ไม่มีโปรแกรมในตารางวันนี้ที่นี่":"Nothing scheduled here today","ดูโปรแกรม":"See programs","วันพัก · ออกได้ถ้าอยากออก":"Rest day · train if you like","หาตำแหน่งไม่ได้":"Couldn't get location",
   "ดัมเบล":"Dumbbells","บาร์เบล":"Barbell","เคเบิล":"Cable","เครื่อง":"Machines","ม้านั่ง":"Bench","บาร์โหน":"Pull-up bar","ยางยืด":"Bands","ตัวเปล่า":"Bodyweight"});
 const EQ=[["db","ดัมเบล"],["bb","บาร์เบล"],["cable","เคเบิล"],["machine","เครื่อง"],["bench","ม้านั่ง"],["bar","บาร์โหน"],["band","ยางยืด"],["body","ตัวเปล่า"]];
 const EQ_ALL=EQ.map(q=>q[0]);
@@ -132,20 +132,29 @@ function renderDayPick(box){const pk=planFor(DAY),p=pk&&PROGS[pk],sug=p?"train":
   box.innerHTML=`<h1 class="lp-h">${t("วันนี้…")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}</div>${card("train","💪","ออกกำลังกาย",tl)}${card("rest","😴","พัก",esc(rl))}`;
   box.querySelectorAll("[data-dm]").forEach(b=>b.addEventListener("click",()=>chooseDay(b.dataset.dm)))}
 const nProgs=n=>lang==="th"?`${n} โปรแกรม`:`${n} program${n===1?"":"s"}`;
-function renderLocHead(){try{updLocSum()}catch(e){}const h=document.getElementById("lochead");if(!h)return;const L=hereLoc();
-  h.innerHTML=`<b>${esc(L.icon||"📍")} ${esc(t(L.name))}</b>${picked?"":`<button class="btn sm" data-lc>${t("เปลี่ยน")}</button>`}`;const b=h.querySelector("[data-lc]");if(b)b.addEventListener("click",openLocChange)}
+// breadcrumb of today's choices: วันนี้ › 💪 ออก › 🏢 ยิม › ▶ Push A — tap an earlier step to choose again
+const modeChip=()=>dayMode()==="rest"?"😴 "+t("พัก"):"💪 "+t("ออก");
+function crumbs(items,lock){return `<nav class="crumbs${lock?" lock":""}" aria-label="${t("วันนี้")}"><span class="cr-lab">${t("วันนี้")}</span>${items.map(([lab,act],i)=>{const last=i===items.length-1;
+    return `<span class="cr-sep">›</span>${lock||!act?`<span class="cr${last?" cur":""}">${esc(lab)}</span>`:`<button class="cr${last?" cur":""}" data-cr="${act}">${esc(lab)} <i>⌄</i></button>`}`}).join("")}</nav>`}
+function bindCrumbs(el){el.querySelectorAll("[data-cr]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.cr;
+  if(a==="mode"){setDayMode(null);pickAnyway=false;locPrev=null;locDay={};save("locday",locDay);renderGym();scrollAppTop()}else if(a==="place")openLocChange()}))}
+function renderLocHead(){try{updLocSum()}catch(e){}const h=document.getElementById("lochead");if(!h)return;const L=hereLoc(),it=[];
+  if(DAY===TODAY&&dayMode()&&(!planDone()||picked))it.push([modeChip(),"mode"]);
+  if(!resting())it.push([`${L.icon||"📍"} ${t(L.name)}`,"place"]);
+  if(picked&&PROGS[cur])it.push(["▶ "+PROGS[cur].name,null]);
+  h.innerHTML=crumbs(it,picked);bindCrumbs(h)}
 const eqSum=l=>l.eq.filter(q=>q!=="body").map(q=>t((EQ.find(x=>x[0]===q)||[0,q])[1])).join(" · ")+(l.dbMax&&l.eq.includes("db")?` ≤ ${l.dbMax} kg`:"")||t("ตัวเปล่า");
 const mapUrl=m=>{m=(m||"").trim();if(!m)return "";return /^https?:\/\//.test(m)?safeUrl(m):"https://maps.google.com/?q="+encodeURIComponent(m)};
 function renderLocPick(){const box=document.getElementById("locpick");if(!box)return;const show=needPick();box.hidden=!show;document.getElementById("v-gym").classList.toggle("picking",show);document.getElementById("v-gym").classList.toggle("resting",resting());document.body.classList.toggle("loc-picking",show);renderLocHead();if(!show)return;
   if(needDay()){renderDayPick(box);return}
   const lastId=locDay.id||curLoc,todayAt=l=>planKeys(DAY).find(k=>locOf(PROGS[k])===l.id);
   const list=LOCS.slice().sort((x,y)=>(!!todayAt(y)-!!todayAt(x))||((y.id===lastId)-(x.id===lastId)));
-  box.innerHTML=`<button class="btn sm lp-back" data-lpback>‹ ${t("กลับ")}</button><h1 class="lp-h">${t("ไปที่ไหน?")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}</div>`+list.map(l=>{const k=todayAt(l),p=k&&PROGS[k],n=Object.keys(PROGS).filter(q=>q!=="free"&&locOf(PROGS[q])===l.id).length;
+  box.innerHTML=crumbs([[modeChip(),"mode"],[t("ไปที่ไหน?"),null]])+`<h1 class="lp-h">${t("ไปที่ไหน?")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}</div>`+list.map(l=>{const k=todayAt(l),p=k&&PROGS[k],n=Object.keys(PROGS).filter(q=>q!=="free"&&locOf(PROGS[q])===l.id).length;
     const line=p?`${isCardio(p)?(p.icon||"🏃"):"▶"} ${esc(p.name)}${isCardio(p)?"":" · "+nU(p.ex.length,"ท่า")} · ${t("วันนี้")}`:nProgs(n);
     return `<div class="lp-card${l.id===lastId?" on":""}" role="button" tabindex="0" data-loc="${esc(l.id)}"><span class="lp-ic">${esc(l.icon||"📍")}</span><span class="lp-tx"><span class="lp-top"><b>${esc(t(l.name))}</b>${l.id===lastId?`<span class="pill">${t("ล่าสุด")}</span>`:""}</span><small>${line}</small></span><span class="lp-more" role="button" tabindex="0" data-locedit="${esc(l.id)}" aria-label="${t("แก้ไขสถานที่")}">•••</span></div>`}).join("")
     +`<button class="btn lp-add" data-locadd>+ ${t("เพิ่มสถานที่")}</button>`;
   box.querySelectorAll("[data-loc]").forEach(c=>c.addEventListener("click",ev=>{if(ev.target.closest("[data-map]"))return;const ed=ev.target.closest("[data-locedit]");if(ed){openLocEdit(ed.dataset.locedit);return}pickLoc(c.dataset.loc)}));
-  box.querySelector("[data-locadd]").addEventListener("click",()=>openLocEdit(null));box.querySelector("[data-lpback]")?.addEventListener("click",closeLocPick)}
+  box.querySelector("[data-locadd]").addEventListener("click",()=>openLocEdit(null));bindCrumbs(box)}
 let locPrev=null;   // place picked before tapping Change / Train anyway, so Back can restore it
 function closeLocPick(){if(locPrev&&locPrev.date){locDay=locPrev;save("locday",locDay)}else setDayMode(null);pickAnyway=false;locPrev=null;renderGym();scrollAppTop()}
 function openLocChange(){if(dayMode()!=="train")setDayMode("train");pickAnyway=true;locPrev=locDay;locDay={};save("locday",locDay);renderGym();scrollAppTop()}

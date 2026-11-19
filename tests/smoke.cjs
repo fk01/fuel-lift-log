@@ -30,7 +30,7 @@ const steps = [
     if (/ไม่ได้|Not possible|Can't/.test(document.getElementById("v-gym").textContent)) throw new Error("no 'can't' text");
     if (cardioHere().some(k => PROGS[k].tag === "bad")) throw new Error("condo has badminton");
     if (!/เลือกโปรแกรม|Pick a program/.test(td.textContent) || td.querySelector(".loc-chip")) throw new Error("today card at condo on badminton day");
-    if (document.querySelectorAll("#v-gym .loc-chip,#v-gym .loc-h").length || !document.querySelector("#lochead b")) throw new Error("place shown once in header");
+    if (document.querySelectorAll("#v-gym .loc-chip,#v-gym .loc-h").length || !document.querySelector("#lochead .crumbs")) throw new Error("place shown once in header");
     openCardioEdit(null); const g = document.getElementById("gen-body"); g.querySelector('[data-f="name"]').value = "Swim"; g.querySelector('[data-f="icon"]').value = "🏊";
     g.querySelector('[data-d="5"]').click(); g.querySelector("[data-save]").click();
     const k = cardioHere().find(q => PROGS[q].name === "Swim"); if (!k || !PROGS[k].days.includes(5)) throw new Error("create cardio program");
@@ -73,8 +73,13 @@ const steps = [
     if (document.querySelectorAll("#lib-list .lib-row").length < 6) throw new Error("cards"); document.querySelector('[data-lv="list"]').click(); document.getElementById("lib-modal").hidden = true; }],
   ["no-dup-court", () => { const n = LOCS.length; for (let i = 0; i < 3; i++) { ensureLocs(); ensureV3(); } if (LOCS.length !== n) throw new Error("places grew on reload: " + n + " → " + LOCS.length);
     LOCS.push({ ...LOCS[LOCS.length - 1] }); ensureLocs(); if (LOCS.length !== n || new Set(LOCS.map(l => l.id)).size !== n) throw new Error("duplicate not removed"); }],
-  ["picker-back", () => { location.hash = "gym"; pickLoc("gym"); openLocChange(); const b = document.querySelector("#locpick [data-lpback]"); if (!b) throw new Error("back button"); b.click();
-    if (!document.getElementById("locpick").hidden || curLoc !== "gym") throw new Error("back should return to the place page"); }],
+  ["crumbs", () => { location.hash = "gym"; setDayMode("train"); pickLoc("gym"); renderGym(); const h = document.getElementById("lochead");
+    if ((!planDone() && !h.querySelector('[data-cr="mode"]')) || !h.querySelector('[data-cr="place"]')) throw new Error("crumbs on place page");
+    const saved = logs.filter(l => l.date === TODAY); logs = logs.filter(l => l.date !== TODAY); const tg = fs().tags; const keep = { run: tg.run, bad: tg.bad, cx: tg.cx }; tg.run = tg.bad = false; tg.cx = {}; renderGym();
+    h.querySelector('[data-cr="place"]').click(); if (!document.querySelector('#locpick [data-cr="mode"]')) throw new Error("crumbs on picker");
+    document.querySelector('#locpick [data-cr="mode"]').click(); if (!document.querySelector("#locpick [data-dm]")) throw new Error("back to train/rest");
+    document.querySelector('#locpick [data-dm="rest"]').click(); renderLocHead(); if (!/พัก|Rest/.test(h.textContent) || !h.querySelector('.cr.cur')) throw new Error("rest crumb");
+    setDayMode("train"); pickLoc("gym"); logs.push(...saved); Object.assign(tg, keep); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

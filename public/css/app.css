@@ -588,3 +588,12 @@ body.loc-picking:has(#v-gym:not([hidden])) .wrap>header,body.loc-picking:has(#v-
 #v-gym.resting #step2,#v-gym.resting #lochead{display:none}
 .td-rec{display:grid;gap:4px;margin:6px 0}.td-rec .row-head small{font-family:var(--f-num);color:var(--muted)}
 .today .td-rest{justify-self:center;margin-top:4px}
+/* today breadcrumb */
+.crumbs{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:.88rem}
+.crumbs .cr-lab,.crumbs .cr-sep{color:var(--muted)}
+.crumbs .cr{border:1px solid var(--line);border-radius:999px;padding:6px 12px;background:none;color:var(--fg);font:inherit;min-height:36px;display:inline-flex;align-items:center;gap:4px}
+.crumbs button.cr{cursor:pointer}.crumbs .cr i{font-style:normal;color:var(--muted);font-size:.8em}
+.crumbs .cr.cur{border-color:var(--fg);font-weight:600}
+.crumbs.lock .cr{opacity:.6}
+#v-gym.resting #lochead{display:block!important}
+.lochead{display:block}
