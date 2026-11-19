@@ -472,3 +472,9 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 .rec-grid .rec-t b{font-size:.7rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rec-grid .rec-t small{font-family:var(--f-num);font-size:.62rem;white-space:nowrap}
 .rec-grid .rec-t.s0,.rec-grid .rec-t.s4{border-color:#4a3d75}.rec-grid .rec-t[aria-pressed="true"]{border-color:var(--fg)}
 .rec-leg{flex-wrap:wrap;gap:4px 12px!important}
+
+/* muscle sheet */
+.msh-h{font-size:1.4rem}.msh-st{display:flex;align-items:center;gap:6px;font-family:var(--f-num);font-size:.85rem;margin-top:-6px}.msh-st i{width:10px;height:10px;border-radius:50%}
+.msh-fig{display:flex;justify-content:center;padding:4px 0}
+.mrole{margin-left:auto;font-style:normal;font-size:.68rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px;flex:none}.mrole.p{color:#111;background:#e8a46a;border-color:#e8a46a}
+.sx-row span small+small{opacity:.8}
