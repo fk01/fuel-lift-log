@@ -82,7 +82,10 @@ function libForm(x){
     if(libNamed(x)&&!b.dataset.sure){b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน");return}
     EXLIB=EXLIB.filter(q=>q!==x);save("exlib",EXLIB);libEdit=null;renderLib();if(libNamed(x))toast(t("ลบท่าแล้ว"))});
   return c}
-function renderLib(){
+let libView=(()=>{try{return localStorage.getItem("libView")||"list"}catch(e){return "list"}})();
+document.querySelectorAll("[data-lv]").forEach(b=>b.addEventListener("click",()=>{libView=b.dataset.lv;try{localStorage.setItem("libView",libView)}catch(e){}renderLib()}));
+function renderLib(){const G=libView==="grid",FS=G?96:40;document.querySelectorAll("[data-lv]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lv===libView));
+  document.getElementById("lib-list").classList.toggle("lib-grid",G);
   document.getElementById("lib-title").textContent=t(libMode?"เลือกท่า":"คลังท่า");
   const box=document.getElementById("lib-list");box.innerHTML="";
   const mine=EXLIB.filter(x=>x.id===libEdit||!libMode||!libMode.skip.has(x.id));
@@ -105,12 +108,12 @@ function renderLib(){
   shown.forEach(x=>{
     if(x.cat){const g=groupOf(x);if(libGroup==="all"&&g!==lastG){lastG=g;const h=document.createElement("div");h.className="pick-h";h.textContent=groupName(g);box.appendChild(h)}
       const b=document.createElement("button");b.className="prog lib-row";b.style.cssText="display:flex;gap:10px;align-items:center;text-align:left";
-      b.innerHTML=`<span class="sx-mini">${bodySVG(...musOf(x),40)}</span><span style="flex:1;min-width:0"><b>${x.z} ${esc(x.n)}</b><small style="display:block">${groupName(g)} · ${esc(x.t)} · ${esc(x.e)}</small></span>${howBtn(x)}`;
+      b.innerHTML=`<span class="sx-mini">${bodySVG(...musOf(x),FS)}</span><span style="flex:1;min-width:0"><b>${G?"":x.z+" "}${esc(x.n)}</b><small style="display:block">${groupName(g)} · ${G?"":esc(x.t)+" · "}${esc(x.e)}</small></span>${howBtn(x)}`;
       b.addEventListener("click",()=>{const y=adoptCat(x);if(libMode){const m=libMode;closeLib();m.onPick(y)}else{libEdit=y.id;renderLib()}});box.appendChild(b);return}const g=groupOf(x);if(libGroup==="all"&&g!==lastG){lastG=g;const h=document.createElement("div");h.className="pick-h";h.textContent=groupName(g);box.appendChild(h)}
     if(x.id===libEdit){box.appendChild(libForm(x));return}
     const used=libUsed(x.id);const b=document.createElement("button");b.className="prog lib-row";
     const th="";b.style.cssText="display:flex;gap:10px;align-items:center;text-align:left";
-    b.innerHTML=`<span class="sx-mini">${bodySVG(...musOf(x),40)}</span><span style="display:grid;gap:2px;min-width:0;flex:1"><b>${x.z||"🔩"} ${esc(x.n)}</b><small>${groupName(groupOf(x))} · ${(x.u||"kg")} · ${used.length?esc(used.join(", ")):t("ยังไม่ได้ใช้ในโปรแกรม")}</small></span>${howBtn(x)}`;
+    b.innerHTML=G?`<span class="sx-mini">${bodySVG(...musOf(x),FS)}</span><span style="display:grid;gap:2px;min-width:0"><b>${esc(x.n)}</b><small>${groupName(groupOf(x))} · ${esc(eqOf(x).map(q=>t((EQ.find(e=>e[0]===q)||[0,q])[1])).join(", "))}</small>${used.length?`<small class="lib-used">${t("ใช้ใน")} ${used.length}</small>`:""}</span>${howBtn(x)}`:`<span class="sx-mini">${bodySVG(...musOf(x),40)}</span><span style="display:grid;gap:2px;min-width:0;flex:1"><b>${x.z||"🔩"} ${esc(x.n)}</b><small>${groupName(groupOf(x))} · ${(x.u||"kg")} · ${used.length?esc(used.join(", ")):t("ยังไม่ได้ใช้ในโปรแกรม")}</small></span>${howBtn(x)}`;
     b.addEventListener("click",()=>{if(libMode){const m=libMode;closeLib();m.onPick(x)}else{libEdit=x.id;renderLib()}});box.appendChild(b)})}
 document.getElementById("lib-new").addEventListener("click",()=>{
   EXLIB=EXLIB.filter(libNamed);const x={id:"c"+Date.now().toString(36),n:"",z:"🔩"};if(libGroup!=="all")x.g=libGroup;EXLIB.push(x);libEdit=x.id;renderLib();

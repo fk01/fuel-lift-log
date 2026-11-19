@@ -62,6 +62,12 @@ const steps = [
     const R = recPct(); if (!(R.chest && R.chest.pct >= 30 && R.chest.pct <= 36)) throw new Error("chest 24h/72h ≈ 33%, got " + (R.chest && R.chest.pct));
     location.hash = "stats"; renderRecovery(); if (!document.querySelector("#rec-card .rec-bar")) throw new Error("bars");
     openMuscle("chest"); if (!/%/.test(document.querySelector("#gen-body .msh-st").textContent)) throw new Error("sheet pct"); closeGen(); logs.pop(); }],
+  ["body-stepper", () => { BODY = [{ d: "2026-11-10", kg: 76.1, mm: 34 }]; location.hash = "stats"; renderBody(); document.getElementById("bw-add").click();
+    const g = document.getElementById("gen-body"), m = g.querySelector('[data-st="-"][data-for="b-kg"]'); for (let i = 0; i < 3; i++) { m.dispatchEvent(new PointerEvent("pointerdown")); m.dispatchEvent(new PointerEvent("pointerup")); }
+    if (g.querySelector("#b-kg").value !== "75.8") throw new Error("stepper value " + g.querySelector("#b-kg").value);
+    g.querySelector("#b-save").click(); const r = BODY.find(x => x.d === TODAY); if (!r || r.kg !== 75.8 || r.mm != null) throw new Error("saved only touched field"); BODY = []; save("body", BODY); }],
+  ["lib-grid", () => { openLib(); document.querySelector('[data-lv="grid"]').click(); if (!document.getElementById("lib-list").classList.contains("lib-grid")) throw new Error("grid");
+    if (document.querySelectorAll("#lib-list .lib-row").length < 6) throw new Error("cards"); document.querySelector('[data-lv="list"]').click(); document.getElementById("lib-modal").hidden = true; }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

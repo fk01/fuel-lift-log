@@ -87,7 +87,7 @@ function openBadges(){openGen("🏆 "+t("เหรียญรางวัล"),
 Object.assign(EN,{"มวลกล้ามเนื้อ":"Muscle mass","ไขมัน":"Body fat","บันทึกร่างกาย":"Log body","บันทึก":"Save"});
 let bodyMetric="kg";
 let bodyRange=90,bodyGoal=(()=>{try{return +localStorage.getItem("bodygoal")||0}catch(e){return 0}})();
-Object.assign(EN,{"เป้าหมาย":"Goal","ตั้งเป้า":"Set goal","อีก":"to go","ถึงเป้าแล้ว 🎉":"Goal reached 🎉","7 วัน":"7 days","30 วัน":"30 days","ต่อสัปดาห์":"per week","ประวัติ":"History","วันที่":"Date","ลบ":"Delete","แก้":"Edit","สูงสุด":"High","ต่ำสุด":"Low","เพิ่มบันทึก":"Add entry"});
+Object.assign(EN,{"เป้าหมาย":"Goal","ตั้งเป้า":"Set goal","อีก":"to go","ถึงเป้าแล้ว 🎉":"Goal reached 🎉","7 วัน":"7 days","30 วัน":"30 days","ต่อสัปดาห์":"per week","ประวัติ":"History","วันที่":"Date","ลบ":"Delete","แก้":"Edit","ใส่ค่า":"Enter value","สูงสุด":"High","ต่ำสุด":"Low","เพิ่มบันทึก":"Add entry"});
 renderBody=function(){const box=document.getElementById("body-card");if(!box)return;const L=BODY.slice().sort((a,b)=>a.d.localeCompare(b.d));
   const lastOf=k=>{for(let i=L.length-1;i>=0;i--)if(L[i][k]!=null)return L[i];return null};
   const M=[["kg","น้ำหนักตัว","kg"],["mm","มวลกล้ามเนื้อ","kg"],["fat","ไขมัน","%"]],U=M.find(m=>m[0]===bodyMetric)[2];
@@ -125,11 +125,26 @@ renderBody=function(){const box=document.getElementById("body-card");if(!box)ret
   box.querySelector("#b-goal")?.addEventListener("click",()=>{PAD.bg={steps:[.1,.5,1,5],def:last?Math.round(last.kg):70,fix:1};const i=document.createElement("input");i.dataset.pad="bg";i.value=bodyGoal||"";i.setAttribute("aria-label",t("เป้าหมาย"));
     i.addEventListener("change",()=>{bodyGoal=Math.round(+i.value*10)/10||0;try{localStorage.setItem("bodygoal",bodyGoal)}catch(e){}renderBody()});openPad(i)});
   const openLog=ds=>{PAD.bw={steps:[.1,.5,1,5],def:70,fix:1};PAD.bf={steps:[.1,.5,1],def:15,fix:1};const t0=L.find(x=>x.d===ds)||{},l=lastOf("kg")||{},lm=lastOf("mm")||{},lf=lastOf("fat")||{};
+    const prev=(k)=>{const a=L.filter(x=>x[k]!=null&&x.d<ds);return a.length?a[a.length-1][k]:null};
+    const row=(k,id,lab,u,pad,v,def)=>`<div class="bstep-row"><div class="row-head"><span>${t(lab)} (${u})</span><small class="bdiff" data-diff="${k}"></small></div>
+      <div class="bstep"><button class="bst" data-st="-" data-for="${id}" aria-label="−0.1">−</button><input id="${id}" readonly inputmode="none" data-pad="${pad}" data-k="${k}" data-def="${def}" value="${v??""}" placeholder="${t("ใส่ค่า")}" aria-label="${t(lab)}"><button class="bst" data-st="+" data-for="${id}" aria-label="+0.1">+</button></div></div>`;
     openGen(t("บันทึกร่างกาย"),`<label class="rm-in" style="grid-template-columns:1fr"><label>${t("วันที่")}<input id="b-d" type="date" value="${ds}" max="${TODAY}"></label></label>
-      <div class="rm-in"><label>${t("น้ำหนักตัว")} (kg)<input id="b-kg" readonly inputmode="none" data-pad="bw" value="${t0.kg??l.kg??""}"></label><label>${t("มวลกล้ามเนื้อ")} (kg)<input id="b-mm" readonly inputmode="none" data-pad="bw" value="${t0.mm??lm.mm??""}"></label><label>${t("ไขมัน")} (%)<input id="b-fat" readonly inputmode="none" data-pad="bf" value="${t0.fat??lf.fat??""}"></label></div>
-      <div class="actions sheet-act">${L.some(x=>x.d===ds)?`<button class="btn ghost" id="b-del">${t("ลบ")}</button>`:""}<button class="btn" data-gen-close>${t("ยกเลิก")}</button><button class="btn primary" id="b-save" style="flex:1">✓ ${t("บันทึก")}</button></div>`,b=>{
+      ${row("kg","b-kg","น้ำหนักตัว","kg","bw",t0.kg??l.kg,70)}${row("mm","b-mm","มวลกล้ามเนื้อ","kg","bw",t0.mm??lm.mm,30)}${row("fat","b-fat","ไขมัน","%","bf",t0.fat??lf.fat,15)}
+      <div class="actions sheet-act">${L.some(x=>x.d===ds)?`<button class="btn ghost" id="b-del">${t("ลบ")}</button>`:""}<button class="btn primary" id="b-save" style="flex:1">✓ ${t("บันทึก")}</button></div>`,b=>{
+      const touched=new Set(Object.keys(t0).filter(k=>k!=="d"));
+      const diff=()=>b.querySelectorAll("[data-diff]").forEach(el=>{const k=el.dataset.diff,inp=b.querySelector(`[data-k="${k}"]`),v=+inp.value,p=prev(k);
+        if(!inp.value||p==null){el.textContent="";return}const d=Math.round((v-p)*10)/10,good=k==="mm"?d>=0:d<=0;el.textContent=d===0?"—":(d>0?"▲":"▼")+Math.abs(d);el.className="bdiff "+(d===0?"":good?"up":"dn")});
+      const step=(inp,dir,big)=>{const v=inp.value===""?+inp.dataset.def:+inp.value;inp.value=Math.max(0,Math.round((v+dir*(big?.5:.1))*10)/10).toFixed(1);touched.add(inp.dataset.k);diff();try{navigator.vibrate&&navigator.vibrate(5)}catch(e){}};
+      b.querySelectorAll("[data-st]").forEach(btn=>{const inp=b.querySelector("#"+btn.dataset.for),dir=btn.dataset.st==="+"?1:-1;let tm=null,iv=null,t0h=0;
+        const stop=()=>{clearTimeout(tm);clearInterval(iv);tm=iv=null};
+        btn.addEventListener("pointerdown",ev=>{ev.preventDefault();step(inp,dir);t0h=Date.now();tm=setTimeout(()=>{iv=setInterval(()=>step(inp,dir,Date.now()-t0h>1500),80)},400)});
+        ["pointerup","pointerleave","pointercancel"].forEach(e=>btn.addEventListener(e,stop));
+        btn.addEventListener("keydown",ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();step(inp,dir)}})});
+      b.querySelectorAll("[data-k]").forEach(i=>i.addEventListener("change",()=>{touched.add(i.dataset.k);diff()}));diff();
       b.querySelector("#b-del")?.addEventListener("click",()=>{BODY=BODY.filter(x=>x.d!==ds);save("body",BODY);document.getElementById("gen-sheet").hidden=true;renderBody()});
-      b.querySelector("#b-save").addEventListener("click",()=>{const d=b.querySelector("#b-d").value||TODAY;if(d>TODAY)return;const r={d};[["kg","#b-kg"],["mm","#b-mm"],["fat","#b-fat"]].forEach(([k,s])=>{const v=Math.round(+b.querySelector(s).value*10)/10;if(v>0)r[k]=v});
+      b.querySelector("#b-save").addEventListener("click",()=>{const d=b.querySelector("#b-d").value||TODAY;if(d>TODAY)return;const r={d};
+        if(!touched.size)touched.add("kg");
+        [["kg","#b-kg"],["mm","#b-mm"],["fat","#b-fat"]].forEach(([k,sel])=>{if(!touched.has(k))return;const v=Math.round(+b.querySelector(sel).value*10)/10;if(v>0)r[k]=v});
         if(Object.keys(r).length<2)return;BODY=BODY.filter(x=>x.d!==ds&&x.d!==d);BODY.push(r);save("body",BODY);document.getElementById("gen-sheet").hidden=true;renderBody();toast("✓")})})};
   box.querySelector("#bw-add").addEventListener("click",()=>openLog(TODAY));
   box.querySelectorAll("[data-bed]").forEach(b=>b.addEventListener("click",()=>openLog(b.dataset.bed)))};
