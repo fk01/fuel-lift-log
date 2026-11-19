@@ -168,7 +168,7 @@ function closeLocPick(){if(locPrev&&locPrev.date){locDay=locPrev;save("locday",l
 function openLocChange(){if(dayMode()!=="train")setDayMode("train");pickAnyway=true;locPrev=locDay;locDay={};save("locday",locDay);renderGym();scrollAppTop()}
 function openLocEdit(id){const isNew=!id,l=isNew?{id:"l"+Date.now().toString(36),name:"",icon:"📍",map:"",eq:["db","body"],types:["gym","cardio"]}:JSON.parse(JSON.stringify(locById(id)));
   openGen(t(isNew?"เพิ่มสถานที่":"แก้ไขสถานที่"),`<div class="le">
-    <div class="le-row"><input class="le-in le-ic" data-f="icon" value="${esc(l.icon||"")}" maxlength="4" aria-label="icon"><input class="le-in" data-f="name" value="${esc(l.name)}" placeholder="${t("ชื่อสถานที่")}" aria-label="${t("ชื่อสถานที่")}"></div>
+    <div class="le-row">${icoPick(l.icon||"📍",["🏢","🏠","🏸","🏊","🏃","📍"])}<input class="le-in" data-f="name" value="${esc(l.name)}" placeholder="${t("ชื่อสถานที่")}" aria-label="${t("ชื่อสถานที่")}"></div>
     <input class="le-in" data-f="map" value="${esc(l.map||"")}" placeholder="📍 ${t("ลิงก์ Google Maps")}" aria-label="${t("ลิงก์ Google Maps")}">
     <button class="btn sm" data-geo style="justify-self:start">📍 ${t("ใช้ตำแหน่งปัจจุบัน")}</button>
     <div class="label" style="margin:4px 0 0">${t("ประเภทโปรแกรม")}</div>
@@ -222,7 +222,7 @@ function openAddProg(){const L=hereLoc(),ty=typesOf(L);if(ty.length===1){ty[0]==
     b=>b.querySelectorAll("[data-ty]").forEach(c=>c.addEventListener("click",()=>{closeGen();c.dataset.ty==="gym"?newWeights():openCardioEdit(null)})))}
 function openCardioEdit(k){const isNew=!k,p=isNew?{name:"",icon:"🏃",kind:"cardio",track:"dist",ex:[],loc:curLoc,days:[]}:PROGS[k];
   openGen(t("โปรแกรมคาร์ดิโอ"),`<div class="le">
-    <div class="le-row"><input class="le-in le-ic" data-f="icon" value="${esc(p.icon||"")}" maxlength="4" aria-label="icon"><input class="le-in" data-f="name" value="${esc(p.name)}" placeholder="${t("ชื่อโปรแกรม")}" aria-label="${t("ชื่อโปรแกรม")}"></div>
+    <div class="le-row">${icoPick(p.icon||"🏃",["🏃","🏸","🏊","🚴","🤸","🏋️"])}<input class="le-in" data-f="name" value="${esc(p.name)}" placeholder="${t("ชื่อโปรแกรม")}" aria-label="${t("ชื่อโปรแกรม")}"></div>
     <div class="label" style="margin:4px 0 0">${t("บันทึก")}</div>
     <div class="chips"><button class="chip" data-tr="dist" aria-pressed="${p.track!=="done"}">${t("ระยะ + เวลา")}</button><button class="chip" data-tr="done" aria-pressed="${p.track==="done"}">${t("✓ ทำแล้ว")}</button></div>
     <label class="le-row le-goal" style="justify-content:space-between">${t("เป้าหมาย (km)")}<input class="le-in" data-f="goal" type="number" inputmode="decimal" value="${p.goal||""}" style="width:90px;text-align:right"></label>
@@ -250,3 +250,7 @@ function openProgPick(){const L=hereLoc(),sel=selProg(),pl=planFor(DAY),w=weight
     ${hasType(L,"gym")?`<button class="btn ghost" data-ppfree>＋ ${t("ออกแบบอิสระ")}</button>`:""}`,b=>{
     b.querySelectorAll("[data-pp]").forEach(r=>r.addEventListener("click",()=>chooseProg(r.dataset.pp)));
     b.querySelector("[data-ppfree]")?.addEventListener("click",()=>{closeGen();startEmpty()})})}
+
+// icon picker (stores the emoji code, shown as a line icon)
+function icoPick(v,set){if(!set.includes(v))set=[v,...set];return `<input type="hidden" data-f="icon" value="${esc(v)}"><div class="chips ico-pick" role="radiogroup" aria-label="icon">${set.map(e=>`<button type="button" class="chip" data-ico="${esc(e)}" aria-pressed="${e===v}">${e}</button>`).join("")}</div>`}
+document.addEventListener("click",ev=>{const b=ev.target.closest&&ev.target.closest("[data-ico]");if(!b)return;const g=b.closest(".le")||b.parentNode.parentNode;const inp=g.querySelector('[data-f="icon"]');if(inp)inp.value=b.dataset.ico;b.parentNode.querySelectorAll("[data-ico]").forEach(c=>c.setAttribute("aria-pressed",c===b))});
