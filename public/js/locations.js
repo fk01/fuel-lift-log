@@ -5,7 +5,7 @@ Object.assign(EN,{"วันนี้ออกที่ไหน?":"Where today?
   "ลิงก์ Google Maps":"Google Maps link","ใช้ตำแหน่งปัจจุบัน":"Use current location","ดัมเบลหนักสุด (kg)":"Heaviest dumbbell (kg)","บันทึก":"Save","แผนที่":"Map",
   "ต้องมีอย่างน้อย 1 สถานที่":"Keep at least one place","ไม่มีท่าแทน → ตัดออก":"No substitute → removed","คัดลอก":"Copy","ย้าย":"Move","คัดลอก แล้วแก้ต่อ":"Copy, then edit",
   "ย้าย แล้วแก้ต่อ":"Move, then edit","ไม่มีสถานที่อื่น":"No other place","ท่าหลักย้ายไม่ได้ ใช้คัดลอกแทน":"Locked lifts can't move — copy instead","ยังไม่เคยเล่นที่นี่":"Not trained here yet",
-  "ที่นี่":"Here","ยิม":"Gym","คอนโด":"Condo","สถานที่":"Place","เปลี่ยน":"Change","วันนี้…":"Today…","ออกกำลังกาย":"Train","พัก":"Rest","แนะนำ":"Suggested","ตามตาราง":"Scheduled","นอกตาราง — เลือกเองได้":"Off schedule — pick anything","กล้ามฟื้นครบแล้ว":"All recovered","พักวันนี้":"Resting today","ให้กล้ามได้ฟื้น — กลับมาพรุ่งนี้":"Let your muscles recover — back tomorrow","เปลี่ยนใจ ออกกำลังกาย":"Changed my mind — train","พักแทน":"Rest instead","ไปที่ไหน?":"Where to?","กลับ":"Back","ออก":"Train","เลือกโปรแกรม":"Pick a program","ไม่มีโปรแกรมในตารางวันนี้ที่นี่":"Nothing scheduled here today","ดูโปรแกรม":"See programs","วันพัก · ออกได้ถ้าอยากออก":"Rest day · train if you like","หาตำแหน่งไม่ได้":"Couldn't get location",
+  "ที่นี่":"Here","ยิม":"Gym","คอนโด":"Condo","สถานที่":"Place","เปลี่ยน":"Change","ความพร้อมของกล้าม":"Muscle readiness","มัด":"muscles","เมื่อวาน":"yesterday","วันนี้…":"Today…","ออกกำลังกาย":"Train","พัก":"Rest","แนะนำ":"Suggested","ตามตาราง":"Scheduled","นอกตาราง — เลือกเองได้":"Off schedule — pick anything","กล้ามฟื้นครบแล้ว":"All recovered","พักวันนี้":"Resting today","ให้กล้ามได้ฟื้น — กลับมาพรุ่งนี้":"Let your muscles recover — back tomorrow","เปลี่ยนใจ ออกกำลังกาย":"Changed my mind — train","พักแทน":"Rest instead","ไปที่ไหน?":"Where to?","กลับ":"Back","ออก":"Train","เลือกโปรแกรม":"Pick a program","ไม่มีโปรแกรมในตารางวันนี้ที่นี่":"Nothing scheduled here today","ดูโปรแกรม":"See programs","วันพัก · ออกได้ถ้าอยากออก":"Rest day · train if you like","หาตำแหน่งไม่ได้":"Couldn't get location",
   "ดัมเบล":"Dumbbells","บาร์เบล":"Barbell","เคเบิล":"Cable","เครื่อง":"Machines","ม้านั่ง":"Bench","บาร์โหน":"Pull-up bar","ยางยืด":"Bands","ตัวเปล่า":"Bodyweight"});
 const EQ=[["db","ดัมเบล"],["bb","บาร์เบล"],["cable","เคเบิล"],["machine","เครื่อง"],["bench","ม้านั่ง"],["bar","บาร์โหน"],["band","ยางยืด"],["body","ตัวเปล่า"]];
 const EQ_ALL=EQ.map(q=>q[0]);
@@ -125,11 +125,18 @@ const resting=()=>freshDay()&&dayMode()==="rest";
 const needPick=()=>needDay()||(freshDay()&&dayMode()==="train"&&(locDay.date!==TODAY||pickAnyway));
 function chooseDay(m){setDayMode(m);if(m==="train"){pickAnyway=false;locPrev=null;if(locDay.date===TODAY){locPrev=locDay;locDay={};save("locday",locDay);pickAnyway=true}}renderGym();scrollAppTop()}
 function weakest(n){try{const R=recPct();return REC_ORDER.filter(m=>R[m]&&R[m].pct<100&&R[m].days<=NEGLECT).sort((a,b)=>R[a].pct-R[b].pct).slice(0,n).map(m=>[m,R[m].pct])}catch(e){return []}}
+const ICO={train:'<path d="M3 10v4M6 7v10M18 7v10M21 10v4M6 12h12"/>',rest:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>'};
+const ico=(k,c)=>`<svg class="dp-svg" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[k]}</svg>`;
 function renderDayPick(box){const pk=planFor(DAY),p=pk&&PROGS[pk],sug=p?"train":"rest",w=weakest(2);
-  const tl=p?`${t("ตามตาราง")}: ${isCardio(p)?(p.icon||"🏃")+" ":""}${esc(p.name)}${isCardio(p)?"":" · "+nU(p.ex.length,"ท่า")}`:t("นอกตาราง — เลือกเองได้");
-  const rl=w.length?`${w.map(([m,v])=>t(MUS_NAME[m])+" "+v+"%").join(" · ")} ${t("ยังไม่ฟื้นเต็ม")}`:t("กล้ามฟื้นครบแล้ว");
-  const card=(m,ic,name,line)=>`<button class="dp-card${m===sug?" on":""}" data-dm="${m}"><span class="dp-top"><span class="dp-ic">${ic}</span>${m===sug?`<span class="pill">${t("แนะนำ")}</span>`:""}</span><b>${t(name)}</b><small>${line}</small></button>`;
-  box.innerHTML=`<h1 class="lp-h">${t("วันนี้…")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}</div>${card("train","💪","ออกกำลังกาย",tl)}${card("rest","😴","พัก",esc(rl))}`;
+  const last=logs.filter(l=>l.date<TODAY).slice(-1)[0],ago=last?Math.round((ds2d(TODAY)-ds2d(last.date))/864e5):null;
+  const tl=(p?`${t("ตามตาราง")}: ${esc(p.name)}`:t("นอกตาราง — เลือกเองได้"))+(last?` · ${t("ล่าสุด")} ${ago===1?t("เมื่อวาน"):nU(ago,"วันก่อน")}`:"");
+  const bars=w.length?`<span class="dp-bars">${w.map(([m,v])=>`<span><small>${t(MUS_NAME[m])} ${v}%</small><i class="rec-bar"><i style="width:${v}%;background:${REC_C[v<40?1:2]}"></i></i></span>`).join("")}</span>`:`<small>${t("กล้ามฟื้นครบแล้ว")}</small>`;
+  const card=(m,name,body,col)=>`<button class="dp-card${m===sug?" on":""}" data-dm="${m}">${ico(m,col)}<span class="dp-tx"><span class="dp-t"><b>${t(name)}</b>${m===sug?`<span class="sug">${t("แนะนำ")}</span>`:""}</span>${body}</span><span class="dp-go">›</span></button>`;
+  let ready=0,tot=0;try{const R=recPct();REC_ORDER.forEach(m=>{if(R[m]){tot++;if(R[m].pct>=100)ready++}})}catch(e){}
+  box.innerHTML=`<h1 class="dp-h">${t("วันนี้…")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}</div>
+    ${card("train","ออกกำลังกาย",`<small>${tl}</small>`,"var(--cyan)")}${card("rest","พัก",bars,"var(--green)")}
+    ${tot?`<button class="dp-ready" data-ready><span><small>${t("ความพร้อมของกล้าม")}</small><b>${t("พร้อม")} ${ready}/${tot} ${t("มัด")}</b></span><i class="rec-bar big"><i style="width:${ready/tot*100}%;background:var(--grad)"></i></i></button>`:""}`;
+  box.querySelector("[data-ready]")?.addEventListener("click",()=>{location.hash="stats";setTimeout(()=>document.getElementById("rec-card")?.scrollIntoView({behavior:"smooth"}),300)});
   box.querySelectorAll("[data-dm]").forEach(b=>b.addEventListener("click",()=>chooseDay(b.dataset.dm)))}
 const nProgs=n=>lang==="th"?`${n} โปรแกรม`:`${n} program${n===1?"":"s"}`;
 // breadcrumb of today's choices: วันนี้ › 💪 ออก › 🏢 ยิม › ▶ Push A — tap an earlier step to choose again
