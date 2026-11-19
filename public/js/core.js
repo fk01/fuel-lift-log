@@ -31,3 +31,9 @@ function applyStatic(){document.querySelectorAll("[data-i]").forEach(el=>el.text
 const appScroll=()=>document.querySelector(".wrap");
 function scrollAppTop(smooth){const w=appScroll();if(w)w.scrollTo({top:0,behavior:smooth?"smooth":"auto"})}
 function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,1800)}
+
+// line icons (app-defined things use these; user-chosen emoji stay emoji)
+const LI={dumbbell:'<path d="M3 10v4M6 7v10M18 7v10M21 10v4M6 12h12"/>',moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',bowl:'<path d="M3 11h18a9 9 0 0 1-18 0zM8 7c0-2 2-2 2-4M13 7c0-2 2-2 2-4"/>',
+  pill:'<rect x="3" y="9" width="18" height="6" rx="3" transform="rotate(-35 12 12)"/><path d="M9.5 7.5l5 7"/>',run:'<circle cx="14" cy="4.5" r="1.8"/><path d="M8 21l3-6 3 2v5M6 12l3-4 4 1 3 4h3M11 15l-2-3"/>',
+  pin:'<path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',coffee:'<path d="M4 8h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM17 10h2a2 2 0 0 1 0 4h-2M8 3v2M12 3v2"/>'};
+const licon=(k,cls)=>`<svg class="licon ${cls||""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LI[k]||LI.dumbbell}</svg>`;
