@@ -754,3 +754,7 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 .dp-sub{font-size:1.15rem;margin:8px 0 0;padding-bottom:6px;background:var(--grad) left bottom/40px 2px no-repeat}
 #v-stats #rec-card{display:none}
 .locpick>*{min-width:0;max-width:100%}.rec-slot{min-width:0;overflow:hidden}.locpick{grid-template-columns:minmax(0,1fr)}
+/* recovery: show all 16 muscles in the 4-column grid again (no horizontal scroll) */
+#rec-card .rec-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));overflow:visible;gap:6px;padding-bottom:0}
+#rec-card .rec-grid .rec-t{flex:none;min-width:0;padding:8px!important}
+#rec-card .rec-grid .rec-t b{font-size:.72rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
