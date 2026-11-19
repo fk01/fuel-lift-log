@@ -751,3 +751,5 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 /* level character removed */
 #hero,#rest-cv,#hero-cv{display:none!important}
 .ico-pick{flex:1}.ico-pick .chip{width:44px;height:44px;padding:0;display:grid;place-items:center}.ico-pick .emo{width:22px;height:22px}
+.dp-sub{font-size:1.15rem;margin:8px 0 0;padding-bottom:6px;background:var(--grad) left bottom/40px 2px no-repeat}
+#v-stats #rec-card{display:none}

@@ -135,8 +135,8 @@ function renderDayPick(box){const pk=planFor(DAY),p=pk&&PROGS[pk],sug=p?"train":
   let ready=0,tot=0;try{const R=recPct();REC_ORDER.forEach(m=>{if(R[m]){tot++;if(R[m].pct>=100)ready++}})}catch(e){}
   box.innerHTML=`<h1 class="dp-h">${t("วันนี้…")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}</div>
     ${card("train","ออกกำลังกาย",`<small>${tl}</small>`,"var(--cyan)")}${card("rest","พัก",bars,"var(--green)")}
-    ${tot?`<button class="dp-ready" data-ready><span><small>${t("ความพร้อมของกล้าม")}</small><b>${t("พร้อม")} ${ready}/${tot} ${t("มัด")}</b></span><i class="rec-bar big"><i style="width:${ready/tot*100}%;background:var(--grad)"></i></i></button>`:""}`;
-  box.querySelector("[data-ready]")?.addEventListener("click",()=>{location.hash="stats";setTimeout(()=>document.getElementById("rec-card")?.scrollIntoView({behavior:"smooth"}),300)});
+    <h2 class="dp-sub">${t("การฟื้นตัวของกล้ามเนื้อ")}</h2><div class="rec-slot"></div>`;
+  const rc=document.getElementById("rec-card");if(rc){box.querySelector(".rec-slot").appendChild(rc);try{renderRecovery()}catch(e){}}
   box.querySelectorAll("[data-dm]").forEach(b=>b.addEventListener("click",()=>chooseDay(b.dataset.dm)))}
 const nProgs=n=>lang==="th"?`${n} โปรแกรม`:`${n} program${n===1?"":"s"}`;
 // breadcrumb of today's choices: วันนี้ › 💪 ออก › 🏢 ยิม › ▶ Push A — tap an earlier step to choose again
@@ -153,7 +153,7 @@ function renderLocHead(){try{updLocSum()}catch(e){}const h=document.getElementBy
   h.innerHTML=crumbs(it,picked);bindCrumbs(h)}
 const eqSum=l=>l.eq.filter(q=>q!=="body").map(q=>t((EQ.find(x=>x[0]===q)||[0,q])[1])).join(" · ")+(l.dbMax&&l.eq.includes("db")?` ≤ ${l.dbMax} kg`:"")||t("ตัวเปล่า");
 const mapUrl=m=>{m=(m||"").trim();if(!m)return "";return /^https?:\/\//.test(m)?safeUrl(m):"https://maps.google.com/?q="+encodeURIComponent(m)};
-function renderLocPick(){const box=document.getElementById("locpick");if(!box)return;const show=needPick();box.hidden=!show;document.getElementById("v-gym").classList.toggle("picking",show);document.getElementById("v-gym").classList.toggle("resting",resting());document.body.classList.toggle("loc-picking",show);renderLocHead();if(!show)return;
+function renderLocPick(){const box=document.getElementById("locpick");if(!box)return;const rc0=document.getElementById("rec-card"),home=document.querySelector(".rec-home");if(rc0&&home&&box.contains(rc0))home.after(rc0);const show=needPick();box.hidden=!show;document.getElementById("v-gym").classList.toggle("picking",show);document.getElementById("v-gym").classList.toggle("resting",resting());document.body.classList.toggle("loc-picking",show);renderLocHead();if(!show)return;
   if(needDay()){renderDayPick(box);return}
   const lastId=locDay.id||curLoc,todayAt=l=>planKeys(DAY).find(k=>locOf(PROGS[k])===l.id);
   const list=LOCS.slice().sort((x,y)=>(!!todayAt(y)-!!todayAt(x))||((y.id===lastId)-(x.id===lastId)));
