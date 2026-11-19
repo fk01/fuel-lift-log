@@ -18,7 +18,7 @@ const steps = [
   ["food", () => (location.hash = "food")], ["gym", () => (location.hash = "gym")],
   ["day-pick", () => { if (!document.querySelectorAll("#locpick [data-dm]").length) throw new Error("first screen should ask train or rest");
     document.querySelector('#locpick [data-dm="rest"]').click(); renderToday(); if (!document.getElementById("v-gym").classList.contains("resting") || !/พักวันนี้|Resting/.test(document.getElementById("today").textContent)) throw new Error("rest mode");
-    document.querySelector('#today [data-today="train"]').click(); }],
+    document.querySelector('#today [data-today="train"]').click(); dayKind = {}; save("daykind", dayKind); renderGym(); }],
   ["gyms-picker", () => { if (document.getElementById("locpick").hidden || document.querySelectorAll("#locpick .lp-card").length !== 3) throw new Error("picker should show 3 places");
     if (!/ตีแบด|Badminton/.test(document.querySelector("#locpick .lp-card").textContent)) throw new Error("court with today's badminton should be first");
     if (getComputedStyle(document.getElementById("step1")).display !== "none") throw new Error("picker should be full screen");; }],
@@ -89,6 +89,9 @@ const steps = [
   ["no-emoji", () => { ["food", "gym", "stats", "more"].forEach(h => { location.hash = h; }); deEmoji(document.body);
     const txt = document.body.innerText; const m = txt.match(/\p{Extended_Pictographic}/u); if (m && !/[✓✕✎☰↗★⚠]/.test(m[0])) throw new Error("emoji left: " + m[0]);
     if (getComputedStyle(document.getElementById("hero")).display !== "none") throw new Error("level character should be hidden"); }],
+  ["three-choices", () => { location.hash = "gym"; setDayMode(null); locDay = {}; renderGym(); const n = document.querySelectorAll("#locpick [data-dm]").length; if (n !== 3) throw new Error("3 choices, got " + n);
+    document.querySelector('#locpick [data-dm="cardio"]').click(); const names = [...document.querySelectorAll("#locpick .lp-card")].map(c => c.dataset.loc); if (names.some(id => !hasType(locById(id), "cardio"))) throw new Error("cardio filters places");
+    setDayMode(null); dayKind = {}; pickLoc("gym"); setDayMode("train"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

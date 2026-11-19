@@ -5,7 +5,7 @@ Object.assign(EN,{"วันนี้ออกที่ไหน?":"Where today?
   "ลิงก์ Google Maps":"Google Maps link","ใช้ตำแหน่งปัจจุบัน":"Use current location","ดัมเบลหนักสุด (kg)":"Heaviest dumbbell (kg)","บันทึก":"Save","แผนที่":"Map",
   "ต้องมีอย่างน้อย 1 สถานที่":"Keep at least one place","ไม่มีท่าแทน → ตัดออก":"No substitute → removed","คัดลอก":"Copy","ย้าย":"Move","คัดลอก แล้วแก้ต่อ":"Copy, then edit",
   "ย้าย แล้วแก้ต่อ":"Move, then edit","ไม่มีสถานที่อื่น":"No other place","ท่าหลักย้ายไม่ได้ ใช้คัดลอกแทน":"Locked lifts can't move — copy instead","ยังไม่เคยเล่นที่นี่":"Not trained here yet",
-  "ที่นี่":"Here","ยิม":"Gym","คอนโด":"Condo","สถานที่":"Place","เปลี่ยน":"Change","ให้กล้ามได้ฟื้น":"Let muscles recover","วันนี้จะทำอะไร?":"What today?","ความพร้อมของกล้าม":"Muscle readiness","มัด":"muscles","เมื่อวาน":"yesterday","วันนี้…":"Today…","ออกกำลังกาย":"Train","พัก":"Rest","แนะนำ":"Suggested","ตามตาราง":"Scheduled","นอกตาราง — เลือกเองได้":"Off schedule — pick anything","กล้ามฟื้นครบแล้ว":"All recovered","พักวันนี้":"Resting today","ให้กล้ามได้ฟื้น — กลับมาพรุ่งนี้":"Let your muscles recover — back tomorrow","เปลี่ยนใจ ออกกำลังกาย":"Changed my mind — train","พักแทน":"Rest instead","ไปที่ไหน?":"Where to?","กลับ":"Back","ออก":"Train","เลือกโปรแกรม":"Pick a program","ไม่มีโปรแกรมในตารางวันนี้ที่นี่":"Nothing scheduled here today","ดูโปรแกรม":"See programs","วันพัก · ออกได้ถ้าอยากออก":"Rest day · train if you like","หาตำแหน่งไม่ได้":"Couldn't get location",
+  "ที่นี่":"Here","ยิม":"Gym","คอนโด":"Condo","สถานที่":"Place","เปลี่ยน":"Change","เวทเทรนนิ่ง":"Weight training","เลือกโปรแกรมเวท":"Pick a weights program","วิ่ง ตีแบด ว่ายน้ำ …":"Run, badminton, swim …","ให้กล้ามได้ฟื้น":"Let muscles recover","วันนี้จะทำอะไร?":"What today?","ความพร้อมของกล้าม":"Muscle readiness","มัด":"muscles","เมื่อวาน":"yesterday","วันนี้…":"Today…","ออกกำลังกาย":"Train","พัก":"Rest","แนะนำ":"Suggested","ตามตาราง":"Scheduled","นอกตาราง — เลือกเองได้":"Off schedule — pick anything","กล้ามฟื้นครบแล้ว":"All recovered","พักวันนี้":"Resting today","ให้กล้ามได้ฟื้น — กลับมาพรุ่งนี้":"Let your muscles recover — back tomorrow","เปลี่ยนใจ ออกกำลังกาย":"Changed my mind — train","พักแทน":"Rest instead","ไปที่ไหน?":"Where to?","กลับ":"Back","ออก":"Train","เลือกโปรแกรม":"Pick a program","ไม่มีโปรแกรมในตารางวันนี้ที่นี่":"Nothing scheduled here today","ดูโปรแกรม":"See programs","วันพัก · ออกได้ถ้าอยากออก":"Rest day · train if you like","หาตำแหน่งไม่ได้":"Couldn't get location",
   "ดัมเบล":"Dumbbells","บาร์เบล":"Barbell","เคเบิล":"Cable","เครื่อง":"Machines","ม้านั่ง":"Bench","บาร์โหน":"Pull-up bar","ยางยืด":"Bands","ตัวเปล่า":"Bodyweight"});
 const EQ=[["db","ดัมเบล"],["bb","บาร์เบล"],["cable","เคเบิล"],["machine","เครื่อง"],["bench","ม้านั่ง"],["bar","บาร์โหน"],["band","ยางยืด"],["body","ตัวเปล่า"]];
 const EQ_ALL=EQ.map(q=>q[0]);
@@ -123,24 +123,27 @@ const freshDay=()=>DAY===TODAY&&!picked&&!editing&&!planDone();
 const needDay=()=>freshDay()&&!dayMode();
 const resting=()=>freshDay()&&dayMode()==="rest";
 const needPick=()=>needDay()||(freshDay()&&dayMode()==="train"&&(locDay.date!==TODAY||pickAnyway));
-function chooseDay(m){setDayMode(m);if(m==="train"){pickAnyway=false;locPrev=null;if(locDay.date===TODAY){locPrev=locDay;locDay={};save("locday",locDay);pickAnyway=true}}renderGym();scrollAppTop()}
+let dayKind=load("daykind",{});const kindToday=()=>dayKind.date===TODAY?dayKind.k:null;
+function chooseDay(m){if(m==="cardio"||m==="train"){dayKind={date:TODAY,k:m==="cardio"?"cardio":"gym"};save("daykind",dayKind);m="train"}setDayMode(m);if(m==="train"){pickAnyway=false;locPrev=null;if(locDay.date===TODAY){locPrev=locDay;locDay={};save("locday",locDay);pickAnyway=true}}renderGym();scrollAppTop()}
 function weakest(n){try{const R=recPct();return REC_ORDER.filter(m=>R[m]&&R[m].pct<100&&R[m].days<=NEGLECT).sort((a,b)=>R[a].pct-R[b].pct).slice(0,n).map(m=>[m,R[m].pct])}catch(e){return []}}
-const ICO={train:'<path d="M3 10v4M6 7v10M18 7v10M21 10v4M6 12h12"/>',rest:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>'};
+const ICO={cardio:'<circle cx="14" cy="4.5" r="1.8"/><path d="M8 21l3-6 3 2v5M6 12l3-4 4 1 3 4h3M11 15l-2-3"/>',train:'<path d="M3 10v4M6 7v10M18 7v10M21 10v4M6 12h12"/>',rest:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>'};
 const ico=(k,c)=>`<svg class="dp-svg" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[k]}</svg>`;
-function renderDayPick(box){const pk=planFor(DAY),p=pk&&PROGS[pk],sug=p?"train":"rest",w=weakest(2);
+function renderDayPick(box){const pk=planFor(DAY),p=pk&&PROGS[pk],sug=!p?"rest":isCardio(p)?"cardio":"train",w=weakest(2);
   const last=logs.filter(l=>l.date<TODAY).slice(-1)[0],ago=last?Math.round((ds2d(TODAY)-ds2d(last.date))/864e5):null;
-  const tl=(p?`${t("ตามตาราง")}: ${esc(p.name)}`:t("นอกตาราง — เลือกเองได้"))+(last?` · ${t("ล่าสุด")} ${ago===1?t("เมื่อวาน"):nU(ago,"วันก่อน")}`:"");
+  const lastW=last?` · ${t("ล่าสุด")} ${ago===1?t("เมื่อวาน"):nU(ago,"วันก่อน")}`:"";
+  const tl=(p&&!isCardio(p)?`${t("ตามตาราง")}: ${esc(p.name)}`:t("เลือกโปรแกรมเวท"))+lastW;
+  const cl=p&&isCardio(p)?`${t("ตามตาราง")}: ${esc(p.name)}`:t("วิ่ง ตีแบด ว่ายน้ำ …");
   const bars=`<small>${w.length?`${t("ให้กล้ามได้ฟื้น")} · ${w.map(([m])=>t(MUS_NAME[m])).join(", ")}`:t("กล้ามฟื้นครบแล้ว")}</small>`;
   const card=(m,name,body,col)=>`<button class="dp-card${m===sug?" on":""}" data-dm="${m}">${ico(m,col)}<span class="dp-tx"><span class="dp-t"><b>${t(name)}</b>${m===sug?`<span class="sug">${t("แนะนำ")}</span>`:""}</span>${body}</span><span class="dp-go">›</span></button>`;
   let ready=0,tot=0;try{const R=recPct();REC_ORDER.forEach(m=>{if(R[m]){tot++;if(R[m].pct>=100)ready++}})}catch(e){}
   box.innerHTML=`<h1 class="dp-h">${t("วันนี้…")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}</div>
     <div class="rec-slot"></div>
-    <h2 class="dp-sub">${t("วันนี้จะทำอะไร?")}</h2>${card("train","ออกกำลังกาย",`<small>${tl}</small>`,"var(--cyan)")}${card("rest","พัก",bars,"var(--green)")}`;
+    <h2 class="dp-sub">${t("วันนี้จะทำอะไร?")}</h2>${card("train","เวทเทรนนิ่ง",`<small>${tl}</small>`,"var(--cyan)")}${card("cardio","คาร์ดิโอ",`<small>${cl}</small>`,"var(--green)")}${card("rest","พัก",bars,"var(--muted)")}`;
   const rc=document.getElementById("rec-card");if(rc){box.querySelector(".rec-slot").appendChild(rc);try{renderRecovery()}catch(e){}}
   box.querySelectorAll("[data-dm]").forEach(b=>b.addEventListener("click",()=>chooseDay(b.dataset.dm)))}
 const nProgs=n=>lang==="th"?`${n} โปรแกรม`:`${n} program${n===1?"":"s"}`;
 // breadcrumb of today's choices: วันนี้ › 💪 ออก › 🏢 ยิม › ▶ Push A — tap an earlier step to choose again
-const modeChip=()=>dayMode()==="rest"?"😴 "+t("พัก"):"💪 "+t("ออก");
+const modeChip=()=>dayMode()==="rest"?"😴 "+t("พัก"):kindToday()==="cardio"?"🏃 "+t("คาร์ดิโอ"):"🏋️ "+t("เวท");
 function crumbs(items,lock){return `<nav class="crumbs${lock?" lock":""}" aria-label="${t("วันนี้")}"><span class="cr-lab">${t("วันนี้")}</span>${items.map(([lab,act],i)=>{const last=i===items.length-1;
     return `<span class="cr-sep">›</span>${lock||!act?`<span class="cr${last?" cur":""}">${esc(lab)}</span>`:`<button class="cr${last?" cur":""}" data-cr="${act}">${esc(lab)} <i>⌄</i></button>`}`}).join("")}</nav>`}
 function bindCrumbs(el){el.querySelectorAll("[data-cr]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.cr;
@@ -156,7 +159,7 @@ const mapUrl=m=>{m=(m||"").trim();if(!m)return "";return /^https?:\/\//.test(m)?
 function renderLocPick(){const box=document.getElementById("locpick");if(!box)return;const rc0=document.getElementById("rec-card"),home=document.querySelector(".rec-home");if(rc0&&home&&box.contains(rc0))home.after(rc0);const show=needPick();box.hidden=!show;document.getElementById("v-gym").classList.toggle("picking",show);document.getElementById("v-gym").classList.toggle("resting",resting());document.body.classList.toggle("loc-picking",show);renderLocHead();if(!show)return;
   if(needDay()){renderDayPick(box);return}
   const lastId=locDay.id||curLoc,todayAt=l=>planKeys(DAY).find(k=>locOf(PROGS[k])===l.id);
-  const list=LOCS.slice().sort((x,y)=>(!!todayAt(y)-!!todayAt(x))||((y.id===lastId)-(x.id===lastId)));
+  const kd=kindToday(),list=LOCS.filter(l=>!kd||hasType(l,kd)).sort((x,y)=>(!!todayAt(y)-!!todayAt(x))||((y.id===lastId)-(x.id===lastId)));
   box.innerHTML=crumbs([[modeChip(),"mode"],[t("ไปที่ไหน?"),null]])+`<h1 class="lp-h">${t("ไปที่ไหน?")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}</div>`+list.map(l=>{const k=todayAt(l),p=k&&PROGS[k],n=Object.keys(PROGS).filter(q=>q!=="free"&&locOf(PROGS[q])===l.id).length;
     const line=p?`${isCardio(p)?(p.icon||"🏃"):"▶"} ${esc(p.name)}${isCardio(p)?"":" · "+nU(p.ex.length,"ท่า")} · ${t("วันนี้")}`:nProgs(n);
     return `<div class="lp-card${l.id===lastId?" on":""}" role="button" tabindex="0" data-loc="${esc(l.id)}"><span class="lp-ic">${esc(l.icon||"📍")}</span><span class="lp-tx"><span class="lp-top"><b>${esc(t(l.name))}</b>${l.id===lastId?`<span class="pill">${t("ล่าสุด")}</span>`:""}</span><small>${line}</small></span><span class="lp-more" role="button" tabindex="0" data-locedit="${esc(l.id)}" aria-label="${t("แก้ไขสถานที่")}">•••</span><span class="dp-go">›</span></div>`}).join("")
@@ -241,9 +244,10 @@ document.getElementById("loc-open")?.addEventListener("click",openPlaces);
 function updLocSum(){const e=document.getElementById("loc-sum");if(e&&LOCS)e.textContent=LOCS.map(l=>t(l.name)).join(" · ")}
 
 /* ---------- program chip: today's program at this place (picked, else scheduled) ---------- */
-function selProg(){const k=locDay.date===TODAY&&locDay.prog;if(k&&PROGS[k]&&locOf(PROGS[k])===curLoc)return k;const pl=planFor(DAY);return pl&&PROGS[pl]&&locOf(PROGS[pl])===curLoc?pl:null}
+const kindOk=k=>{const kd=kindToday();return !kd||(kd==="cardio")===isCardio(PROGS[k])};
+function selProg(){const k=locDay.date===TODAY&&locDay.prog;if(k&&PROGS[k]&&locOf(PROGS[k])===curLoc&&kindOk(k))return k;const pl=planFor(DAY);return pl&&PROGS[pl]&&locOf(PROGS[pl])===curLoc&&kindOk(pl)?pl:null}
 function chooseProg(k){locDay={...locDay,date:TODAY,id:curLoc,prog:k};save("locday",locDay);if(!isCardio(PROGS[k])&&!picked){if(cur!==k)draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft)}closeGen();renderGym()}
-function openProgPick(){const L=hereLoc(),sel=selProg(),pl=planFor(DAY),w=weightsHere(),c=cardioHere();
+function openProgPick(){const L=hereLoc(),sel=selProg(),pl=planFor(DAY),kd=kindToday(),w=kd==="cardio"?[]:weightsHere(),c=kd==="gym"?[]:cardioHere();
   const row=k=>{const p=PROGS[k],cx=isCardio(p);return `<button class="menu-row" data-pp="${esc(k)}"><span class="mi">${cx?esc(p.icon||"🏃"):"📋"}</span><span class="mt"><b>${esc(p.name)}</b><small>${cx?"":nU(p.ex.length,"ท่า")+" · "+esc([...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(" "))}${k===pl?" · "+t("ตามตาราง"):""}</small></span><span class="mc">${k===sel?"✓":"›"}</span></button>`};
   openGen(`${t("เลือกโปรแกรม")} · ${esc(L.icon||"📍")} ${esc(t(L.name))}`,`${w.length?`<div class="label" style="margin:0">${t("เวท")}</div><div class="pm-menu">${w.map(row).join("")}</div>`:""}
     ${c.length?`<div class="label" style="margin:0">${t("คาร์ดิโอ")}</div><div class="pm-menu">${c.map(row).join("")}</div>`:""}
