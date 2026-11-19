@@ -9,6 +9,17 @@ Object.assign(EN,{"วันนี้ออกที่ไหน?":"Where today?
   "ดัมเบล":"Dumbbells","บาร์เบล":"Barbell","เคเบิล":"Cable","เครื่อง":"Machines","ม้านั่ง":"Bench","บาร์โหน":"Pull-up bar","ยางยืด":"Bands","ตัวเปล่า":"Bodyweight"});
 const EQ=[["db","ดัมเบล"],["bb","บาร์เบล"],["cable","เคเบิล"],["machine","เครื่อง"],["bench","ม้านั่ง"],["bar","บาร์โหน"],["band","ยางยืด"],["body","ตัวเปล่า"]];
 const EQ_ALL=EQ.map(q=>q[0]);
+const ACT=[["gym","เวท"],["run","วิ่ง"],["bad","ตีแบด"]];
+Object.assign(EN,{"เวท":"Weights","กิจกรรม":"Activities","สนามแบด":"Badminton court","วันนี้:":"Today:","เปลี่ยนที่":"Change place","เวทแทน":"Weights instead","วิ่งแทน":"Run instead",
+  "ยังไม่มีที่ที่ทำได้ · เพิ่มสถานที่":"No place for this yet · add one","แทน":"for","เลื่อนขึ้น":"Move up","เลื่อนลง":"Move down","ลบโปรแกรม":"Delete program"});
+const actOf=l=>(l&&l.act)||["gym","run"];
+const canAct=(l,a)=>actOf(l).includes(a);
+const actName=a=>t((ACT.find(q=>q[0]===a)||[0,a])[1]);
+// what today's plan needs: gym / run / bad, or null on a rest day
+function planAct(){const pl=planFor(DAY);return !pl?null:pl==="run"||pl==="bad"?pl:"gym"}
+function planDone(){const a=planAct(),tg=(fs().tags)||{};return a==="gym"?logs.some(l=>l.date===DAY):a?!!tg[a]:true}
+// "อ. · อก ไหล่ แขน ขา": weekday prefix kept from the old text, groups rebuilt from the exercises actually in the program
+function descFor(p){const pre=(p.sub||"").split(" · ")[0];const g=[...new Set(p.ex.map(e=>groupOf(e)).filter(x=>x!=="other").map(groupName))].join(" ");return (pre&&pre.length<=4?pre+" · ":"")+g}
 // equipment each default exercise needs
 const EQ_DEF={"chest-press":["machine"],"pec-fly":["machine"],"incline-db":["db","bench"],"db-shoulder-press":["db","bench"],"cable-lat-raise":["cable"],"cable-oh-tri":["cable"],
   "leg-ext":["machine"],"leg-curl":["machine"],"lat-pulldown":["machine"],"wide-cable-row":["cable"],"seated-cable-row":["cable"],"squat":["bb"],"deadlift":["bb"],"reverse-fly":["machine"],
@@ -35,7 +46,8 @@ const SUB_EX={
 const SUB_DEF={"chest-press":["db-bench"],"pec-fly":["db-fly"],"cable-lat-raise":["db-lat-raise"],"cable-oh-tri":["db-oh-tri"],"leg-ext":["db-split-squat","goblet-squat"],
   "leg-curl":["db-rdl"],"lat-pulldown":["db-pullover","db-row"],"wide-cable-row":["db-row"],"seated-cable-row":["db-cs-row","db-row"],"squat":["goblet-squat"],"deadlift":["db-rdl"],
   "reverse-fly":["db-rev-fly"],"machine-curl":["db-curl"],"abdominal":["crunch"],"woodchop":["db-woodchop"],"seated-calf":["db-calf"],"hip-add":["side-hip-add"],"hip-abd":["side-hip-abd"]};
-const DEF_LOCS=()=>[{id:"gym",name:"ยิม",icon:"🏢",map:"",eq:EQ_ALL.slice()},{id:"condo",name:"คอนโด",icon:"🏠",map:"",eq:["db","bench","body"]}];
+const COURT=()=>({id:"court",name:"สนามแบด",icon:"🏸",map:"",eq:["body"],act:["bad"]});
+const DEF_LOCS=()=>[{id:"gym",name:"ยิม",icon:"🏢",map:"",eq:EQ_ALL.slice(),act:["gym","run"]},{id:"condo",name:"คอนโด",icon:"🏠",map:"",eq:["db","bench","body"],act:["gym","run"]},COURT()];
 let LOCS=load("locs",null);
 let locDay=load("locday",{});                        // {date,id}: the place picked for that day
 let curLoc=locDay.id||"gym";
@@ -46,7 +58,8 @@ const locOf=p=>(p&&p.loc)||"gym";
 const logLoc=l=>l.loc||locOf(PROGS[l.prog]);
 const progsHere=()=>Object.keys(PROGS).filter(k=>k!=="free"&&locOf(PROGS[k])===curLoc);
 const slotOf=(k,p)=>(p&&p.slot)||k;
-function slotKey(s){if(!s)return null;const ks=progsHere();return ks.find(k=>slotOf(k,PROGS[k])===s)||null}
+function slotKeyAt(s,loc){if(!s||!loc)return null;return Object.keys(PROGS).find(k=>k!=="free"&&locOf(PROGS[k])===loc&&slotOf(k,PROGS[k])===s)||null}
+function slotKey(s){return slotKeyAt(s,curLoc)}
 // equipment an exercise needs: own setting → default map → catalog text → icon
 function eqOf(x){if(!x)return [];if(Array.isArray(x.eq))return x.eq;if(EQ_DEF[x.id])return EQ_DEF[x.id];if(SUB_EX[x.id])return SUB_EX[x.id].eq;
   const lib=(typeof EXLIB!=="undefined"&&EXLIB.find(q=>q.id===x.id))||{};if(Array.isArray(lib.eq))return lib.eq;
@@ -63,24 +76,30 @@ function subFor(e,loc){const lib=(typeof EXLIB!=="undefined"&&EXLIB.find(q=>q.id
 // convert a program's exercises for loc: keep, swap (marked), or drop
 function convertEx(ex,loc){const out=[],log=[];ex.forEach(e=>{if(canDo(e,loc)){out.push(JSON.parse(JSON.stringify(e)));return}
   const s=subFor(e,loc);if(!s||out.some(o=>o.id===s.id)){log.push([e,null]);return}
-  const o={id:s.id,n:s.n,z:s.z||"🏋️",s:e.s,r:e.r,swap:e.id};["g","mp","ms","u","link","gif"].forEach(f=>{if(s[f])o[f]=s[f]});out.push(o);log.push([e,s])});return {ex:out,log}}
+  const o={id:s.id,n:s.n,z:s.z||"🏋️",s:e.s,r:e.r,swap:e.id,swapN:e.n};["g","mp","ms","u","link","gif"].forEach(f=>{if(s[f])o[f]=s[f]});out.push(o);log.push([e,s])});return {ex:out,log}}
 function addSubsToLib(ex){if(typeof EXLIB==="undefined")return false;let ch=false;ex.forEach(e=>{if(!EXLIB.some(q=>q.id===e.id)&&SUB_EX[e.id]){EXLIB.push(subExObj(e.id));ch=true}});return ch}
 // first run: gym = everything that exists; condo = Push/Pull A/B converted to dumbbells
-function ensureLocs(){if(LOCS&&LOCS.length)return false;LOCS=DEF_LOCS();const condo=LOCS[1];
+function ensureLocs(){if(LOCS&&LOCS.length){if(LOCS.some(l=>l.act))return false;
+    // places from before activities existed: weights + run everywhere, add a badminton court, rewrite converted programs' text
+    LOCS.forEach(l=>l.act=["gym","run"]);LOCS.push(COURT());Object.values(PROGS).forEach(p=>{if(locOf(p)!=="gym"&&p.ex.some(e=>e.swap))p.sub=descFor(p)});
+    try{localStorage.setItem("locs",JSON.stringify(LOCS))}catch(e){}return true}
+  LOCS=DEF_LOCS();const condo=LOCS[1];
   ["push","pull","push2","pull2"].forEach(k=>{const p=PROGS[k];if(!p||locOf(p)!=="gym")return;const c=convertEx(p.ex,condo).ex;
-    PROGS["c-"+k]={name:p.name,sub:p.sub||"",loc:"condo",slot:k,ex:c}});
+    PROGS["c-"+k]={name:p.name,sub:p.sub||"",loc:"condo",slot:k,ex:c};PROGS["c-"+k].sub=descFor(PROGS["c-"+k])});
   try{localStorage.setItem("locs",JSON.stringify(LOCS))}catch(e){}return true}
 function saveLocs(){save("locs",LOCS);setProgsRev(Date.now());if(typeof markDirty==="function")markDirty("progs")}
 function pickLoc(id){curLoc=id;locDay={date:TODAY,id};save("locday",locDay);if(!picked){cur=nextProg();chosen=false;draft.ex={};draft.prog=cur;save("gymdraft",draft)}renderGym()}
-const needPick=()=>DAY===TODAY&&locDay.date!==TODAY&&!picked&&!editing;
+const needPick=()=>DAY===TODAY&&locDay.date!==TODAY&&!picked&&!editing&&!!planAct()&&!planDone();
 const eqSum=l=>l.eq.filter(q=>q!=="body").map(q=>t((EQ.find(x=>x[0]===q)||[0,q])[1])).join(" · ")+(l.dbMax&&l.eq.includes("db")?` ≤ ${l.dbMax} kg`:"")||t("ตัวเปล่า");
 const mapUrl=m=>{m=(m||"").trim();if(!m)return "";return /^https?:\/\//.test(m)?safeUrl(m):"https://maps.google.com/?q="+encodeURIComponent(m)};
 function renderLocPick(){const box=document.getElementById("locpick");if(!box)return;const show=needPick();box.hidden=!show;document.getElementById("v-gym").classList.toggle("picking",show);if(!show)return;
-  const lastId=locDay.id||curLoc;
-  box.innerHTML=`<h2 class="lp-h">${t("วันนี้ออกที่ไหน?")}</h2>`+LOCS.map(l=>{const ls=logs.filter(g=>logLoc(g)===l.id),last=ls[ls.length-1],n=Object.values(PROGS).filter(p=>p!==PROGS.free&&locOf(p)===l.id).length,mu=mapUrl(l.map);
-    return `<div class="lp-card${l.id===lastId?" on":""}" role="button" tabindex="0" data-loc="${esc(l.id)}"><span class="lp-top"><b>${esc(l.icon||"📍")} ${esc(t(l.name))}</b>${l.id===lastId?`<span class="pill">${t("ล่าสุด")}</span>`:""}<span class="lp-more" role="button" tabindex="0" data-locedit="${esc(l.id)}" aria-label="${t("แก้ไขสถานที่")}">•••</span></span>
-      <small>${mu?`<a href="${esc(mu)}" target="_blank" rel="noopener" data-map>📍 ${t("แผนที่")}</a> · `:""}${esc(eqSum(l))}</small>
-      <small>${n} ${t("โปรแกรม")} · ${last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่นที่นี่")}</small></div>`}).join("")
+  const lastId=locDay.id||curLoc,a=planAct(),pk=a==="gym"?slotKeyAt(planFor(DAY),lastId)||slotKeyAt(planFor(DAY),(LOCS.find(l=>canAct(l,"gym"))||{}).id):null;
+  const planTxt=a==="run"?"🏃 "+t("วิ่ง")+" 10 km":a==="bad"?"🏸 "+t("ตีแบด"):pk?`${PROGS[pk].name} · ${nU(PROGS[pk].ex.length,"ท่า")}`:progName(planFor(DAY));
+  const ok=l=>canAct(l,a),list=LOCS.slice().sort((x,y)=>(ok(y)-ok(x))||((y.id===lastId)-(x.id===lastId)));
+  box.innerHTML=`<h2 class="lp-h">${t("วันนี้ออกที่ไหน?")}</h2><div class="lp-plan">${t("วันนี้:")} <b>${esc(planTxt)}</b></div>`+(list.some(ok)?"":`<small class="note">${t("ยังไม่มีที่ที่ทำได้ · เพิ่มสถานที่")}</small>`)+list.map(l=>{const ls=logs.filter(g=>logLoc(g)===l.id),last=ls[ls.length-1],n=Object.values(PROGS).filter(p=>p!==PROGS.free&&locOf(p)===l.id).length,mu=mapUrl(l.map);
+    const no=!ok(l);return `<div class="lp-card${l.id===lastId&&!no?" on":""}${no?" no":""}" role="button" tabindex="0" data-loc="${esc(l.id)}"><span class="lp-top"><b>${esc(l.icon||"📍")} ${esc(t(l.name))}</b>${l.id===lastId&&!no?`<span class="pill">${t("ล่าสุด")}</span>`:""}<span class="lp-more" role="button" tabindex="0" data-locedit="${esc(l.id)}" aria-label="${t("แก้ไขสถานที่")}">•••</span></span>
+      ${no?`<small class="lp-no">${lang==="th"?`ทำ${actName(a)}ไม่ได้`:`Can't ${actName(a).toLowerCase()} here`}</small>`:""}<small>${mu?`<a href="${esc(mu)}" target="_blank" rel="noopener" data-map>📍 ${t("แผนที่")}</a> · `:""}${esc(actOf(l).map(actName).join(" · "))}${canAct(l,"gym")?" · "+esc(eqSum(l)):""}</small>
+      <small>${canAct(l,"gym")?n+" "+t("โปรแกรม")+" · ":""}${last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่นที่นี่")}</small></div>`}).join("")
     +`<button class="btn lp-add" data-locadd>+ ${t("เพิ่มสถานที่")}</button>`;
   box.querySelectorAll("[data-loc]").forEach(c=>c.addEventListener("click",ev=>{if(ev.target.closest("[data-map]"))return;const ed=ev.target.closest("[data-locedit]");if(ed){openLocEdit(ed.dataset.locedit);return}pickLoc(c.dataset.loc)}));
   box.querySelector("[data-locadd]").addEventListener("click",()=>openLocEdit(null))}
@@ -90,15 +109,19 @@ function openLocEdit(id){const isNew=!id,l=isNew?{id:"l"+Date.now().toString(36)
     <div class="le-row"><input class="le-in le-ic" data-f="icon" value="${esc(l.icon||"")}" maxlength="4" aria-label="icon"><input class="le-in" data-f="name" value="${esc(l.name)}" placeholder="${t("ชื่อสถานที่")}" aria-label="${t("ชื่อสถานที่")}"></div>
     <input class="le-in" data-f="map" value="${esc(l.map||"")}" placeholder="📍 ${t("ลิงก์ Google Maps")}" aria-label="${t("ลิงก์ Google Maps")}">
     <button class="btn sm" data-geo style="justify-self:start">📍 ${t("ใช้ตำแหน่งปัจจุบัน")}</button>
-    <div class="label" style="margin:4px 0 0">${t("อุปกรณ์")}</div>
+    <div class="label" style="margin:4px 0 0">${t("กิจกรรม")}</div>
+    <div class="chips" data-act>${ACT.map(([k,n])=>`<button class="chip" data-a="${k}" aria-pressed="${actOf(l).includes(k)}">${t(n)}</button>`).join("")}</div>
+    <div class="le-eq"><div class="label" style="margin:4px 0 0">${t("อุปกรณ์")}</div>
     <div class="chips" data-eq>${EQ.map(([k,n])=>`<button class="chip" data-q="${k}" aria-pressed="${k==="body"||l.eq.includes(k)}"${k==="body"?" disabled":""}>${t(n)}</button>`).join("")}</div>
-    <label class="le-row" style="justify-content:space-between">${t("ดัมเบลหนักสุด (kg)")}<input class="le-in" data-f="dbMax" type="number" inputmode="decimal" value="${l.dbMax||""}" style="width:90px;text-align:right"></label>
+    <label class="le-row" style="justify-content:space-between">${t("ดัมเบลหนักสุด (kg)")}<input class="le-in" data-f="dbMax" type="number" inputmode="decimal" value="${l.dbMax||""}" style="width:90px;text-align:right"></label></div>
     <button class="btn primary" data-save>${t("บันทึก")}</button>${isNew?"":`<button class="btn ghost warn" data-del>${t("ลบสถานที่นี้")}</button>`}<button class="btn" data-gen-close>${t("ปิด")}</button></div>`,b=>{
-    b.querySelectorAll("[data-q]").forEach(c=>c.addEventListener("click",()=>{if(c.disabled)return;c.setAttribute("aria-pressed",c.getAttribute("aria-pressed")!=="true")}));
+    b.querySelectorAll("[data-q],[data-a]").forEach(c=>c.addEventListener("click",()=>{if(c.disabled)return;c.setAttribute("aria-pressed",c.getAttribute("aria-pressed")!=="true");eqVis()}));
+    const eqVis=()=>{b.querySelector(".le-eq").hidden=b.querySelector('[data-a="gym"]').getAttribute("aria-pressed")!=="true"};eqVis();
     b.querySelector("[data-geo]").addEventListener("click",()=>{if(!navigator.geolocation){toast(t("หาตำแหน่งไม่ได้"));return}
       navigator.geolocation.getCurrentPosition(p=>{b.querySelector('[data-f="map"]').value=`https://maps.google.com/?q=${p.coords.latitude.toFixed(5)},${p.coords.longitude.toFixed(5)}`},()=>toast(t("หาตำแหน่งไม่ได้")),{timeout:10000})});
     b.querySelector("[data-save]").addEventListener("click",()=>{const v=f=>b.querySelector(`[data-f="${f}"]`).value.trim();
       l.name=v("name")||t("สถานที่");l.icon=v("icon")||"📍";l.map=v("map");const m=+v("dbMax");if(m>0)l.dbMax=m;else delete l.dbMax;
+      l.act=[...b.querySelectorAll("[data-a]")].filter(c=>c.getAttribute("aria-pressed")==="true").map(c=>c.dataset.a);
       l.eq=[...b.querySelectorAll("[data-q]")].filter(c=>c.getAttribute("aria-pressed")==="true").map(c=>c.dataset.q);
       const i=LOCS.findIndex(q=>q.id===l.id);if(i>=0)LOCS[i]=l;else LOCS.push(l);saveLocs();closeGen();renderGym()});
     const d=b.querySelector("[data-del]");if(d)d.addEventListener("click",()=>{if(LOCS.length<2){toast(t("ต้องมีอย่างน้อย 1 สถานที่"));return}
@@ -107,8 +130,8 @@ function openLocEdit(id){const isNew=!id,l=isNew?{id:"l"+Date.now().toString(36)
       if(curLoc===l.id){curLoc=LOCS[0].id;locDay={};save("locday",locDay);cur=nextProg()}closeGen();renderGym()})})}
 function closeGen(){document.getElementById("gen-sheet").hidden=true}
 // copy / move a program to another place, converting exercises the target can't do
-function openProgMove(k){const p=PROGS[k],others=LOCS.filter(l=>l.id!==locOf(p));if(!others.length){toast(t("ไม่มีสถานที่อื่น"));return}
-  let to=others[0].id,mode="copy";
+function openProgMove(k,m0){const p=PROGS[k],others=LOCS.filter(l=>l.id!==locOf(p));if(!others.length){toast(t("ไม่มีสถานที่อื่น"));return}
+  let to=others[0].id,mode=m0||"copy";
   const draw=b=>{const L=locById(to),{log}=convertEx(p.ex,L);
     b.querySelector("[data-prev]").innerHTML=log.length?log.map(([e,s])=>`<div class="mv-row"><span>${esc(e.n)}</span><span>→ ${s?`<b>${esc(s.n)}</b>`:`<i>${t("ไม่มีท่าแทน → ตัดออก")}</i>`}</span></div>`).join(""):`<small class="note">✓ ${nU(p.ex.length,"ท่า")}</small>`;
     b.querySelectorAll("[data-to]").forEach(c=>c.setAttribute("aria-pressed",c.dataset.to===to));b.querySelectorAll("[data-mode]").forEach(c=>c.setAttribute("aria-pressed",c.dataset.mode===mode));
@@ -120,7 +143,7 @@ function openProgMove(k){const p=PROGS[k],others=LOCS.filter(l=>l.id!==locOf(p))
     b.querySelectorAll("[data-mode]").forEach(c=>c.addEventListener("click",()=>{mode=c.dataset.mode;draw(b)}));
     b.querySelector("[data-go]").addEventListener("click",()=>{if(mode==="move"&&p.ex.some(e=>isLocked(k,e))){toast("🔒 "+t("ท่าหลักย้ายไม่ได้ ใช้คัดลอกแทน"));return}
       const L=locById(to),ex=convertEx(p.ex,L).ex,slot=slotOf(k,p),taken=Object.keys(PROGS).some(q=>q!==k&&locOf(PROGS[q])===to&&slotOf(q,PROGS[q])===slot);
-      const nk="p"+Date.now().toString(36),np={name:p.name,sub:p.sub||"",loc:to,ex};if(!taken&&/^(push|pull)/.test(slot))np.slot=slot;
+      const nk="p"+Date.now().toString(36),np={name:p.name,sub:p.sub||"",loc:to,ex};if(ex.some(e=>e.swap))np.sub=descFor(np);if(!taken&&/^(push|pull)/.test(slot))np.slot=slot;
       if(addSubsToLib(ex))save("exlib",EXLIB);PROGS[nk]=np;if(mode==="move")delete PROGS[k];saveProgs();
       if(mode==="move"&&cur===k){cur=nextProg()}closeGen();curLoc=to;locDay={date:TODAY,id:to};save("locday",locDay);
       pmOnly=nk;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false;renderGym()})})}

@@ -73,14 +73,17 @@ function renderPM(){
   const keys=progsHere();const lh=document.createElement("div");lh.className="pick-h";lh.textContent=`${hereLoc().icon||"📍"} ${t(hereLoc().name)}`;box.appendChild(lh);
   keys.forEach((k,i)=>{const p=PROGS[k];const r=document.createElement("div");r.className="pm-li";
     r.innerHTML=`<button class="pm-open" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}"><b>${esc(p.name)}</b><small>${esc(t(p.sub||""))}</small><small>${nU(p.ex.length,"ท่า")} ›</small></button>
-      <div class="pm-li-act"><button class="btn sm" data-up ${i===0?"disabled":""} aria-label="up">↑</button><button class="btn sm" data-down ${i===keys.length-1?"disabled":""} aria-label="down">↓</button><button class="btn sm" data-mv aria-label="${t("คัดลอกไป…")}">⇄</button><button class="btn sm ghost" data-del aria-label="${t("ลบโปรแกรม")}">🗑</button></div>`;
+      <div class="pm-li-act"><button class="btn sm pm-more" data-menu aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</button></div>`;
     const on=(s,ev,fn)=>r.querySelector(s).addEventListener(ev,fn);
     on(".pm-open","click",()=>{pmOnly=k;pmFromList=true;renderPM();document.getElementById("pm-modal").scrollTop=0});
     const move=d=>{const o={};const ks=Object.keys(PROGS),a=ks.indexOf(k),b=ks.indexOf(keys[i+d]);ks[a]=keys[i+d];ks[b]=k;ks.forEach(x=>o[x]=PROGS[x]);PROGS=o;saveProgs();renderPM();renderGym()};
-    on("[data-mv]","click",()=>openProgMove(k));on("[data-up]","click",()=>move(-1));on("[data-down]","click",()=>move(1));
-    on("[data-del]","click",ev=>{const b=ev.currentTarget;if(p.ex.some(e=>isLocked(k,e))){toast("🔒 "+t("ท่าหลักห้ามลบหรือเปลี่ยน"));return}if(keys.length<2){toast(t("ต้องมีอย่างน้อย 1 โปรแกรม"));return}
-      if(!b.dataset.sure){b.dataset.sure=1;b.textContent=t("ลบ")+"?";return}
-      const o={...PROGS};delete o[k];pmCommit(o);renderPM();renderGym()});
+    on("[data-menu]","click",()=>openGen(esc(p.name),`<div class="pm-menu">${i>0?`<button class="menu-row" data-m="up"><span class="mi">↑</span><span class="mt">${t("เลื่อนขึ้น")}</span></button>`:""}${i<keys.length-1?`<button class="menu-row" data-m="down"><span class="mi">↓</span><span class="mt">${t("เลื่อนลง")}</span></button>`:""}
+      <button class="menu-row" data-m="copy"><span class="mi">⧉</span><span class="mt">${t("คัดลอกไป…")}</span></button><button class="menu-row" data-m="move"><span class="mi">→</span><span class="mt">${t("ย้ายไป…")}</span></button>
+      <button class="menu-row warn" data-m="del"><span class="mi">🗑</span><span class="mt">${t("ลบโปรแกรม")}</span></button></div><button class="btn" data-gen-close>${t("ปิด")}</button>`,g=>g.querySelectorAll("[data-m]").forEach(b=>b.addEventListener("click",()=>{const m=b.dataset.m;
+      if(m==="up"||m==="down"){closeGen();move(m==="up"?-1:1);return}if(m==="copy"||m==="move"){openProgMove(k,m);return}
+      if(p.ex.some(e=>isLocked(k,e))){toast("🔒 "+t("ท่าหลักห้ามลบหรือเปลี่ยน"));return}if(keys.length<2){toast(t("ต้องมีอย่างน้อย 1 โปรแกรม"));return}
+      if(!b.dataset.sure){b.dataset.sure=1;b.querySelector(".mt").textContent=t("ลบ")+"?";return}
+      closeGen();const o={...PROGS};delete o[k];pmCommit(o);renderPM();renderGym()}))));
     box.appendChild(r)});
   const a=document.createElement("button");a.className="btn primary";a.textContent="+ "+t("เพิ่มโปรแกรม");
   a.addEventListener("click",()=>{const k="p"+Date.now().toString(36);PROGS[k]={name:t("โปรแกรมใหม่"),sub:"",ex:[],loc:curLoc};saveProgs();renderGym();

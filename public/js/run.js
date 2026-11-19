@@ -8,7 +8,7 @@ function runPrev(){const km=+document.getElementById("run-km").value,sec=parseDu
   document.getElementById("run-pace").textContent=km>0&&sec>0?fmtPace(sec/km)+" /km":"– /km";return{km,sec}}
 function openRun(){const rd=fs().tags.runData||{};document.getElementById("run-km").value=rd.km||"";document.getElementById("run-time").value=rd.sec?fmtDur(rd.sec):"";
   document.getElementById("run-del").hidden=!fs().tags.run;runPrev();document.getElementById("run-modal").hidden=false}
-function saveRun(){const {km,sec}=runPrev();const tg=fs().tags;tg.run=true;tg.runData=km>0&&sec>0?{km,sec}:null;save("mealcheck",food);try{renderFood()}catch(e){}renderGym();return tg.runData}
+function saveRun(){const {km,sec}=runPrev();const tg=fs().tags;tg.run=true;tg.runLoc=curLoc;tg.runData=km>0&&sec>0?{km,sec}:null;save("mealcheck",food);try{renderFood()}catch(e){}renderGym();return tg.runData}
 let runPhoto=null;
 async function drawRun(d,clear){try{await document.fonts.ready}catch(e){}
   const W=1080,H=1920,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");

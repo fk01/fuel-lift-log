@@ -68,8 +68,9 @@ function best(sets){return sets.reduce((m,s)=>Math.max(m,+s.kg||0),0)}
 function renderProgs(){
   const pl=planFor(DAY);const nx=pl==="run"||pl==="bad"?null:nextProg();const box=document.getElementById("progs");box.innerHTML="";
   const hd=s=>{const d=document.createElement("div");d.className="pick-h";d.textContent=t(s);box.appendChild(d)};
-  hd("เวทเทรนนิ่ง");
-  progsHere().map(k=>[k,PROGS[k]]).forEach(([k,p])=>{
+  const L=hereLoc();
+  if(canAct(L,"gym")){const h=document.createElement("button");h.className="pick-h loc-h";h.innerHTML=`${esc(L.icon||"📍")} ${esc(t(L.name))} ⌄`;h.addEventListener("click",openLocChange);box.appendChild(h)}
+  (canAct(L,"gym")?progsHere():[]).map(k=>[k,PROGS[k]]).forEach(([k,p])=>{
     const last=[...logs].reverse().find(l=>l.prog===k);
     const b=document.createElement("button");b.className="prog";b.id="p-"+k;b.setAttribute("aria-pressed",(picked||chosen)&&k===cur);
     const groups=[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", "),open=false;
@@ -82,14 +83,14 @@ function renderProgs(){
       if(!picked){openSheet(k);return}
       if(!picked){if(chosen&&cur===k){chosen=false;renderGym();return}if(cur!==k){draft.ex={}}cur=k;draft.prog=k;chosen=true;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("start-row").scrollIntoView({behavior:"smooth",block:"center"}),50);return}
       if(cur===k){cancelProg();return}draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});box.appendChild(b)});
-  hd("คาร์ดิโอ");
+  if(canAct(L,"run")||canAct(L,"bad"))hd("คาร์ดิโอ");
   const tg=fs().tags,rd=tg.runData;
   const run=document.createElement("button");run.className="prog cardio";run.setAttribute("aria-pressed",!!tg.run);
   run.innerHTML=`<span class="ic">🏃</span><b>${t("วิ่ง")}</b><small>${tg.run?(rd&&rd.km?`${rd.km} km · ${fmtPace(rd.sec/rd.km)}/km`:"✓ "+t("บันทึกแล้ว")):pl==="run"?`<span class="next">${t("คิวถัดไป")} · 10 km</span>`:t("ใส่ระยะ / เวลา")}</small>`;
-  run.addEventListener("click",openRun);box.appendChild(run);
+  run.addEventListener("click",openRun);if(canAct(L,"run")||tg.run)box.appendChild(run);
   const bad=document.createElement("button");bad.className="prog cardio";bad.setAttribute("aria-pressed",!!tg.bad);
   bad.innerHTML=`<span class="ic">🏸</span><b>${t("ตีแบด")}</b><small>${tg.bad?"✓ "+t("บันทึกแล้ว")+" +50 XP":pl==="bad"?`<span class="next">${t("คิวถัดไป")}</span>`:t("แตะเพื่อบันทึก")}</small>`;
-  bad.addEventListener("click",openBad);box.appendChild(bad);
+  bad.addEventListener("click",openBad);if(canAct(L,"bad")||tg.bad)box.appendChild(bad);
 }
 
 /* ---------- program sheet: tap a card → slide-up sheet with its exercises, Start and Edit (cards never move) ---------- */
@@ -121,7 +122,7 @@ function openBad(){const on=!!fs().tags.bad,day=thDate(DAY,{weekday:"short",day:
 const closeBad=()=>{document.getElementById("bad-modal").hidden=true};
 document.getElementById("bad-cancel").addEventListener("click",closeBad);
 document.getElementById("bad-modal").addEventListener("click",ev=>{if(ev.target.id==="bad-modal")closeBad()});
-document.getElementById("bad-ok").addEventListener("click",()=>{const tg=fs().tags;tg.bad=!tg.bad;save("mealcheck",food);closeBad();try{renderFood()}catch(e){}renderGym();toast(tg.bad?t("ตีแบด")+" ✓ +50 XP":t("ยกเลิกแล้ว"))});
+document.getElementById("bad-ok").addEventListener("click",()=>{const tg=fs().tags;tg.bad=!tg.bad;if(tg.bad)tg.badLoc=curLoc;save("mealcheck",food);closeBad();try{renderFood()}catch(e){}renderGym();toast(tg.bad?t("ตีแบด")+" ✓ +50 XP":t("ยกเลิกแล้ว"))});
 
 /* ---------- "Today" card: what the weekly plan says for the selected day, with one action ---------- */
 Object.assign(EN,{"วันนี้":"Today","วันพัก":"Rest day","พักให้กล้ามฟื้น":"Let your muscles recover","ออกนอกตาราง":"Train anyway","กลับไปเล่นต่อ":"Resume workout","เริ่ม":"Start","บันทึกตีแบด":"Log badminton","บันทึกวิ่ง":"Log run","เสร็จแล้ววันนี้":"Done today","ทำแล้ว":"Done","กำลังเล่น":"in progress"});
@@ -135,12 +136,21 @@ function renderToday(){const box=document.getElementById("today");if(!box)return
   else if(pl==="bad"){title="🏸 "+t("ตีแบด");sub=tg.bad?"✓ "+t("ทำแล้ว"):"";btn=tg.bad?"":`🏸 ${t("บันทึกตีแบด")}`;act="bad"}
   else if(slotKey(pl)){const pk=slotKey(pl),p=PROGS[pk];title=p.name;sub=`${nU(p.ex.length,"ท่า")} · ${[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", ")}`;btn=`▶ ${t("เริ่ม")} ${p.name}`;act="start:"+pk}
   else{title="😴 "+t("วันพัก");sub=t("พักให้กล้ามฟื้น");btn="";act=""}
+  // today's plan can't be done at this place: say so and offer what can
+  const L=hereLoc(),pa=planAct(),alts=[];
+  if(!picked&&!done.length&&pa&&!canAct(L,pa)&&!(pa!=="gym"&&tg[pa])){
+    if(pa==="gym"){title=progName(pl)}
+    sub=lang==="th"?`ทำที่${t(L.name)}ไม่ได้`:`Not possible at ${t(L.name)}`;btn="";act="";
+    const k=canAct(L,"gym")?nextProg():null;if(k&&PROGS[k]&&locOf(PROGS[k])===curLoc)alts.push([`▶ ${t("เวทแทน")}: ${PROGS[k].name}`,"start:"+k,"primary"]);
+    if(canAct(L,"run")&&!tg.run)alts.push([`🏃 ${t("วิ่งแทน")}`,"run",alts.length?"":"primary"]);
+    alts.push([t("เปลี่ยนที่"),"loc","ghost sm"])}
   box.className="today"+(done.length||(pl==="run"&&tg.run)||(pl==="bad"&&tg.bad)?" is-done":"");
-  const L=hereLoc();box.innerHTML=`<span class="td-top"><small class="td-l">${lbl}</small><button class="loc-chip" data-locchg${picked?" disabled":""}>${esc(L.icon||"📍")} ${esc(t(L.name))}${picked?"":" ⌄"}</button></span><b class="td-t">${esc(title)}</b>${sub?`<span class="td-s">${esc(sub)}</span>`:""}
-    ${btn?`<button class="btn primary td-b" data-today="${act}">${esc(btn)}</button>`:""}${!btn&&!picked&&!done.length?`<button class="btn ghost sm td-x" data-today="any">${t("ออกนอกตาราง")} ↓</button>`:""}`;
+  box.innerHTML=`<span class="td-top"><small class="td-l">${lbl}</small><button class="loc-chip" data-locchg${picked?" disabled":""}>${esc(L.icon||"📍")} ${esc(t(L.name))}${picked?"":" ⌄"}</button></span><b class="td-t">${esc(title)}</b>${sub?`<span class="td-s">${esc(sub)}</span>`:""}
+    ${btn?`<button class="btn primary td-b" data-today="${act}">${esc(btn)}</button>`:""}${alts.map(([l,a,c])=>`<button class="btn ${c} td-b" data-today="${a}">${esc(l)}</button>`).join("")}${!btn&&!alts.length&&!picked&&!done.length?`<button class="btn ghost sm td-x" data-today="any">${t("ออกนอกตาราง")} ↓</button>`:""}`;
   const lc=box.querySelector("[data-locchg]");if(lc&&!picked)lc.addEventListener("click",openLocChange);
-  const b=box.querySelector("[data-today]");if(!b)return;b.addEventListener("click",()=>{const a=b.dataset.today;
+  box.querySelectorAll("[data-today]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.today;
+    if(a==="loc"){openLocChange();return}
     if(a==="resume")document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"});
     else if(a==="run")openRun();else if(a==="bad")openBad();
     else if(a==="any")document.getElementById("step2").scrollIntoView({behavior:"smooth",block:"start"});
-    else if(a.startsWith("start:")){const k=a.slice(6);if(cur!==k)draft.ex={};cur=k;draft.prog=k;chosen=true;document.getElementById("start-w").click()}})}
+    else if(a.startsWith("start:")){const k=a.slice(6);if(cur!==k)draft.ex={};cur=k;draft.prog=k;chosen=true;document.getElementById("start-w").click()}}))}
