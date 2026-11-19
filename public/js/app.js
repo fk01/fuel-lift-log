@@ -26,7 +26,7 @@ function renderWeek(){const box=document.getElementById("week");if(!box)return;c
     days=[...Array(lead)].map(()=>null).concat([...Array(n)].map((_,i)=>`${m}-${String(i+1).padStart(2,"0")}`));
     head=`<div class="wk-h"><button class="btn sm" data-mv="-1" aria-label="prev">‹</button><b>${first.toLocaleDateString(LOC(),{month:"long",year:"numeric"})}</b><button class="btn sm" data-mv="1" aria-label="next">›</button></div>`+
       [0,1,2,3,4,5,6].map(i=>`<small class="wk-dow">${new Date(2024,0,1+i).toLocaleDateString(LOC(),{weekday:"narrow"})}</small>`).join("")}
-  box.innerHTML=head+days.map(ds=>{if(!ds)return "<span></span>";const d=new Date(ds+"T12:00:00"),tg=(food[ds]||{}).tags||{},did=logs.some(l=>l.date===ds)||tg.run||tg.bad;
+  box.innerHTML=head+days.map(ds=>{if(!ds)return "<span></span>";const d=new Date(ds+"T12:00:00"),tg=(food[ds]||{}).tags||{},did=logs.some(l=>l.date===ds)||cxAny(ds);
     return `<button class="wd${ds===DAY?" sel":""}${ds===TODAY?" today":""}" data-ds="${ds}" ${ds>TODAY?"disabled":""}>${weekOpen?"":`<small>${d.toLocaleDateString(LOC(),{weekday:"narrow"})}</small>`}<b>${d.getDate()}</b><i class="${did?"on":""}"></i></button>`}).join("");
   box.querySelectorAll("[data-ds]").forEach(b=>b.addEventListener("click",()=>{weekOpen=false;wkMonth=null;if(b.dataset.ds===DAY){renderWeek();return}DAY=b.dataset.ds;draft.ex={};picked=false;renderAll()}));
   box.querySelectorAll("[data-mv]").forEach(b=>b.addEventListener("click",()=>{const [y,m]=(wkMonth||DAY.slice(0,7)).split("-").map(Number);wkMonth=dkey(new Date(y,m-1+(+b.dataset.mv),1)).slice(0,7);renderWeek()}))}
@@ -63,5 +63,5 @@ cloudLoad();
 autoCommitOld();
 document.querySelectorAll("#sessions").forEach(()=>{});
 document.getElementById("today-btn").addEventListener("click",()=>{DAY=TODAY;draft.ex={};renderAll()});
-if(ensureLocs()){addSubsToLib(Object.values(PROGS).flatMap(p=>p.ex));save("exlib",EXLIB);saveProgs()}if(!locById(curLoc))curLoc=LOCS[0].id;cur=draft.prog&&PROGS[draft.prog]?draft.prog:nextProg();
+if(ensureLocs()){addSubsToLib(Object.values(PROGS).flatMap(p=>p.ex));save("exlib",EXLIB);saveProgs()}if(ensureV3())saveProgs();if(!locById(curLoc))curLoc=LOCS[0].id;cur=draft.prog&&PROGS[draft.prog]?draft.prog:nextProg();
 renderAll();

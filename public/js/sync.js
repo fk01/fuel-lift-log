@@ -44,7 +44,7 @@ async function cloudLoad(){
     col=c;
     // ย้ายข้อมูลเดิมในเครื่องที่ยังไม่เคยอยู่บนบัญชี
     for(const date of Object.keys(food))if(!seenF.has(date)&&Object.keys(food[date].done||{}).length){await c.doc("f-"+date).set({date,...food[date]})}
-    if(ensureLocs()){addSubsToLib(Object.values(PROGS).flatMap(p=>p.ex));saveProgs();toUpload.add("progs");toUpload.add("exlib")}if(!locById(curLoc))curLoc=LOCS[0].id;
+    if(ensureLocs()){addSubsToLib(Object.values(PROGS).flatMap(p=>p.ex));saveProgs();toUpload.add("progs");toUpload.add("exlib")}if(ensureV3()){saveProgs();toUpload.add("progs")}if(!locById(curLoc))curLoc=LOCS[0].id;
     if(ensureLib())toUpload.add("exlib");
     if(logs.some(l=>!syncedLogs[logId(l)]))toUpload.add("gymlog");
     try{localStorage.setItem("mealcheck",JSON.stringify(food));localStorage.setItem("gymlog",JSON.stringify(logs));localStorage.setItem("exlib",JSON.stringify(EXLIB))}catch(e){}

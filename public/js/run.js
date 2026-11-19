@@ -6,9 +6,11 @@ const fmtPace=s=>isFinite(s)&&s>0?fmtDur(s):"–";
 const parseDur=v=>{const p=String(v).trim().split(":").map(Number);if(p.some(isNaN)||!p.length)return 0;return p.reduce((a,b)=>a*60+b,0)};
 function runPrev(){const km=+document.getElementById("run-km").value,sec=parseDur(document.getElementById("run-time").value);
   document.getElementById("run-pace").textContent=km>0&&sec>0?fmtPace(sec/km)+" /km":"– /km";return{km,sec}}
-function openRun(){const rd=fs().tags.runData||{};document.getElementById("run-km").value=rd.km||"";document.getElementById("run-time").value=rd.sec?fmtDur(rd.sec):"";
-  document.getElementById("run-del").hidden=!fs().tags.run;runPrev();document.getElementById("run-modal").hidden=false}
-function saveRun(){const {km,sec}=runPrev();const tg=fs().tags;tg.run=true;tg.runLoc=curLoc;tg.runData=km>0&&sec>0?{km,sec}:null;save("mealcheck",food);try{renderFood()}catch(e){}renderGym();return tg.runData}
+let runK=null;   // cardio program being logged (distance + time)
+const runProgK=()=>runK&&PROGS[runK]?runK:Object.keys(PROGS).find(k=>PROGS[k].tag==="run");
+function openRun(){const k=runProgK();const rd=(k?cxGet(k):fs().tags.runData)||{};const h=document.querySelector("#run-modal .run-in>.label");if(h&&k)h.textContent=`${PROGS[k].icon||"🏃"} ${PROGS[k].name}`;document.getElementById("run-km").value=rd.km||"";document.getElementById("run-time").value=rd.sec?fmtDur(rd.sec):"";
+  document.getElementById("run-del").hidden=!(k?cxGet(k):fs().tags.run);runPrev();document.getElementById("run-modal").hidden=false}
+function saveRun(){const {km,sec}=runPrev(),k=runProgK(),d=km>0&&sec>0?{km,sec}:null;if(k)cxSet(k,d||{});else{const tg=fs().tags;tg.run=true;tg.runData=d;save("mealcheck",food)}try{renderFood()}catch(e){}renderGym();return d}
 let runPhoto=null;
 async function drawRun(d,clear){try{await document.fonts.ready}catch(e){}
   const W=1080,H=1920,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
@@ -36,8 +38,8 @@ async function shareRun2(clear){const d=saveRun();if(!d){toast(t("ใส่ร�
   const img=document.getElementById("share-img");if(img.src)URL.revokeObjectURL(img.src);img.src=URL.createObjectURL(shareBlob);
   document.getElementById("share-hint").hidden=true;document.getElementById("open-ig").hidden=true;document.getElementById("open-ig-web").hidden=true;document.getElementById("share-modal").hidden=false}
 document.getElementById("run-km").addEventListener("input",runPrev);document.getElementById("run-time").addEventListener("input",runPrev);
-document.getElementById("run-save").addEventListener("click",()=>{saveRun();document.getElementById("run-modal").hidden=true;toast(t("วิ่ง")+" ✓ +50 XP")});
+document.getElementById("run-save").addEventListener("click",()=>{saveRun();document.getElementById("run-modal").hidden=true;{const k=runProgK();toast((k?PROGS[k].name:t("วิ่ง"))+" ✓"+(!k||PROGS[k].tag==="run"?" +50 XP":""))}});
 document.getElementById("run-share").addEventListener("click",()=>shareRun(false));
 document.getElementById("run-overlay").addEventListener("click",()=>shareRun(true));
-document.getElementById("run-del").addEventListener("click",()=>{const tg=fs().tags;tg.run=false;delete tg.runData;save("mealcheck",food);try{renderFood()}catch(e){}renderGym();document.getElementById("run-modal").hidden=true;toast(t("ยกเลิกแล้ว"))});
+document.getElementById("run-del").addEventListener("click",()=>{const k=runProgK();if(k)cxSet(k,null);else{const tg=fs().tags;tg.run=false;delete tg.runData;save("mealcheck",food)}try{renderFood()}catch(e){}renderGym();document.getElementById("run-modal").hidden=true;toast(t("ยกเลิกแล้ว"))});
 document.getElementById("run-close").addEventListener("click",()=>document.getElementById("run-modal").hidden=true);

@@ -9,7 +9,7 @@ function bestStreak(){const wk=[...new Set(logs.map(l=>weekKey(l.date)))].sort()
 const volOf=l=>Object.values(l.ex).flat().reduce((a,s)=>a+(+s.kg||0)*(+s.reps||0),0);
 // small label under a calendar day: programs logged that day (+ run/badminton); future days show the weekly plan, faded
 function calTag(ds){const tg=(food[ds]||{}).tags||{};
-  const done=logs.filter(l=>l.date===ds).map(l=>progName(l.prog));if(tg.run)done.push("🏃");if(tg.bad)done.push("🏸");
+  const done=logs.filter(l=>l.date===ds).map(l=>progName(l.prog));if(tg.run)done.push("🏃");if(tg.bad)done.push("🏸");Object.keys(tg.cx||{}).forEach(k=>done.push((PROGS[k]||{}).icon||"🏃"));
   if(done.length)return `<small>${esc(done.join(" "))}</small>`;
   if(ds<=TODAY)return "";const pl=planFor(ds);
   return pl?`<small class="plan">${pl==="run"?"🏃":pl==="bad"?"🏸":esc(progName(pl))}</small>`:""}
@@ -40,11 +40,11 @@ function openDay(ds){dayDs=ds;const d=food[ds]||{done:{},tags:{}},tg=d.tags||{},
   const rows=[];
   ls.forEach(l=>{const n=Object.values(l.ex).reduce((a,s)=>a+s.length,0);rows.push(`<li><b class="no">🏋️</b><em class="nm">${esc(progName(l.prog))}</em><span class="ss">${nU(Object.keys(l.ex).length,"ท่า")} · ${nU(n,"เซ็ต")}</span></li>`)});
   if(tg.run){const r=tg.runData;rows.push(`<li><b class="no">🏃</b><em class="nm">${t("วิ่ง")}</em><span class="ss">${r&&r.km?`${r.km} km · ${fmtPace(r.sec/r.km)}/km`:"✓"}</span></li>`)}
-  if(tg.bad)rows.push(`<li><b class="no">🏸</b><em class="nm">${t("ตีแบด")}</em><span class="ss">✓</span></li>`);
+  if(tg.bad)rows.push(`<li><b class="no">🏸</b><em class="nm">${t("ตีแบด")}</em><span class="ss">✓</span></li>`);Object.entries(tg.cx||{}).forEach(([k,v])=>{const p=PROGS[k]||{};rows.push(`<li><b class="no">${esc(p.icon||"🏃")}</b><em class="nm">${esc(p.name||k)}</em><span class="ss">${v&&v.km?`${v.km} km`:"✓"}</span></li>`)});
   rows.push(`<li><b class="no">🍽️</b><em class="nm">${t("อาหาร")}</em><span class="ss">${k} kcal · P${p}</span></li>`);
   const plan=planFor(ds);
   document.getElementById("day-body").innerHTML=`<div class="sheet-h"><b>${thDate(ds,{weekday:"long",day:"numeric",month:"long"})}</b>
-    <small>${ls.length||tg.run||tg.bad?t("สิ่งที่ทำวันนั้น"):plan&&PROGS[plan]?t("ตามตาราง")+": "+esc(progName(plan)):t("ยังไม่มีบันทึก")}</small></div><ul class="prog-ex">${rows.join("")}</ul>`;
+    <small>${ls.length||cxAny(ds)?t("สิ่งที่ทำวันนั้น"):plan&&PROGS[plan]?t("ตามตาราง")+": "+esc(progName(plan)):t("ยังไม่มีบันทึก")}</small></div><ul class="prog-ex">${rows.join("")}</ul>`;
   document.getElementById("day-sheet").hidden=false}
 const closeDay=()=>{document.getElementById("day-sheet").hidden=true};
 const goDay=v=>{const ds=dayDs;closeDay();weekOpen=false;wkMonth=null;try{renderWeek()}catch(e){}if(ds&&ds!==DAY){DAY=ds;draft.ex={};picked=false;renderAll()}location.hash=v};

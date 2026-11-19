@@ -512,3 +512,8 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 .today .td-b+.td-b{margin-top:8px}
 .ex .swap-tag{display:block;margin-top:2px}
 .loc-h{display:inline-flex;align-items:center;border:1px solid var(--line)!important;border-radius:99px;padding:4px 12px!important;justify-self:start;width:max-content}
+.td-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.prog.cardio .pc-more{margin-left:auto}.prog-add{grid-column:1/-1;border-style:dashed}
+.menu-row .mt small{display:block}
+.days .chip{min-width:40px;padding:6px 8px;text-align:center}
+.prog.cardio{position:relative}.prog.cardio .pc-more{position:absolute;top:8px;right:8px;margin:0}
