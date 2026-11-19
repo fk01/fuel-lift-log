@@ -33,7 +33,7 @@ const steps = [
     const k = cardioHere().find(q => PROGS[q].name === "Swim"); if (!k || !PROGS[k].days.includes(5)) throw new Error("create cardio program");
     openCardio(k); document.getElementById("run-km").value = "1.5"; document.getElementById("run-time").value = "30:00"; document.getElementById("run-save").click();
     if (!cxGet(k) || cxGet(k).km !== 1.5) throw new Error("log cardio"); cxSet(k, null); delete PROGS[k]; }],
-  ["gyms-restday", () => { locDay = {}; const ok = needPick(); if (!ok) throw new Error("rest day should still ask place"); locDay = { date: TODAY, id: curLoc }; }],
+  ["gyms-restday", () => { locDay = {}; pickAnyway = false; const real = planKeys; const ok = !planKeys(DAY).length ? !needPick() : needPick(); if (!ok) throw new Error("rest day should skip the picker; plan day should ask"); locDay = { date: TODAY, id: curLoc }; }],
   ["gyms-pm-menu", () => { pmOnly = null; renderPM(); document.getElementById("pm-modal").hidden = false; document.querySelector("#pm-body [data-menu]").click();
     if (document.getElementById("gen-sheet").hidden || !document.querySelector('#gen-body [data-m="copy"]')) throw new Error("pm menu"); closeGen(); document.getElementById("pm-modal").hidden = true; }],
   ["gyms-edit", () => { openLocEdit(null); const g = document.getElementById("gen-body"); g.querySelector('[data-f="name"]').value = "Test Gym"; g.querySelector("[data-save]").click();
