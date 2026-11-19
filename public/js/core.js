@@ -37,3 +37,30 @@ const LI={dumbbell:'<path d="M3 10v4M6 7v10M18 7v10M21 10v4M6 12h12"/>',moon:'<p
   pill:'<rect x="3" y="9" width="18" height="6" rx="3" transform="rotate(-35 12 12)"/><path d="M9.5 7.5l5 7"/>',run:'<circle cx="14" cy="4.5" r="1.8"/><path d="M8 21l3-6 3 2v5M6 12l3-4 4 1 3 4h3M11 15l-2-3"/>',
   pin:'<path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',coffee:'<path d="M4 8h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM17 10h2a2 2 0 0 1 0 4h-2M8 3v2M12 3v2"/>'};
 const licon=(k,cls)=>`<svg class="licon ${cls||""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LI[k]||LI.dumbbell}</svg>`;
+// ---- no emoji: every pictographic emoji in the UI is swapped for a line icon ----
+Object.assign(LI,{
+  machine:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+  link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  racket:'<ellipse cx="14" cy="9" rx="6" ry="6.5" transform="rotate(35 14 9)"/><path d="M9.5 13.5L3 20M11 6l6 6M9 9l6 6M14 4l5 5"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0"/>',checkc:'<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
+  lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/>',clip:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6"/>',
+  chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>',
+  building:'<rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2M11 21v-3h2v3"/>',home:'<path d="M3 11l9-7 9 7M5 10v10h14V10M10 20v-5h4v5"/>',
+  trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',star:'<path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/>',
+  calc:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M16 11v6M8 15h2M12 15h2"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  camera:'<path d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13" r="4"/>',swim:'<circle cx="16" cy="6" r="2"/><path d="M3 18c2 0 2-1.5 4.5-1.5S10 18 12 18s2.5-1.5 4.5-1.5S19 18 21 18M7 14l4-4 3 2 2-3"/>',
+  bike:'<circle cx="6" cy="16" r="4"/><circle cx="18" cy="16" r="4"/><path d="M6 16l4-8h5l3 8M10 8l4 8"/>',body:'<circle cx="12" cy="4.5" r="2"/><path d="M5 9l7-2 7 2M12 7v7M8 22l4-8 4 8"/>',
+  medal:'<circle cx="12" cy="15" r="5"/><path d="M8.5 10.5L6 3h4l2 5 2-5h4l-2.5 7.5"/>',fire:'<path d="M12 22a7 7 0 0 0 7-7c0-4-3-6-4-10-1 3-3 4-4 6-1-1-1.5-2-1.5-3C7 10 5 12 5 15a7 7 0 0 0 7 7z"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',dot:'<circle cx="12" cy="12" r="4"/>',warn:'<path d="M12 3l10 18H2zM12 10v5M12 18v.5"/>'});
+const EMO={"🏋️":"dumbbell","🏋":"dumbbell","💪":"dumbbell","🔩":"machine","🔗":"link","🏃":"run","🤸":"body","📍":"pin","🏸":"racket","🔔":"bell","✅":"checkc","🔒":"lock","📅":"cal","🏆":"trophy","😴":"moon","🌙":"moon",
+  "📋":"clip","📈":"chart","🎉":"spark","🏢":"building","🏠":"home","💊":"pill","🍽️":"bowl","🍽":"bowl","🗑":"trash","🗑️":"trash","🥇":"medal","🏅":"medal","👑":"star","💎":"star","⚡":"fire","🔥":"fire","☀️":"sun","☀":"sun",
+  "🌋":"fire","🧱":"star","🏔️":"star","🏔":"star","🚀":"spark","🧮":"calc","⚙":"gear","⚙️":"gear","📷":"camera","🏊":"swim","🚴":"bike","🙂":"dot","☕":"coffee","⚠":"warn","⚠️":"warn"};
+const EMO_RE=/(\p{Extended_Pictographic}(?:️)?(?:‍\p{Extended_Pictographic}️?)*)/u;
+const KEEP=/^[✓✕✎☰↗★▶◀⏱]/;   // text symbols, not emoji
+const hasEmo=v=>{const g=new RegExp(EMO_RE.source,"gu");let m;while((m=g.exec(v)))if(!KEEP.test(m[0]))return true;return false};
+function deEmoji(root){if(!root)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>{const p=n.parentNode;if(!p||/^(SCRIPT|STYLE|TEXTAREA|INPUT|OPTION|TITLE)$/.test(p.nodeName)||p.closest&&p.closest("svg"))return NodeFilter.FILTER_REJECT;return hasEmo(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_SKIP}});
+  const hits=[];while(w.nextNode())hits.push(w.currentNode);
+  hits.forEach(n=>{const f=document.createDocumentFragment();n.nodeValue.split(EMO_RE).forEach((part,i)=>{if(i%2){const k=EMO[part]||EMO[part.replace(/️/g,"")];if(KEEP.test(part)){f.appendChild(document.createTextNode(part));return}
+      const s=document.createElement("span");s.className="emo";s.innerHTML=licon(k||"dot");f.appendChild(s)}else if(part)f.appendChild(document.createTextNode(part))});n.replaceWith(f)})}
+document.addEventListener("DOMContentLoaded",()=>{deEmoji(document.body);new MutationObserver(ms=>ms.forEach(m=>{m.addedNodes.forEach(n=>{if(n.nodeType===1)deEmoji(n);else if(n.nodeType===3&&n.parentNode)deEmoji(n.parentNode)});if(m.type==="characterData"&&m.target.parentNode)deEmoji(m.target.parentNode)})).observe(document.body,{childList:true,subtree:true,characterData:true})});

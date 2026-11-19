@@ -135,8 +135,8 @@ function renderDayPick(box){const pk=planFor(DAY),p=pk&&PROGS[pk],sug=p?"train":
   let ready=0,tot=0;try{const R=recPct();REC_ORDER.forEach(m=>{if(R[m]){tot++;if(R[m].pct>=100)ready++}})}catch(e){}
   box.innerHTML=`<h1 class="dp-h">${t("วันนี้…")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}</div>
     ${card("train","ออกกำลังกาย",`<small>${tl}</small>`,"var(--cyan)")}${card("rest","พัก",bars,"var(--green)")}
-    ${tot?`<button class="dp-ready" data-ready><span><small>${t("ความพร้อมของกล้าม")}</small><b>${t("พร้อม")} ${ready}/${tot} ${t("มัด")}</b></span><i class="rec-bar big"><i style="width:${ready/tot*100}%;background:var(--grad)"></i></i></button>`:""}`;
-  box.querySelector("[data-ready]")?.addEventListener("click",()=>{location.hash="stats";setTimeout(()=>document.getElementById("rec-card")?.scrollIntoView({behavior:"smooth"}),300)});
+    <h2 class="dp-sub">${t("การฟื้นตัวของกล้ามเนื้อ")}</h2><div class="rec-slot"></div>`;
+  const rc=document.getElementById("rec-card");if(rc){box.querySelector(".rec-slot").appendChild(rc);try{renderRecovery()}catch(e){}}
   box.querySelectorAll("[data-dm]").forEach(b=>b.addEventListener("click",()=>chooseDay(b.dataset.dm)))}
 const nProgs=n=>lang==="th"?`${n} โปรแกรม`:`${n} program${n===1?"":"s"}`;
 // breadcrumb of today's choices: วันนี้ › 💪 ออก › 🏢 ยิม › ▶ Push A — tap an earlier step to choose again
@@ -153,7 +153,7 @@ function renderLocHead(){try{updLocSum()}catch(e){}const h=document.getElementBy
   h.innerHTML=crumbs(it,picked);bindCrumbs(h)}
 const eqSum=l=>l.eq.filter(q=>q!=="body").map(q=>t((EQ.find(x=>x[0]===q)||[0,q])[1])).join(" · ")+(l.dbMax&&l.eq.includes("db")?` ≤ ${l.dbMax} kg`:"")||t("ตัวเปล่า");
 const mapUrl=m=>{m=(m||"").trim();if(!m)return "";return /^https?:\/\//.test(m)?safeUrl(m):"https://maps.google.com/?q="+encodeURIComponent(m)};
-function renderLocPick(){const box=document.getElementById("locpick");if(!box)return;const show=needPick();box.hidden=!show;document.getElementById("v-gym").classList.toggle("picking",show);document.getElementById("v-gym").classList.toggle("resting",resting());document.body.classList.toggle("loc-picking",show);renderLocHead();if(!show)return;
+function renderLocPick(){const box=document.getElementById("locpick");if(!box)return;const rc0=document.getElementById("rec-card"),home=document.querySelector(".rec-home");if(rc0&&home&&box.contains(rc0))home.after(rc0);const show=needPick();box.hidden=!show;document.getElementById("v-gym").classList.toggle("picking",show);document.getElementById("v-gym").classList.toggle("resting",resting());document.body.classList.toggle("loc-picking",show);renderLocHead();if(!show)return;
   if(needDay()){renderDayPick(box);return}
   const lastId=locDay.id||curLoc,todayAt=l=>planKeys(DAY).find(k=>locOf(PROGS[k])===l.id);
   const list=LOCS.slice().sort((x,y)=>(!!todayAt(y)-!!todayAt(x))||((y.id===lastId)-(x.id===lastId)));
@@ -168,7 +168,7 @@ function closeLocPick(){if(locPrev&&locPrev.date){locDay=locPrev;save("locday",l
 function openLocChange(){if(dayMode()!=="train")setDayMode("train");pickAnyway=true;locPrev=locDay;locDay={};save("locday",locDay);renderGym();scrollAppTop()}
 function openLocEdit(id){const isNew=!id,l=isNew?{id:"l"+Date.now().toString(36),name:"",icon:"📍",map:"",eq:["db","body"],types:["gym","cardio"]}:JSON.parse(JSON.stringify(locById(id)));
   openGen(t(isNew?"เพิ่มสถานที่":"แก้ไขสถานที่"),`<div class="le">
-    <div class="le-row"><input class="le-in le-ic" data-f="icon" value="${esc(l.icon||"")}" maxlength="4" aria-label="icon"><input class="le-in" data-f="name" value="${esc(l.name)}" placeholder="${t("ชื่อสถานที่")}" aria-label="${t("ชื่อสถานที่")}"></div>
+    <div class="le-row">${icoPick(l.icon||"📍",["🏢","🏠","🏸","🏊","🏃","📍"])}<input class="le-in" data-f="name" value="${esc(l.name)}" placeholder="${t("ชื่อสถานที่")}" aria-label="${t("ชื่อสถานที่")}"></div>
     <input class="le-in" data-f="map" value="${esc(l.map||"")}" placeholder="📍 ${t("ลิงก์ Google Maps")}" aria-label="${t("ลิงก์ Google Maps")}">
     <button class="btn sm" data-geo style="justify-self:start">📍 ${t("ใช้ตำแหน่งปัจจุบัน")}</button>
     <div class="label" style="margin:4px 0 0">${t("ประเภทโปรแกรม")}</div>
@@ -222,7 +222,7 @@ function openAddProg(){const L=hereLoc(),ty=typesOf(L);if(ty.length===1){ty[0]==
     b=>b.querySelectorAll("[data-ty]").forEach(c=>c.addEventListener("click",()=>{closeGen();c.dataset.ty==="gym"?newWeights():openCardioEdit(null)})))}
 function openCardioEdit(k){const isNew=!k,p=isNew?{name:"",icon:"🏃",kind:"cardio",track:"dist",ex:[],loc:curLoc,days:[]}:PROGS[k];
   openGen(t("โปรแกรมคาร์ดิโอ"),`<div class="le">
-    <div class="le-row"><input class="le-in le-ic" data-f="icon" value="${esc(p.icon||"")}" maxlength="4" aria-label="icon"><input class="le-in" data-f="name" value="${esc(p.name)}" placeholder="${t("ชื่อโปรแกรม")}" aria-label="${t("ชื่อโปรแกรม")}"></div>
+    <div class="le-row">${icoPick(p.icon||"🏃",["🏃","🏸","🏊","🚴","🤸","🏋️"])}<input class="le-in" data-f="name" value="${esc(p.name)}" placeholder="${t("ชื่อโปรแกรม")}" aria-label="${t("ชื่อโปรแกรม")}"></div>
     <div class="label" style="margin:4px 0 0">${t("บันทึก")}</div>
     <div class="chips"><button class="chip" data-tr="dist" aria-pressed="${p.track!=="done"}">${t("ระยะ + เวลา")}</button><button class="chip" data-tr="done" aria-pressed="${p.track==="done"}">${t("✓ ทำแล้ว")}</button></div>
     <label class="le-row le-goal" style="justify-content:space-between">${t("เป้าหมาย (km)")}<input class="le-in" data-f="goal" type="number" inputmode="decimal" value="${p.goal||""}" style="width:90px;text-align:right"></label>
@@ -250,3 +250,7 @@ function openProgPick(){const L=hereLoc(),sel=selProg(),pl=planFor(DAY),w=weight
     ${hasType(L,"gym")?`<button class="btn ghost" data-ppfree>＋ ${t("ออกแบบอิสระ")}</button>`:""}`,b=>{
     b.querySelectorAll("[data-pp]").forEach(r=>r.addEventListener("click",()=>chooseProg(r.dataset.pp)));
     b.querySelector("[data-ppfree]")?.addEventListener("click",()=>{closeGen();startEmpty()})})}
+
+// icon picker (stores the emoji code, shown as a line icon)
+function icoPick(v,set){if(!set.includes(v))set=[v,...set];return `<input type="hidden" data-f="icon" value="${esc(v)}"><div class="chips ico-pick" role="radiogroup" aria-label="icon">${set.map(e=>`<button type="button" class="chip" data-ico="${esc(e)}" aria-pressed="${e===v}">${e}</button>`).join("")}</div>`}
+document.addEventListener("click",ev=>{const b=ev.target.closest&&ev.target.closest("[data-ico]");if(!b)return;const g=b.closest(".le")||b.parentNode.parentNode;const inp=g.querySelector('[data-f="icon"]');if(inp)inp.value=b.dataset.ico;b.parentNode.querySelectorAll("[data-ico]").forEach(c=>c.setAttribute("aria-pressed",c===b))});
