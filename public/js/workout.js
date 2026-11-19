@@ -139,7 +139,7 @@ function renderGym(){setTimeout(()=>{try{renderToday()}catch(e){console.error(e)
   document.getElementById("sn-1").classList.add("done");
   const sb=document.getElementById("start-w"),row=document.getElementById("start-row");row.hidden=picked||editing||!chosen||!PROGS[cur];if(!row.hidden)sb.textContent=`▶ ${t("เริ่มออก")} · ${PROGS[cur].name}`;
   document.getElementById("wo-add").hidden=!picked||editing;document.getElementById("edit-mode").hidden=cur==="free";const t3=document.querySelector("#step3 .step-t");if(t3)t3.textContent=PROGS[cur]&&picked?`${PROGS[cur].name} · ${t("กำลังเล่น")}`:t("กรอกน้ำหนัก");
-  renderProgs();renderEx();renderSessions();document.getElementById("step4").hidden=editing||!picked;updWoBar();try{renderLocPick()}catch(e){console.error(e)}}
+  renderProgs();renderEx();applyPager();renderSessions();document.getElementById("step4").hidden=editing||!picked;updWoBar();try{renderLocPick()}catch(e){console.error(e)}}
 document.getElementById("edit-w").addEventListener("click",()=>{if(!PROGS[cur])return;pmOnly=cur;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false;window.scrollTo(0,0)});
 document.getElementById("start-w").addEventListener("click",()=>{if(!PROGS[cur])return;draft.prog=cur;draft.started=1;draft.day=DAY;draft.loc=curLoc;draft.t0=Date.now();picked=true;chosen=false;save("gymdraft",draft);renderGym();
   setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});
@@ -162,3 +162,17 @@ document.getElementById("wo-add").addEventListener("click",()=>openLib({skip:new
 function startEmpty(){PROGS.free={name:t("ออกแบบอิสระ"),sub:"",ex:[]};cur="free";draft={prog:"free",loc:curLoc,ex:{},extra:[],started:1,day:DAY,t0:Date.now()};picked=true;chosen=false;
   save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("wo-add").click(),80)}
 document.getElementById("empty-w").addEventListener("click",startEmpty);
+
+/* ---------- one exercise at a time while training: ‹ 2/7 name › pager + swipe ---------- */
+let woIdx=0;
+function applyPager(){const box=document.getElementById("exs");if(!box)return;const cards=[...box.querySelectorAll(":scope>.ex")];
+  box.querySelector(".wo-pager")?.remove();const on=picked&&!editing&&cards.length>1;box.classList.toggle("paged",on);
+  cards.forEach(c=>c.classList.remove("pg-on"));if(!on)return;
+  woIdx=Math.max(0,Math.min(cards.length-1,woIdx));cards[woIdx].classList.add("pg-on");
+  const ex=sessEx(),e=ex[woIdx]||{},done=r=>(draft.ex[r.id]||[]).every(x=>x.ok);
+  const nav=document.createElement("div");nav.className="wo-pager";
+  nav.innerHTML=`<button class="btn sm" data-pg="-1" ${woIdx?"":"disabled"} aria-label="prev">‹</button><span class="pg-mid"><small>${woIdx+1}/${cards.length}</small><span class="pg-dots">${ex.map((x,i)=>`<i class="${i===woIdx?"cur":done(x)?"ok":""}"></i>`).join("")}</span></span><button class="btn sm" data-pg="1" ${woIdx<cards.length-1?"":"disabled"} aria-label="next">›</button>`;
+  cards[0].before(nav);nav.querySelectorAll("[data-pg]").forEach(b=>b.addEventListener("click",()=>goEx(woIdx+ +b.dataset.pg)))}
+function goEx(i){woIdx=i;applyPager();const n=document.querySelector("#exs .wo-pager");if(n)n.scrollIntoView({block:"start",behavior:"smooth"})}
+(()=>{const box=document.getElementById("exs");let x0=null,y0=0;box.addEventListener("touchstart",e=>{if(!box.classList.contains("paged")||e.target.closest("input,textarea"))return;x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+  box.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)goEx(woIdx+(dx<0?1:-1))},{passive:true})})();

@@ -9,7 +9,7 @@ function startRest(e,i,rows){
   const ex=sessEx();const k=ex.indexOf(e);
   let next;
   if(i+1<rows.length)next=`<b>${e.n}</b> ${t("เซ็ต")} ${i+2}/${rows.length}${rows[i+1].kg!==""?` · ${toDisp(rows[i+1].kg,e.u)} ${e.u||"kg"}`:""}`;
-  else if(ex[k+1])next=`${t("ท่าถัดไป")} <b>${ex[k+1].n}</b>`;
+  else if(ex[k+1]){next=`${t("ท่าถัดไป")} <b>${ex[k+1].n}</b>`;if(typeof goEx==="function"&&woIdx===k)setTimeout(()=>goEx(k+1),400)}
   else next=`<b>${t("ครบทุกท่าแล้ว")}</b>`;
   document.getElementById("rest-next").innerHTML=next;
   rt={end:Date.now()+secs*1000,total:secs,iv:rt.iv,beeped:false};
@@ -18,10 +18,12 @@ function startRest(e,i,rows){
 }
 function tick(){const left=(rt.end-Date.now())/1000;const el=document.getElementById("rest-time");
   el.textContent=left>0?fmt(left):t("ไปต่อ!");el.classList.toggle("done",left<=0);
-  document.getElementById("rest-fill").style.width=Math.max(0,Math.min(100,(1-left/rt.total)*100))+"%";
+  const f=Math.max(0,Math.min(1,left/rt.total));document.getElementById("rest-fill").style.width=(1-f)*100+"%";const rg=document.getElementById("rest-ring");if(rg)rg.style.strokeDashoffset=String(565*(1-f));
   if(left<=0&&!rt.beeped){rt.beeped=true;beep()}
   if(left<-20)stopRest()}
 function stopRest(){clearInterval(rt.iv);document.getElementById("rest").hidden=true;document.querySelector(".wrap").classList.remove("has-rest")}
 document.getElementById("rest-minus").addEventListener("click",()=>{rt.end-=15000;rt.total=Math.max(15,rt.total-15);tick()});
 document.getElementById("rest-plus").addEventListener("click",()=>{rt.end+=15000;rt.total+=15;rt.beeped=false;tick()});
 document.getElementById("rest-skip").addEventListener("click",stopRest);
+// neon dial: the countdown sits inside the ring
+(()=>{const ring=document.querySelector("#rest .rest-ring"),tm=document.getElementById("rest-time");if(!ring||!tm)return;const d=document.createElement("div");d.className="rest-dial";ring.before(d);d.appendChild(ring);d.appendChild(tm)})();

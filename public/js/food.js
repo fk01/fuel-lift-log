@@ -37,7 +37,7 @@ function renderFoodHist(){
   const card=document.createElement("div");card.className="card stack";card.style.gap="8px";
   card.innerHTML=`<div class="chips seg">${[["p","โปรตีน"],["k","แคลอรี"]].map(([k,l])=>`<button class="chip" data-fm="${k}" aria-pressed="${fhMetric===k}">${t(l)}</button>`).join("")}${[[7,"1 สัปดาห์"],[30,"1 เดือน"]].map(([k,l])=>`<button class="chip" data-fr="${k}" aria-pressed="${fhRange===k}">${t(l)}</button>`).join("")}</div>
     <div class="row-head"><span class="vol-h" style="margin:0"><small>${t("เฉลี่ยต่อวัน")}</small><b>${avg.toLocaleString()} <small>${fhMetric==="p"?"g":"kcal"}</small></b></span><span class="vol-h" style="margin:0;text-align:right"><small>${t("ถึงเป้า")}</small><b>${hit}<small> / ${n}</small></b></span></div>
-    <div class="fh-tg"><i class="ok"></i>${t("ถึงเป้า")} ≥ ${tg} ${fhMetric==="p"?"g":"kcal"}<i class="no"></i>${t("ยังไม่ถึง")}</div><svg viewBox="0 0 ${W} ${H+16}" width="100%">${vals.map((v,i)=>{const X=i*(bw+gap),h=v?Math.max(3,H-Y(v)):3;return `<rect x="${X.toFixed(1)}" y="${(H-h).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="${Math.min(4,bw/2)}" fill="${!v?"var(--line)":v>=tg?"var(--up)":"var(--series,#4f93f5)"}"><title>${days7[i]}: ${v}</title></rect>${n<=7||i%7===n%7-1?`<text x="${(X+bw/2).toFixed(1)}" y="${H+12}" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="var(--f-num)">${n<=7?new Date(days7[i]+"T12:00:00").toLocaleDateString(LOC(),{weekday:"narrow"}):new Date(days7[i]+"T12:00:00").getDate()}</text>`:""}`}).join("")}
+    <div class="fh-tg"><i class="ok"></i>${t("ถึงเป้า")} ≥ ${tg} ${fhMetric==="p"?"g":"kcal"}<i class="no"></i>${t("ยังไม่ถึง")}</div><svg viewBox="0 0 ${W} ${H+16}" width="100%">${vals.map((v,i)=>{const X=i*(bw+gap),h=v?Math.max(3,H-Y(v)):3;return `<rect x="${X.toFixed(1)}" y="${(H-h).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="${Math.min(4,bw/2)}" fill="${!v?"var(--line)":v>=tg?"var(--up)":"var(--series,#2ee6ff)"}"><title>${days7[i]}: ${v}</title></rect>${n<=7||i%7===n%7-1?`<text x="${(X+bw/2).toFixed(1)}" y="${H+12}" text-anchor="middle" font-size="9" fill="var(--muted)" font-family="var(--f-num)">${n<=7?new Date(days7[i]+"T12:00:00").toLocaleDateString(LOC(),{weekday:"narrow"}):new Date(days7[i]+"T12:00:00").getDate()}</text>`:""}`}).join("")}
       </svg>`;
   card.querySelectorAll("[data-fm]").forEach(b=>b.addEventListener("click",()=>{fhMetric=b.dataset.fm;renderFoodHist()}));
   card.querySelectorAll("[data-fr]").forEach(b=>b.addEventListener("click",()=>{fhRange=+b.dataset.fr;renderFoodHist()}));
@@ -72,7 +72,7 @@ function renderFood(){renderFoodHist();
   });
   const sn=logOf(DAY).filter(x=>!meals.some(m=>m.id===x.slot));if(sn.length){const h=document.createElement("div");h.className="label";h.style.margin="6px 0 -6px";h.textContent=t("ของว่าง");box.appendChild(h);box.appendChild(logRows(sn))}
   const xs0=logSum(DAY);let k=xs0.k,p=xs0.p,kt=0;meals.forEach(m=>{kt+=m.k;if(fs().done[m.id]){k+=m.k;p+=m.p}});
-  document.getElementById("kcal-t").textContent=`${k} / ${kt}`;
+  document.getElementById("kcal-t").textContent=`${k} / ${kt}`;drawFoodRing(k,kt,p);
   document.getElementById("p-t").textContent=`${p} / ${P_TARGET} g`;
   document.getElementById("kcal-f").style.width=Math.min(100,k/kt*100)+"%";
   document.getElementById("p-f").style.width=Math.min(100,p/P_TARGET*100)+"%";
@@ -120,3 +120,11 @@ function openFoodLog(id){const L=(fs().log=fs().log||[]),cur0=id?L.find(x=>x.id=
       save("mealcheck",food);closeGen();renderFood();toast(`${n} ✓`)});
     const d=$("#fl-del");if(d)d.addEventListener("click",()=>{if(!d.dataset.sure){d.dataset.sure=1;d.textContent=t("ลบ")+"?";return}fs().log=L.filter(q=>q.id!==id);save("mealcheck",food);closeGen();renderFood()})})}
 document.getElementById("food-add")?.addEventListener("click",()=>openFoodLog(null));
+
+/* ---------- neon ring: kcal (outer, cyan) + protein (inner, green) ---------- */
+function drawFoodRing(k,kt,p){const el=document.getElementById("food-ring");if(!el)return;
+  const arc=(r,f,c,w)=>{const C=2*Math.PI*r;return `<circle cx="110" cy="110" r="${r}" fill="none" stroke="var(--line)" stroke-width="${w}"/><circle cx="110" cy="110" r="${r}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="${Math.max(.001,Math.min(1,f))*C} ${C}" transform="rotate(-90 110 110)"/>`};
+  el.innerHTML=`<svg viewBox="0 0 220 220" role="img" aria-label="kcal ${k}/${kt}, protein ${p}/${P_TARGET}">${arc(96,k/kt,"var(--cyan,#2ee6ff)",12)}${arc(76,p/P_TARGET,"var(--green,#3dff8c)",10)}
+    <text x="110" y="102" text-anchor="middle" class="fr-big">${k.toLocaleString()}</text><text x="110" y="121" text-anchor="middle" class="fr-sm">/ ${kt.toLocaleString()} kcal</text>
+    <text x="110" y="150" text-anchor="middle" class="fr-mid">${p} g</text><text x="110" y="166" text-anchor="middle" class="fr-sm">${t("โปรตีน")} / ${P_TARGET}</text></svg>`}
+document.getElementById("day-gear")?.addEventListener("click",ev=>{const s=document.getElementById("day-type");s.hidden=!s.hidden;ev.currentTarget.setAttribute("aria-expanded",!s.hidden)});
