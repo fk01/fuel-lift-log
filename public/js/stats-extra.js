@@ -55,7 +55,7 @@ let recSel=null;
 // all 16 muscles always shown, fixed anatomical order; state: 0 never · 1 just trained (≤1d) · 2 recovering (2d) · 3 ready (3–7d) · 4 neglected (>7d)
 const REC_ORDER=["chest","delt","rear","traps","lats","bi","tri","fore","abs","obl","glute","quad","ham","add","abd","calf"],NEGLECT=7;
 const REC_C=["#55606f","#e07a6a","#d9a46c","#7cc47a","#8a6fd1"];
-Object.assign(EN,{"ฟื้น":"Recovered","พร้อมเต็มที่":"fully ready","พร้อมแล้ว":"Ready","พรุ่งนี้":"Tomorrow","เล่นล่าสุด":"last trained","ยังไม่ฟื้นเต็ม":"not fully recovered","กำลังฟื้น":"Recovering","พร้อม":"Ready","ยังไม่เคยเล่น":"Never","ละเลย":"Neglected","ควรเล่น":"Due","ท่าที่เล่นล่าสุด":"Last exercises"});
+Object.assign(EN,{"ฟื้น":"Recovered","พร้อมเต็มที่":"fully ready","พร้อมแล้ว":"Ready","พรุ่งนี้":"Tomorrow","เล่นล่าสุด":"last trained","ยังไม่ฟื้นเต็ม":"not fully recovered","กำลังฟื้น":"Recovering","พร้อม":"Ready","ยังไม่เคยเล่น":"Never","ยังไม่เคย":"Never","ละเลย":"Neglected","ควรเล่น":"Due","ท่าที่เล่นล่าสุด":"Last exercises"});
 // recovery %: hours since the last session that hit the muscle ÷ full recovery time (by muscle size, scaled by that session's sets)
 const REC_H={chest:72,lats:72,quad:72,ham:72,glute:72,delt:48,rear:48,traps:48,bi:48,tri:48,add:48,abd:48,calf:36,abs:36,obl:36,fore:36};
 function recPct(){const out={};logs.forEach(l=>{if(l.date>TODAY)return;const t0=l.at||new Date(l.date+"T20:00:00").getTime(),sets={};
@@ -65,9 +65,9 @@ function recPct(){const out={};logs.forEach(l=>{if(l.date>TODAY)return;const t0=
 const recState=o=>!o?0:o.days>NEGLECT?4:o.pct>=100?3:o.pct<40?1:2;
 function renderRecovery(){const box=document.getElementById("rec-card");if(!box)return;const R=recPct();
   const state=o=>recState(o),ago=m=>R[m];
-  const lab=m=>{const o=R[m];return !o?"–":o.days>NEGLECT?nU(o.days,"วันก่อน"):o.pct+"%"};
+  const lab=m=>{const o=R[m];return !o?"–":o.pct+"%"},sub=m=>{const o=R[m];return !o?t("ยังไม่เคย"):o.days>NEGLECT?nU(o.days,"วันก่อน"):""};
   const due=REC_ORDER.filter(m=>{const s=state(ago(m));return s===0||s===4});
-  const tiles=REC_ORDER.map(m=>{const o=R[m],s=state(o),w=!o?0:s===4?100:o.pct;return `<button class="rec-t s${s}" data-m="${m}"><b>${t(MUS_NAME[m])}</b><span class="rec-p">${lab(m)}</span><i class="rec-bar"><i style="width:${w}%;background:${REC_C[s]}"></i></i></button>`}).join("");
+  const tiles=REC_ORDER.map(m=>{const o=R[m],s=state(o),w=!o?0:s===4?100:o.pct;return `<button class="rec-t s${s}" data-m="${m}"><b>${t(MUS_NAME[m])}</b><span class="rec-p">${lab(m)}</span><small class="rec-sub">${sub(m)||"&nbsp;"}</small><i class="rec-bar"><i style="width:${w}%;background:${REC_C[s]}"></i></i></button>`}).join("");
   box.innerHTML=`<div class="rec-fig">${bodySVG([],[],170,m=>REC_C[state(ago(m))])}</div>
     ${due.length?`<div class="rec-due">${t("ควรเล่น")}: ${due.map(m=>t(MUS_NAME[m])).join(", ")}</div>`:""}
     <div class="rec-grid">${tiles}</div>
