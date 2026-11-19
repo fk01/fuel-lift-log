@@ -76,9 +76,9 @@ function renderProgs(){
     const b=document.createElement("button");b.className="prog";b.id="p-"+k;b.setAttribute("aria-pressed",(picked||chosen)&&k===cur);
     const groups=[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", "),open=false;
     b.classList.toggle("open",open);
-    b.innerHTML=`<span class="pc-top"><b>${esc(p.name)}</b><span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span></span>
+    b.classList.add("row-card");b.innerHTML=`<span class="row-ic">${licon("dumbbell")}</span><span class="row-tx"><span class="pc-top"><b>${esc(p.name)}</b>${k===selProg()?`<span class="pill p-cyan">${t("วันนี้")}</span>`:""}</span>
       <small>${nU(p.ex.length,"ท่า")} · ${esc(groups)}</small>
-      <small class="pc-when">${last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small>
+      <small class="pc-when">${last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small></span><span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span>
       <ul class="prog-ex"${open?"":" hidden"}>${p.ex.map((e,n)=>`<li><b class="no">${n+1}</b><em class="nm">${e.z} ${esc(e.n)}</em><span class="ss">${e.s}×${e.r}</span><i class="mg">${groupName(groupOf(e))}</i></li>`).join("")}</ul>`;
     b.addEventListener("click",ev=>{if(ev.target.closest(".pc-more")){pmOnly=k;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false;return}
       if(!picked){openSheet(k);return}
