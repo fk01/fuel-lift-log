@@ -758,3 +758,6 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 #rec-card .rec-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));overflow:visible;gap:6px;padding-bottom:0}
 #rec-card .rec-grid .rec-t{flex:none;min-width:0;padding:8px!important}
 #rec-card .rec-grid .rec-t b{font-size:.72rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* today: recovery first (compact figure), choices below */
+#locpick #rec-card .rec-fig svg,#locpick #rec-card .rec-fig img{max-width:230px!important}
+#locpick #rec-card{padding:12px!important}
