@@ -68,6 +68,8 @@ const steps = [
     g.querySelector("#b-save").click(); const r = BODY.find(x => x.d === TODAY); if (!r || r.kg !== 75.8 || r.mm != null) throw new Error("saved only touched field"); BODY = []; save("body", BODY); }],
   ["lib-grid", () => { openLib(); document.querySelector('[data-lv="grid"]').click(); if (!document.getElementById("lib-list").classList.contains("lib-grid")) throw new Error("grid");
     if (document.querySelectorAll("#lib-list .lib-row").length < 6) throw new Error("cards"); document.querySelector('[data-lv="list"]').click(); document.getElementById("lib-modal").hidden = true; }],
+  ["no-dup-court", () => { const n = LOCS.length; for (let i = 0; i < 3; i++) { ensureLocs(); ensureV3(); } if (LOCS.length !== n) throw new Error("places grew on reload: " + n + " → " + LOCS.length);
+    LOCS.push({ ...LOCS[LOCS.length - 1] }); ensureLocs(); if (LOCS.length !== n || new Set(LOCS.map(l => l.id)).size !== n) throw new Error("duplicate not removed"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

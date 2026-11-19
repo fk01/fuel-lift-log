@@ -94,7 +94,9 @@ function convertEx(ex,loc){const out=[],log=[];ex.forEach(e=>{if(canDo(e,loc)){o
   const o={id:s.id,n:s.n,z:s.z||"🏋️",s:e.s,r:e.r,swap:e.id,swapN:e.n};["g","mp","ms","u","link","gif"].forEach(f=>{if(s[f])o[f]=s[f]});out.push(o);log.push([e,s])});return {ex:out,log}}
 function addSubsToLib(ex){if(typeof EXLIB==="undefined")return false;let ch=false;ex.forEach(e=>{if(!EXLIB.some(q=>q.id===e.id)&&SUB_EX[e.id]){EXLIB.push(subExObj(e.id));ch=true}});return ch}
 // first run: gym = everything that exists; condo = Push/Pull A/B converted to dumbbells
-function ensureLocs(){if(LOCS&&LOCS.length){if(LOCS.some(l=>l.act))return false;
+// a bug re-ran the "add badminton court" step on every load once places had switched to `types`; drop duplicate place ids
+function dedupeLocs(){if(!LOCS)return false;const seen=new Set(),n=LOCS.length;LOCS=LOCS.filter(l=>!seen.has(l.id)&&seen.add(l.id));if(LOCS.length===n)return false;try{localStorage.setItem("locs",JSON.stringify(LOCS))}catch(e){}return true}
+function ensureLocs(){if(LOCS&&LOCS.length){if(LOCS.some(l=>l.act||l.types))return dedupeLocs();
     // places from before activities existed: weights + run everywhere, add a badminton court, rewrite converted programs' text
     LOCS.forEach(l=>l.act=["gym","run"]);LOCS.push(COURT());Object.values(PROGS).forEach(p=>{if(locOf(p)!=="gym"&&p.ex.some(e=>e.swap))p.sub=descFor(p)});
     try{localStorage.setItem("locs",JSON.stringify(LOCS))}catch(e){}return true}
