@@ -29,7 +29,7 @@ const steps = [
   ["gyms-cardio", () => { renderToday(); const td = document.getElementById("today");
     if (/ไม่ได้|Not possible|Can't/.test(document.getElementById("v-gym").textContent)) throw new Error("no 'can't' text");
     if (cardioHere().some(k => PROGS[k].tag === "bad")) throw new Error("condo has badminton");
-    if (!/เลือกโปรแกรม|Pick a program/.test(td.textContent) || td.querySelector(".loc-chip")) throw new Error("today card at condo on badminton day");
+    if (!td.hidden || !/เลือกโปรแกรม|Pick a program/.test(document.getElementById("lochead").textContent)) throw new Error("condo on badminton day: card hidden, chip asks to pick");
     if (document.querySelectorAll("#v-gym .loc-chip,#v-gym .loc-h").length || !document.querySelector("#lochead .crumbs")) throw new Error("place shown once in header");
     openCardioEdit(null); const g = document.getElementById("gen-body"); g.querySelector('[data-f="name"]').value = "Swim"; g.querySelector('[data-f="icon"]').value = "🏊";
     g.querySelector('[data-d="5"]').click(); g.querySelector("[data-save]").click();
@@ -81,6 +81,7 @@ const steps = [
     document.querySelector('#locpick [data-dm="rest"]').click(); renderLocHead(); if (!/พัก|Rest/.test(h.textContent) || !h.querySelector('.cr.cur')) throw new Error("rest crumb");
     setDayMode("train"); pickLoc("gym"); logs.push(...saved); Object.assign(tg, keep); }],
   ["crumb-program", () => { location.hash = "gym"; setDayMode("train"); pickLoc("gym"); const saved = logs.filter(l => l.date === TODAY); logs = logs.filter(l => l.date !== TODAY); renderGym();
+    renderToday(); if (!selProg() && !document.getElementById("today").hidden) throw new Error("no card before a program is picked");
     const chip = document.querySelector('#lochead [data-cr="prog"]'); if (!chip) throw new Error("program chip"); chip.click();
     const k = weightsHere()[1]; document.querySelector(`#gen-body [data-pp="${k}"]`).click(); renderToday();
     if (!document.querySelector("#lochead").textContent.includes(PROGS[k].name) || !document.querySelector('#today [data-today="start:' + k + '"]')) throw new Error("chosen program on chip + today");

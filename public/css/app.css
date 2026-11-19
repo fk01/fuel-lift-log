@@ -597,3 +597,4 @@ body.loc-picking:has(#v-gym:not([hidden])) .wrap>header,body.loc-picking:has(#v-
 .crumbs.lock .cr{opacity:.6}
 #v-gym.resting #lochead{display:block!important}
 .lochead{display:block}
+.crumbs .cr.cur[data-cr="prog"]{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}.crumbs .cr.cur[data-cr="prog"] i{color:var(--on-accent)}
