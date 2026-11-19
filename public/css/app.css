@@ -581,3 +581,10 @@ body.loc-picking:has(#v-gym:not([hidden])) .wrap>header,body.loc-picking:has(#v-
 .rec-grid .rec-t.s0,.rec-grid .rec-t.s4{border-color:transparent}
 .rec-due{color:var(--muted);background:var(--bg);border-color:var(--line)}
 .lp-back{justify-self:start;margin-bottom:-4px}
+/* train or rest */
+.dp-card{display:grid;gap:6px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;color:var(--fg);font:inherit;cursor:pointer;min-height:132px;align-content:center}
+.dp-card.on{border-color:var(--fg)}.dp-top{display:flex;justify-content:space-between;align-items:center}.dp-ic{font-size:2.2rem;line-height:1}
+.dp-card b{font-size:1.3rem}.dp-card small{color:var(--muted);font-size:.85rem}
+#v-gym.resting #step2,#v-gym.resting #lochead{display:none}
+.td-rec{display:grid;gap:4px;margin:6px 0}.td-rec .row-head small{font-family:var(--f-num);color:var(--muted)}
+.today .td-rest{justify-self:center;margin-top:4px}

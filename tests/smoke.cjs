@@ -16,6 +16,9 @@ await p.goto("http://localhost:8799/"); await p.waitForTimeout(800);
 await p.evaluate(() => (document.getElementById("login").hidden = true));
 const steps = [
   ["food", () => (location.hash = "food")], ["gym", () => (location.hash = "gym")],
+  ["day-pick", () => { if (!document.querySelectorAll("#locpick [data-dm]").length) throw new Error("first screen should ask train or rest");
+    document.querySelector('#locpick [data-dm="rest"]').click(); renderToday(); if (!document.getElementById("v-gym").classList.contains("resting") || !/พักวันนี้|Resting/.test(document.getElementById("today").textContent)) throw new Error("rest mode");
+    document.querySelector('#today [data-today="train"]').click(); }],
   ["gyms-picker", () => { if (document.getElementById("locpick").hidden || document.querySelectorAll("#locpick .lp-card").length !== 3) throw new Error("picker should show 3 places");
     if (!/ตีแบด|Badminton/.test(document.querySelector("#locpick .lp-card").textContent)) throw new Error("court with today's badminton should be first");
     if (getComputedStyle(document.getElementById("step1")).display !== "none") throw new Error("picker should be full screen");; }],
@@ -33,7 +36,7 @@ const steps = [
     const k = cardioHere().find(q => PROGS[q].name === "Swim"); if (!k || !PROGS[k].days.includes(5)) throw new Error("create cardio program");
     openCardio(k); document.getElementById("run-km").value = "1.5"; document.getElementById("run-time").value = "30:00"; document.getElementById("run-save").click();
     if (!cxGet(k) || cxGet(k).km !== 1.5) throw new Error("log cardio"); cxSet(k, null); delete PROGS[k]; }],
-  ["gyms-restday", () => { locDay = {}; pickAnyway = false; const real = planKeys; const ok = !planKeys(DAY).length ? !needPick() : needPick(); if (!ok) throw new Error("rest day should skip the picker; plan day should ask"); locDay = { date: TODAY, id: curLoc }; }],
+  ["gyms-restday", () => { setDayMode(null); locDay = {}; if (!needDay()) throw new Error("fresh day asks train/rest"); setDayMode("train"); locDay = { date: TODAY, id: curLoc }; }],
   ["gyms-pm-menu", () => { pmOnly = null; renderPM(); document.getElementById("pm-modal").hidden = false; document.querySelector("#pm-body [data-menu]").click();
     if (document.getElementById("gen-sheet").hidden || !document.querySelector('#gen-body [data-m="copy"]')) throw new Error("pm menu"); closeGen(); document.getElementById("pm-modal").hidden = true; }],
   ["gyms-edit", () => { openLocEdit(null); const g = document.getElementById("gen-body"); g.querySelector('[data-f="name"]').value = "Test Gym"; g.querySelector("[data-save]").click();
