@@ -140,12 +140,16 @@ function renderToday(){const box=document.getElementById("today");if(!box)return
       try{const R=recPct(),ms=[...new Set(p.ex.flatMap(e=>musOf(e)[0]))].filter(m=>R[m]&&R[m].pct<70&&R[m].days<=NEGLECT).sort((a,b)=>R[a].pct-R[b].pct).slice(0,3);
         if(ms.length)warn=`⚠ ${ms.map(m=>t(MUS_NAME[m])+" "+R[m].pct+"%").join(" · ")} ${t("ยังไม่ฟื้นเต็ม")}`}catch(e){}}
     else if(pl){title=t("เลือกโปรแกรม");sub=t("ไม่มีโปรแกรมในตารางวันนี้ที่นี่")}
+    else if(dayMode()==="train"){title=t("เลือกโปรแกรม");sub=t("นอกตาราง — เลือกเองได้")}
     else{title="😴 "+t("วันพัก");sub=t("พักให้กล้ามฟื้น")}}
+  if(resting()){title="😴 "+t("พักวันนี้");sub=t("ให้กล้ามได้ฟื้น — กลับมาพรุ่งนี้");btn="";warn=""}
   box.className="today"+(done.length||(pl&&isCardio(PROGS[pl])&&cxGet(pl))?" is-done":"");
   box.innerHTML=`<small class="td-l">${lbl}</small><b class="td-t">${esc(title)}</b>${sub?`<span class="td-s">${esc(sub)}</span>`:""}${warn?`<span class="td-w">${esc(warn)}</span>`:""}
-    ${btn?`<button class="btn primary td-b" data-today="${act}">${esc(btn)}</button>`:""}${!btn&&!picked&&!done.length?`<button class="btn ghost sm td-x" data-today="any">${t(pl?"ดูโปรแกรม":"ออกนอกตาราง")} ↓</button>`:""}`;
+    ${btn?`<button class="btn primary td-b" data-today="${act}">${esc(btn)}</button>`:""}${resting()?`<div class="td-rec">${weakest(3).map(([m,v])=>`<div class="row-head"><span>${t(MUS_NAME[m])}</span><small>${v}%</small></div><i class="rec-bar"><i style="width:${v}%;background:${REC_C[v<40?1:2]}"></i></i>`).join("")}</div><button class="btn text sm td-x" data-today="train">${t("เปลี่ยนใจ ออกกำลังกาย")}</button>`
+      :!btn&&!picked&&!done.length?`<button class="btn ghost sm td-x" data-today="any">${t(pl||dayMode()==="train"?"ดูโปรแกรม":"ออกนอกตาราง")} ↓</button>`:""}${!resting()&&!picked&&!done.length&&DAY===TODAY?`<button class="btn text sm td-rest" data-today="rest">${t("พักแทน")}</button>`:""}`;
   box.querySelectorAll("[data-today]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.today;
     if(a.startsWith("cx:")){openCardio(a.slice(3));return}
+    if(a==="rest"){chooseDay("rest");return}if(a==="train"){chooseDay("train");return}
     if(a==="resume")document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"});
     else if(a==="any"){if(!pl&&locDay.date!==TODAY){openLocChange();return}document.getElementById("step2").scrollIntoView({behavior:"smooth",block:"start"})}
     else if(a.startsWith("start:")){const k=a.slice(6);if(cur!==k)draft.ex={};cur=k;draft.prog=k;chosen=true;document.getElementById("start-w").click()}}))}
