@@ -32,5 +32,4 @@ docs/work/
     plan.md
 tests/
   smoke.cjs        เปิดทุกแท็บ/หน้าต่างหลัก ต้องไม่มี error
-                   ต้องมี playwright: npm i -D playwright && npx playwright install chromium
 ```
