@@ -16,8 +16,8 @@ await p.goto("http://localhost:8799/"); await p.waitForTimeout(800);
 await p.evaluate(() => (document.getElementById("login").hidden = true));
 const steps = [
   ["food", () => (location.hash = "food")], ["gym", () => (location.hash = "gym")],
-  ["day-pick", () => { if (!document.querySelectorAll("#locpick [data-dm]").length) throw new Error("first screen should ask train or rest");
-    document.querySelector('#locpick [data-dm="rest"]').click(); renderToday(); if (!document.getElementById("v-gym").classList.contains("resting") || !/พักวันนี้|Resting/.test(document.getElementById("today").textContent)) throw new Error("rest mode");
+  ["day-pick", () => { if (!document.querySelectorAll("#locpick [data-dm],#locpick [data-pl]").length) throw new Error("first screen should ask what today");
+    (document.querySelector('#locpick [data-dm="rest"]') || document.querySelector("#locpick [data-plrest]")).click(); renderToday(); if (!document.getElementById("v-gym").classList.contains("resting") || !/พักวันนี้|Resting/.test(document.getElementById("today").textContent)) throw new Error("rest mode");
     document.querySelector('#today [data-today="train"]').click(); dayKind = {}; save("daykind", dayKind); renderGym(); }],
   ["gyms-picker", () => { if (document.getElementById("locpick").hidden || document.querySelectorAll("#locpick .lp-card").length !== 3) throw new Error("picker should show 3 places");
     if (!/ตีแบด|Badminton/.test(document.querySelector("#locpick .lp-card").textContent)) throw new Error("court with today's badminton should be first");
@@ -92,6 +92,13 @@ const steps = [
   ["three-choices", () => { location.hash = "gym"; setDayMode(null); locDay = {}; renderGym(); const n = document.querySelectorAll("#locpick [data-dm]").length; if (n !== 3) throw new Error("3 choices, got " + n);
     document.querySelector('#locpick [data-dm="cardio"]').click(); const names = [...document.querySelectorAll("#locpick .lp-card")].map(c => c.dataset.loc); if (names.some(id => !hasType(locById(id), "cardio"))) throw new Error("cardio filters places");
     setDayMode(null); dayKind = {}; pickLoc("gym"); setDayMode("train"); }],
+  ["plan-multi", () => { location.hash = "gym"; const run = Object.keys(PROGS).find(k => PROGS[k].tag === "run" && locOf(PROGS[k]) === "condo"), wd = new Date(TODAY + "T12:00:00").getDay();
+    const keep = { r: PROGS[run].days.slice(), p: PROGS.push.days.slice() }; PROGS[run].days.push(wd); PROGS.push.days.push(wd);
+    const saved = logs.filter(l => l.date === TODAY); logs = logs.filter(l => l.date !== TODAY); const tg = fs().tags, kt = { run: tg.run, runData: tg.runData, bad: tg.bad }; tg.run = tg.bad = false;
+    setDayMode(null); renderGym(); const rows = document.querySelectorAll("#locpick [data-pl]"); if (rows.length < 2) throw new Error("plan rows " + rows.length);
+    document.querySelector(`#locpick [data-pl="${run}"]`).click(); if (curLoc !== "condo") throw new Error("row picks the place");
+    cxSet(run, { km: 5, sec: 1800 }); setDayMode(null); renderGym(); if (!document.querySelector(`#locpick [data-pl="${run}"].ok`)) throw new Error("done row");
+    PROGS[run].days = keep.r; PROGS.push.days = keep.p; cxSet(run, null); Object.assign(tg, kt); logs.push(...saved); setDayMode("train"); pickLoc("gym"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

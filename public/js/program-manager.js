@@ -99,12 +99,12 @@ function pmEditOne(box,k){const p=PROGS[k];
   const c=document.createElement("div");c.className="ex";
   c.innerHTML=`<input data-f="name" value="${esc(p.name)}" aria-label="${t("ชื่อโปรแกรม")}" style="${pmFld};font-family:var(--f-display);font-size:1.05rem">
     <input data-f="sub" value="${esc(p.sub||"")}" placeholder="${t("คำอธิบาย")}" aria-label="${t("คำอธิบาย")}" style="${pmFld};font-size:.85rem">
-    <div class="label" style="margin:2px 0 0">${t("วันในตาราง")}</div>${dayChips(daysOf(k))}
+    <div class="label" style="margin:2px 0 0">${t("วันในตาราง")}</div>${dayChips(daysOf(k))}${todChips(p.tod)}
     <div class="stack pm-ex" style="gap:6px"></div>
     <button class="btn sm" data-add style="justify-self:start">+ ${t("เพิ่มท่า")}</button>`;
   const on=(s,ev,fn)=>c.querySelector(s).addEventListener(ev,fn);
   pmExRows(c.querySelector(".pm-ex"),k);
-  c.querySelectorAll("[data-d]").forEach(x=>x.addEventListener("click",()=>{x.setAttribute("aria-pressed",x.getAttribute("aria-pressed")!=="true");p.days=readDays(c);saveProgs();renderGym()}));
+  c.querySelectorAll("[data-d]").forEach(x=>x.addEventListener("click",()=>{x.setAttribute("aria-pressed",x.getAttribute("aria-pressed")!=="true");p.days=readDays(c);saveProgs();renderGym()}));bindTod(c,p,()=>{saveProgs();renderGym()});
   on("[data-add]","click",()=>openLib({skip:new Set(p.ex.map(q=>q.id)),onPick:x=>{p.ex.push({...libPick(x),s:3,r:"5"});saveProgs();renderPM()}}));
   on('[data-f="name"]',"change",ev=>{p.name=ev.target.value.trim()||p.name;saveProgs();renderGym();document.getElementById("pm-title").textContent="✎ "+p.name});
   on('[data-f="sub"]',"change",ev=>{p.sub=ev.target.value.trim();saveProgs();renderGym()});

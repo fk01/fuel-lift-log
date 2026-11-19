@@ -96,7 +96,7 @@ function commitDraft(day,prog){
   const rec={date:day,prog,ex,names,loc:draft.loc||curLoc};if(day===TODAY)rec.at=Date.now();if(Object.keys(memo).length)rec.memo=memo;if(note)rec.note=note;
   if(i>=0)logs[i]=rec;else logs.push(rec);
   logs.sort((a,b)=>a.date.localeCompare(b.date));
-  save("gymlog",logs);draft={};save("gymdraft",draft);return true;
+  save("gymlog",logs);draft={};save("gymdraft",draft);try{if(day===TODAY&&hasPlanToday())setDayMode(null)}catch(e){}return true;
 }
 // finishing with exercises left untouched: confirm once, listing what will be skipped
 function finishWorkout(){const left=sessEx().filter(e=>!((draft.ex||{})[e.id]||[]).some(r=>r.ok));

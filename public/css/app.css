@@ -761,3 +761,12 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 /* today: recovery first (compact figure), choices below */
 #locpick #rec-card .rec-fig svg,#locpick #rec-card .rec-fig img{max-width:230px!important}
 #locpick #rec-card{padding:12px!important}
+/* today's plan */
+.pl-h{display:flex;align-items:center;justify-content:space-between}
+.pl-row{display:flex;align-items:center;gap:14px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;color:var(--fg);font:inherit;cursor:pointer;min-height:72px}
+.pl-row .row-tx{flex:1;min-width:0;display:grid;gap:2px}.pl-row b{font-size:1.05rem}.pl-row small{color:var(--muted);font-size:.8rem}
+.pl-row.nx{background:linear-gradient(var(--surface),var(--surface)) padding-box,var(--grad) border-box;border-color:transparent;box-shadow:var(--glow)}
+.pl-row.ok{opacity:.65}.pl-row.ok .row-ic{color:var(--green);background:#3dff8c14}
+.row-ic.g{color:var(--green);background:#3dff8c14}
+.pl-add{border:1px dashed var(--line);border-radius:14px;padding:14px;background:none;color:var(--muted);font:inherit;cursor:pointer}
+.pl-rest{justify-self:center}
