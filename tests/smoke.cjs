@@ -17,21 +17,23 @@ await p.evaluate(() => (document.getElementById("login").hidden = true));
 const steps = [
   ["food", () => (location.hash = "food")], ["gym", () => (location.hash = "gym")],
   ["gyms-picker", () => { if (document.getElementById("locpick").hidden || document.querySelectorAll("#locpick .lp-card").length !== 3) throw new Error("picker should show 3 places");
-    if (!document.querySelector("#locpick .lp-plan")) throw new Error("plan line");; }],
+    if (!/ตีแบด|Badminton/.test(document.querySelector("#locpick .lp-card").textContent)) throw new Error("court with today's badminton should be first");
+    if (getComputedStyle(document.getElementById("step1")).display !== "none") throw new Error("picker should be full screen");; }],
   ["gyms-condo", () => { pickLoc("condo"); if (!document.getElementById("locpick").hidden) throw new Error("picker should close");
     const ks = weightsHere(); if (ks.length !== 4) throw new Error("condo should have 4 weight programs, got " + ks.length);
     const bad = ks.flatMap(k => PROGS[k].ex).filter(e => !canDo(e)); if (bad.length) throw new Error("condo has machine lifts: " + bad.map(e => e.n));
-    renderToday(); if (!document.querySelector("#today .loc-chip").textContent.includes("คอนโด") && !document.querySelector("#today .loc-chip").textContent.includes("Condo")) throw new Error("loc chip"); }],
+    if (!/คอนโด|Condo/.test(document.querySelector("#lochead").textContent)) throw new Error("place header"); }],
   ["gyms-cardio", () => { renderToday(); const td = document.getElementById("today");
     if (/ไม่ได้|Not possible|Can't/.test(document.getElementById("v-gym").textContent)) throw new Error("no 'can't' text");
     if (cardioHere().some(k => PROGS[k].tag === "bad")) throw new Error("condo has badminton");
-    if (!td.querySelector(".td-chips [data-today]")) throw new Error("today should offer this place's programs");
+    if (!/เลือกโปรแกรม|Pick a program/.test(td.textContent) || td.querySelector(".loc-chip")) throw new Error("today card at condo on badminton day");
+    if (document.querySelectorAll("#v-gym .loc-chip,#v-gym .loc-h").length || !document.querySelector("#lochead b")) throw new Error("place shown once in header");
     openCardioEdit(null); const g = document.getElementById("gen-body"); g.querySelector('[data-f="name"]').value = "Swim"; g.querySelector('[data-f="icon"]').value = "🏊";
     g.querySelector('[data-d="5"]').click(); g.querySelector("[data-save]").click();
     const k = cardioHere().find(q => PROGS[q].name === "Swim"); if (!k || !PROGS[k].days.includes(5)) throw new Error("create cardio program");
     openCardio(k); document.getElementById("run-km").value = "1.5"; document.getElementById("run-time").value = "30:00"; document.getElementById("run-save").click();
-    if (!cxGet(k) || cxGet(k).km !== 1.5) throw new Error("log cardio"); delete PROGS[k]; }],
-  ["gyms-restday", () => { const d = DAY; DAY = "2026-11-20"; locDay = {}; if (planFor(DAY) && !planKeys(DAY).length) throw new Error("plan"); if (needPick()) throw new Error("rest day should not ask place"); DAY = d; locDay = { date: TODAY, id: curLoc }; }],
+    if (!cxGet(k) || cxGet(k).km !== 1.5) throw new Error("log cardio"); cxSet(k, null); delete PROGS[k]; }],
+  ["gyms-restday", () => { locDay = {}; const ok = needPick(); if (!ok) throw new Error("rest day should still ask place"); locDay = { date: TODAY, id: curLoc }; }],
   ["gyms-pm-menu", () => { pmOnly = null; renderPM(); document.getElementById("pm-modal").hidden = false; document.querySelector("#pm-body [data-menu]").click();
     if (document.getElementById("gen-sheet").hidden || !document.querySelector('#gen-body [data-m="copy"]')) throw new Error("pm menu"); closeGen(); document.getElementById("pm-modal").hidden = true; }],
   ["gyms-edit", () => { openLocEdit(null); const g = document.getElementById("gen-body"); g.querySelector('[data-f="name"]').value = "Test Gym"; g.querySelector("[data-save]").click();
