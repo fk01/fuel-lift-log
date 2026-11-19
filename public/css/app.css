@@ -548,3 +548,10 @@ body.loc-picking:has(#v-gym:not([hidden])) .wrap>header,body.loc-picking:has(#v-
 .menu-blk:first-child{border-top:0}
 .mv-row{display:grid;gap:0;color:var(--fg);font-size:.95rem}.mv-row .old{color:var(--muted);text-decoration:line-through;font-size:.8rem}.mv-row b{color:var(--fg)}
 .btn.text{border-color:transparent;background:none;color:var(--muted)}
+/* food log */
+#food-add{padding:14px}
+.flog{display:grid;gap:4px;margin:-6px 0 0 28px}
+.flog-row{display:flex;justify-content:space-between;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--fg);font:inherit;font-size:.9rem;text-align:left;cursor:pointer;min-height:44px}
+.flog-row .macro{color:var(--muted);font-family:var(--f-num);font-size:.78rem;white-space:nowrap}
+.flog-rec{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.flog-rec .chip{white-space:nowrap}
+.fl-num{flex:1;display:grid;gap:4px;min-width:0}.fl-num span{color:var(--muted);font-size:.75rem}.fl-num input{font-family:var(--f-num)}

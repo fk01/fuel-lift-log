@@ -15,20 +15,23 @@ const EXTRAS={
  bad:{id:"x-bad",time:"19:00",name:"เพิ่มวันแบด",k:105,p:1,items:["กล้วย 1 ลูก (กินพร้อมมื้อเย็น)"]},
 };
 const P_TARGET=160;
+// custom food entries per day: food[ds].log=[{id,n,k,p,slot,q}] (k / p per serving, q servings)
+const logOf=ds=>((food[ds]||{}).log)||[];
+const logSum=ds=>logOf(ds).reduce((a,x)=>({k:a.k+Math.round((+x.k||0)*(+x.q||1)),p:a.p+Math.round((+x.p||0)*(+x.q||1))}),{k:0,p:0});
 let food=load("mealcheck",{}); food[TODAY]=food[TODAY]||{done:{},tags:{}};
 let DAY=TODAY;
 const fs=()=>(food[DAY]=food[DAY]||{done:{},tags:{}});
 function mealList(){const t=fs().tags;const l=MEALS.map(m=>({...m}));if(t.late){l.find(x=>x.id==="m4").time="18:00";l.find(x=>x.id==="v2").time="18:15"}if(t.run)l.push(EXTRAS.run);if(t.bad)l.push(EXTRAS.bad);return l}
-function dayP(day){const d=food[day];if(!d)return null;let p=0;[...MEALS,EXTRAS.run,EXTRAS.bad].forEach(m=>{if(d.done[m.id])p+=m.p});return p}
+function dayP(day){const d=food[day];if(!d)return null;let p=logSum(day).p;[...MEALS,EXTRAS.run,EXTRAS.bad].forEach(m=>{if((d.done||{})[m.id])p+=m.p});return p}
 let fhMetric="p",fhRange=7,fhAll=false;const K_GOAL=2032;
 const addDays=(ds,n)=>{const d=new Date(ds+"T12:00:00");d.setDate(d.getDate()+n);return d};
 Object.assign(EN,{"มื้อถัดไป":"Next","เลยเวลา":"Overdue","ถึงเป้า":"Hit target","ยังไม่ถึง":"Below","เป้า":"Target","ดูทั้งหมด":"Show all","ย่อ":"Show less"});
 function renderFoodHist(){
   const box=document.getElementById("food-hist");box.innerHTML="";
-  const all30=Object.keys(food).filter(d=>food[d]&&Object.values(food[d].done||{}).some(Boolean)).sort().reverse().slice(0,60);
+  const all30=Object.keys(food).filter(d=>food[d]&&(Object.values(food[d].done||{}).some(Boolean)||logOf(d).length)).sort().reverse().slice(0,60);
   if(!all30.length){box.innerHTML=emptyBox('bowl','ยังไม่มีบันทึกอาหาร','ติ๊กมื้อในหน้าอาหาร');return}
   // chart card: protein (or kcal) per day vs target, like the Stats cards
-  const tot=ds=>{const d=food[ds]||{done:{}},e=[...MEALS,EXTRAS.run,EXTRAS.bad].filter(m=>(d.done||{})[m.id]);return{k:e.reduce((a,m)=>a+m.k,0),p:e.reduce((a,m)=>a+m.p,0)}};
+  const tot=ds=>{const d=food[ds]||{done:{}},e=[...MEALS,EXTRAS.run,EXTRAS.bad].filter(m=>(d.done||{})[m.id]),x=logSum(ds);return{k:x.k+e.reduce((a,m)=>a+m.k,0),p:x.p+e.reduce((a,m)=>a+m.p,0)}};
   const n=fhRange,days7=[...Array(n)].map((_,i)=>dkey(addDays(TODAY,i-n+1))),vals=days7.map(ds=>tot(ds)[fhMetric]),tg=fhMetric==="p"?P_TARGET:K_GOAL;
   const W=320,H=110,mx=Math.max(tg*1.15,...vals,1),gap=n>10?2:6,bw=(W-gap*(n-1))/n,Y=v=>H-v/mx*H,hit=vals.filter(v=>v>=tg).length,avg=Math.round(vals.reduce((a,b)=>a+b,0)/Math.max(1,vals.filter(Boolean).length));
   const card=document.createElement("div");card.className="card stack";card.style.gap="8px";
@@ -41,11 +44,11 @@ function renderFoodHist(){
   box.appendChild(card);
   const days=fhAll?all30:all30.slice(0,7);
   days.forEach(ds=>{const d=food[ds],tg=d.tags||{};const all=[...MEALS,EXTRAS.run,EXTRAS.bad];
-    const eaten=all.filter(m=>d.done[m.id]);const k=eaten.reduce((a,m)=>a+m.k,0),p=eaten.reduce((a,m)=>a+m.p,0);
+    const eaten=all.filter(m=>(d.done||{})[m.id]),xs=logSum(ds);const k=xs.k+eaten.reduce((a,m)=>a+m.k,0),p=xs.p+eaten.reduce((a,m)=>a+m.p,0);
     const planned=MEALS.length+(tg.run?1:0)+(tg.bad?1:0);
     const el=document.createElement("details");el.className="ex log";
     el.innerHTML=`<summary><b>${thDate(ds,{weekday:"short",day:"numeric",month:"short"})}</b> · ${k} kcal · <span style="color:${p>=P_TARGET?"var(--up)":"inherit"}">P${p}</span> · ${eaten.length}/${planned}${tg.run?" 🏃":""}${tg.bad?" 🏸":""}${tg.late?" 🏋️":""}</summary>
-      <table>${all.filter(m=>m.id[0]!=="x"||(m.id==="x-run"&&tg.run)||(m.id==="x-bad"&&tg.bad)).map(m=>`<tr><td>${d.done[m.id]?"✓":"·"}</td><td>${m.time.length<6?m.time:t(m.time)}</td><td>${t(m.name)}</td><td>${m.vit?"💊":m.k+" kcal"}</td></tr>`).join("")}</table>
+      <table>${all.filter(m=>m.id[0]!=="x"||(m.id==="x-run"&&tg.run)||(m.id==="x-bad"&&tg.bad)).map(m=>`<tr><td>${(d.done||{})[m.id]?"✓":"·"}</td><td>${m.time.length<6?m.time:t(m.time)}</td><td>${t(m.name)}</td><td>${m.vit?"💊":m.k+" kcal"}</td></tr>`).join("")}${logOf(ds).map(x=>`<tr><td>✎</td><td></td><td>${esc(x.n)}${x.q!=1?" ×"+x.q:""}</td><td>${Math.round(x.k*x.q)} kcal</td></tr>`).join("")}</table>
       <div class="actions" style="margin-top:8px"><button class="btn sm" data-open>✎ ${t("แก้ไข")}</button></div>`;
     el.querySelector("[data-open]").addEventListener("click",()=>{DAY=ds;draft.ex={};picked=false;renderAll();scrollAppTop(true)});
     box.appendChild(el)});
@@ -65,8 +68,10 @@ function renderFood(){renderFoodHist();
     el.innerHTML=`<input type="checkbox" id="c-${m.id}" ${done?"checked":""}><div><div class="row-head"><span><span class="time">${t(m.time)}</span> · ${t(m.name)}</span><span class="macro">${m.vit?"💊":`${m.k} kcal · P${m.p}`}</span></div><ul>${m.items.map(i=>`<li>${t(i)}</li>`).join("")}</ul></div>`;
     el.querySelector("input").addEventListener("change",e=>{fs().done[m.id]=e.target.checked;save("mealcheck",food);renderFood()});
     box.appendChild(el);
+    const xs=logOf(DAY).filter(x=>x.slot===m.id);if(xs.length)box.appendChild(logRows(xs));
   });
-  let k=0,p=0,kt=0;meals.forEach(m=>{kt+=m.k;if(fs().done[m.id]){k+=m.k;p+=m.p}});
+  const sn=logOf(DAY).filter(x=>!meals.some(m=>m.id===x.slot));if(sn.length){const h=document.createElement("div");h.className="label";h.style.margin="6px 0 -6px";h.textContent=t("ของว่าง");box.appendChild(h);box.appendChild(logRows(sn))}
+  const xs0=logSum(DAY);let k=xs0.k,p=xs0.p,kt=0;meals.forEach(m=>{kt+=m.k;if(fs().done[m.id]){k+=m.k;p+=m.p}});
   document.getElementById("kcal-t").textContent=`${k} / ${kt}`;
   document.getElementById("p-t").textContent=`${p} / ${P_TARGET} g`;
   document.getElementById("kcal-f").style.width=Math.min(100,k/kt*100)+"%";
@@ -81,3 +86,37 @@ function renderFood(){renderFoodHist();
 }
 document.querySelectorAll(".chip[data-k]").forEach(c=>c.addEventListener("click",()=>{const t=fs().tags;t[c.dataset.k]=!t[c.dataset.k];save("mealcheck",food);renderFood()}));
 document.getElementById("reset").addEventListener("click",()=>{fs().done={};save("mealcheck",food);renderFood()});
+
+/* ---------- log your own food ---------- */
+Object.assign(EN,{"บันทึกอาหาร":"Log food","ที่เคยกิน":"Recent","จำนวน":"Servings","ของว่าง":"Snack","ชื่ออาหาร":"Food name","โปรตีน (g)":"Protein (g)","มื้อ":"Meal",
+  "ใส่ชื่ออาหาร":"Enter a name","ใส่ kcal หรือโปรตีน":"Enter kcal or protein","แก้รายการ":"Edit entry"});
+const SLOTS=[["m1","เช้า"],["m2","กลางวัน"],["m3","บ่าย"],["m4","เย็น"],["snack","ของว่าง"]];
+function slotNow(){const d=new Date(),h=d.getHours()+d.getMinutes()/60;return h<10.5?"m1":h<14?"m2":h<17?"m3":h<21?"m4":"snack"}
+function logRows(xs){const w=document.createElement("div");w.className="flog";
+  xs.forEach(x=>{const b=document.createElement("button");b.className="flog-row";const q=+x.q||1;
+    b.innerHTML=`<span>✎ ${esc(x.n)}${q!==1?` ×${q}`:""}</span><span class="macro">${Math.round(x.k*q)} kcal · P${Math.round(x.p*q)}</span>`;
+    b.addEventListener("click",()=>openFoodLog(x.id));w.appendChild(b)});return w}
+// recent foods across all days: newest first, one per name
+function recentFoods(){const seen=new Set(),out=[];Object.keys(food).sort().reverse().forEach(ds=>logOf(ds).slice().reverse().forEach(x=>{const k=(x.n||"").trim().toLowerCase();if(k&&!seen.has(k)){seen.add(k);out.push(x)}}));return out.slice(0,8)}
+function openFoodLog(id){const L=(fs().log=fs().log||[]),cur0=id?L.find(x=>x.id===id):null,x=cur0?{...cur0}:{n:"",k:"",p:"",q:1,slot:slotNow()};
+  const rec=id?[]:recentFoods();
+  openGen(t(id?"แก้รายการ":"บันทึกอาหาร"),`<div class="le">
+    ${rec.length?`<div class="label" style="margin:0">${t("ที่เคยกิน")}</div><div class="chips flog-rec">${rec.map((r,i)=>`<button class="chip" data-r="${i}">${esc(r.n)} · ${Math.round(r.k)}</button>`).join("")}</div>`:""}
+    <input class="le-in" id="fl-n" placeholder="${t("ชื่ออาหาร")}" aria-label="${t("ชื่ออาหาร")}" value="${esc(x.n)}">
+    <div class="le-row"><label class="fl-num"><input class="le-in" id="fl-k" type="number" inputmode="decimal" min="0" value="${x.k}"><span>kcal</span></label><label class="fl-num"><input class="le-in" id="fl-p" type="number" inputmode="decimal" min="0" value="${x.p}"><span>${t("โปรตีน (g)")}</span></label></div>
+    <div class="label" style="margin:0">${t("จำนวน")}</div><div class="segc">${[0.5,1,1.5,2].map(q=>`<button class="chip" data-q="${q}">×${q}</button>`).join("")}</div><small class="note" id="fl-sum"></small>
+    <div class="label" style="margin:0">${t("มื้อ")}</div><div class="chips">${SLOTS.map(([k,n])=>`<button class="chip" data-s="${k}">${t(n)}</button>`).join("")}</div>
+    <button class="btn primary sticky-b" id="fl-save">${t("บันทึก")}</button>${id?`<button class="btn ghost warn" id="fl-del">${t("ลบ")}</button>`:""}</div>`,b=>{
+    const $=s=>b.querySelector(s);
+    const draw=()=>{b.querySelectorAll("[data-q]").forEach(c=>c.setAttribute("aria-pressed",+c.dataset.q===+x.q));b.querySelectorAll("[data-s]").forEach(c=>c.setAttribute("aria-pressed",c.dataset.s===x.slot));
+      const k=+$("#fl-k").value||0,p=+$("#fl-p").value||0;$("#fl-sum").textContent=`= ${Math.round(k*x.q)} kcal · P${Math.round(p*x.q)}`};
+    b.querySelectorAll("[data-q]").forEach(c=>c.addEventListener("click",()=>{x.q=+c.dataset.q;draw()}));
+    b.querySelectorAll("[data-s]").forEach(c=>c.addEventListener("click",()=>{x.slot=c.dataset.s;draw()}));
+    b.querySelectorAll("[data-r]").forEach(c=>c.addEventListener("click",()=>{const r=rec[+c.dataset.r];$("#fl-n").value=r.n;$("#fl-k").value=r.k;$("#fl-p").value=r.p;draw()}));
+    ["#fl-k","#fl-p"].forEach(s=>$(s).addEventListener("input",draw));draw();if(!id)setTimeout(()=>$("#fl-n").focus(),50);
+    $("#fl-save").addEventListener("click",()=>{const n=$("#fl-n").value.trim(),k=Math.max(0,+$("#fl-k").value||0),p=Math.max(0,+$("#fl-p").value||0);
+      if(!n){toast(t("ใส่ชื่ออาหาร"));return}if(!(k>0||p>0)){toast(t("ใส่ kcal หรือโปรตีน"));return}
+      const rec2={id:cur0?cur0.id:"l"+Date.now().toString(36),n,k,p,q:x.q,slot:x.slot};const i=L.findIndex(q=>q.id===rec2.id);if(i>=0)L[i]=rec2;else L.push(rec2);
+      save("mealcheck",food);closeGen();renderFood();toast(`${n} ✓`)});
+    const d=$("#fl-del");if(d)d.addEventListener("click",()=>{if(!d.dataset.sure){d.dataset.sure=1;d.textContent=t("ลบ")+"?";return}fs().log=L.filter(q=>q.id!==id);save("mealcheck",food);closeGen();renderFood()})})}
+document.getElementById("food-add")?.addEventListener("click",()=>openFoodLog(null));
