@@ -25,10 +25,15 @@ function loadCat(){if(CAT||catLoading)return;catLoading=true;
     if(!document.getElementById("lib-modal").hidden)renderLib();else try{renderGym()}catch(_){}})}
 // collapsible "How to" block (GIF + steps) for an exercise; "" when it has no demo
 const gifOf=x=>x.gif||((catOf(x)||{}).gif)||"";
-function howTo(x){const cat=catOf(x),gif=x.gif||(cat&&cat.gif);if(!gif)return "";
-  return `<details class="howto"><summary>▶ ${t("วิธีเล่น")}${cat?` <small>${esc(cat.t)} · ${esc(cat.e)}</small>`:""}</summary>
-    <img src="${esc(gif)}" alt="" loading="lazy">
-    ${cat&&cat.s.length?`<ol>${cat.s.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>`:""}</details>`}
+// exercise demos are never shown inline: a ▶ How-to button opens them in a sheet
+const hasHow=x=>!!(gifOf(x)||safeUrl(x.link));
+function howBtn(x,label){return hasHow(x)?`<span class="how-btn${label?" lbl":""}" role="button" tabindex="0" data-how="${esc(x.id)}" data-hown="${esc(x.n||"")}" aria-label="${t("วิธีเล่น")} ${esc(x.n||"")}"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M7 4l13 8-13 8z"/></svg>${label?` ${t("วิธีเล่น")}`:""}</span>`:""}
+function howTo(x){return howBtn(x,true)}
+function openHowTo(id,name){const x=EXLIB.find(q=>q.id===id)||(CAT||[]).find(q=>q.id===id)||{id,n:name},cat=catOf(x),gif=gifOf(x),link=safeUrl(x.link);
+  openGen(esc(x.n||name),`${cat?`<small class="note">${esc(cat.t)} · ${esc(cat.e)}</small>`:""}${gif?`<img class="how-gif" src="${esc(gif)}" alt="">`:""}
+    ${cat&&cat.s&&cat.s.length?`<ol class="how-steps">${cat.s.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>`:""}
+    ${link?`<a class="btn" href="${esc(link)}" target="_blank" rel="noopener">▶ YouTube / TikTok</a>`:""}<button class="btn" data-gen-close>${t("ปิด")}</button>`)}
+document.addEventListener("click",ev=>{const b=ev.target.closest&&ev.target.closest("[data-how]");if(!b)return;ev.preventDefault();ev.stopPropagation();openHowTo(b.dataset.how,b.dataset.hown)},true);
 setTimeout(loadCat,0);
 function adoptCat(c){let x=EXLIB.find(q=>q.id===c.id);if(!x){x=libPick(c);EXLIB.push(x);save("exlib",EXLIB)}return x}
 function ensureLib(){let ch=false;const have=new Set(EXLIB.map(x=>x.id));
@@ -100,12 +105,12 @@ function renderLib(){
   shown.forEach(x=>{
     if(x.cat){const g=groupOf(x);if(libGroup==="all"&&g!==lastG){lastG=g;const h=document.createElement("div");h.className="pick-h";h.textContent=groupName(g);box.appendChild(h)}
       const b=document.createElement("button");b.className="prog lib-row";b.style.cssText="display:flex;gap:10px;align-items:center;text-align:left";
-      b.innerHTML=`<img src="${esc(x.gif||"")}" alt="" loading="lazy" width="48" height="48" style="border-radius:6px;background:#fff;flex:none;object-fit:cover"><span><b>${x.z} ${esc(x.n)}</b><small style="display:block">${groupName(g)} · ${esc(x.t)} · ${esc(x.e)}</small></span>`;
+      b.innerHTML=`<span class="sx-mini">${bodySVG(...musOf(x),40)}</span><span style="flex:1;min-width:0"><b>${x.z} ${esc(x.n)}</b><small style="display:block">${groupName(g)} · ${esc(x.t)} · ${esc(x.e)}</small></span>${howBtn(x)}`;
       b.addEventListener("click",()=>{const y=adoptCat(x);if(libMode){const m=libMode;closeLib();m.onPick(y)}else{libEdit=y.id;renderLib()}});box.appendChild(b);return}const g=groupOf(x);if(libGroup==="all"&&g!==lastG){lastG=g;const h=document.createElement("div");h.className="pick-h";h.textContent=groupName(g);box.appendChild(h)}
     if(x.id===libEdit){box.appendChild(libForm(x));return}
     const used=libUsed(x.id);const b=document.createElement("button");b.className="prog lib-row";
-    const th=gifOf(x);if(th)b.style.cssText="display:flex;gap:10px;align-items:center;text-align:left";
-    b.innerHTML=th?`<img src="${esc(th)}" alt="" loading="lazy" width="48" height="48" style="border-radius:6px;background:#fff;flex:none;object-fit:cover"><span style="display:grid;gap:2px;min-width:0"><b>${x.z||"🔩"} ${esc(x.n)}</b><small>${groupName(groupOf(x))} · ${(x.u||"kg")} · ${used.length?esc(used.join(", ")):t("ยังไม่ได้ใช้ในโปรแกรม")}</small></span>`:`<b>${x.z||"🔩"} ${esc(x.n)}</b><small>${groupName(groupOf(x))} · ${(x.u||"kg")} · ${used.length?esc(used.join(", ")):t("ยังไม่ได้ใช้ในโปรแกรม")}</small>`;
+    const th="";b.style.cssText="display:flex;gap:10px;align-items:center;text-align:left";
+    b.innerHTML=`<span class="sx-mini">${bodySVG(...musOf(x),40)}</span><span style="display:grid;gap:2px;min-width:0;flex:1"><b>${x.z||"🔩"} ${esc(x.n)}</b><small>${groupName(groupOf(x))} · ${(x.u||"kg")} · ${used.length?esc(used.join(", ")):t("ยังไม่ได้ใช้ในโปรแกรม")}</small></span>${howBtn(x)}`;
     b.addEventListener("click",()=>{if(libMode){const m=libMode;closeLib();m.onPick(x)}else{libEdit=x.id;renderLib()}});box.appendChild(b)})}
 document.getElementById("lib-new").addEventListener("click",()=>{
   EXLIB=EXLIB.filter(libNamed);const x={id:"c"+Date.now().toString(36),n:"",z:"🔩"};if(libGroup!=="all")x.g=libGroup;EXLIB.push(x);libEdit=x.id;renderLib();

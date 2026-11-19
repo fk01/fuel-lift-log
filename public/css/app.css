@@ -478,3 +478,12 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 .msh-fig{display:flex;justify-content:center;padding:4px 0}
 .mrole{margin-left:auto;font-style:normal;font-size:.68rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px;flex:none}.mrole.p{color:#111;background:#e8a46a;border-color:#e8a46a}
 .sx-row span small+small{opacity:.8}
+
+/* How-to button + sheet (GIFs only inside the sheet) */
+.how-btn{flex:none;display:inline-grid;place-items:center;grid-auto-flow:column;gap:4px;min-width:34px;height:34px;padding:0 10px;border-radius:999px;border:1px solid #3a5a3a;background:#1c241c;color:var(--up);font:600 .8rem var(--f-ui);cursor:pointer;position:relative}
+.how-btn::before{content:"";position:absolute;inset:-6px}
+.how-btn.lbl{justify-self:start;height:36px}
+.how-gif{width:100%;max-width:320px;justify-self:center;border-radius:14px;background:#fff}
+.how-steps{margin:0;padding-left:1.2em;font-size:.9rem;line-height:1.5;color:var(--fg)}.how-steps li+li{margin-top:4px}
+.sx-row{align-items:center}
+.how-btn:not(.lbl){padding:0;width:34px}.ex-name .how-btn{width:30px;height:30px;min-width:30px}
