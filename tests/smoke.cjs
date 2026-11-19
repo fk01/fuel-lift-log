@@ -16,13 +16,26 @@ await p.goto("http://localhost:8799/"); await p.waitForTimeout(800);
 await p.evaluate(() => (document.getElementById("login").hidden = true));
 const steps = [
   ["food", () => (location.hash = "food")], ["gym", () => (location.hash = "gym")],
-  ["gyms-picker", () => { if (document.getElementById("locpick").hidden || document.querySelectorAll("#locpick .lp-card").length !== 2) throw new Error("picker should show 2 places"); }],
+  ["gyms-picker", () => { if (document.getElementById("locpick").hidden || document.querySelectorAll("#locpick .lp-card").length !== 3) throw new Error("picker should show 3 places");
+    if (!document.querySelector("#locpick .lp-plan")) throw new Error("plan line");; }],
   ["gyms-condo", () => { pickLoc("condo"); if (!document.getElementById("locpick").hidden) throw new Error("picker should close");
-    const ks = progsHere(); if (ks.length !== 4) throw new Error("condo should have 4 programs, got " + ks.length);
+    const ks = weightsHere(); if (ks.length !== 4) throw new Error("condo should have 4 weight programs, got " + ks.length);
     const bad = ks.flatMap(k => PROGS[k].ex).filter(e => !canDo(e)); if (bad.length) throw new Error("condo has machine lifts: " + bad.map(e => e.n));
     renderToday(); if (!document.querySelector("#today .loc-chip").textContent.includes("คอนโด") && !document.querySelector("#today .loc-chip").textContent.includes("Condo")) throw new Error("loc chip"); }],
+  ["gyms-cardio", () => { renderToday(); const td = document.getElementById("today");
+    if (/ไม่ได้|Not possible|Can't/.test(document.getElementById("v-gym").textContent)) throw new Error("no 'can't' text");
+    if (cardioHere().some(k => PROGS[k].tag === "bad")) throw new Error("condo has badminton");
+    if (!td.querySelector(".td-chips [data-today]")) throw new Error("today should offer this place's programs");
+    openCardioEdit(null); const g = document.getElementById("gen-body"); g.querySelector('[data-f="name"]').value = "Swim"; g.querySelector('[data-f="icon"]').value = "🏊";
+    g.querySelector('[data-d="5"]').click(); g.querySelector("[data-save]").click();
+    const k = cardioHere().find(q => PROGS[q].name === "Swim"); if (!k || !PROGS[k].days.includes(5)) throw new Error("create cardio program");
+    openCardio(k); document.getElementById("run-km").value = "1.5"; document.getElementById("run-time").value = "30:00"; document.getElementById("run-save").click();
+    if (!cxGet(k) || cxGet(k).km !== 1.5) throw new Error("log cardio"); delete PROGS[k]; }],
+  ["gyms-restday", () => { const d = DAY; DAY = "2026-11-20"; locDay = {}; if (planFor(DAY) && !planKeys(DAY).length) throw new Error("plan"); if (needPick()) throw new Error("rest day should not ask place"); DAY = d; locDay = { date: TODAY, id: curLoc }; }],
+  ["gyms-pm-menu", () => { pmOnly = null; renderPM(); document.getElementById("pm-modal").hidden = false; document.querySelector("#pm-body [data-menu]").click();
+    if (document.getElementById("gen-sheet").hidden || !document.querySelector('#gen-body [data-m="copy"]')) throw new Error("pm menu"); closeGen(); document.getElementById("pm-modal").hidden = true; }],
   ["gyms-edit", () => { openLocEdit(null); const g = document.getElementById("gen-body"); g.querySelector('[data-f="name"]').value = "Test Gym"; g.querySelector("[data-save]").click();
-    if (LOCS.length !== 3) throw new Error("add place"); openLocEdit(LOCS[2].id); const d = document.querySelector("#gen-body [data-del]"); d.click(); d.click(); if (LOCS.length !== 2) throw new Error("delete place"); }],
+    if (LOCS.length !== 4) throw new Error("add place"); openLocEdit(LOCS[2].id); const d = document.querySelector("#gen-body [data-del]"); d.click(); d.click(); if (LOCS.length !== 3) throw new Error("delete place"); }],
   ["gyms-copy", () => { pickLoc("gym"); const n = Object.keys(PROGS).length; openProgMove("pull"); document.querySelector("#gen-body [data-go]").click();
     if (Object.keys(PROGS).length !== n + 1 || curLoc !== "condo") throw new Error("copy program"); document.getElementById("pm-modal").hidden = true; pickLoc("gym"); }],
   ["stats", () => (location.hash = "stats")], ["more", () => (location.hash = "more")],

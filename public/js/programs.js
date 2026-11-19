@@ -58,18 +58,22 @@ function fmt(s){s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+":"+String(s%
 let logs=load("gymlog",[]);           // [{date,prog,ex:{id:[{kg,reps}]}}]
 let draft=load("gymdraft",{});
 if(typeof _clearDraft!=="undefined"){draft={prog:draft.prog}}        // {prog, ex:{id:[{kg,reps,ok}]}}
-function planFor(ds){return WEEK[new Date(ds+"T12:00:00").getDay()]||null}
+// the program scheduled on ds: one at the current place first, else any place's
+function planFor(ds){const ks=planKeys(ds);return ks.find(k=>locOf(PROGS[k])===curLoc)||ks[0]||null}
 function nextProg(){const wd=new Date(DAY+"T12:00:00").getDay();
-  for(let i=0;i<7;i++){const k=slotKey(WEEK[(wd+i)%7]);if(k&&PROGS[k]&&!(i===0&&logs.some(l=>l.date===DAY&&l.prog===k)))return k}
-  return progsHere()[0]||Object.keys(PROGS)[0]}
+  const ws=typeof weightsHere==="function"&&LOCS?weightsHere():Object.keys(PROGS);
+  for(let i=0;i<7;i++){const k=ws.find(q=>daysOf(q).includes((wd+i)%7));if(k&&!(i===0&&logs.some(l=>l.date===DAY&&l.prog===k)))return k}
+  return ws[0]||Object.keys(PROGS)[0]}
 let cur=draft.prog&&PROGS[draft.prog]?draft.prog:nextProg();
 function lastFor(id){for(let i=logs.length-1;i>=0;i--){if(logs[i].date>DAY||logLoc(logs[i])!==curLoc)continue;const s=logs[i].ex[id];if(s&&s.length)return{date:logs[i].date,sets:s}}return null}
 function best(sets){return sets.reduce((m,s)=>Math.max(m,+s.kg||0),0)}
 function renderProgs(){
-  const pl=planFor(DAY);const nx=pl==="run"||pl==="bad"?null:nextProg();const box=document.getElementById("progs");box.innerHTML="";
+  const pl=planFor(DAY);const box=document.getElementById("progs");box.innerHTML="";
   const hd=s=>{const d=document.createElement("div");d.className="pick-h";d.textContent=t(s);box.appendChild(d)};
-  hd("เวทเทรนนิ่ง");
-  progsHere().map(k=>[k,PROGS[k]]).forEach(([k,p])=>{
+  const L=hereLoc();
+  const h=document.createElement("button");h.className="pick-h loc-h";h.innerHTML=`${esc(L.icon||"📍")} ${esc(t(L.name))} ⌄`;h.addEventListener("click",openLocChange);box.appendChild(h);
+  if(hasType(L,"gym")&&hasType(L,"cardio"))hd("เวท");
+  (hasType(L,"gym")?weightsHere():[]).map(k=>[k,PROGS[k]]).forEach(([k,p])=>{
     const last=[...logs].reverse().find(l=>l.prog===k);
     const b=document.createElement("button");b.className="prog";b.id="p-"+k;b.setAttribute("aria-pressed",(picked||chosen)&&k===cur);
     const groups=[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", "),open=false;
@@ -82,14 +86,12 @@ function renderProgs(){
       if(!picked){openSheet(k);return}
       if(!picked){if(chosen&&cur===k){chosen=false;renderGym();return}if(cur!==k){draft.ex={}}cur=k;draft.prog=k;chosen=true;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("start-row").scrollIntoView({behavior:"smooth",block:"center"}),50);return}
       if(cur===k){cancelProg();return}draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});box.appendChild(b)});
-  hd("คาร์ดิโอ");
-  const tg=fs().tags,rd=tg.runData;
-  const run=document.createElement("button");run.className="prog cardio";run.setAttribute("aria-pressed",!!tg.run);
-  run.innerHTML=`<span class="ic">🏃</span><b>${t("วิ่ง")}</b><small>${tg.run?(rd&&rd.km?`${rd.km} km · ${fmtPace(rd.sec/rd.km)}/km`:"✓ "+t("บันทึกแล้ว")):pl==="run"?`<span class="next">${t("คิวถัดไป")} · 10 km</span>`:t("ใส่ระยะ / เวลา")}</small>`;
-  run.addEventListener("click",openRun);box.appendChild(run);
-  const bad=document.createElement("button");bad.className="prog cardio";bad.setAttribute("aria-pressed",!!tg.bad);
-  bad.innerHTML=`<span class="ic">🏸</span><b>${t("ตีแบด")}</b><small>${tg.bad?"✓ "+t("บันทึกแล้ว")+" +50 XP":pl==="bad"?`<span class="next">${t("คิวถัดไป")}</span>`:t("แตะเพื่อบันทึก")}</small>`;
-  bad.addEventListener("click",openBad);box.appendChild(bad);
+  if(hasType(L,"cardio")){if(hasType(L,"gym"))hd("คาร์ดิโอ");
+    cardioHere().forEach(k=>{const p=PROGS[k],v=cxGet(k);const b=document.createElement("button");b.className="prog cardio";b.setAttribute("aria-pressed",!!v);
+      b.innerHTML=`<span class="ic">${esc(p.icon||"🏃")}</span><b>${esc(p.name)}</b><span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span><small>${v?esc(cxTxt(k,v)):k===pl?`<span class="next">${t("คิวถัดไป")}${p.goal?" · "+p.goal+" km":""}</span>`:t(p.track==="dist"?"ใส่ระยะ / เวลา":"แตะเพื่อบันทึก")}</small>`;
+      b.addEventListener("click",ev=>{if(ev.target.closest(".pc-more")){openCardioEdit(k);return}openCardio(k)});box.appendChild(b)})}
+  const ew=document.getElementById("empty-w");if(ew)ew.hidden=!hasType(L,"gym");
+  const add=document.createElement("button");add.className="btn ghost sm prog-add";add.textContent="+ "+t("เพิ่มโปรแกรม");add.addEventListener("click",openAddProg);box.appendChild(add);
 }
 
 /* ---------- program sheet: tap a card → slide-up sheet with its exercises, Start and Edit (cards never move) ---------- */
@@ -115,13 +117,16 @@ document.getElementById("sheet-edit").addEventListener("click",()=>{const k=shee
   inn.addEventListener("touchend",()=>{if(y0===null)return;inn.style.transition="";if(dy>90)closeSheet();else inn.style.transform="";y0=null})})();
 
 /* ---------- badminton: confirm before logging (or removing) ---------- */
-function openBad(){const on=!!fs().tags.bad,day=thDate(DAY,{weekday:"short",day:"numeric",month:"short"});
-  document.getElementById("bad-msg").textContent=on?`${t("ลบบันทึกตีแบดของ")} ${day}?`:`${t("บันทึกตีแบดของ")} ${day} · +50 XP`;
+let badK=null;
+function openBad(k){badK=k||cardioHere().find(q=>PROGS[q].tag==="bad")||Object.keys(PROGS).find(q=>PROGS[q].tag==="bad");if(!badK)return;const p=PROGS[badK],on=!!cxGet(badK),day=thDate(DAY,{weekday:"short",day:"numeric",month:"short"});
+  document.getElementById("bad-msg").textContent=on?`${t("ลบบันทึก")} ${p.icon||""} ${p.name} · ${day}?`:`${t("บันทึก")} ${p.icon||""} ${p.name} · ${day}${p.tag==="bad"?" · +50 XP":""}`;
   const ok=document.getElementById("bad-ok");ok.textContent=on?t("ลบ"):"✓ "+t("บันทึก");ok.classList.toggle("warn",on);document.getElementById("bad-modal").hidden=false}
 const closeBad=()=>{document.getElementById("bad-modal").hidden=true};
 document.getElementById("bad-cancel").addEventListener("click",closeBad);
 document.getElementById("bad-modal").addEventListener("click",ev=>{if(ev.target.id==="bad-modal")closeBad()});
-document.getElementById("bad-ok").addEventListener("click",()=>{const tg=fs().tags;tg.bad=!tg.bad;save("mealcheck",food);closeBad();try{renderFood()}catch(e){}renderGym();toast(tg.bad?t("ตีแบด")+" ✓ +50 XP":t("ยกเลิกแล้ว"))});
+document.getElementById("bad-ok").addEventListener("click",()=>{if(!badK)return;const on=!cxGet(badK);cxSet(badK,on?{}:null);closeBad();try{renderFood()}catch(e){}renderGym();toast(on?PROGS[badK].name+" ✓"+(PROGS[badK].tag==="bad"?" +50 XP":""):t("ยกเลิกแล้ว"))});
+// open the right logger for a cardio program
+function openCardio(k){const p=PROGS[k];if(!p)return;if(p.track==="dist"){runK=k;openRun()}else openBad(k)}
 
 /* ---------- "Today" card: what the weekly plan says for the selected day, with one action ---------- */
 Object.assign(EN,{"วันนี้":"Today","วันพัก":"Rest day","พักให้กล้ามฟื้น":"Let your muscles recover","ออกนอกตาราง":"Train anyway","กลับไปเล่นต่อ":"Resume workout","เริ่ม":"Start","บันทึกตีแบด":"Log badminton","บันทึกวิ่ง":"Log run","เสร็จแล้ววันนี้":"Done today","ทำแล้ว":"Done","กำลังเล่น":"in progress"});
@@ -131,16 +136,20 @@ function renderToday(){const box=document.getElementById("today");if(!box)return
   if(picked&&PROGS[cur]){title=PROGS[cur].name;sub=t("กำลังเล่น");btn=`▶ ${t("กลับไปเล่นต่อ")}`;act="resume"}
   else if(done.length){title=done.map(l=>progName(l.prog)).join(" + ");const n=done.reduce((a,l)=>a+Object.values(l.ex).reduce((b,s)=>b+s.length,0),0),v=Math.round(done.reduce((a,l)=>a+volOf(l),0));
     sub=`✓ ${t("ทำแล้ว")} · ${nU(n,"เซ็ต")} · ${v.toLocaleString()} kg`;btn="";}
-  else if(pl==="run"){const r=tg.runData;title="🏃 "+t("วิ่ง")+" 10 km";sub=tg.run?`✓ ${r&&r.km?r.km+" km · "+fmtPace(r.sec/r.km)+"/km":t("ทำแล้ว")}`:"";btn=tg.run?"":`🏃 ${t("บันทึกวิ่ง")}`;act="run"}
-  else if(pl==="bad"){title="🏸 "+t("ตีแบด");sub=tg.bad?"✓ "+t("ทำแล้ว"):"";btn=tg.bad?"":`🏸 ${t("บันทึกตีแบด")}`;act="bad"}
-  else if(slotKey(pl)){const pk=slotKey(pl),p=PROGS[pk];title=p.name;sub=`${nU(p.ex.length,"ท่า")} · ${[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", ")}`;btn=`▶ ${t("เริ่ม")} ${p.name}`;act="start:"+pk}
-  else{title="😴 "+t("วันพัก");sub=t("พักให้กล้ามฟื้น");btn="";act=""}
-  box.className="today"+(done.length||(pl==="run"&&tg.run)||(pl==="bad"&&tg.bad)?" is-done":"");
-  const L=hereLoc();box.innerHTML=`<span class="td-top"><small class="td-l">${lbl}</small><button class="loc-chip" data-locchg${picked?" disabled":""}>${esc(L.icon||"📍")} ${esc(t(L.name))}${picked?"":" ⌄"}</button></span><b class="td-t">${esc(title)}</b>${sub?`<span class="td-s">${esc(sub)}</span>`:""}
-    ${btn?`<button class="btn primary td-b" data-today="${act}">${esc(btn)}</button>`:""}${!btn&&!picked&&!done.length?`<button class="btn ghost sm td-x" data-today="any">${t("ออกนอกตาราง")} ↓</button>`:""}`;
+  else{const here=pl&&locOf(PROGS[pl])===curLoc?pl:null,p=here&&PROGS[here];
+    if(p&&isCardio(p)){const v=cxGet(here);title=`${p.icon||"🏃"} ${p.name}`;sub=v?"✓ "+cxTxt(here,v):"";btn=v?"":`${p.icon||"🏃"} ${t("บันทึก")} ${p.name}`;act="cx:"+here}
+    else if(p){title=p.name;sub=`${nU(p.ex.length,"ท่า")} · ${[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", ")}`;btn=`▶ ${t("เริ่ม")} ${p.name}`;act="start:"+here}
+    else if(pl){title=(isCardio(PROGS[pl])?(PROGS[pl].icon||"🏃")+" ":"")+PROGS[pl].name}
+    else{title="😴 "+t("วันพัก");sub=t("พักให้กล้ามฟื้น")}}
+  // planned somewhere else (or nothing planned here): offer this place's programs as chips, no "can't" text
+  const L=hereLoc(),alts=[],cxDoneToday=cxAny(DAY);
+  if(!picked&&!done.length&&!btn&&!(pl&&isCardio(PROGS[pl])&&cxGet(pl)))progsHere().forEach(k=>{const q=PROGS[k];if(isCardio(q)&&cxGet(k))return;alts.push([(isCardio(q)?(q.icon||"🏃"):"▶")+" "+q.name,(isCardio(q)?"cx:":"start:")+k])});
+  box.className="today"+(done.length||(pl&&isCardio(PROGS[pl])&&cxGet(pl))?" is-done":"");
+  box.innerHTML=`<span class="td-top"><small class="td-l">${lbl}</small><button class="loc-chip" data-locchg${picked?" disabled":""}>${esc(L.icon||"📍")} ${esc(t(L.name))}${picked?"":" ⌄"}</button></span><b class="td-t">${esc(title)}</b>${sub?`<span class="td-s">${esc(sub)}</span>`:""}
+    ${btn?`<button class="btn primary td-b" data-today="${act}">${esc(btn)}</button>`:""}${alts.length?`<div class="td-chips">${alts.map(([l,a])=>`<button class="chip" data-today="${a}">${esc(l)}</button>`).join("")}</div>`:""}${!btn&&!alts.length&&!picked&&!done.length?`<button class="btn ghost sm td-x" data-today="any">${t("ออกนอกตาราง")} ↓</button>`:""}`;
   const lc=box.querySelector("[data-locchg]");if(lc&&!picked)lc.addEventListener("click",openLocChange);
-  const b=box.querySelector("[data-today]");if(!b)return;b.addEventListener("click",()=>{const a=b.dataset.today;
+  box.querySelectorAll("[data-today]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.today;
+    if(a.startsWith("cx:")){openCardio(a.slice(3));return}
     if(a==="resume")document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"});
-    else if(a==="run")openRun();else if(a==="bad")openBad();
     else if(a==="any")document.getElementById("step2").scrollIntoView({behavior:"smooth",block:"start"});
-    else if(a.startsWith("start:")){const k=a.slice(6);if(cur!==k)draft.ex={};cur=k;draft.prog=k;chosen=true;document.getElementById("start-w").click()}})}
+    else if(a.startsWith("start:")){const k=a.slice(6);if(cur!==k)draft.ex={};cur=k;draft.prog=k;chosen=true;document.getElementById("start-w").click()}}))}
