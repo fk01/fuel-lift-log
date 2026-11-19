@@ -577,3 +577,6 @@ body.loc-picking:has(#v-gym:not([hidden])) .wrap>header,body.loc-picking:has(#v-
 .bstep input{text-align:center;font-family:var(--f-num);font-size:1.8rem;background:none;border:0;color:var(--fg);width:100%}
 .bdiff{font-family:var(--f-num)}.bdiff.up{color:var(--up)}.bdiff.dn{color:var(--warn)}
 .rec-t .rec-sub{font-size:.7rem;color:var(--muted);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* no purple: neglected reads as ready; due list is neutral */
+.rec-grid .rec-t.s0,.rec-grid .rec-t.s4{border-color:transparent}
+.rec-due{color:var(--muted);background:var(--bg);border-color:var(--line)}
