@@ -141,7 +141,9 @@ function renderToday(){const box=document.getElementById("today");if(!box)return
         if(ms.length)warn=`⚠ ${ms.map(m=>t(MUS_NAME[m])+" "+R[m].pct+"%").join(" · ")} ${t("ยังไม่ฟื้นเต็ม")}`}catch(e){}}
     else if(pl||dayMode()==="train"){title=t("เลือกโปรแกรม");sub=t(pl?"ไม่มีโปรแกรมในตารางวันนี้ที่นี่":"นอกตาราง — เลือกเองได้");if(DAY===TODAY){btn=t("เลือกโปรแกรม");act="pick"}}
     else{title="😴 "+t("วันพัก");sub=t("พักให้กล้ามฟื้น")}}
-  if(resting()){title="😴 "+t("พักวันนี้");sub=t("ให้กล้ามได้ฟื้น — กลับมาพรุ่งนี้");btn="";warn=""}
+  if(resting()){title="😴 "+t("พักวันนี้");sub=t("ให้กล้ามได้ฟื้น — กลับมาพรุ่งนี้");btn="";act="";warn=""}
+  // nothing chosen yet today: the program chip in the breadcrumb is the call to action, so no card
+  box.hidden=act==="pick";if(box.hidden)return;
   box.className="today"+(done.length||(pl&&isCardio(PROGS[pl])&&cxGet(pl))?" is-done":"");
   box.innerHTML=`<small class="td-l">${lbl}</small><b class="td-t">${esc(title)}</b>${sub?`<span class="td-s">${esc(sub)}</span>`:""}${warn?`<span class="td-w">${esc(warn)}</span>`:""}
     ${btn?`<button class="btn primary td-b" data-today="${act}">${esc(btn)}</button>`:""}${resting()?`<div class="td-rec">${weakest(3).map(([m,v])=>`<div class="row-head"><span>${t(MUS_NAME[m])}</span><small>${v}%</small></div><i class="rec-bar"><i style="width:${v}%;background:${REC_C[v<40?1:2]}"></i></i>`).join("")}</div><button class="btn text sm td-x" data-today="train">${t("เปลี่ยนใจ ออกกำลังกาย")}</button>`
