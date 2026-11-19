@@ -69,7 +69,6 @@ function renderRecovery(){const box=document.getElementById("rec-card");if(!box)
   const due=REC_ORDER.filter(m=>{const s=state(ago(m));return s===0||s===4});
   const tiles=REC_ORDER.map(m=>{const o=R[m],s=state(o),w=!o?0:s===4?100:o.pct;return `<button class="rec-t s${s}" data-m="${m}"><b>${t(MUS_NAME[m])}</b><span class="rec-p">${lab(m)}</span><small class="rec-sub">${sub(m)||"&nbsp;"}</small><i class="rec-bar"><i style="width:${w}%;background:${REC_C[s]}"></i></i></button>`}).join("");
   box.innerHTML=`<div class="rec-fig">${bodySVG([],[],170,m=>REC_C[state(ago(m))])}</div>
-    ${due.length?`<div class="rec-due">${t("ควรเล่น")}: ${due.map(m=>t(MUS_NAME[m])).join(", ")}</div>`:""}
     <div class="rec-grid">${tiles}</div>
     <div class="rec-leg">${[[1,"< 40%"],[2,"กำลังฟื้น"],[3,"พร้อม"],[0,"ยังไม่เคยเล่น"]].map(([k,l])=>`<span><i style="background:${REC_C[k]}"></i>${t(l)}</span>`).join("")}</div>`}
 /* ---------- generic bottom sheet ---------- */
