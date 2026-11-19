@@ -147,5 +147,5 @@ function renderToday(){const box=document.getElementById("today");if(!box)return
   box.querySelectorAll("[data-today]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.today;
     if(a.startsWith("cx:")){openCardio(a.slice(3));return}
     if(a==="resume")document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"});
-    else if(a==="any")document.getElementById("step2").scrollIntoView({behavior:"smooth",block:"start"});
+    else if(a==="any"){if(!pl&&locDay.date!==TODAY){openLocChange();return}document.getElementById("step2").scrollIntoView({behavior:"smooth",block:"start"})}
     else if(a.startsWith("start:")){const k=a.slice(6);if(cur!==k)draft.ex={};cur=k;draft.prog=k;chosen=true;document.getElementById("start-w").click()}}))}

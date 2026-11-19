@@ -114,7 +114,8 @@ function ensureV3(){if(LOCS.every(l=>l.types)&&Object.values(PROGS).some(p=>Arra
   try{localStorage.setItem("locs",JSON.stringify(LOCS))}catch(e){}return true}
 function saveLocs(){save("locs",LOCS);setProgsRev(Date.now());if(typeof markDirty==="function")markDirty("progs")}
 function pickLoc(id){curLoc=id;locDay={date:TODAY,id};save("locday",locDay);if(!picked){cur=nextProg();chosen=false;draft.ex={};draft.prog=cur;save("gymdraft",draft)}renderGym()}
-const needPick=()=>DAY===TODAY&&locDay.date!==TODAY&&!picked&&!editing&&!planDone();
+let pickAnyway=false;   // rest day: no picker unless the user taps "train anyway"
+const needPick=()=>DAY===TODAY&&locDay.date!==TODAY&&!picked&&!editing&&!planDone()&&(planKeys(DAY).length>0||pickAnyway);
 const nProgs=n=>lang==="th"?`${n} โปรแกรม`:`${n} program${n===1?"":"s"}`;
 function renderLocHead(){try{updLocSum()}catch(e){}const h=document.getElementById("lochead");if(!h)return;const L=hereLoc();
   h.innerHTML=`<b>${esc(L.icon||"📍")} ${esc(t(L.name))}</b>${picked?"":`<button class="btn sm" data-lc>${t("เปลี่ยน")}</button>`}`;const b=h.querySelector("[data-lc]");if(b)b.addEventListener("click",openLocChange)}
@@ -129,7 +130,7 @@ function renderLocPick(){const box=document.getElementById("locpick");if(!box)re
     +`<button class="btn lp-add" data-locadd>+ ${t("เพิ่มสถานที่")}</button>`;
   box.querySelectorAll("[data-loc]").forEach(c=>c.addEventListener("click",ev=>{if(ev.target.closest("[data-map]"))return;const ed=ev.target.closest("[data-locedit]");if(ed){openLocEdit(ed.dataset.locedit);return}pickLoc(c.dataset.loc)}));
   box.querySelector("[data-locadd]").addEventListener("click",()=>openLocEdit(null))}
-function openLocChange(){locDay={};save("locday",locDay);renderGym();scrollAppTop()}
+function openLocChange(){pickAnyway=true;locDay={};save("locday",locDay);renderGym();scrollAppTop()}
 function openLocEdit(id){const isNew=!id,l=isNew?{id:"l"+Date.now().toString(36),name:"",icon:"📍",map:"",eq:["db","body"],types:["gym","cardio"]}:JSON.parse(JSON.stringify(locById(id)));
   openGen(t(isNew?"เพิ่มสถานที่":"แก้ไขสถานที่"),`<div class="le">
     <div class="le-row"><input class="le-in le-ic" data-f="icon" value="${esc(l.icon||"")}" maxlength="4" aria-label="icon"><input class="le-in" data-f="name" value="${esc(l.name)}" placeholder="${t("ชื่อสถานที่")}" aria-label="${t("ชื่อสถานที่")}"></div>
