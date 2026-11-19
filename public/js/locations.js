@@ -5,7 +5,7 @@ Object.assign(EN,{"วันนี้ออกที่ไหน?":"Where today?
   "ลิงก์ Google Maps":"Google Maps link","ใช้ตำแหน่งปัจจุบัน":"Use current location","ดัมเบลหนักสุด (kg)":"Heaviest dumbbell (kg)","บันทึก":"Save","แผนที่":"Map",
   "ต้องมีอย่างน้อย 1 สถานที่":"Keep at least one place","ไม่มีท่าแทน → ตัดออก":"No substitute → removed","คัดลอก":"Copy","ย้าย":"Move","คัดลอก แล้วแก้ต่อ":"Copy, then edit",
   "ย้าย แล้วแก้ต่อ":"Move, then edit","ไม่มีสถานที่อื่น":"No other place","ท่าหลักย้ายไม่ได้ ใช้คัดลอกแทน":"Locked lifts can't move — copy instead","ยังไม่เคยเล่นที่นี่":"Not trained here yet",
-  "ที่นี่":"Here","ยิม":"Gym","คอนโด":"Condo","สถานที่":"Place","เปลี่ยน":"Change","เลือกโปรแกรม":"Pick a program","ไม่มีโปรแกรมในตารางวันนี้ที่นี่":"Nothing scheduled here today","ดูโปรแกรม":"See programs","วันพัก · ออกได้ถ้าอยากออก":"Rest day · train if you like","หาตำแหน่งไม่ได้":"Couldn't get location",
+  "ที่นี่":"Here","ยิม":"Gym","คอนโด":"Condo","สถานที่":"Place","เปลี่ยน":"Change","กลับ":"Back","เลือกโปรแกรม":"Pick a program","ไม่มีโปรแกรมในตารางวันนี้ที่นี่":"Nothing scheduled here today","ดูโปรแกรม":"See programs","วันพัก · ออกได้ถ้าอยากออก":"Rest day · train if you like","หาตำแหน่งไม่ได้":"Couldn't get location",
   "ดัมเบล":"Dumbbells","บาร์เบล":"Barbell","เคเบิล":"Cable","เครื่อง":"Machines","ม้านั่ง":"Bench","บาร์โหน":"Pull-up bar","ยางยืด":"Bands","ตัวเปล่า":"Bodyweight"});
 const EQ=[["db","ดัมเบล"],["bb","บาร์เบล"],["cable","เคเบิล"],["machine","เครื่อง"],["bench","ม้านั่ง"],["bar","บาร์โหน"],["band","ยางยืด"],["body","ตัวเปล่า"]];
 const EQ_ALL=EQ.map(q=>q[0]);
@@ -113,7 +113,7 @@ function ensureV3(){if(LOCS.every(l=>l.types)&&Object.values(PROGS).some(p=>Arra
   Object.keys(PROGS).forEach(k=>{if(k!=="free"&&!Array.isArray(PROGS[k].days))PROGS[k].days=daysOf(k)});
   try{localStorage.setItem("locs",JSON.stringify(LOCS))}catch(e){}return true}
 function saveLocs(){save("locs",LOCS);setProgsRev(Date.now());if(typeof markDirty==="function")markDirty("progs")}
-function pickLoc(id){curLoc=id;locDay={date:TODAY,id};save("locday",locDay);if(!picked){cur=nextProg();chosen=false;draft.ex={};draft.prog=cur;save("gymdraft",draft)}renderGym()}
+function pickLoc(id){pickAnyway=false;locPrev=null;curLoc=id;locDay={date:TODAY,id};save("locday",locDay);if(!picked){cur=nextProg();chosen=false;draft.ex={};draft.prog=cur;save("gymdraft",draft)}renderGym()}
 let pickAnyway=false;   // rest day: no picker unless the user taps "train anyway"
 const needPick=()=>DAY===TODAY&&locDay.date!==TODAY&&!picked&&!editing&&!planDone()&&(planKeys(DAY).length>0||pickAnyway);
 const nProgs=n=>lang==="th"?`${n} โปรแกรม`:`${n} program${n===1?"":"s"}`;
@@ -124,13 +124,15 @@ const mapUrl=m=>{m=(m||"").trim();if(!m)return "";return /^https?:\/\//.test(m)?
 function renderLocPick(){const box=document.getElementById("locpick");if(!box)return;const show=needPick();box.hidden=!show;document.getElementById("v-gym").classList.toggle("picking",show);document.body.classList.toggle("loc-picking",show);renderLocHead();if(!show)return;
   const lastId=locDay.id||curLoc,todayAt=l=>planKeys(DAY).find(k=>locOf(PROGS[k])===l.id);
   const list=LOCS.slice().sort((x,y)=>(!!todayAt(y)-!!todayAt(x))||((y.id===lastId)-(x.id===lastId)));
-  box.innerHTML=`<h1 class="lp-h">${t("วันนี้ออกที่ไหน?")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}${planKeys(DAY).length?"":" · "+t("วันพัก · ออกได้ถ้าอยากออก")}</div>`+list.map(l=>{const k=todayAt(l),p=k&&PROGS[k],n=Object.keys(PROGS).filter(q=>q!=="free"&&locOf(PROGS[q])===l.id).length;
+  box.innerHTML=(pickAnyway?`<button class="btn sm lp-back" data-lpback>‹ ${t("กลับ")}</button>`:"")+`<h1 class="lp-h">${t("วันนี้ออกที่ไหน?")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}${planKeys(DAY).length?"":" · "+t("วันพัก · ออกได้ถ้าอยากออก")}</div>`+list.map(l=>{const k=todayAt(l),p=k&&PROGS[k],n=Object.keys(PROGS).filter(q=>q!=="free"&&locOf(PROGS[q])===l.id).length;
     const line=p?`${isCardio(p)?(p.icon||"🏃"):"▶"} ${esc(p.name)}${isCardio(p)?"":" · "+nU(p.ex.length,"ท่า")} · ${t("วันนี้")}`:nProgs(n);
     return `<div class="lp-card${l.id===lastId?" on":""}" role="button" tabindex="0" data-loc="${esc(l.id)}"><span class="lp-ic">${esc(l.icon||"📍")}</span><span class="lp-tx"><span class="lp-top"><b>${esc(t(l.name))}</b>${l.id===lastId?`<span class="pill">${t("ล่าสุด")}</span>`:""}</span><small>${line}</small></span><span class="lp-more" role="button" tabindex="0" data-locedit="${esc(l.id)}" aria-label="${t("แก้ไขสถานที่")}">•••</span></div>`}).join("")
     +`<button class="btn lp-add" data-locadd>+ ${t("เพิ่มสถานที่")}</button>`;
   box.querySelectorAll("[data-loc]").forEach(c=>c.addEventListener("click",ev=>{if(ev.target.closest("[data-map]"))return;const ed=ev.target.closest("[data-locedit]");if(ed){openLocEdit(ed.dataset.locedit);return}pickLoc(c.dataset.loc)}));
-  box.querySelector("[data-locadd]").addEventListener("click",()=>openLocEdit(null))}
-function openLocChange(){pickAnyway=true;locDay={};save("locday",locDay);renderGym();scrollAppTop()}
+  box.querySelector("[data-locadd]").addEventListener("click",()=>openLocEdit(null));box.querySelector("[data-lpback]")?.addEventListener("click",closeLocPick)}
+let locPrev=null;   // place picked before tapping Change / Train anyway, so Back can restore it
+function closeLocPick(){pickAnyway=false;if(locPrev&&locPrev.date)locDay=locPrev;save("locday",locDay);locPrev=null;renderGym();scrollAppTop()}
+function openLocChange(){pickAnyway=true;locPrev=locDay;locDay={};save("locday",locDay);renderGym();scrollAppTop()}
 function openLocEdit(id){const isNew=!id,l=isNew?{id:"l"+Date.now().toString(36),name:"",icon:"📍",map:"",eq:["db","body"],types:["gym","cardio"]}:JSON.parse(JSON.stringify(locById(id)));
   openGen(t(isNew?"เพิ่มสถานที่":"แก้ไขสถานที่"),`<div class="le">
     <div class="le-row"><input class="le-in le-ic" data-f="icon" value="${esc(l.icon||"")}" maxlength="4" aria-label="icon"><input class="le-in" data-f="name" value="${esc(l.name)}" placeholder="${t("ชื่อสถานที่")}" aria-label="${t("ชื่อสถานที่")}"></div>
