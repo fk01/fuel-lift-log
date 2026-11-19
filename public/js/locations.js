@@ -137,11 +137,12 @@ const modeChip=()=>dayMode()==="rest"?"😴 "+t("พัก"):"💪 "+t("ออ�
 function crumbs(items,lock){return `<nav class="crumbs${lock?" lock":""}" aria-label="${t("วันนี้")}"><span class="cr-lab">${t("วันนี้")}</span>${items.map(([lab,act],i)=>{const last=i===items.length-1;
     return `<span class="cr-sep">›</span>${lock||!act?`<span class="cr${last?" cur":""}">${esc(lab)}</span>`:`<button class="cr${last?" cur":""}" data-cr="${act}">${esc(lab)} <i>⌄</i></button>`}`}).join("")}</nav>`}
 function bindCrumbs(el){el.querySelectorAll("[data-cr]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.cr;
-  if(a==="mode"){setDayMode(null);pickAnyway=false;locPrev=null;locDay={};save("locday",locDay);renderGym();scrollAppTop()}else if(a==="place")openLocChange()}))}
+  if(a==="mode"){setDayMode(null);pickAnyway=false;locPrev=null;locDay={};save("locday",locDay);renderGym();scrollAppTop()}else if(a==="place")openLocChange();else if(a==="prog")openProgPick()}))}
 function renderLocHead(){try{updLocSum()}catch(e){}const h=document.getElementById("lochead");if(!h)return;const L=hereLoc(),it=[];
   if(DAY===TODAY&&dayMode()&&(!planDone()||picked))it.push([modeChip(),"mode"]);
   if(!resting())it.push([`${L.icon||"📍"} ${t(L.name)}`,"place"]);
   if(picked&&PROGS[cur])it.push(["▶ "+PROGS[cur].name,null]);
+  else if(DAY===TODAY&&!planDone()&&!resting()){const k=selProg();it.push([k?`${isCardio(PROGS[k])?(PROGS[k].icon||"🏃"):"📋"} ${PROGS[k].name}`:"📋 "+t("เลือกโปรแกรม"),"prog"])}
   h.innerHTML=crumbs(it,picked);bindCrumbs(h)}
 const eqSum=l=>l.eq.filter(q=>q!=="body").map(q=>t((EQ.find(x=>x[0]===q)||[0,q])[1])).join(" · ")+(l.dbMax&&l.eq.includes("db")?` ≤ ${l.dbMax} kg`:"")||t("ตัวเปล่า");
 const mapUrl=m=>{m=(m||"").trim();if(!m)return "";return /^https?:\/\//.test(m)?safeUrl(m):"https://maps.google.com/?q="+encodeURIComponent(m)};
@@ -231,3 +232,14 @@ function openPlaces(){openGen(t("จัดการสถานที่"),`<div
   <button class="btn primary" data-pladd>+ ${t("เพิ่มสถานที่")}</button>`,b=>{b.querySelectorAll("[data-pl]").forEach(r=>r.addEventListener("click",()=>openLocEdit(r.dataset.pl)));b.querySelector("[data-pladd]").addEventListener("click",()=>openLocEdit(null))})}
 document.getElementById("loc-open")?.addEventListener("click",openPlaces);
 function updLocSum(){const e=document.getElementById("loc-sum");if(e&&LOCS)e.textContent=LOCS.map(l=>t(l.name)).join(" · ")}
+
+/* ---------- program chip: today's program at this place (picked, else scheduled) ---------- */
+function selProg(){const k=locDay.date===TODAY&&locDay.prog;if(k&&PROGS[k]&&locOf(PROGS[k])===curLoc)return k;const pl=planFor(DAY);return pl&&PROGS[pl]&&locOf(PROGS[pl])===curLoc?pl:null}
+function chooseProg(k){locDay={...locDay,date:TODAY,id:curLoc,prog:k};save("locday",locDay);if(!isCardio(PROGS[k])&&!picked){if(cur!==k)draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft)}closeGen();renderGym()}
+function openProgPick(){const L=hereLoc(),sel=selProg(),pl=planFor(DAY),w=weightsHere(),c=cardioHere();
+  const row=k=>{const p=PROGS[k],cx=isCardio(p);return `<button class="menu-row" data-pp="${esc(k)}"><span class="mi">${cx?esc(p.icon||"🏃"):"📋"}</span><span class="mt"><b>${esc(p.name)}</b><small>${cx?"":nU(p.ex.length,"ท่า")+" · "+esc([...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(" "))}${k===pl?" · "+t("ตามตาราง"):""}</small></span><span class="mc">${k===sel?"✓":"›"}</span></button>`};
+  openGen(`${t("เลือกโปรแกรม")} · ${esc(L.icon||"📍")} ${esc(t(L.name))}`,`${w.length?`<div class="label" style="margin:0">${t("เวท")}</div><div class="pm-menu">${w.map(row).join("")}</div>`:""}
+    ${c.length?`<div class="label" style="margin:0">${t("คาร์ดิโอ")}</div><div class="pm-menu">${c.map(row).join("")}</div>`:""}
+    ${hasType(L,"gym")?`<button class="btn ghost" data-ppfree>＋ ${t("ออกแบบอิสระ")}</button>`:""}`,b=>{
+    b.querySelectorAll("[data-pp]").forEach(r=>r.addEventListener("click",()=>chooseProg(r.dataset.pp)));
+    b.querySelector("[data-ppfree]")?.addEventListener("click",()=>{closeGen();startEmpty()})})}
