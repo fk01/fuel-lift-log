@@ -100,7 +100,7 @@ const steps = [
     cxSet(run, { km: 5, sec: 1800 }); setDayMode(null); renderGym(); if (!document.querySelector(`#locpick [data-pl="${run}"].ok`)) throw new Error("done row");
     PROGS[run].days = keep.r; PROGS.push.days = keep.p; cxSet(run, null); Object.assign(tg, kt); logs.push(...saved); setDayMode("train"); pickLoc("gym"); }],
   ["pick-after-cardio", () => { location.hash = "gym"; dayKind = { date: TODAY, k: "cardio" }; setDayMode("train"); pickLoc("gym"); renderGym();
-    document.querySelector('#lochead [data-cr="prog"]').click(); const b = document.querySelector('#gen-body [data-pp="push"]'); if (!b) throw new Error("weights must be pickable after cardio"); b.click();
+    document.querySelector('#lochead [data-cr="prog"]').click(); const b = document.querySelector('#gen-body [data-pp="push"]'); if (!b) throw new Error("weights must be pickable after cardio"); b.click(); renderToday();
     if (!document.querySelector('#today [data-today="start:push"]')) throw new Error("start button"); dayKind = {}; }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
