@@ -487,3 +487,4 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 .how-steps{margin:0;padding-left:1.2em;font-size:.9rem;line-height:1.5;color:var(--fg)}.how-steps li+li{margin-top:4px}
 .sx-row{align-items:center}
 .how-btn:not(.lbl){padding:0;width:34px}.ex-name .how-btn{width:30px;height:30px;min-width:30px}
+.how-gif{display:block;margin:0 auto;align-self:center}
