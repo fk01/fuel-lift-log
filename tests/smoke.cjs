@@ -18,7 +18,8 @@ const steps = [
   ["food", () => (location.hash = "food")], ["gym", () => (location.hash = "gym")],
   ["stats", () => (location.hash = "stats")], ["more", () => (location.hash = "more")],
   ["library", () => openLib()], ["programs", () => { pmOnly = null; renderPM(); document.getElementById("pm-modal").hidden = false; }],
-  ["sheet", () => openSheet("push")], ["1rm", () => open1RM()], ["badges", () => openBadges()],
+  ["sheet", () => openSheet("push")],
+  ["recovery-16", () => { location.hash = "stats"; if (document.querySelectorAll("#rec-card .rec-grid .rec-t").length !== 16) throw new Error("recovery should list 16 muscles"); }], ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
 await b.close(); srv.close();

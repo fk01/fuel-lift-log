@@ -52,14 +52,20 @@ let recLast={};
 function lastTrained(){const out={},by={};logs.filter(l=>l.date<=TODAY).forEach(l=>Object.keys(l.ex).forEach(id=>{const x=exOf(id,l);musOf(x)[0].forEach(m=>{
     if(!out[m]||out[m]<l.date){out[m]=l.date;by[m]=[]}if(out[m]===l.date&&!by[m].includes(x.n))by[m].push(x.n)})}));recLast=by;return out}
 let recSel=null;
+// all 16 muscles always shown, fixed anatomical order; state: 0 never · 1 just trained (≤1d) · 2 recovering (2d) · 3 ready (3–7d) · 4 neglected (>7d)
+const REC_ORDER=["chest","delt","rear","traps","lats","bi","tri","fore","abs","obl","glute","quad","ham","add","abd","calf"],NEGLECT=7;
+const REC_C=["#55606f","#e07a6a","#d9a46c","#7cc47a","#8a6fd1"];
+Object.assign(EN,{"ยังไม่เคยเล่น":"Never","ละเลย":"Neglected","ควรเล่น":"Due","ท่าที่เล่นล่าสุด":"Last exercises"});
 function renderRecovery(){const box=document.getElementById("rec-card");if(!box)return;const lt=lastTrained(),now=ds2d(TODAY);
-  const ago=m=>lt[m]?Math.round((now-ds2d(lt[m]))/864e5):null,state=d=>d==null?0:d<=1?1:d<=2?2:3;
-  const C=["#2f2e2b","#e07a6a","#d9a46c","#7cc47a"];
-  const rows=Object.keys(MUS_NAME).filter(m=>lt[m]).sort((a,b)=>ago(a)-ago(b)).map(m=>{const d=ago(m);
-    return `<button class="rec-t" data-m="${m}" aria-pressed="${recSel===m}"><b><span>${t(MUS_NAME[m])}</span><small style="color:${C[state(d)]}">${d===0?t("วันนี้"):nU(d,"วันก่อน")}</small></b><em>${(recLast[m]||[]).map(esc).join(" · ")}</em></button>`}).join("");
-  box.innerHTML=`<div class="rec-wrap"><div class="rec-fig">${bodySVG([],[],170,m=>recSel&&m!==recSel?(lt[m]?"#3a3936":null):C[state(ago(m))])}</div><div class="rec-list">${rows||emptyBox("bar","ยังไม่มีข้อมูลการฝึก","เริ่มจากการ์ดวันนี้ในหน้าเวท")}</div></div>
-    <div class="rec-leg"><span><i style="background:${C[1]}"></i>${t("เพิ่งเล่น")}</span><span><i style="background:${C[2]}"></i>${t("กำลังฟื้น")}</span><span><i style="background:${C[3]}"></i>${t("พร้อม")}</span></div>
-`}
+  const ago=m=>lt[m]?Math.round((now-ds2d(lt[m]))/864e5):null,state=d=>d==null?0:d<=1?1:d<=2?2:d<=NEGLECT?3:4;
+  const lab=m=>{const d=ago(m);return d==null?t("ยังไม่เคยเล่น"):d===0?t("วันนี้"):nU(d,"วันก่อน")};
+  const due=REC_ORDER.filter(m=>{const s=state(ago(m));return s===0||s===4});
+  const tiles=REC_ORDER.map(m=>{const s=state(ago(m));return `<button class="rec-t s${s}" data-m="${m}" aria-pressed="${recSel===m}"><b>${t(MUS_NAME[m])}</b><small style="color:${REC_C[s]}">${lab(m)}</small></button>`}).join("");
+  const det=recSel?`<div class="rec-det"><b>${t(MUS_NAME[recSel])}</b><small style="color:${REC_C[state(ago(recSel))]}">${lab(recSel)}${lt[recSel]?" · "+thDate(lt[recSel],{day:"numeric",month:"short"}):""}</small>${(recLast[recSel]||[]).length?`<span>${t("ท่าที่เล่นล่าสุด")}: ${recLast[recSel].map(esc).join(", ")}</span>`:""}</div>`:"";
+  box.innerHTML=`<div class="rec-fig">${bodySVG([],[],170,m=>recSel&&m!==recSel?null:REC_C[state(ago(m))])}</div>
+    ${due.length?`<div class="rec-due">${t("ควรเล่น")}: ${due.map(m=>t(MUS_NAME[m])).join(", ")}</div>`:""}${det}
+    <div class="rec-grid">${tiles}</div>
+    <div class="rec-leg">${[[1,"เพิ่งเล่น"],[2,"กำลังฟื้น"],[3,"พร้อม"],[4,"ละเลย"],[0,"ยังไม่เคยเล่น"]].map(([k,l])=>`<span><i style="background:${REC_C[k]}"></i>${t(l)}</span>`).join("")}</div>`}
 /* ---------- generic bottom sheet ---------- */
 function openGen(title,html,after){document.getElementById("gen-body").innerHTML=`<div class="sheet-h"><b>${title}</b></div>${html}`;document.getElementById("gen-sheet").hidden=false;if(after)after(document.getElementById("gen-body"))}
 document.getElementById("gen-sheet").addEventListener("click",ev=>{if(ev.target.id==="gen-sheet"||ev.target.closest("[data-gen-close]"))document.getElementById("gen-sheet").hidden=true});

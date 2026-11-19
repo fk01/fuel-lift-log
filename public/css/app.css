@@ -462,3 +462,13 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 .empty svg{opacity:.8}.empty b{color:var(--fg);font-family:var(--f-ui);font-size:1rem}.empty small{font-size:.85rem}
 /* line icons in menus */
 .mi svg{display:block;margin:auto}
+
+/* recovery: all 16 muscles */
+#rec-card .rec-fig{display:flex;justify-content:center}
+.rec-due{font-size:.8rem;color:#c9b8f5;background:#2a2340;border:1px solid #4a3d75;border-radius:10px;padding:6px 10px;margin:8px 0 0}
+.rec-det{display:grid;gap:2px;margin-top:8px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px}.rec-det small{font-family:var(--f-num);font-size:.75rem}.rec-det span{font-size:.75rem;color:var(--muted)}
+.rec-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:8px}
+.rec-grid .rec-t{display:grid;gap:1px;padding:6px 6px;border-radius:9px;background:var(--bg);border:1px solid transparent;text-align:left;color:var(--fg);font:inherit;cursor:pointer;min-width:0}
+.rec-grid .rec-t b{font-size:.7rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rec-grid .rec-t small{font-family:var(--f-num);font-size:.62rem;white-space:nowrap}
+.rec-grid .rec-t.s0,.rec-grid .rec-t.s4{border-color:#4a3d75}.rec-grid .rec-t[aria-pressed="true"]{border-color:var(--fg)}
+.rec-leg{flex-wrap:wrap;gap:4px 12px!important}
