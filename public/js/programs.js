@@ -71,8 +71,6 @@ function renderProgs(){
   const pl=planFor(DAY);const box=document.getElementById("progs");box.innerHTML="";
   const hd=s=>{const d=document.createElement("div");d.className="pick-h";d.textContent=t(s);box.appendChild(d)};
   const L=hereLoc();
-  const h=document.createElement("button");h.className="pick-h loc-h";h.innerHTML=`${esc(L.icon||"📍")} ${esc(t(L.name))} ⌄`;h.addEventListener("click",openLocChange);box.appendChild(h);
-  if(hasType(L,"gym")&&hasType(L,"cardio"))hd("เวท");
   (hasType(L,"gym")?weightsHere():[]).map(k=>[k,PROGS[k]]).forEach(([k,p])=>{
     const last=[...logs].reverse().find(l=>l.prog===k);
     const b=document.createElement("button");b.className="prog";b.id="p-"+k;b.setAttribute("aria-pressed",(picked||chosen)&&k===cur);
@@ -139,15 +137,11 @@ function renderToday(){const box=document.getElementById("today");if(!box)return
   else{const here=pl&&locOf(PROGS[pl])===curLoc?pl:null,p=here&&PROGS[here];
     if(p&&isCardio(p)){const v=cxGet(here);title=`${p.icon||"🏃"} ${p.name}`;sub=v?"✓ "+cxTxt(here,v):"";btn=v?"":`${p.icon||"🏃"} ${t("บันทึก")} ${p.name}`;act="cx:"+here}
     else if(p){title=p.name;sub=`${nU(p.ex.length,"ท่า")} · ${[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", ")}`;btn=`▶ ${t("เริ่ม")} ${p.name}`;act="start:"+here}
-    else if(pl){title=(isCardio(PROGS[pl])?(PROGS[pl].icon||"🏃")+" ":"")+PROGS[pl].name}
+    else if(pl){title=t("เลือกโปรแกรม");sub=t("ไม่มีโปรแกรมในตารางวันนี้ที่นี่")}
     else{title="😴 "+t("วันพัก");sub=t("พักให้กล้ามฟื้น")}}
-  // planned somewhere else (or nothing planned here): offer this place's programs as chips, no "can't" text
-  const L=hereLoc(),alts=[],cxDoneToday=cxAny(DAY);
-  if(!picked&&!done.length&&!btn&&!(pl&&isCardio(PROGS[pl])&&cxGet(pl)))progsHere().forEach(k=>{const q=PROGS[k];if(isCardio(q)&&cxGet(k))return;alts.push([(isCardio(q)?(q.icon||"🏃"):"▶")+" "+q.name,(isCardio(q)?"cx:":"start:")+k])});
   box.className="today"+(done.length||(pl&&isCardio(PROGS[pl])&&cxGet(pl))?" is-done":"");
-  box.innerHTML=`<span class="td-top"><small class="td-l">${lbl}</small><button class="loc-chip" data-locchg${picked?" disabled":""}>${esc(L.icon||"📍")} ${esc(t(L.name))}${picked?"":" ⌄"}</button></span><b class="td-t">${esc(title)}</b>${sub?`<span class="td-s">${esc(sub)}</span>`:""}
-    ${btn?`<button class="btn primary td-b" data-today="${act}">${esc(btn)}</button>`:""}${alts.length?`<div class="td-chips">${alts.map(([l,a])=>`<button class="chip" data-today="${a}">${esc(l)}</button>`).join("")}</div>`:""}${!btn&&!alts.length&&!picked&&!done.length?`<button class="btn ghost sm td-x" data-today="any">${t("ออกนอกตาราง")} ↓</button>`:""}`;
-  const lc=box.querySelector("[data-locchg]");if(lc&&!picked)lc.addEventListener("click",openLocChange);
+  box.innerHTML=`<small class="td-l">${lbl}</small><b class="td-t">${esc(title)}</b>${sub?`<span class="td-s">${esc(sub)}</span>`:""}
+    ${btn?`<button class="btn primary td-b" data-today="${act}">${esc(btn)}</button>`:""}${!btn&&!picked&&!done.length?`<button class="btn ghost sm td-x" data-today="any">${t(pl?"ดูโปรแกรม":"ออกนอกตาราง")} ↓</button>`:""}`;
   box.querySelectorAll("[data-today]").forEach(b=>b.addEventListener("click",()=>{const a=b.dataset.today;
     if(a.startsWith("cx:")){openCardio(a.slice(3));return}
     if(a==="resume")document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"});

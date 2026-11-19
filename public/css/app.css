@@ -517,3 +517,14 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 .menu-row .mt small{display:block}
 .days .chip{min-width:40px;padding:6px 8px;text-align:center}
 .prog.cardio{position:relative}.prog.cardio .pc-more{position:absolute;top:8px;right:8px;margin:0}
+/* workout story */
+body.loc-picking:has(#v-gym:not([hidden])) #step1{display:none}
+.lochead{display:flex;align-items:center;justify-content:space-between;gap:12px}.lochead b{font-size:1.3rem;font-weight:600}
+#v-gym.picking>.lochead{display:none}
+.lp-h{font-family:var(--f-display);font-weight:400;font-size:2rem;margin:0}
+.lp-card{display:flex!important;align-items:center;gap:14px;min-height:72px}
+.lp-ic{font-size:2.2rem;line-height:1;width:44px;text-align:center}.lp-tx{flex:1;min-width:0;display:grid;gap:4px}
+.lp-tx .lp-top b{font-size:1.15rem}.lp-tx small{color:var(--muted);font-size:.85rem}
+#step2 .step-t{font-size:1.25rem}
+body.loc-picking:has(#v-gym:not([hidden])) .wrap>header,body.loc-picking:has(#v-gym:not([hidden])) .wrap>.top{display:none}
+.prog.cardio b{font-family:var(--f-body);font-weight:600;padding-right:56px}
