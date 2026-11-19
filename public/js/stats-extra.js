@@ -27,7 +27,7 @@ function renderMuscleSets(){const box=document.getElementById("mset-card");if(!b
     return `<div class="ring"><svg viewBox="0 0 64 64" width="64" height="64"><circle cx="32" cy="32" r="${r}" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="32" cy="32" r="${r}" fill="none" stroke="${v>=tg?"var(--up)":"var(--series,#4f93f5)"}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(C*f).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="ring-fig">${bodySVG(GROUP_MUS[g]||[],[],36)}</span><b>${groupName(g)}</b><small>${v} / ${nU(tg,"เซ็ต")}</small></div>`}).join("")}</div>`}
 function renderPRs(){const box=document.getElementById("pr-card");if(!box)return;const e1=s=>Math.max(...s.map(q=>(+q.kg||0)*(1+(+q.reps||0)/30)));
   const cut=dkey(addD(ds2d(TODAY),-30)),rows=[];
-  HEAVY.forEach(id=>{const h=logs.filter(l=>l.ex[id]&&l.ex[id].length);if(!h.length)return;const recent=h.filter(l=>l.date>=cut),old=h.filter(l=>l.date<cut);
+  HEAVY.forEach(id=>{const h=logs.filter(l=>l.ex[id]&&l.ex[id].length&&logLoc(l)===curLoc);if(!h.length)return;const recent=h.filter(l=>l.date>=cut),old=h.filter(l=>l.date<cut);
     const now=Math.max(...(recent.length?recent:h).map(l=>e1(l.ex[id]))),was=old.length?Math.max(...old.map(l=>e1(l.ex[id]))):null;
     rows.push({id,n:exName(id),now,d:was==null?null:now-was,sets:h.reduce((a,l)=>a+l.ex[id].length,0),last:h[h.length-1].date})});
   rows.sort((a,b)=>b.last.localeCompare(a.last));

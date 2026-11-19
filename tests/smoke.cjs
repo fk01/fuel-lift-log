@@ -16,6 +16,15 @@ await p.goto("http://localhost:8799/"); await p.waitForTimeout(800);
 await p.evaluate(() => (document.getElementById("login").hidden = true));
 const steps = [
   ["food", () => (location.hash = "food")], ["gym", () => (location.hash = "gym")],
+  ["gyms-picker", () => { if (document.getElementById("locpick").hidden || document.querySelectorAll("#locpick .lp-card").length !== 2) throw new Error("picker should show 2 places"); }],
+  ["gyms-condo", () => { pickLoc("condo"); if (!document.getElementById("locpick").hidden) throw new Error("picker should close");
+    const ks = progsHere(); if (ks.length !== 4) throw new Error("condo should have 4 programs, got " + ks.length);
+    const bad = ks.flatMap(k => PROGS[k].ex).filter(e => !canDo(e)); if (bad.length) throw new Error("condo has machine lifts: " + bad.map(e => e.n));
+    renderToday(); if (!document.querySelector("#today .loc-chip").textContent.includes("คอนโด") && !document.querySelector("#today .loc-chip").textContent.includes("Condo")) throw new Error("loc chip"); }],
+  ["gyms-edit", () => { openLocEdit(null); const g = document.getElementById("gen-body"); g.querySelector('[data-f="name"]').value = "Test Gym"; g.querySelector("[data-save]").click();
+    if (LOCS.length !== 3) throw new Error("add place"); openLocEdit(LOCS[2].id); const d = document.querySelector("#gen-body [data-del]"); d.click(); d.click(); if (LOCS.length !== 2) throw new Error("delete place"); }],
+  ["gyms-copy", () => { pickLoc("gym"); const n = Object.keys(PROGS).length; openProgMove("pull"); document.querySelector("#gen-body [data-go]").click();
+    if (Object.keys(PROGS).length !== n + 1 || curLoc !== "condo") throw new Error("copy program"); document.getElementById("pm-modal").hidden = true; pickLoc("gym"); }],
   ["stats", () => (location.hash = "stats")], ["more", () => (location.hash = "more")],
   ["library", () => openLib()], ["programs", () => { pmOnly = null; renderPM(); document.getElementById("pm-modal").hidden = false; }],
   ["sheet", () => openSheet("push")],

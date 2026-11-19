@@ -45,7 +45,7 @@ function libUpdate(id,patch){const x=EXLIB.find(q=>q.id===id);if(x)Object.assign
 
 let libMode=null,libEdit=null,libGroup="all",libEq="all";         // libMode: null = manage, {skip:Set,onPick:fn} = pick for a program
 const libNamed=x=>!!(x.n&&x.n.trim());
-function openLib(mode){libMode=mode||null;libEdit=null;libGroup="all";libQ="";libEq="all";const q=document.getElementById("lib-q");if(q){q.value="";q.placeholder=t("ค้นหาท่า")}loadCat();renderLib();document.getElementById("lib-modal").hidden=false}
+function openLib(mode){libMode=mode||null;libEdit=null;libGroup="all";libQ="";libEq=hereLoc().eq.length<EQ_ALL.length?"here":"all";const q=document.getElementById("lib-q");if(q){q.value="";q.placeholder=t("ค้นหาท่า")}loadCat();renderLib();document.getElementById("lib-modal").hidden=false}
 function closeLib(){const n=EXLIB.length;EXLIB=EXLIB.filter(libNamed);if(EXLIB.length!==n)save("exlib",EXLIB);
   libEdit=null;libMode=null;document.getElementById("lib-modal").hidden=true;renderGym()}
 function libDone(x){
@@ -89,12 +89,12 @@ function renderLib(){
   const haveId=new Set(EXLIB.map(x=>x.id)),haveN=new Set(EXLIB.map(x=>(x.n||"").trim().toLowerCase()));
   const extra=(CAT||[]).filter(c=>!c.as&&!haveId.has(c.id)&&!haveN.has(c.n.toLowerCase())).map(c=>Object.assign({cat:1},c));
   const q=libQ.trim().toLowerCase(),hit=x=>!q||x.id===libEdit||[x.n,x.t,x.e].some(s=>s&&s.toLowerCase().includes(q));
-  const all=mine.concat(extra).filter(hit).filter(x=>libEq==="all"||(x.z||"🔩")===libEq);
+  const all=mine.concat(extra).filter(hit).filter(x=>libEq==="all"||(libEq==="here"?canDo(x):(x.z||"🔩")===libEq));
   const count={};all.forEach(x=>{const g=groupOf(x);count[g]=(count[g]||0)+1});
   const chips=document.getElementById("lib-groups");chips.innerHTML="";
   [["all","ทั้งหมด"],...GROUPS].forEach(([g,l])=>{if(g!=="all"&&!count[g])return;const b=document.createElement("button");b.className="chip";b.setAttribute("aria-pressed",libGroup===g);
     b.textContent=`${t(l)} ${g==="all"?all.length:count[g]}`;b.addEventListener("click",()=>{libGroup=g;renderLib()});chips.appendChild(b)});
-  const eq=document.getElementById("lib-eq");if(eq){eq.innerHTML="";[["all","ทุกอุปกรณ์"],["🔩","🔩 "+t("เครื่อง")],["🏋️","🏋️ "+t("ดัมเบล/บาร์")],["🔗","🔗 "+t("เคเบิล")]].forEach(([k,l])=>{const b=document.createElement("button");b.className="chip";b.setAttribute("aria-pressed",libEq===k);b.textContent=t(l);b.addEventListener("click",()=>{libEq=k;renderLib()});eq.appendChild(b)})}
+  const eq=document.getElementById("lib-eq");if(eq){eq.innerHTML="";[...(hereLoc().eq.length<EQ_ALL.length?[["here",`${hereLoc().icon||"📍"} ${t(hereLoc().name)}`]]:[]),["all","ทุกอุปกรณ์"],["🔩","🔩 "+t("เครื่อง")],["🏋️","🏋️ "+t("ดัมเบล/บาร์")],["🔗","🔗 "+t("เคเบิล")]].forEach(([k,l])=>{const b=document.createElement("button");b.className="chip";b.setAttribute("aria-pressed",libEq===k);b.textContent=t(l);b.addEventListener("click",()=>{libEq=k;renderLib()});eq.appendChild(b)})}
   const order=g=>GROUPS.findIndex(q=>q[0]===g);
   const items=all.filter(x=>x.id===libEdit||libGroup==="all"||groupOf(x)===libGroup).sort((a,b)=>order(groupOf(a))-order(groupOf(b))||(a.n||"").localeCompare(b.n||""));
   const hint=document.createElement("p");hint.className="note";
