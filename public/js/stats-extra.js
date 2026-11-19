@@ -54,7 +54,7 @@ function lastTrained(){const out={},by={};logs.filter(l=>l.date<=TODAY).forEach(
 let recSel=null;
 // all 16 muscles always shown, fixed anatomical order; state: 0 never · 1 just trained (≤1d) · 2 recovering (2d) · 3 ready (3–7d) · 4 neglected (>7d)
 const REC_ORDER=["chest","delt","rear","traps","lats","bi","tri","fore","abs","obl","glute","quad","ham","add","abd","calf"],NEGLECT=7;
-const REC_C=["#55606f","#e07a6a","#d9a46c","#7cc47a","#8a6fd1"];
+const REC_C=["#55606f","#e07a6a","#d9a46c","#7cc47a","#7cc47a"];   // neglected = ready (green); the tile says how long ago
 Object.assign(EN,{"ฟื้น":"Recovered","พร้อมเต็มที่":"fully ready","พร้อมแล้ว":"Ready","พรุ่งนี้":"Tomorrow","เล่นล่าสุด":"last trained","ยังไม่ฟื้นเต็ม":"not fully recovered","กำลังฟื้น":"Recovering","พร้อม":"Ready","ยังไม่เคยเล่น":"Never","ยังไม่เคย":"Never","ละเลย":"Neglected","ควรเล่น":"Due","ท่าที่เล่นล่าสุด":"Last exercises"});
 // recovery %: hours since the last session that hit the muscle ÷ full recovery time (by muscle size, scaled by that session's sets)
 const REC_H={chest:72,lats:72,quad:72,ham:72,glute:72,delt:48,rear:48,traps:48,bi:48,tri:48,add:48,abd:48,calf:36,abs:36,obl:36,fore:36};
@@ -71,7 +71,7 @@ function renderRecovery(){const box=document.getElementById("rec-card");if(!box)
   box.innerHTML=`<div class="rec-fig">${bodySVG([],[],170,m=>REC_C[state(ago(m))])}</div>
     ${due.length?`<div class="rec-due">${t("ควรเล่น")}: ${due.map(m=>t(MUS_NAME[m])).join(", ")}</div>`:""}
     <div class="rec-grid">${tiles}</div>
-    <div class="rec-leg">${[[1,"< 40%"],[2,"กำลังฟื้น"],[3,"พร้อม"],[4,"ละเลย"],[0,"ยังไม่เคยเล่น"]].map(([k,l])=>`<span><i style="background:${REC_C[k]}"></i>${t(l)}</span>`).join("")}</div>`}
+    <div class="rec-leg">${[[1,"< 40%"],[2,"กำลังฟื้น"],[3,"พร้อม"],[0,"ยังไม่เคยเล่น"]].map(([k,l])=>`<span><i style="background:${REC_C[k]}"></i>${t(l)}</span>`).join("")}</div>`}
 /* ---------- generic bottom sheet ---------- */
 function openGen(title,html,after){document.getElementById("gen-body").innerHTML=`<div class="sheet-h has-x"><b>${title}</b><button class="sh-x" data-gen-close aria-label="${t("ปิด")}">✕</button></div>${html}`;document.getElementById("gen-sheet").hidden=false;if(after)after(document.getElementById("gen-body"))}
 document.getElementById("gen-sheet").addEventListener("click",ev=>{if(ev.target.id==="gen-sheet"||ev.target.closest("[data-gen-close]"))document.getElementById("gen-sheet").hidden=true});
