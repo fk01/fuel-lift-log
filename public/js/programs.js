@@ -74,8 +74,7 @@ function renderProgs(){
     const b=document.createElement("button");b.className="prog";b.id="p-"+k;b.setAttribute("aria-pressed",(picked||chosen)&&k===cur);
     const groups=[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", "),open=false;
     b.classList.toggle("open",open);
-    b.innerHTML=`<span class="pc-top"><b>${esc(p.name)}</b><span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span></span>${k===nx?`<em class="pc-tag">${t("คิวถัดไป")}</em>`:""}
-      <small class="pc-ex">${esc(p.ex.map(e=>e.n).join(", "))}</small>
+    b.innerHTML=`<span class="pc-top"><b>${esc(p.name)}</b><span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span></span>
       <small>${p.ex.length} ${t("ท่า")} · ${esc(groups)}</small>
       <small class="pc-when">${last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small>
       <ul class="prog-ex"${open?"":" hidden"}>${p.ex.map((e,n)=>`<li><b class="no">${n+1}</b><em class="nm">${e.z} ${esc(e.n)}</em><span class="ss">${e.s}×${e.r}</span><i class="mg">${groupName(groupOf(e))}</i></li>`).join("")}</ul>`;

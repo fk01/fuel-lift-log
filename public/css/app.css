@@ -434,3 +434,17 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 .meal.late:not(.next){border-color:#5a3e22}
 .meal[data-flag]:not([data-flag=""])::after{content:attr(data-flag);position:absolute;top:-9px;right:12px;font-size:.66rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--up);color:#111}
 .meal.late::after{background:#d9a46c!important}
+/* ===== Phase 2 type system: system sans for UI, mono only for numbers ===== */
+:root{--f-ui:system-ui,-apple-system,"IBM Plex Sans Thai",sans-serif}
+.btn,.chip,.tab,.label,.pick-h,.date,.step-t,.sec-t,.menu-row,.pm-open b,.wo-bar .btn,.btn.sm{font-family:var(--f-ui)!important;text-transform:none!important;letter-spacing:0!important}
+.btn{font-size:.92rem!important;font-weight:600}.btn.sm{font-size:.82rem!important;padding:6px 12px!important}
+.btn.primary{font-weight:700}
+.label,.pick-h{font-size:.8rem!important;font-weight:600;color:var(--muted)}.label::before{content:none!important}
+.tabbar .tab span svg{display:block}.tabbar .tab span{filter:none!important;opacity:.55}.tabbar .tab[aria-selected="true"] span{opacity:1}
+.st-tabs{grid-template-columns:1fr 1fr!important;position:sticky;top:-12px;z-index:6;background:var(--bg)!important;border:1px solid var(--line)}
+/* 2.5 compact level bar */
+.hero{padding:8px 12px!important;gap:10px!important;border-radius:14px!important}
+.hero canvas#hero-cv{width:44px!important;height:44px!important}
+.hero .hero-l b{font-size:1rem!important}.hero .hero-i{gap:3px!important}
+.hero .hero-l:last-child{display:none}
+.td-l{font-family:var(--f-ui)!important;font-weight:600}

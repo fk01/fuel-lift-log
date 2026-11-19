@@ -51,6 +51,11 @@ document.getElementById("lang").addEventListener("click",()=>{lang=lang==="th"?"
 document.getElementById("v-more").addEventListener("click",ev=>{const r=ev.target.closest("[data-act]");if(!r)return;const x=r.dataset.act;
   if(x==="rm")open1RM();else if(x==="badges")openBadges();else if(x==="lang"){document.getElementById("lang").click();updMoreLang()}else if(x==="refresh")doRefresh()});
 function updMoreLang(){const e=document.getElementById("more-lang");if(e)e.textContent=lang==="th"?"ไทย":"English"}
+/* ---------- Stats sub-tabs: Training | Body ---------- */
+let stTab=(()=>{try{return localStorage.getItem("sttab")||"train"}catch(e){return "train"}})();
+function applyStTab(){document.querySelectorAll("#st-tabs [data-st]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.st===stTab));document.querySelectorAll(".st-pane").forEach(p=>p.hidden=p.dataset.pane!==stTab)}
+document.getElementById("st-tabs").addEventListener("click",ev=>{const b=ev.target.closest("[data-st]");if(!b)return;stTab=b.dataset.st;try{localStorage.setItem("sttab",stTab)}catch(e){}applyStTab();scrollAppTop();try{renderStatsExtra();renderHistChart()}catch(e){}});
+applyStTab();
 /* ---------- startup ---------- */
 pkState();
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").then(pushState).catch(()=>{})}else{pushState()}

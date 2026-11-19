@@ -8,11 +8,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Fuel & Lift">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=053844">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=053973">
 <title>Fuel &amp; Lift Log</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+Thai:wght@400;500&display=swap">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*{-webkit-tap-highlight-color:transparent}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
-<link rel="stylesheet" href="/css/app.css?v=053844">
+<link rel="stylesheet" href="/css/app.css?v=053973">
 </head><body>
 
 <div class="wrap">
@@ -80,13 +80,15 @@
 
   <!-- PROGRESS -->
   <div id="v-stats" class="stack" style="gap:18px" hidden>
+    <div class="chips seg st-tabs" id="st-tabs"><button class="chip" data-st="train" data-i="การฝึก">การฝึก</button><button class="chip" data-st="body" data-i="ร่างกาย">ร่างกาย</button></div>
+    <div class="stack st-pane" data-pane="train" style="gap:18px">
     <div class="stack" style="gap:10px">
       <div class="sec-t" data-i="ภาพรวม">ภาพรวม</div>
       <div class="stats" id="stats"></div>
-      <div class="sec-t" data-i="วอลุ่ม">วอลุ่ม</div>
-      <div class="card" id="vol-card"></div>
       <div class="sec-t" data-i="การฟื้นตัวของกล้ามเนื้อ">การฟื้นตัวของกล้ามเนื้อ</div>
       <div class="card" id="rec-card"></div>
+      <div class="sec-t" data-i="วอลุ่ม">วอลุ่ม</div>
+      <div class="card" id="vol-card"></div>
       <div class="sec-t" data-i="เซ็ตต่อกล้ามเนื้อสัปดาห์นี้">เซ็ตต่อกล้ามเนื้อสัปดาห์นี้</div>
       <div class="card" id="mset-card"></div>
       <div class="sec-t" data-i="1RM เด่น">1RM เด่น</div>
@@ -99,10 +101,13 @@
       <div class="stack" id="hist-chart" hidden></div>
       <div class="stack" id="sessions"></div>
     </section>
-    <div class="sec-t" data-i="โภชนาการ">โภชนาการ</div>
-    <div class="stack" id="food-hist"></div>
+    </div>
+    <div class="stack st-pane" data-pane="body" style="gap:10px">
     <div class="sec-t" data-i="น้ำหนักตัว">น้ำหนักตัว</div>
     <div class="card stack" id="body-card" style="gap:8px"></div>
+    <div class="sec-t" data-i="โภชนาการ">โภชนาการ</div>
+    <div class="stack" id="food-hist"></div>
+    </div>
   </div>
 
   <!-- MORE -->
@@ -132,10 +137,10 @@
   </div>
 </div>
 <nav class="tabbar" role="tablist">
-  <button class="tab" role="tab" id="tab-food" data-v="food"><span>🍽️</span><small data-i="อาหาร">อาหาร</small></button>
-  <button class="tab" role="tab" id="tab-gym" data-v="gym"><span>🏋️</span><small data-i="เวท">เวท</small></button>
-  <button class="tab" role="tab" id="tab-stats" data-v="stats"><span>📈</span><small data-i="สถิติ">สถิติ</small></button>
-  <button class="tab" role="tab" id="tab-more" data-v="more"><span>☰</span><small data-i="เพิ่มเติม">เพิ่มเติม</small></button>
+  <button class="tab" role="tab" id="tab-food" data-v="food"><span><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v8a2 2 0 0 0 2 2v8M5 3v5M9 3v5M17 3c-2 0-3 3-3 6s1 4 3 4v8"/></svg></span><small data-i="อาหาร">อาหาร</small></button>
+  <button class="tab" role="tab" id="tab-gym" data-v="gym"><span><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4M6 7v10M18 7v10M21 10v4M6 12h12"/></svg></span><small data-i="เวท">เวท</small></button>
+  <button class="tab" role="tab" id="tab-stats" data-v="stats"><span><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><small data-i="สถิติ">สถิติ</small></button>
+  <button class="tab" role="tab" id="tab-more" data-v="more"><span><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></span><small data-i="เพิ่มเติม">เพิ่มเติม</small></button>
 </nav>
 <div class="toast" id="toast" hidden></div>
 <div id="ptr" aria-hidden="true"><span id="ptr-i">↓</span></div>
@@ -230,27 +235,27 @@
   </div>
 </div>
 
-<script src="/js/core.js?v=053844"></script>
-<script src="/js/food.js?v=053844"></script>
-<script src="/js/programs.js?v=053844"></script>
-<script src="/js/run.js?v=053844"></script>
-<script src="/js/workout.js?v=053844"></script>
-<script src="/js/exercise-edit.js?v=053844"></script>
-<script src="/js/exercise-library.js?v=053844"></script>
-<script src="/js/program-manager.js?v=053844"></script>
-<script src="/js/hero.js?v=053844"></script>
-<script src="/js/rest-timer.js?v=053844"></script>
-<script src="/js/auth.js?v=053844"></script>
-<script src="/js/push.js?v=053844"></script>
-<script src="/js/data-io.js?v=053844"></script>
-<script src="/js/sync.js?v=053844"></script>
-<script src="/js/muscle-map.js?v=053844"></script>
-<script src="/js/progress.js?v=053844"></script>
-<script src="/js/history-chart.js?v=053844"></script>
-<script src="/js/stats-extra.js?v=053844"></script>
-<script src="/js/share-card.js?v=053844"></script>
-<script src="/js/number-pad.js?v=053844"></script>
-<script src="/js/refresh.js?v=053844"></script>
-<script src="/js/app.js?v=053844"></script>
+<script src="/js/core.js?v=053973"></script>
+<script src="/js/food.js?v=053973"></script>
+<script src="/js/programs.js?v=053973"></script>
+<script src="/js/run.js?v=053973"></script>
+<script src="/js/workout.js?v=053973"></script>
+<script src="/js/exercise-edit.js?v=053973"></script>
+<script src="/js/exercise-library.js?v=053973"></script>
+<script src="/js/program-manager.js?v=053973"></script>
+<script src="/js/hero.js?v=053973"></script>
+<script src="/js/rest-timer.js?v=053973"></script>
+<script src="/js/auth.js?v=053973"></script>
+<script src="/js/push.js?v=053973"></script>
+<script src="/js/data-io.js?v=053973"></script>
+<script src="/js/sync.js?v=053973"></script>
+<script src="/js/muscle-map.js?v=053973"></script>
+<script src="/js/progress.js?v=053973"></script>
+<script src="/js/history-chart.js?v=053973"></script>
+<script src="/js/stats-extra.js?v=053973"></script>
+<script src="/js/share-card.js?v=053973"></script>
+<script src="/js/number-pad.js?v=053973"></script>
+<script src="/js/refresh.js?v=053973"></script>
+<script src="/js/app.js?v=053973"></script>
 
 </body></html>
