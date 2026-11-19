@@ -66,7 +66,7 @@ function renderRecovery(){const box=document.getElementById("rec-card");if(!box)
     <div class="rec-grid">${tiles}</div>
     <div class="rec-leg">${[[1,"เพิ่งเล่น"],[2,"กำลังฟื้น"],[3,"พร้อม"],[4,"ละเลย"],[0,"ยังไม่เคยเล่น"]].map(([k,l])=>`<span><i style="background:${REC_C[k]}"></i>${t(l)}</span>`).join("")}</div>`}
 /* ---------- generic bottom sheet ---------- */
-function openGen(title,html,after){document.getElementById("gen-body").innerHTML=`<div class="sheet-h"><b>${title}</b></div>${html}`;document.getElementById("gen-sheet").hidden=false;if(after)after(document.getElementById("gen-body"))}
+function openGen(title,html,after){document.getElementById("gen-body").innerHTML=`<div class="sheet-h has-x"><b>${title}</b><button class="sh-x" data-gen-close aria-label="${t("ปิด")}">✕</button></div>${html}`;document.getElementById("gen-sheet").hidden=false;if(after)after(document.getElementById("gen-body"))}
 document.getElementById("gen-sheet").addEventListener("click",ev=>{if(ev.target.id==="gen-sheet"||ev.target.closest("[data-gen-close]"))document.getElementById("gen-sheet").hidden=true});
 /* ---------- 1RM calculator ---------- */
 Object.assign(EN,{"คำนวณ 1RM":"1RM calculator","น้ำหนัก":"Weight","ครั้ง":"Reps","เหรียญรางวัล":"Badges","ปิด":"Close"});
@@ -80,7 +80,7 @@ function openBadges(){openGen("🏆 "+t("เหรียญรางวัล"),
 Object.assign(EN,{"มวลกล้ามเนื้อ":"Muscle mass","ไขมัน":"Body fat","บันทึกร่างกาย":"Log body","บันทึก":"Save"});
 let bodyMetric="kg";
 let bodyRange=90,bodyGoal=(()=>{try{return +localStorage.getItem("bodygoal")||0}catch(e){return 0}})();
-Object.assign(EN,{"เป้าหมาย":"Goal","ตั้งเป้า":"Set goal","อีก":"to go","ถึงเป้าแล้ว 🎉":"Goal reached 🎉","7 วัน":"7 days","30 วัน":"30 days","ต่อสัปดาห์":"per week","ประวัติ":"History","วันที่":"Date","ลบ":"Delete","แก้":"Edit"});
+Object.assign(EN,{"เป้าหมาย":"Goal","ตั้งเป้า":"Set goal","อีก":"to go","ถึงเป้าแล้ว 🎉":"Goal reached 🎉","7 วัน":"7 days","30 วัน":"30 days","ต่อสัปดาห์":"per week","ประวัติ":"History","วันที่":"Date","ลบ":"Delete","แก้":"Edit","สูงสุด":"High","ต่ำสุด":"Low","เพิ่มบันทึก":"Add entry"});
 renderBody=function(){const box=document.getElementById("body-card");if(!box)return;const L=BODY.slice().sort((a,b)=>a.d.localeCompare(b.d));
   const lastOf=k=>{for(let i=L.length-1;i>=0;i--)if(L[i][k]!=null)return L[i];return null};
   const M=[["kg","น้ำหนักตัว","kg"],["mm","มวลกล้ามเนื้อ","kg"],["fat","ไขมัน","%"]],U=M.find(m=>m[0]===bodyMetric)[2];
@@ -102,13 +102,16 @@ renderBody=function(){const box=document.getElementById("body-card");if(!box)ret
     const area=P.length>1?`<path d="${path} L${X(P[P.length-1]).toFixed(1)} ${H-PB} L${X(P[0]).toFixed(1)} ${H-PB}Z" fill="url(#bg)" />`:"";
     chart=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="trend"><defs><linearGradient id="bg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#4f93f5" stop-opacity=".35"/><stop offset="1" stop-color="#4f93f5" stop-opacity="0"/></linearGradient></defs>${ticks}${goal}${area}
       <path d="${path}" fill="none" stroke="var(--series,#4f93f5)" stroke-width="2.5" stroke-linejoin="round"/>${P.map(q=>`<circle cx="${X(q).toFixed(1)}" cy="${Y(q[bodyMetric]).toFixed(1)}" r="3.5" fill="var(--series,#4f93f5)"><title>${q.d}: ${q[bodyMetric]}</title></circle>`).join("")}
+      ${(()=>{const lv=P.map(q=>q[bodyMetric]),mx=Math.max(...lv),mn=Math.min(...lv),qm=P.find(q=>q[bodyMetric]===mx),qn=P.find(q=>q[bodyMetric]===mn),ql=P[P.length-1];
+        const lab=(q,txt,dy,anc)=>`<text x="${Math.min(W-2,Math.max(PL+2,X(q))).toFixed(1)}" y="${(Y(q[bodyMetric])+dy).toFixed(1)}" text-anchor="${anc}" font-size="10" fill="var(--fg)" font-family="var(--f-num)">${txt}</text>`;
+        return `<circle cx="${X(ql).toFixed(1)}" cy="${Y(ql[bodyMetric]).toFixed(1)}" r="6" fill="var(--fg)"/>`+(P.length>2&&qm!==ql?lab(qm,t("สูงสุด")+" "+mx,-8,"start"):"")+(P.length>2&&qn!==ql&&qn!==qm?lab(qn,t("ต่ำสุด")+" "+mn,16,"middle"):"")+`<text x="${(X(ql)-10).toFixed(1)}" y="${(Y(ql[bodyMetric])+18).toFixed(1)}" text-anchor="end" font-size="11" font-weight="600" fill="var(--fg)" font-family="var(--f-num)">${ql[bodyMetric]} ${U}</text>`})()}
       <text x="${PL}" y="${H-4}" font-size="9" fill="var(--muted)" font-family="var(--f-num)">${thDate(P[0].d,{day:"numeric",month:"short"})}</text><text x="${W}" y="${H-4}" text-anchor="end" font-size="9" fill="var(--muted)" font-family="var(--f-num)">${thDate(P[P.length-1].d,{day:"numeric",month:"short"})}</text></svg>`}
   const goalTxt=bodyMetric==="kg"&&bodyGoal&&last?(Math.abs(last.kg-bodyGoal)<.05?t("ถึงเป้าแล้ว 🎉"):`${t("อีก")} ${Math.round(Math.abs(last.kg-bodyGoal)*10)/10} kg`):"";
-  box.innerHTML=`<div class="btiles">${tiles}</div>
-    <div class="bstat"><span><small>${t("7 วัน")}</small>${fmtD(dlt(7))}</span><span><small>${t("30 วัน")}</small>${fmtD(dlt(30))}</span><span><small>${t("ต่อสัปดาห์")}</small>${fmtD(wk)}</span>${bodyMetric==="kg"?`<button class="bgoal" id="b-goal"><small>${t("เป้าหมาย")}</small><b>${bodyGoal||"–"}</b><em>${goalTxt||t("ตั้งเป้า")}</em></button>`:""}</div>
+  box.innerHTML=`<div class="card-h"><b>${t("น้ำหนักตัว")}</b><button class="btn primary sm" id="bw-add">+ ${t("เพิ่มบันทึก")}</button></div>
+    <div class="btiles">${tiles}</div>
+    <div class="bline"><span>${t("7 วัน")} ${fmtD(dlt(7))}</span><span>${t("30 วัน")} ${fmtD(dlt(30))}</span><span>${t("ต่อสัปดาห์")} ${fmtD(wk)}</span>${bodyMetric==="kg"?`<button class="bgoal" id="b-goal">${t("เป้าหมาย")} <b>${bodyGoal||"–"}</b> <em>${goalTxt||t("ตั้งเป้า")}</em></button>`:""}</div>
+    <div class="segc" role="tablist">${[[30,"1 เดือน"],[90,"3 เดือน"],[365,"1 ปี"],[0,"ทั้งหมด"]].map(([k,l])=>`<button class="chip" data-br="${k}" aria-pressed="${bodyRange===k}">${t(l)}</button>`).join("")}</div>
     ${chart}
-    <div class="chips seg">${[[30,"1 เดือน"],[90,"3 เดือน"],[365,"1 ปี"],[0,"ทั้งหมด"]].map(([k,l])=>`<button class="chip" data-br="${k}" aria-pressed="${bodyRange===k}">${t(l)}</button>`).join("")}</div>
-    <button class="btn primary" id="bw-add">+ ${t("บันทึกร่างกาย")}</button>
     ${L.length?`<details class="log"><summary>${t("ประวัติ")} (${L.length})</summary><table class="btab"><tr><th>${t("วันที่")}</th><th>kg</th><th>${t("มวลกล้ามเนื้อ")}</th><th>%</th><th></th></tr>${L.slice().reverse().map(q=>`<tr><td>${thDate(q.d,{day:"numeric",month:"short",year:"2-digit"})}</td><td>${q.kg??"–"}</td><td>${q.mm??"–"}</td><td>${q.fat??"–"}</td><td><button class="btn sm" data-bed="${q.d}">✎</button></td></tr>`).join("")}</table></details>`:""}`;
   box.querySelectorAll("[data-bm]").forEach(b=>b.addEventListener("click",()=>{bodyMetric=b.dataset.bm;renderBody()}));
   box.querySelectorAll("[data-br]").forEach(b=>b.addEventListener("click",()=>{bodyRange=+b.dataset.br;renderBody()}));
