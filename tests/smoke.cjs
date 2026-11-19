@@ -58,6 +58,10 @@ const steps = [
     if (!document.querySelector("#meals .flog-row")) throw new Error("entry row");
     document.getElementById("food-add").click(); if (!document.querySelector("#gen-body .flog-rec [data-r]")) throw new Error("recent foods"); closeGen();
     document.querySelector("#meals .flog-row").click(); const d = document.querySelector("#gen-body #fl-del"); d.click(); d.click(); if (logOf(DAY).length) throw new Error("delete entry"); }],
+  ["recovery-pct", () => { const d = new Date(Date.now() - 24 * 36e5); logs.push({ date: TODAY, prog: "push", ex: { "incline-db": [{ kg: 20, reps: 5 }, { kg: 20, reps: 5 }, { kg: 20, reps: 5 }, { kg: 20, reps: 5 }, { kg: 20, reps: 5 }] }, names: {}, at: d.getTime() });
+    const R = recPct(); if (!(R.chest && R.chest.pct >= 30 && R.chest.pct <= 36)) throw new Error("chest 24h/72h ≈ 33%, got " + (R.chest && R.chest.pct));
+    location.hash = "stats"; renderRecovery(); if (!document.querySelector("#rec-card .rec-bar")) throw new Error("bars");
+    openMuscle("chest"); if (!/%/.test(document.querySelector("#gen-body .msh-st").textContent)) throw new Error("sheet pct"); closeGen(); logs.pop(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
