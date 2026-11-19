@@ -418,3 +418,19 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 #food-hist details.log{display:block!important;padding:12px 14px!important}#food-hist details.log[open]>table{margin-top:8px}
 .fh-tg{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--muted);justify-content:flex-end}.fh-tg i{width:16px;border-top:2px dashed var(--fg)}
 .fh-tg i{width:10px!important;height:10px;border:0!important;border-radius:3px;margin-left:6px}.fh-tg i.ok{background:var(--up)}.fh-tg i.no{background:var(--series,#4f93f5)}
+
+/* Today card */
+.today{display:grid;gap:4px;padding:16px;border-radius:18px;background:linear-gradient(135deg,#232a36,#1a1a19);border:1px solid #2f3b4d}
+.today.is-done{background:linear-gradient(135deg,#1f2a1f,#1a1a19);border-color:#3a5a3a}
+.td-l{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+.td-t{font-family:system-ui,-apple-system,"IBM Plex Sans Thai",sans-serif;font-size:1.6rem;font-weight:800}
+.td-s{color:var(--muted);font-size:.88rem}.today.is-done .td-s{color:var(--up)}
+.td-b{margin-top:8px;padding:15px!important;font-size:.95rem!important}.td-x{justify-self:start;margin-top:4px}
+
+/* meals: next meal stands out, eaten meals shrink to one line, overdue flagged */
+.meal{position:relative}
+.meal.mini{padding:8px 14px;opacity:.6}.meal.mini ul{display:none}.meal.mini input{margin-top:0}
+.meal.next{border-color:var(--up);background:#1c241c;padding:16px 14px}.meal.next .time{color:var(--up)}
+.meal.late:not(.next){border-color:#5a3e22}
+.meal[data-flag]:not([data-flag=""])::after{content:attr(data-flag);position:absolute;top:-9px;right:12px;font-size:.66rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--up);color:#111}
+.meal.late::after{background:#d9a46c!important}

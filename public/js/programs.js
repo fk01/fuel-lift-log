@@ -123,3 +123,24 @@ const closeBad=()=>{document.getElementById("bad-modal").hidden=true};
 document.getElementById("bad-cancel").addEventListener("click",closeBad);
 document.getElementById("bad-modal").addEventListener("click",ev=>{if(ev.target.id==="bad-modal")closeBad()});
 document.getElementById("bad-ok").addEventListener("click",()=>{const tg=fs().tags;tg.bad=!tg.bad;save("mealcheck",food);closeBad();try{renderFood()}catch(e){}renderGym();toast(tg.bad?t("ตีแบด")+" ✓ +50 XP":t("ยกเลิกแล้ว"))});
+
+/* ---------- "Today" card: what the weekly plan says for the selected day, with one action ---------- */
+Object.assign(EN,{"วันนี้":"Today","วันพัก":"Rest day","พักให้กล้ามฟื้น":"Let your muscles recover","ออกนอกตาราง":"Train anyway","กลับไปเล่นต่อ":"Resume workout","เริ่ม":"Start","บันทึกตีแบด":"Log badminton","บันทึกวิ่ง":"Log run","เสร็จแล้ววันนี้":"Done today","ทำแล้ว":"Done","กำลังเล่น":"in progress"});
+function renderToday(){const box=document.getElementById("today");if(!box)return;
+  const pl=planFor(DAY),tg=fs().tags||{},done=logs.filter(l=>l.date===DAY),isT=DAY===TODAY,lbl=isT?t("วันนี้"):thDate(DAY,{weekday:"long"});
+  let title,sub="",btn="",act="";
+  if(picked&&PROGS[cur]){title=PROGS[cur].name;sub=t("กำลังเล่น");btn=`▶ ${t("กลับไปเล่นต่อ")}`;act="resume"}
+  else if(done.length){title=done.map(l=>progName(l.prog)).join(" + ");const n=done.reduce((a,l)=>a+Object.values(l.ex).reduce((b,s)=>b+s.length,0),0),v=Math.round(done.reduce((a,l)=>a+volOf(l),0));
+    sub=`✓ ${t("ทำแล้ว")} · ${n} ${t("เซ็ต")} · ${v.toLocaleString()} kg`;btn="";}
+  else if(pl==="run"){const r=tg.runData;title="🏃 "+t("วิ่ง")+" 10 km";sub=tg.run?`✓ ${r&&r.km?r.km+" km · "+fmtPace(r.sec/r.km)+"/km":t("ทำแล้ว")}`:"";btn=tg.run?"":`🏃 ${t("บันทึกวิ่ง")}`;act="run"}
+  else if(pl==="bad"){title="🏸 "+t("ตีแบด");sub=tg.bad?"✓ "+t("ทำแล้ว"):"";btn=tg.bad?"":`🏸 ${t("บันทึกตีแบด")}`;act="bad"}
+  else if(PROGS[pl]){const p=PROGS[pl];title=p.name;sub=`${p.ex.length} ${t("ท่า")} · ${[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", ")}`;btn=`▶ ${t("เริ่ม")} ${p.name}`;act="start:"+pl}
+  else{title="😴 "+t("วันพัก");sub=t("พักให้กล้ามฟื้น");btn="";act=""}
+  box.className="today"+(done.length||(pl==="run"&&tg.run)||(pl==="bad"&&tg.bad)?" is-done":"");
+  box.innerHTML=`<small class="td-l">${lbl}</small><b class="td-t">${esc(title)}</b>${sub?`<span class="td-s">${esc(sub)}</span>`:""}
+    ${btn?`<button class="btn primary td-b" data-today="${act}">${esc(btn)}</button>`:""}${!btn&&!picked&&!done.length?`<button class="btn ghost sm td-x" data-today="any">${t("ออกนอกตาราง")} ↓</button>`:""}`;
+  const b=box.querySelector("[data-today]");if(!b)return;b.addEventListener("click",()=>{const a=b.dataset.today;
+    if(a==="resume")document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"});
+    else if(a==="run")openRun();else if(a==="bad")openBad();
+    else if(a==="any")document.getElementById("step2").scrollIntoView({behavior:"smooth",block:"start"});
+    else if(a.startsWith("start:")){const k=a.slice(6);if(cur!==k)draft.ex={};cur=k;draft.prog=k;chosen=true;document.getElementById("start-w").click()}})}

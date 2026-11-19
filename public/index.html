@@ -8,16 +8,16 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Fuel & Lift">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=015547">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=053844">
 <title>Fuel &amp; Lift Log</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+Thai:wght@400;500&display=swap">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*{-webkit-tap-highlight-color:transparent}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
-<link rel="stylesheet" href="/css/app.css?v=015547">
+<link rel="stylesheet" href="/css/app.css?v=053844">
 </head><body>
 
 <div class="wrap">
   <header>
-    <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><span style="display:flex;gap:10px;align-items:center;min-width:0"><button class="burger" id="menu-btn" aria-label="Menu" aria-expanded="false"><i></i><i></i><i></i></button><h1 id="h1"></h1></span><span style="display:flex;gap:6px"><button class="btn sm" id="reload-btn" aria-label="Refresh" onclick="doRefresh()">↻</button><button class="btn sm" id="lang" aria-label="Language">TH</button></span></div>
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><span style="display:flex;gap:10px;align-items:center;min-width:0"><h1 id="h1"></h1></span><span style="display:flex;gap:6px"><button class="btn sm" id="lang" hidden aria-label="Language">TH</button></span></div>
   </header>
   <section class="stepbox" id="step1"><div class="step"><span class="num" id="sn-1" hidden>1</span><div class="date" id="date"></div><span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;min-width:0"><button class="btn sm" id="fold-btn" aria-label="Show or hide calendar">📅 ▾</button><button class="btn sm" id="today-btn" hidden data-i="วันนี้">วันนี้</button><button class="btn sm primary" id="share-last" data-i="แชร์" data-pre="↗ ">↗ แชร์</button></span></div>
     <input type="hidden" id="day">
@@ -47,14 +47,11 @@
     <div class="step"><span class="num">3</span><span class="step-t" data-i="ติ๊กมื้อที่กินแล้ว">ติ๊กมื้อที่กินแล้ว</span></div>
     <section class="stack" id="meals"></section>
     <button class="btn ghost" id="reset" style="align-self:start" data-i="ล้างวันนี้">ล้างวันนี้</button>
-    <section>
-      <div class="label" data-i="ประวัติ">ประวัติ</div>
-      <div class="stack" id="food-hist"></div>
-    </section>
   </div>
 
   <!-- GYM -->
   <div id="v-gym" class="stack" style="gap:16px" hidden>
+    <section class="today" id="today"></section>
     <section class="hero" id="hero"><canvas id="hero-cv" width="64" height="64" style="width:80px;height:80px"></canvas><div class="hero-i"><div class="hero-l"><b id="hero-lv">Lv 1</b><span id="hero-tier"></span></div><div class="track"><div class="fill" id="hero-fill"></div></div><div class="hero-l"><span id="hero-xp"></span><span id="hero-next"></span></div></div></section>
     <section class="stepbox" id="step2">
       <div class="step"><span class="num" id="sn-2">2</span><span class="step-t" data-i="โปรแกรม">โปรแกรม</span></div>
@@ -102,6 +99,8 @@
       <div class="stack" id="hist-chart" hidden></div>
       <div class="stack" id="sessions"></div>
     </section>
+    <div class="sec-t" data-i="โภชนาการ">โภชนาการ</div>
+    <div class="stack" id="food-hist"></div>
     <div class="sec-t" data-i="น้ำหนักตัว">น้ำหนักตัว</div>
     <div class="card stack" id="body-card" style="gap:8px"></div>
   </div>
@@ -110,12 +109,17 @@
   <div id="v-more" class="stack" style="gap:18px" hidden>
     <section class="menu">
       <button class="menu-row" id="lib-open"><span class="mi">📚</span><span class="mt"><b data-i="คลังท่า">คลังท่า</b><small data-i="สร้าง แก้ไข ดูวิธีเล่น">สร้าง แก้ไข ดูวิธีเล่น</small></span><span class="mc">›</span></button>
+      <button class="menu-row" data-act="rm"><span class="mi">🧮</span><span class="mt"><b data-i="คำนวณ 1RM">คำนวณ 1RM</b></span><span class="mc">›</span></button>
+      <button class="menu-row" data-act="badges"><span class="mi">🏆</span><span class="mt"><b data-i="เหรียญรางวัล">เหรียญรางวัล</b></span><span class="mc">›</span></button>
       <button class="menu-row" id="pm-open"><span class="mi">⚙</span><span class="mt"><b data-i="จัดการโปรแกรม">จัดการโปรแกรม</b><small data-i="ท่าในแต่ละโปรแกรม · JSON">ท่าในแต่ละโปรแกรม · JSON</small></span><span class="mc">›</span></button>
+    </section>
+    <section class="menu">
+      <button class="menu-row" data-act="lang"><span class="mi">🌐</span><span class="mt"><b data-i="ภาษา">ภาษา</b><small id="more-lang"></small></span><span class="mc">›</span></button>
+      <button class="menu-row" data-act="refresh"><span class="mi">↻</span><span class="mt"><b data-i="ซิงก์ข้อมูล">ซิงก์ข้อมูล</b><small data-i="หรือดึงหน้าจอลง">หรือดึงหน้าจอลง</small></span></button>
     </section>
   <section class="rules" style="display:grid;gap:8px">
     <div class="label" style="margin:0" data-i="ข้อมูล">ข้อมูล</div>
     <p class="note" id="sync"></p>
-    <p id="vpinfo"></p>
     <div class="actions"><button class="btn sm" id="export">Export JSON</button><button class="btn sm" id="import" data-i="นำเข้า JSON">นำเข้า JSON</button><input type="file" id="import-file" accept="application/json,.json" hidden></div>
     <div class="label" style="margin:8px 0 0">Face ID</div>
     <p class="note" id="pk-state"></p>
@@ -152,27 +156,6 @@
     <div class="pad-g" id="pad-steps"></div>
     <div class="actions"><button class="btn ghost" id="pad-clear" data-i="ล้าง">ล้าง</button><button class="btn primary" id="pad-done" style="flex:1" data-i="เสร็จ">เสร็จ</button></div>
   </div>
-</div>
-<div class="modal drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-label="Menu">
-  <nav class="drawer-in">
-    <div class="drawer-h"><b>Fuel &amp; Lift</b><button class="btn sm" id="drawer-close" aria-label="Close">✕</button></div>
-    <div class="menu">
-      <button class="menu-row" data-go="food"><span class="mi">🍽️</span><span class="mt"><b data-i="อาหาร">อาหาร</b></span><span class="mc">›</span></button>
-      <button class="menu-row" data-go="gym"><span class="mi">🏋️</span><span class="mt"><b data-i="เวท">เวท</b></span><span class="mc">›</span></button>
-      <button class="menu-row" data-go="stats"><span class="mi">📈</span><span class="mt"><b data-i="สถิติ">สถิติ</b></span><span class="mc">›</span></button>
-    </div>
-    <div class="menu">
-      <button class="menu-row" data-act="lib"><span class="mi">📚</span><span class="mt"><b data-i="คลังท่า">คลังท่า</b></span><span class="mc">›</span></button>
-      <button class="menu-row" data-act="pm"><span class="mi">⚙</span><span class="mt"><b data-i="จัดการโปรแกรม">จัดการโปรแกรม</b></span><span class="mc">›</span></button>
-      <button class="menu-row" data-act="rm"><span class="mi">🧮</span><span class="mt"><b data-i="คำนวณ 1RM">คำนวณ 1RM</b></span><span class="mc">›</span></button>
-      <button class="menu-row" data-act="badges"><span class="mi">🏆</span><span class="mt"><b data-i="เหรียญรางวัล">เหรียญรางวัล</b></span><span class="mc">›</span></button>
-      <button class="menu-row" data-go="more"><span class="mi">🔔</span><span class="mt"><b data-i="ข้อมูล · Face ID · แจ้งเตือน">ข้อมูล · Face ID · แจ้งเตือน</b></span><span class="mc">›</span></button>
-    </div>
-    <div class="menu">
-      <button class="menu-row" data-act="lang"><span class="mi">🌐</span><span class="mt"><b data-i="ภาษา">ภาษา</b><small id="drawer-lang"></small></span></button>
-      <button class="menu-row" data-act="refresh"><span class="mi">↻</span><span class="mt"><b data-i="ซิงก์ข้อมูล">ซิงก์ข้อมูล</b></span></button>
-    </div>
-  </nav>
 </div>
 <div class="modal sheet" id="prog-sheet" hidden role="dialog" aria-modal="true" aria-label="Program">
   <div class="sheet-in">
@@ -247,27 +230,27 @@
   </div>
 </div>
 
-<script src="/js/core.js?v=015547"></script>
-<script src="/js/food.js?v=015547"></script>
-<script src="/js/programs.js?v=015547"></script>
-<script src="/js/run.js?v=015547"></script>
-<script src="/js/workout.js?v=015547"></script>
-<script src="/js/exercise-edit.js?v=015547"></script>
-<script src="/js/exercise-library.js?v=015547"></script>
-<script src="/js/program-manager.js?v=015547"></script>
-<script src="/js/hero.js?v=015547"></script>
-<script src="/js/rest-timer.js?v=015547"></script>
-<script src="/js/auth.js?v=015547"></script>
-<script src="/js/push.js?v=015547"></script>
-<script src="/js/data-io.js?v=015547"></script>
-<script src="/js/sync.js?v=015547"></script>
-<script src="/js/muscle-map.js?v=015547"></script>
-<script src="/js/progress.js?v=015547"></script>
-<script src="/js/history-chart.js?v=015547"></script>
-<script src="/js/stats-extra.js?v=015547"></script>
-<script src="/js/share-card.js?v=015547"></script>
-<script src="/js/number-pad.js?v=015547"></script>
-<script src="/js/refresh.js?v=015547"></script>
-<script src="/js/app.js?v=015547"></script>
+<script src="/js/core.js?v=053844"></script>
+<script src="/js/food.js?v=053844"></script>
+<script src="/js/programs.js?v=053844"></script>
+<script src="/js/run.js?v=053844"></script>
+<script src="/js/workout.js?v=053844"></script>
+<script src="/js/exercise-edit.js?v=053844"></script>
+<script src="/js/exercise-library.js?v=053844"></script>
+<script src="/js/program-manager.js?v=053844"></script>
+<script src="/js/hero.js?v=053844"></script>
+<script src="/js/rest-timer.js?v=053844"></script>
+<script src="/js/auth.js?v=053844"></script>
+<script src="/js/push.js?v=053844"></script>
+<script src="/js/data-io.js?v=053844"></script>
+<script src="/js/sync.js?v=053844"></script>
+<script src="/js/muscle-map.js?v=053844"></script>
+<script src="/js/progress.js?v=053844"></script>
+<script src="/js/history-chart.js?v=053844"></script>
+<script src="/js/stats-extra.js?v=053844"></script>
+<script src="/js/share-card.js?v=053844"></script>
+<script src="/js/number-pad.js?v=053844"></script>
+<script src="/js/refresh.js?v=053844"></script>
+<script src="/js/app.js?v=053844"></script>
 
 </body></html>

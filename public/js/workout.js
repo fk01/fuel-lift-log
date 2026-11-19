@@ -129,7 +129,7 @@ document.getElementById("cancel-w").addEventListener("click",ev=>{const b=ev.cur
   if(woProgress().any&&!b.dataset.sure){b.dataset.sure=1;b.querySelector("span").textContent=t("แตะอีกครั้งเพื่อทิ้ง");b.classList.add("warn");
     clearTimeout(b._t);b._t=setTimeout(()=>{delete b.dataset.sure;b.classList.remove("warn");b.querySelector("span").textContent=t("ยกเลิก")},3000);return}
   delete b.dataset.sure;b.classList.remove("warn");b.querySelector("span").textContent=t("ยกเลิก");cancelProg();toast(t("ยกเลิกการออกแล้ว"))});
-function renderGym(){if(draft.prog==="free"&&!PROGS.free)PROGS.free={name:t("ออกแบบอิสระ"),sub:"",ex:[]};try{renderProgress()}catch(e){}try{renderStatsExtra()}catch(e){}try{renderHero()}catch(e){}
+function renderGym(){setTimeout(()=>{try{renderToday()}catch(e){console.error(e)}},0);if(draft.prog==="free"&&!PROGS.free)PROGS.free={name:t("ออกแบบอิสระ"),sub:"",ex:[]};try{renderProgress()}catch(e){}try{renderStatsExtra()}catch(e){}try{renderHero()}catch(e){}
   ["step3","step4"].forEach(id=>document.getElementById(id).hidden=!picked&&!editing);
   document.getElementById("step1").classList.toggle("compact",(picked||editing)&&!document.getElementById("v-gym").hidden);document.getElementById("step2").hidden=picked||editing;
   // resume a workout only if sets were actually logged (weights alone are pre-filled from last time)

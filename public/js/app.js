@@ -31,7 +31,7 @@ function renderWeek(){const box=document.getElementById("week");if(!box)return;c
   box.querySelectorAll("[data-ds]").forEach(b=>b.addEventListener("click",()=>{weekOpen=false;wkMonth=null;if(b.dataset.ds===DAY){renderWeek();return}DAY=b.dataset.ds;draft.ex={};picked=false;renderAll()}));
   box.querySelectorAll("[data-mv]").forEach(b=>b.addEventListener("click",()=>{const [y,m]=(wkMonth||DAY.slice(0,7)).split("-").map(Number);wkMonth=dkey(new Date(y,m-1+(+b.dataset.mv),1)).slice(0,7);renderWeek()}))}
 document.getElementById("date").addEventListener("click",()=>{weekOpen=!weekOpen;wkMonth=null;renderWeek()});
-function renderAll(){applyStatic();try{renderWeek()}catch(e){}document.getElementById("today-btn").hidden=DAY===TODAY;document.getElementById("save-day").textContent="→ "+new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"numeric"});document.getElementById("date").textContent=new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{weekday:"short",day:"numeric",month:"long"})+(DAY===TODAY?"":" · "+(lang==="th"?"ย้อนหลัง":"Backfill"));updUnitBtn();renderFood();renderGym();show(viewOf())}
+function renderAll(){applyStatic();try{updMoreLang()}catch(e){}try{renderWeek()}catch(e){}document.getElementById("today-btn").hidden=DAY===TODAY;document.getElementById("save-day").textContent="→ "+new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"numeric"});document.getElementById("date").textContent=new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{weekday:"short",day:"numeric",month:"long"})+(DAY===TODAY?"":" · "+(lang==="th"?"ย้อนหลัง":"Backfill"));updUnitBtn();renderFood();renderGym();show(viewOf())}
 document.getElementById("lang").addEventListener("click",()=>{lang=lang==="th"?"en":"th";try{localStorage.setItem("lang",lang)}catch(e){}renderAll()});
 /* ---------- lock page scroll while a full-screen modal is open (iOS scrolled the page behind it) ---------- */
 (()=>{const sync=()=>document.documentElement.classList.toggle("modal-open",[...document.querySelectorAll(".modal:not(.pad)")].some(m=>!m.hidden));
@@ -40,27 +40,17 @@ document.getElementById("lang").addEventListener("click",()=>{lang=lang==="th"?"
 (()=>{const st=navigator.standalone===true||matchMedia("(display-mode: standalone)").matches;document.documentElement.classList.toggle("standalone",st);
   // use the visible height; if iOS already keeps a strip below the web view (home-screen apps), skip our own home-indicator padding
   const fit=()=>{const r=document.documentElement,full=innerHeight>=innerWidth?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);
-    r.style.setProperty("--app-h",innerHeight+"px");r.classList.toggle("reserved-bottom",st&&full-innerHeight>40);try{vpInfo()}catch(e){}};
+    r.style.setProperty("--app-h",innerHeight+"px");r.classList.toggle("reserved-bottom",st&&full-innerHeight>40);};
   fit();addEventListener("resize",fit);addEventListener("orientationchange",()=>setTimeout(fit,300))})();
-/* screen-size readout in More → Data (to tune the shell on real iPhones) */
-function vpInfo(){const el=document.getElementById("vpinfo");if(!el)return;const pr=v=>{const d=document.createElement("div");d.style.cssText="position:fixed;left:-9px;top:0;width:1px;height:"+v;document.body.appendChild(d);const h=d.getBoundingClientRect().height;d.remove();return Math.round(h)};
-  const sb=(()=>{const d=document.createElement("div");d.style.cssText="position:fixed;left:-9px;width:1px;height:env(safe-area-inset-bottom,0px)";document.body.appendChild(d);const h=d.getBoundingClientRect().height;d.remove();return Math.round(h)})();
-  el.textContent=`vp ${innerWidth}×${innerHeight} · vv ${Math.round(visualViewport?visualViewport.height:0)} · scr ${screen.width}×${screen.height} · svh ${pr("100svh")} dvh ${pr("100dvh")} lvh ${pr("100lvh")} · sab ${sb} · app-h ${getComputedStyle(document.documentElement).getPropertyValue("--app-h")} · sa ${document.documentElement.classList.contains("standalone")?1:0}`}
-addEventListener("hashchange",()=>{if(location.hash==="#more")vpInfo()});setTimeout(vpInfo,500);
 /* ---------- hide the tab bar while scrolling, show it again when scrolling stops ---------- */
 (()=>{const w=document.querySelector(".wrap"),r=document.documentElement;let last=0,tm=null;
   w.addEventListener("scroll",()=>{const y=w.scrollTop,d=y-last;last=y;
     if(y<=10)r.classList.remove("bar-hide");else if(Math.abs(d)>3)r.classList.add("bar-hide");
     clearTimeout(tm);tm=setTimeout(()=>r.classList.remove("bar-hide"),350)},{passive:true})})();
-/* ---------- ☰ side menu (top-left): every screen and tool in one place ---------- */
-(()=>{const d=document.getElementById("drawer"),btn=document.getElementById("menu-btn");
-  const open=()=>{document.getElementById("drawer-lang").textContent=lang==="th"?"ไทย":"English";d.hidden=false;btn.setAttribute("aria-expanded","true")};
-  const close=()=>{d.hidden=true;btn.setAttribute("aria-expanded","false")};
-  btn.addEventListener("click",open);document.getElementById("drawer-close").addEventListener("click",close);
-  d.addEventListener("click",ev=>{if(ev.target===d){close();return}const r=ev.target.closest(".menu-row");if(!r)return;
-    if(r.dataset.go){close();location.hash=r.dataset.go;return}
-    const a=r.dataset.act;if(a==="lib"){close();openLib()}else if(a==="pm"){close();pmOnly=null;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false}
-    else if(a==="rm"){close();open1RM()}else if(a==="badges"){close();openBadges()}else if(a==="lang"){document.getElementById("lang").click();open()}else if(a==="refresh"){close();doRefresh()}})})();
+/* ---------- More tab is the one menu: tools, language, sync ---------- */
+document.getElementById("v-more").addEventListener("click",ev=>{const r=ev.target.closest("[data-act]");if(!r)return;const x=r.dataset.act;
+  if(x==="rm")open1RM();else if(x==="badges")openBadges();else if(x==="lang"){document.getElementById("lang").click();updMoreLang()}else if(x==="refresh")doRefresh()});
+function updMoreLang(){const e=document.getElementById("more-lang");if(e)e.textContent=lang==="th"?"ไทย":"English"}
 /* ---------- startup ---------- */
 pkState();
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").then(pushState).catch(()=>{})}else{pushState()}

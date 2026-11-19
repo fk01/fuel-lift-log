@@ -22,7 +22,7 @@ function mealList(){const t=fs().tags;const l=MEALS.map(m=>({...m}));if(t.late){
 function dayP(day){const d=food[day];if(!d)return null;let p=0;[...MEALS,EXTRAS.run,EXTRAS.bad].forEach(m=>{if(d.done[m.id])p+=m.p});return p}
 let fhMetric="p",fhRange=7,fhAll=false;const K_GOAL=2032;
 const addDays=(ds,n)=>{const d=new Date(ds+"T12:00:00");d.setDate(d.getDate()+n);return d};
-Object.assign(EN,{"ถึงเป้า":"Hit target","ยังไม่ถึง":"Below","เป้า":"Target","ดูทั้งหมด":"Show all","ย่อ":"Show less"});
+Object.assign(EN,{"มื้อถัดไป":"Next","เลยเวลา":"Overdue","ถึงเป้า":"Hit target","ยังไม่ถึง":"Below","เป้า":"Target","ดูทั้งหมด":"Show all","ย่อ":"Show less"});
 function renderFoodHist(){
   const box=document.getElementById("food-hist");box.innerHTML="";
   const all30=Object.keys(food).filter(d=>food[d]&&Object.values(food[d].done||{}).some(Boolean)).sort().reverse().slice(0,60);
@@ -55,9 +55,13 @@ function renderFood(){renderFoodHist();
   document.querySelectorAll(".chip[data-k]").forEach(c=>c.setAttribute("aria-pressed",!!fs().tags[c.dataset.k]));
   const box=document.getElementById("meals");box.innerHTML="";
   const meals=mealList();
+  // next meal = first one not ticked; meals past their time (today only) are flagged
+  const nowHM=(()=>{const d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")})();
+  const nextId=(meals.find(m=>!fs().done[m.id])||{}).id;
   meals.forEach(m=>{
-    const done=!!fs().done[m.id];
-    const el=document.createElement("label");el.className="meal"+(done?" done":"")+(m.id.startsWith("x")?" extra":"");
+    const done=!!fs().done[m.id],late=!done&&DAY===TODAY&&/^\d\d:\d\d$/.test(m.time)&&m.time<nowHM,isNext=m.id===nextId;
+    const el=document.createElement("label");el.className="meal"+(done?" done mini":"")+(m.id.startsWith("x")?" extra":"")+(isNext?" next":"");
+    el.dataset.flag=isNext?(late?t("เลยเวลา"):t("มื้อถัดไป")):late?t("เลยเวลา"):"";if(late)el.classList.add("late");
     el.innerHTML=`<input type="checkbox" id="c-${m.id}" ${done?"checked":""}><div><div class="row-head"><span><span class="time">${t(m.time)}</span> · ${t(m.name)}</span><span class="macro">${m.vit?"💊":`${m.k} kcal · P${m.p}`}</span></div><ul>${m.items.map(i=>`<li>${t(i)}</li>`).join("")}</ul></div>`;
     el.querySelector("input").addEventListener("change",e=>{fs().done[m.id]=e.target.checked;save("mealcheck",food);renderFood()});
     box.appendChild(el);
