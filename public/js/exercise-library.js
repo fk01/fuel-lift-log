@@ -31,8 +31,8 @@ function howBtn(x,label){return hasHow(x)?`<span class="how-btn${label?" lbl":""
 function howTo(x){return howBtn(x,true)}
 function openHowTo(id,name){const x=EXLIB.find(q=>q.id===id)||(CAT||[]).find(q=>q.id===id)||{id,n:name},cat=catOf(x),gif=gifOf(x),link=safeUrl(x.link);
   openGen(esc(x.n||name),`${cat?`<small class="note">${esc(cat.t)} · ${esc(cat.e)}</small>`:""}${gif?`<img class="how-gif" src="${esc(gif)}" alt="">`:""}
-    ${cat&&cat.s&&cat.s.length?`<ol class="how-steps">${cat.s.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>`:""}
-    ${link?`<a class="btn" href="${esc(link)}" target="_blank" rel="noopener">▶ YouTube / TikTok</a>`:""}<button class="btn" data-gen-close>${t("ปิด")}</button>`)}
+    ${cat&&cat.s&&cat.s.length?`<ol class="how-steps">${cat.s.map(s=>{const m=String(s).match(/^(.{3,40}?)([,.:;]\s|\s(?:so|until|with|and|then|to|while)\s)/i);return `<li><span>${m?`<b>${esc(m[1])}</b>${esc(s.slice(m[1].length))}`:esc(s)}</span></li>`}).join("")}</ol>`:""}
+    ${link?`<a class="btn" href="${esc(link)}" target="_blank" rel="noopener">▶ YouTube / TikTok</a>`:""}<button class="btn primary sticky-b" data-gen-close>${t("เข้าใจแล้ว")}</button>`)}
 document.addEventListener("click",ev=>{const b=ev.target.closest&&ev.target.closest("[data-how]");if(!b)return;ev.preventDefault();ev.stopPropagation();openHowTo(b.dataset.how,b.dataset.hown)},true);
 setTimeout(loadCat,0);
 function adoptCat(c){let x=EXLIB.find(q=>q.id===c.id);if(!x){x=libPick(c);EXLIB.push(x);save("exlib",EXLIB)}return x}

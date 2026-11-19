@@ -13,7 +13,7 @@ const TYPES=[["gym","🏋️ เวท"],["cardio","🏃 คาร์ดิโ�
 Object.assign(EN,{"เวท":"Weights","คาร์ดิโอ":"Cardio","ประเภทโปรแกรม":"Program types","สนามแบด":"Badminton court","วันนี้:":"Today:","เปลี่ยนที่":"Change place","แทน":"for",
   "เลื่อนขึ้น":"Move up","เลื่อนลง":"Move down","ลบโปรแกรม":"Delete program","วันในตาราง":"Days","ระยะ + เวลา":"Distance + time","✓ ทำแล้ว":"✓ Done","เป้าหมาย (km)":"Goal (km)",
   "โปรแกรมคาร์ดิโอ":"Cardio program","เพิ่มโปรแกรมที่":"Add program at","ท่า · เซ็ต · ครั้ง":"Exercises · sets · reps","บันทึกระยะ/เวลา หรือ ✓":"Log distance/time or ✓",
-  "ชื่อโปรแกรม":"Program name","บันทึก…":"Log…","ที่นี่มีโปรแกรม":"Programs here","ลบ?":"Delete?"});
+  "ชื่อโปรแกรม":"Program name","เข้าใจแล้ว":"Got it","แก้แบบ JSON (ขั้นสูง)":"Edit as JSON (advanced)","ท่าเหมือนเดิม":"unchanged","จะเปลี่ยน":"will change","การฝึก":"Training","ข้อมูล":"Data","ตั้งค่า":"Settings","จัดการสถานที่":"Places","บันทึก…":"Log…","ที่นี่มีโปรแกรม":"Programs here","ลบ?":"Delete?"});
 const WD=["อา","จ","อ","พ","พฤ","ศ","ส"],WD_EN=["Su","Mo","Tu","We","Th","Fr","Sa"];
 const typesOf=l=>(l&&l.types)||(l&&l.act?[...(l.act.includes("gym")?["gym"]:[]),...(l.act.some(a=>a!=="gym")?["cardio"]:[])]:["gym","cardio"]);
 const hasType=(l,ty)=>typesOf(l).includes(ty);
@@ -114,7 +114,7 @@ function saveLocs(){save("locs",LOCS);setProgsRev(Date.now());if(typeof markDirt
 function pickLoc(id){curLoc=id;locDay={date:TODAY,id};save("locday",locDay);if(!picked){cur=nextProg();chosen=false;draft.ex={};draft.prog=cur;save("gymdraft",draft)}renderGym()}
 const needPick=()=>DAY===TODAY&&locDay.date!==TODAY&&!picked&&!editing&&!planDone();
 const nProgs=n=>lang==="th"?`${n} โปรแกรม`:`${n} program${n===1?"":"s"}`;
-function renderLocHead(){const h=document.getElementById("lochead");if(!h)return;const L=hereLoc();
+function renderLocHead(){try{updLocSum()}catch(e){}const h=document.getElementById("lochead");if(!h)return;const L=hereLoc();
   h.innerHTML=`<b>${esc(L.icon||"📍")} ${esc(t(L.name))}</b>${picked?"":`<button class="btn sm" data-lc>${t("เปลี่ยน")}</button>`}`;const b=h.querySelector("[data-lc]");if(b)b.addEventListener("click",openLocChange)}
 const eqSum=l=>l.eq.filter(q=>q!=="body").map(q=>t((EQ.find(x=>x[0]===q)||[0,q])[1])).join(" · ")+(l.dbMax&&l.eq.includes("db")?` ≤ ${l.dbMax} kg`:"")||t("ตัวเปล่า");
 const mapUrl=m=>{m=(m||"").trim();if(!m)return "";return /^https?:\/\//.test(m)?safeUrl(m):"https://maps.google.com/?q="+encodeURIComponent(m)};
@@ -157,11 +157,12 @@ function closeGen(){document.getElementById("gen-sheet").hidden=true}
 function openProgMove(k,m0){const p=PROGS[k],others=LOCS.filter(l=>l.id!==locOf(p));if(!others.length){toast(t("ไม่มีสถานที่อื่น"));return}
   let to=others[0].id,mode=m0||"copy";
   const draw=b=>{const L=locById(to),{log}=convertEx(p.ex,L);
-    b.querySelector("[data-prev]").innerHTML=log.length?log.map(([e,s])=>`<div class="mv-row"><span>${esc(e.n)}</span><span>→ ${s?`<b>${esc(s.n)}</b>`:`<i>${t("ไม่มีท่าแทน → ตัดออก")}</i>`}</span></div>`).join(""):`<small class="note">✓ ${nU(p.ex.length,"ท่า")}</small>`;
+    const same=p.ex.length-log.length,by={};log.forEach(([e,x])=>{const g=groupName(groupOf(e));(by[g]=by[g]||[]).push([e,x])});
+    b.querySelector("[data-prev]").innerHTML=Object.entries(by).map(([g,rs])=>`<div class="label" style="margin:6px 0 0">${esc(g)} · ${t("จะเปลี่ยน")} ${nU(rs.length,"ท่า")}</div>`+rs.map(([e,x])=>`<div class="mv-row"><span class="old">${esc(e.n)}</span>${x?`<b>→ ${esc(x.n)}</b>`:`<i>${t("ไม่มีท่าแทน → ตัดออก")}</i>`}</div>`).join("")).join("")+(same?`<small class="note">✓ ${lang==="th"?`อีก ${same} ท่าเหมือนเดิม`:`${same} unchanged`}</small>`:"");
     b.querySelectorAll("[data-to]").forEach(c=>c.setAttribute("aria-pressed",c.dataset.to===to));b.querySelectorAll("[data-mode]").forEach(c=>c.setAttribute("aria-pressed",c.dataset.mode===mode));
     b.querySelector("[data-go]").textContent=t(mode==="copy"?"คัดลอก แล้วแก้ต่อ":"ย้าย แล้วแก้ต่อ")};
-  openGen(`${esc(p.name)} → ${t("สถานที่")}`,`<div class="chips">${others.map(l=>`<button class="chip" data-to="${esc(l.id)}">${esc(l.icon||"📍")} ${esc(t(l.name))}</button>`).join("")}</div>
-    <div class="mv" data-prev></div><div class="chips"><button class="chip" data-mode="copy">${t("คัดลอก")}</button><button class="chip" data-mode="move">${t("ย้าย")}</button></div>
+  openGen(`${esc(p.name)} → ${t("สถานที่")}…`,`<div class="chips">${others.map(l=>`<button class="chip" data-to="${esc(l.id)}">${esc(l.icon||"📍")} ${esc(t(l.name))}</button>`).join("")}</div>
+    <div class="mv" data-prev></div><div class="chips segc"><button class="chip" data-mode="copy">${t("คัดลอก")}</button><button class="chip" data-mode="move">${t("ย้าย")}</button></div>
     <button class="btn primary" data-go></button><button class="btn" data-gen-close>${t("ปิด")}</button>`,b=>{draw(b);
     b.querySelectorAll("[data-to]").forEach(c=>c.addEventListener("click",()=>{to=c.dataset.to;draw(b)}));
     b.querySelectorAll("[data-mode]").forEach(c=>c.addEventListener("click",()=>{mode=c.dataset.mode;draw(b)}));
@@ -195,3 +196,8 @@ function openCardioEdit(k){const isNew=!k,p=isNew?{name:"",icon:"🏃",kind:"car
       const q=isNew?p:PROGS[k];q.name=name;q.icon=v("icon")||"🏃";q.track=tr;const g=+v("goal");if(tr==="dist"&&g>0)q.goal=g;else delete q.goal;q.days=readDays(b);
       if(isNew)PROGS["x"+Date.now().toString(36)]=q;saveProgs();closeGen();renderGym();try{if(!document.getElementById("pm-modal").hidden)renderPM()}catch(e){}});
     const d=b.querySelector("[data-del]");if(d)d.addEventListener("click",()=>{if(!d.dataset.sure){d.dataset.sure=1;d.textContent=t("ลบ?");return}delete PROGS[k];saveProgs();closeGen();renderGym();try{renderPM()}catch(e){}})})}
+/* ---------- More › Places: list every place, edit or add ---------- */
+function openPlaces(){openGen(t("จัดการสถานที่"),`<div class="pm-menu">${LOCS.map(l=>`<button class="menu-row" data-pl="${esc(l.id)}"><span class="mi">${esc(l.icon||"📍")}</span><span class="mt"><b>${esc(t(l.name))}</b><small>${nProgs(Object.keys(PROGS).filter(k=>k!=="free"&&locOf(PROGS[k])===l.id).length)}</small></span><span class="mc">›</span></button>`).join("")}</div>
+  <button class="btn primary" data-pladd>+ ${t("เพิ่มสถานที่")}</button>`,b=>{b.querySelectorAll("[data-pl]").forEach(r=>r.addEventListener("click",()=>openLocEdit(r.dataset.pl)));b.querySelector("[data-pladd]").addEventListener("click",()=>openLocEdit(null))})}
+document.getElementById("loc-open")?.addEventListener("click",openPlaces);
+function updLocSum(){const e=document.getElementById("loc-sum");if(e&&LOCS)e.textContent=LOCS.map(l=>t(l.name)).join(" · ")}

@@ -57,7 +57,7 @@ function pmExRows(box,k){const list=PROGS[k].ex;box.innerHTML="";
     box.appendChild(r)})}
 function renderPM(){
   if(pmOnly&&!PROGS[pmOnly])pmOnly=null;if(pmOnly)pmTab="ui";
-  document.getElementById("pm-tabs").hidden=!!pmOnly;document.getElementById("pm-title").textContent=pmOnly?`✎ ${PROGS[pmOnly].name}`:t("จัดการโปรแกรม");
+  document.getElementById("pm-tabs").hidden=pmTab!=="json"||!!pmOnly;document.getElementById("pm-title").textContent=pmOnly?`✎ ${PROGS[pmOnly].name}`:t("จัดการโปรแกรม");
   document.querySelectorAll("#pm-tabs .chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.tab===pmTab));
   const box=document.getElementById("pm-body");box.innerHTML="";
   if(pmTab==="json"){
@@ -90,7 +90,8 @@ function renderPM(){
     box.appendChild(r)});
   const a=document.createElement("button");a.className="btn primary";a.textContent="+ "+t("เพิ่มโปรแกรม");
   a.addEventListener("click",openAddProg);
-  box.appendChild(a)}
+  const j=document.createElement("button");j.className="btn text sm";j.style.justifySelf="center";j.textContent=t("แก้แบบ JSON (ขั้นสูง)");j.addEventListener("click",()=>{pmTab="json";renderPM()});
+  box.appendChild(a);box.appendChild(j)}
 // single-program editor: name, description, exercises
 function pmEditOne(box,k){const p=PROGS[k];
   if(pmFromList){const back=document.createElement("button");back.className="btn sm";back.style.justifySelf="start";back.textContent="‹ "+t("ทุกโปรแกรม");
