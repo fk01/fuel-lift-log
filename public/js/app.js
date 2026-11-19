@@ -6,7 +6,7 @@ const VIEWS=["food","gym","stats","more"],TITLES={food:"วันนี้กิ
 let curView="food",lastMain="gym";
 function show(v){if(!VIEWS.includes(v))v="food";curView=v;if(v==="food"||v==="gym")lastMain=v;
   VIEWS.forEach(x=>document.getElementById("v-"+x).hidden=x!==v);
-  document.getElementById("step1").hidden=!(v==="food"||v==="gym");
+  document.getElementById("step1").hidden=!(v==="food"||v==="gym");document.getElementById("share-last").hidden=v!=="gym";
   document.querySelectorAll(".tabbar .tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
   document.getElementById("h1").textContent=t(TITLES[v]);scrollAppTop();
   if(v==="stats")try{renderHistChart()}catch(e){}}

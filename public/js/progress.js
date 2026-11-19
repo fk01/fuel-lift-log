@@ -38,7 +38,7 @@ let dayDs=null;
 function openDay(ds){dayDs=ds;const d=food[ds]||{done:{},tags:{}},tg=d.tags||{},ls=logs.filter(l=>l.date===ds);
   const all=[...MEALS,EXTRAS.run,EXTRAS.bad],eaten=all.filter(m=>(d.done||{})[m.id]),k=eaten.reduce((a,m)=>a+m.k,0),p=eaten.reduce((a,m)=>a+m.p,0);
   const rows=[];
-  ls.forEach(l=>{const n=Object.values(l.ex).reduce((a,s)=>a+s.length,0);rows.push(`<li><b class="no">🏋️</b><em class="nm">${esc(progName(l.prog))}</em><span class="ss">${Object.keys(l.ex).length} ${t("ท่า")} · ${n} ${t("เซ็ต")}</span></li>`)});
+  ls.forEach(l=>{const n=Object.values(l.ex).reduce((a,s)=>a+s.length,0);rows.push(`<li><b class="no">🏋️</b><em class="nm">${esc(progName(l.prog))}</em><span class="ss">${nU(Object.keys(l.ex).length,"ท่า")} · ${nU(n,"เซ็ต")}</span></li>`)});
   if(tg.run){const r=tg.runData;rows.push(`<li><b class="no">🏃</b><em class="nm">${t("วิ่ง")}</em><span class="ss">${r&&r.km?`${r.km} km · ${fmtPace(r.sec/r.km)}/km`:"✓"}</span></li>`)}
   if(tg.bad)rows.push(`<li><b class="no">🏸</b><em class="nm">${t("ตีแบด")}</em><span class="ss">✓</span></li>`);
   rows.push(`<li><b class="no">🍽️</b><em class="nm">${t("อาหาร")}</em><span class="ss">${k} kcal · P${p}</span></li>`);

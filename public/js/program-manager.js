@@ -38,7 +38,7 @@ function pmCommit(P,newLib){PROGS=P;if(newLib&&newLib.length){EXLIB.push(...newL
 function pmExRows(box,k){const list=PROGS[k].ex;box.innerHTML="";
   list.forEach((e,i)=>{const lock=isLocked(k,e);const r=document.createElement("div");r.className="pm-row";
     r.innerHTML=`<div class="pm-top"><b class="no">${i+1}</b><span class="nm">${lock?"🔒 ":""}${e.z} ${esc(e.n)} <i class="mg">${musOf(e)[0].map(m=>t(MUS_NAME[m])).join(", ")||groupName(groupOf(e))}</i></span></div>
-      <div class="pm-ctl"><input type="number" readonly inputmode="none" data-pad="sets" value="${e.s}" aria-label="${esc(e.n)} ${t("เซ็ต")}"><span>×</span>
+      <div class="pm-ctl"><input type="number" readonly inputmode="none" data-pad="sets" value="${e.s}" aria-label="${nU(esc(e.n),"เซ็ต")}"><span>×</span>
         <input readonly inputmode="none" data-pad="rng" value="${esc(e.r)}" aria-label="${esc(e.n)} ${t("ช่วงครั้ง")}">
         <button class="btn sm" data-up ${i===0?"disabled":""} aria-label="up">↑</button><button class="btn sm" data-down ${i===list.length-1?"disabled":""} aria-label="down">↓</button>
         <button class="btn sm" data-mus-ed aria-label="${t("กล้ามที่โดน")}">💪</button>${lock?"":`<button class="btn sm" data-swap aria-label="${t("เปลี่ยนท่า")}">⇄</button><button class="btn sm ghost" data-rm aria-label="${t("ลบท่า")}">✕</button>`}</div>`;
@@ -72,7 +72,7 @@ function renderPM(){
   // list view: one compact row per program; tap a row to edit that program
   const keys=Object.keys(PROGS).filter(k=>k!=="free");
   keys.forEach((k,i)=>{const p=PROGS[k];const r=document.createElement("div");r.className="pm-li";
-    r.innerHTML=`<button class="pm-open" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}"><b>${esc(p.name)}</b><small>${esc(t(p.sub||""))}</small><small>${p.ex.length} ${t("ท่า")} ›</small></button>
+    r.innerHTML=`<button class="pm-open" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}"><b>${esc(p.name)}</b><small>${esc(t(p.sub||""))}</small><small>${nU(p.ex.length,"ท่า")} ›</small></button>
       <div class="pm-li-act"><button class="btn sm" data-up ${i===0?"disabled":""} aria-label="up">↑</button><button class="btn sm" data-down ${i===keys.length-1?"disabled":""} aria-label="down">↓</button><button class="btn sm ghost" data-del aria-label="${t("ลบโปรแกรม")}">🗑</button></div>`;
     const on=(s,ev,fn)=>r.querySelector(s).addEventListener(ev,fn);
     on(".pm-open","click",()=>{pmOnly=k;pmFromList=true;renderPM();document.getElementById("pm-modal").scrollTop=0});

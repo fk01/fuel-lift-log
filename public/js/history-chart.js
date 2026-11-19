@@ -58,7 +58,7 @@ function renderHistChart(){
   sec.hidden=histMode!=="chart";list.hidden=histMode==="chart";if(sec.hidden)return;
   renderHistInto(sec)}
 function renderHistInto(sec){
-  const ids=histIds();if(!ids.length){sec.innerHTML=`<p class="note">—</p>`;return}
+  const ids=histIds();if(!ids.length){sec.innerHTML=emptyBox('chart','ยังไม่มีประวัติเวท','เริ่มจากการ์ดวันนี้ในหน้าเวท');return}
   if(histEx!=="all"&&!ids.includes(histEx)){const l=logs[logs.length-1];histEx=Object.keys(l.ex).find(id=>l.ex[id].length)||ids[0]}
   const byG={};ids.forEach(id=>{const x={id,n:exName(id)};(byG[groupOf(x)]=byG[groupOf(x)]||[]).push(x)});
   const chips=(arr,cur,attr)=>arr.map(([v,l])=>`<button class="chip" data-${attr}="${v}" aria-pressed="${cur===v}">${t(l)}</button>`).join("");
@@ -76,7 +76,7 @@ function renderHistInto(sec){
   const plot=sec.querySelector("#hist-plot"),stats=sec.querySelector("#hist-stats");
   if(!pts.length){stats.innerHTML="";plot.innerHTML=`<p class="note">${t("ยังไม่มีข้อมูลในช่วงนี้")}</p>`;return}
   const last=pts[pts.length-1].v,top=Math.max(...pts.map(p=>p.v)),d=last-pts[0].v;
-  stats.innerHTML=[[fmtNum(last),`${t("ครั้งล่าสุด")} · ${unit}`],[fmtNum(top),`${t("สถิติสูงสุด")} · ${unit}`],[pts.length>1?(d>0?"▲ +":d<0?"▼ ":"")+fmtNum(d):"–",`${t("เทียบครั้งแรก")} · ${pts.length} ${t("ครั้งที่บันทึก")}`]]
+  stats.innerHTML=[[fmtNum(last),`${t("ครั้งล่าสุด")} · ${unit}`],[fmtNum(top),`${t("สถิติสูงสุด")} · ${unit}`],[pts.length>1?(d>0?"▲ +":d<0?"▼ ":"")+fmtNum(d):"–",`${t("เทียบครั้งแรก")} · ${nU(pts.length,"ครั้งที่บันทึก")}`]]
     .map(([v,l])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join("");
   lineChart(plot,pts,unit)}
 document.querySelectorAll("#hist-mode .chip").forEach(c=>c.addEventListener("click",()=>{histMode=c.dataset.m;try{localStorage.setItem("histmode",histMode)}catch(e){}renderHistChart()}));

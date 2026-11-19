@@ -26,7 +26,7 @@ Object.assign(EN,{"มื้อถัดไป":"Next","เลยเวลา":"
 function renderFoodHist(){
   const box=document.getElementById("food-hist");box.innerHTML="";
   const all30=Object.keys(food).filter(d=>food[d]&&Object.values(food[d].done||{}).some(Boolean)).sort().reverse().slice(0,60);
-  if(!all30.length){box.innerHTML='<p class="note">—</p>';return}
+  if(!all30.length){box.innerHTML=emptyBox('bowl','ยังไม่มีบันทึกอาหาร','ติ๊กมื้อในหน้าอาหาร');return}
   // chart card: protein (or kcal) per day vs target, like the Stats cards
   const tot=ds=>{const d=food[ds]||{done:{}},e=[...MEALS,EXTRAS.run,EXTRAS.bad].filter(m=>(d.done||{})[m.id]);return{k:e.reduce((a,m)=>a+m.k,0),p:e.reduce((a,m)=>a+m.p,0)}};
   const n=fhRange,days7=[...Array(n)].map((_,i)=>dkey(addDays(TODAY,i-n+1))),vals=days7.map(ds=>tot(ds)[fhMetric]),tg=fhMetric==="p"?P_TARGET:K_GOAL;

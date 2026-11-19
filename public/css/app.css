@@ -1,6 +1,6 @@
 /* Layout: one narrow column on near-black with a faint dot grid; serif headings, mono uppercase labels, cream pills. Single dark look by choice. */
 :root{
-  --bg:#0e0e0d; --surface:#151514; --fg:#ece8e1; --muted:#8a8780; --line:#2a2927;
+  --bg:#0e0e0d; --surface:#151514; --fg:#ece8e1; --muted:#9d9a93; --line:#2a2927;
   --accent:#ece8e1; --accent-soft:#1f1e1c; --warn:#d9a46c; --up:#c9e6c2; --on-accent:#111110;
   --f-body:"IBM Plex Sans Thai",system-ui,sans-serif; --f-num:"IBM Plex Mono",ui-monospace,monospace;
   --f-display:"Noto Serif Thai",Georgia,serif;
@@ -448,3 +448,17 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 .hero .hero-l b{font-size:1rem!important}.hero .hero-i{gap:3px!important}
 .hero .hero-l:last-child{display:none}
 .td-l{font-family:var(--f-ui)!important;font-weight:600}
+
+/* ===== Phase 3 ===== */
+/* 3.1 toast above the tab bar (and the rest / workout bars) */
+.toast{bottom:auto!important;top:calc(var(--app-h,100vh) - var(--tabh,80px) - 64px)!important;z-index:45;box-shadow:0 6px 20px #0008;border-radius:12px!important;max-width:86vw;text-align:center;white-space:nowrap;left:50%!important;transform:translateX(-50%)!important}
+.wrap.has-rest~.toast{top:calc(var(--app-h,100vh) - var(--tabh,80px) - 190px)!important}
+/* 3.2 bigger hit areas */
+.pc-more{min-width:44px;min-height:32px;display:grid;place-items:center;position:relative}.pc-more::before{content:"";position:absolute;inset:-8px}
+.btn.sm{min-height:36px}.chip{min-height:34px}.restset button{width:36px!important;height:36px!important}
+.wd:disabled{opacity:.5!important}.tabbar .tab span{opacity:.7!important}.meal.mini{opacity:.75!important}.cal-grid .d small.plan{opacity:.75}
+/* 3.7 empty states */
+.empty{display:grid;justify-items:center;gap:6px;padding:22px 12px;text-align:center;color:var(--muted)}
+.empty svg{opacity:.8}.empty b{color:var(--fg);font-family:var(--f-ui);font-size:1rem}.empty small{font-size:.85rem}
+/* line icons in menus */
+.mi svg{display:block;margin:auto}

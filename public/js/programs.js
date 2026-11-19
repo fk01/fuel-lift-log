@@ -75,7 +75,7 @@ function renderProgs(){
     const groups=[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", "),open=false;
     b.classList.toggle("open",open);
     b.innerHTML=`<span class="pc-top"><b>${esc(p.name)}</b><span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span></span>
-      <small>${p.ex.length} ${t("ท่า")} · ${esc(groups)}</small>
+      <small>${nU(p.ex.length,"ท่า")} · ${esc(groups)}</small>
       <small class="pc-when">${last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small>
       <ul class="prog-ex"${open?"":" hidden"}>${p.ex.map((e,n)=>`<li><b class="no">${n+1}</b><em class="nm">${e.z} ${esc(e.n)}</em><span class="ss">${e.s}×${e.r}</span><i class="mg">${groupName(groupOf(e))}</i></li>`).join("")}</ul>`;
     b.addEventListener("click",ev=>{if(ev.target.closest(".pc-more")){pmOnly=k;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false;return}
@@ -99,10 +99,10 @@ function groupSets(p){const m={};p.ex.forEach(e=>{const g=groupOf(e);m[g]=(m[g]|
 function estMin(p){return Math.round(p.ex.reduce((a,e)=>a+e.s*(40+restFor(e)),0)/60/5)*5}
 function openSheet(k){const p=PROGS[k];if(!p)return;sheetK=k;const last=[...logs].reverse().find(l=>l.prog===k);
   document.getElementById("sheet-body").innerHTML=`<div class="sheet-h"><b>${esc(p.name)}</b><small>${esc(t(p.sub||""))}</small>
-    <small>${p.ex.length} ${t("ท่า")} · ~${estMin(p)} ${t("นาที")} · ${last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small></div>
+    <small>${nU(p.ex.length,"ท่า")} · ~${estMin(p)} ${t("นาที")} · ${last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small></div>
     <div class="sheet-body-fig">${bodySVG(...musUnion(p.ex),180)}</div>
     <div class="mgsum">${groupSets(p).map(([g,n])=>`<span><b>${n}</b> ${t("เซ็ต")}<small>${groupName(g)}</small></span>`).join("")}</div>
-    <div class="sx">${p.ex.map(e=>{const gif=gifOf(e);return `<div class="sx-row">${gif?`<img src="${esc(gif)}" alt="" loading="lazy">`:`<span class="sx-ph">${e.z}</span>`}<span class="sx-mini">${bodySVG(...musOf(e),44)}</span><span><b>${esc(e.n)}</b><small>${e.s} ${t("เซ็ต")} × ${esc(e.r)} · ${groupName(groupOf(e))}</small></span></div>`}).join("")}</div>`;
+    <div class="sx">${p.ex.map(e=>{const gif=gifOf(e);return `<div class="sx-row">${gif?`<img src="${esc(gif)}" alt="" loading="lazy">`:`<span class="sx-ph">${e.z}</span>`}<span class="sx-mini">${bodySVG(...musOf(e),44)}</span><span><b>${esc(e.n)}</b><small>${nU(e.s,"เซ็ต")} × ${esc(e.r)} · ${groupName(groupOf(e))}</small></span></div>`}).join("")}</div>`;
   const m=document.getElementById("prog-sheet");m.hidden=false;m.querySelector(".sheet-in").style.transform="";m.querySelector(".sheet-in").scrollTop=0}
 function closeSheet(){document.getElementById("prog-sheet").hidden=true;sheetK=null}
 document.getElementById("prog-sheet").addEventListener("click",ev=>{if(ev.target.id==="prog-sheet")closeSheet()});
@@ -130,10 +130,10 @@ function renderToday(){const box=document.getElementById("today");if(!box)return
   let title,sub="",btn="",act="";
   if(picked&&PROGS[cur]){title=PROGS[cur].name;sub=t("กำลังเล่น");btn=`▶ ${t("กลับไปเล่นต่อ")}`;act="resume"}
   else if(done.length){title=done.map(l=>progName(l.prog)).join(" + ");const n=done.reduce((a,l)=>a+Object.values(l.ex).reduce((b,s)=>b+s.length,0),0),v=Math.round(done.reduce((a,l)=>a+volOf(l),0));
-    sub=`✓ ${t("ทำแล้ว")} · ${n} ${t("เซ็ต")} · ${v.toLocaleString()} kg`;btn="";}
+    sub=`✓ ${t("ทำแล้ว")} · ${nU(n,"เซ็ต")} · ${v.toLocaleString()} kg`;btn="";}
   else if(pl==="run"){const r=tg.runData;title="🏃 "+t("วิ่ง")+" 10 km";sub=tg.run?`✓ ${r&&r.km?r.km+" km · "+fmtPace(r.sec/r.km)+"/km":t("ทำแล้ว")}`:"";btn=tg.run?"":`🏃 ${t("บันทึกวิ่ง")}`;act="run"}
   else if(pl==="bad"){title="🏸 "+t("ตีแบด");sub=tg.bad?"✓ "+t("ทำแล้ว"):"";btn=tg.bad?"":`🏸 ${t("บันทึกตีแบด")}`;act="bad"}
-  else if(PROGS[pl]){const p=PROGS[pl];title=p.name;sub=`${p.ex.length} ${t("ท่า")} · ${[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", ")}`;btn=`▶ ${t("เริ่ม")} ${p.name}`;act="start:"+pl}
+  else if(PROGS[pl]){const p=PROGS[pl];title=p.name;sub=`${nU(p.ex.length,"ท่า")} · ${[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", ")}`;btn=`▶ ${t("เริ่ม")} ${p.name}`;act="start:"+pl}
   else{title="😴 "+t("วันพัก");sub=t("พักให้กล้ามฟื้น");btn="";act=""}
   box.className="today"+(done.length||(pl==="run"&&tg.run)||(pl==="bad"&&tg.bad)?" is-done":"");
   box.innerHTML=`<small class="td-l">${lbl}</small><b class="td-t">${esc(title)}</b>${sub?`<span class="td-s">${esc(sub)}</span>`:""}

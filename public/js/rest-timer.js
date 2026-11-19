@@ -2,7 +2,7 @@
 // Classic script: shares globals with the other files in /js (load order is set in index.html).
 /* ---------- rest timer ---------- */
 let rt={end:0,total:0,iv:null,beeped:false};let actx=null;
-function beep(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();[0,.25,.5].forEach(t=>{const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;g.gain.value=.15;o.connect(g);g.connect(actx.destination);o.start(actx.currentTime+t);o.stop(actx.currentTime+t+.15)})}catch(e){}try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}}
+function beep(){try{navigator.vibrate&&navigator.vibrate([80,60,80])}catch(_){}try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();[0,.25,.5].forEach(t=>{const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;g.gain.value=.15;o.connect(g);g.connect(actx.destination);o.start(actx.currentTime+t);o.stop(actx.currentTime+t+.15)})}catch(e){}try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}}
 function startRest(e,i,rows){
   try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume()}catch(_){}
   const secs=restFor(e);
