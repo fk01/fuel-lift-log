@@ -63,4 +63,5 @@ cloudLoad();
 autoCommitOld();
 document.querySelectorAll("#sessions").forEach(()=>{});
 document.getElementById("today-btn").addEventListener("click",()=>{DAY=TODAY;draft.ex={};renderAll()});
+if(ensureLocs()){addSubsToLib(Object.values(PROGS).flatMap(p=>p.ex));save("exlib",EXLIB);saveProgs()}if(!locById(curLoc))curLoc=LOCS[0].id;cur=draft.prog&&PROGS[draft.prog]?draft.prog:nextProg();
 renderAll();

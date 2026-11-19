@@ -16,7 +16,7 @@ function histSeries(){
   if(histEx==="all"){const by={};logs.forEach(l=>{by[l.date]=(by[l.date]||0)+volOf(l)});
     pts=Object.keys(by).sort().map(d=>({date:d,v:Math.round(by[d]),note:""}));return{pts,unit:"kg"}}
   const u=uOf(histEx),k=u==="lb"?LB:1;
-  pts=logs.filter(l=>l.ex[histEx]&&l.ex[histEx].length).map(l=>{const s=l.ex[histEx];
+  pts=logs.filter(l=>l.ex[histEx]&&l.ex[histEx].length&&logLoc(l)===curLoc).map(l=>{const s=l.ex[histEx];
     const v=histMetric==="max"?best(s)*k:histMetric==="vol"?s.reduce((a,q)=>a+(+q.kg||0)*(+q.reps||0),0)*k:Math.max(...s.map(q=>(+q.kg||0)*(1+(+q.reps||0)/30)))*k;
     return{date:l.date,v:Math.round(v*10)/10,note:setsTxt(s,u)+" "+u}}).sort((a,b)=>a.date.localeCompare(b.date));
   return{pts,unit:u}}

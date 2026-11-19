@@ -60,16 +60,16 @@ let draft=load("gymdraft",{});
 if(typeof _clearDraft!=="undefined"){draft={prog:draft.prog}}        // {prog, ex:{id:[{kg,reps,ok}]}}
 function planFor(ds){return WEEK[new Date(ds+"T12:00:00").getDay()]||null}
 function nextProg(){const wd=new Date(DAY+"T12:00:00").getDay();
-  for(let i=0;i<7;i++){const k=WEEK[(wd+i)%7];if(PROGS[k]&&!(i===0&&logs.some(l=>l.date===DAY&&l.prog===k)))return k}
-  return Object.keys(PROGS)[0]}
+  for(let i=0;i<7;i++){const k=slotKey(WEEK[(wd+i)%7]);if(k&&PROGS[k]&&!(i===0&&logs.some(l=>l.date===DAY&&l.prog===k)))return k}
+  return progsHere()[0]||Object.keys(PROGS)[0]}
 let cur=draft.prog&&PROGS[draft.prog]?draft.prog:nextProg();
-function lastFor(id){for(let i=logs.length-1;i>=0;i--){if(logs[i].date>DAY)continue;const s=logs[i].ex[id];if(s&&s.length)return{date:logs[i].date,sets:s}}return null}
+function lastFor(id){for(let i=logs.length-1;i>=0;i--){if(logs[i].date>DAY||logLoc(logs[i])!==curLoc)continue;const s=logs[i].ex[id];if(s&&s.length)return{date:logs[i].date,sets:s}}return null}
 function best(sets){return sets.reduce((m,s)=>Math.max(m,+s.kg||0),0)}
 function renderProgs(){
   const pl=planFor(DAY);const nx=pl==="run"||pl==="bad"?null:nextProg();const box=document.getElementById("progs");box.innerHTML="";
   const hd=s=>{const d=document.createElement("div");d.className="pick-h";d.textContent=t(s);box.appendChild(d)};
   hd("เวทเทรนนิ่ง");
-  Object.entries(PROGS).filter(([k])=>k!=="free").forEach(([k,p])=>{
+  progsHere().map(k=>[k,PROGS[k]]).forEach(([k,p])=>{
     const last=[...logs].reverse().find(l=>l.prog===k);
     const b=document.createElement("button");b.className="prog";b.id="p-"+k;b.setAttribute("aria-pressed",(picked||chosen)&&k===cur);
     const groups=[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", "),open=false;
@@ -102,7 +102,7 @@ function openSheet(k){const p=PROGS[k];if(!p)return;sheetK=k;const last=[...logs
     <small>${nU(p.ex.length,"ท่า")} · ~${estMin(p)} ${t("นาที")} · ${last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small></div>
     <div class="sheet-body-fig">${bodySVG(...musUnion(p.ex),180)}</div>
     <div class="mgsum">${groupSets(p).map(([g,n])=>`<span><b>${n}</b> ${t("เซ็ต")}<small>${groupName(g)}</small></span>`).join("")}</div>
-    <div class="sx">${p.ex.map(e=>{const gif=gifOf(e);return `<div class="sx-row"><span class="sx-mini">${bodySVG(...musOf(e),44)}</span><span style="flex:1;min-width:0"><b>${esc(e.n)}</b><small>${nU(e.s,"เซ็ต")} × ${esc(e.r)} · ${groupName(groupOf(e))}</small></span>${howBtn(e)}</div>`}).join("")}</div>`;
+    <div class="sx">${p.ex.map(e=>{const gif=gifOf(e);return `<div class="sx-row"><span class="sx-mini">${bodySVG(...musOf(e),44)}</span><span style="flex:1;min-width:0"><b>${esc(e.n)}</b>${e.swap?` <i class="swap-tag">${t("แปลงแล้ว")}</i>`:""}<small>${nU(e.s,"เซ็ต")} × ${esc(e.r)} · ${groupName(groupOf(e))}</small></span>${howBtn(e)}</div>`}).join("")}</div>`;
   const m=document.getElementById("prog-sheet");m.hidden=false;m.querySelector(".sheet-in").style.transform="";m.querySelector(".sheet-in").scrollTop=0}
 function closeSheet(){document.getElementById("prog-sheet").hidden=true;sheetK=null}
 document.getElementById("prog-sheet").addEventListener("click",ev=>{if(ev.target.id==="prog-sheet")closeSheet()});
@@ -133,11 +133,12 @@ function renderToday(){const box=document.getElementById("today");if(!box)return
     sub=`✓ ${t("ทำแล้ว")} · ${nU(n,"เซ็ต")} · ${v.toLocaleString()} kg`;btn="";}
   else if(pl==="run"){const r=tg.runData;title="🏃 "+t("วิ่ง")+" 10 km";sub=tg.run?`✓ ${r&&r.km?r.km+" km · "+fmtPace(r.sec/r.km)+"/km":t("ทำแล้ว")}`:"";btn=tg.run?"":`🏃 ${t("บันทึกวิ่ง")}`;act="run"}
   else if(pl==="bad"){title="🏸 "+t("ตีแบด");sub=tg.bad?"✓ "+t("ทำแล้ว"):"";btn=tg.bad?"":`🏸 ${t("บันทึกตีแบด")}`;act="bad"}
-  else if(PROGS[pl]){const p=PROGS[pl];title=p.name;sub=`${nU(p.ex.length,"ท่า")} · ${[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", ")}`;btn=`▶ ${t("เริ่ม")} ${p.name}`;act="start:"+pl}
+  else if(slotKey(pl)){const pk=slotKey(pl),p=PROGS[pk];title=p.name;sub=`${nU(p.ex.length,"ท่า")} · ${[...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(", ")}`;btn=`▶ ${t("เริ่ม")} ${p.name}`;act="start:"+pk}
   else{title="😴 "+t("วันพัก");sub=t("พักให้กล้ามฟื้น");btn="";act=""}
   box.className="today"+(done.length||(pl==="run"&&tg.run)||(pl==="bad"&&tg.bad)?" is-done":"");
-  box.innerHTML=`<small class="td-l">${lbl}</small><b class="td-t">${esc(title)}</b>${sub?`<span class="td-s">${esc(sub)}</span>`:""}
+  const L=hereLoc();box.innerHTML=`<span class="td-top"><small class="td-l">${lbl}</small><button class="loc-chip" data-locchg${picked?" disabled":""}>${esc(L.icon||"📍")} ${esc(t(L.name))}${picked?"":" ⌄"}</button></span><b class="td-t">${esc(title)}</b>${sub?`<span class="td-s">${esc(sub)}</span>`:""}
     ${btn?`<button class="btn primary td-b" data-today="${act}">${esc(btn)}</button>`:""}${!btn&&!picked&&!done.length?`<button class="btn ghost sm td-x" data-today="any">${t("ออกนอกตาราง")} ↓</button>`:""}`;
+  const lc=box.querySelector("[data-locchg]");if(lc&&!picked)lc.addEventListener("click",openLocChange);
   const b=box.querySelector("[data-today]");if(!b)return;b.addEventListener("click",()=>{const a=b.dataset.today;
     if(a==="resume")document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"});
     else if(a==="run")openRun();else if(a==="bad")openBad();

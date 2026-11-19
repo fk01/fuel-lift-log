@@ -23,7 +23,7 @@ export async function docsRoutes(req, env, url) {
         const cur = await env.DB.prepare("SELECT value FROM docs WHERE id = ?1").bind(id).first();
         const old = cur ? JSON.parse(cur.value) : null;
         if (old && (+old.progsRev || 0) > (+doc.progsRev || 0)) {
-          doc = { ...doc, progs: old.progs, lib: old.lib, progsRev: old.progsRev, scheme: old.scheme ?? doc.scheme };
+          doc = { ...doc, progs: old.progs, locs: old.locs, lib: old.lib, progsRev: old.progsRev, scheme: old.scheme ?? doc.scheme };
           value = JSON.stringify(doc);
         }
       }

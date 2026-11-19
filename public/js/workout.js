@@ -59,7 +59,7 @@ function renderEx(){
   });
 }
 function exHistory(id){const u=uOf(id);
-  const all=logs.filter(l=>l.ex[id]&&l.ex[id].length),h=all.slice(-1);   // latest only; the rest lives in the chart
+  const all=logs.filter(l=>l.ex[id]&&l.ex[id].length&&logLoc(l)===curLoc),h=all.slice(-1);   // latest only; the rest lives in the chart
   if(!h.length)return"";
   return `<details class="log"><summary>${t("ประวัติ")} (${all.length})</summary><button class="btn sm" data-chart="${id}" style="margin-top:6px">📈 ${t("ดูกราฟ")}</button><table>${h.map(l=>`<tr><td>${thDate(l.date,{day:"numeric",month:"short"})}</td><td>${l.ex[id].map(s=>`${toDisp(s.kg,u)}×${s.reps}`).join(" · ")} ${u}</td><td>${t("สูงสุด")} ${toDisp(best(l.ex[id]),u)}</td></tr>`).join("")}</table></details>`;
 }
@@ -93,7 +93,7 @@ function commitDraft(day,prog){
   const i=logs.findIndex(l=>l.date===day&&l.prog===prog);
   const names={};all.forEach(e=>{if(ex[e.id])names[e.id]=e.n});
   const memo={};Object.entries(draft.memo||{}).forEach(([k,v])=>{if(ex[k]&&v.trim())memo[k]=v.trim()});const note=(draft.note||"").trim();
-  const rec={date:day,prog,ex,names};if(Object.keys(memo).length)rec.memo=memo;if(note)rec.note=note;
+  const rec={date:day,prog,ex,names,loc:draft.loc||curLoc};if(Object.keys(memo).length)rec.memo=memo;if(note)rec.note=note;
   if(i>=0)logs[i]=rec;else logs.push(rec);
   logs.sort((a,b)=>a.date.localeCompare(b.date));
   save("gymlog",logs);draft={};save("gymdraft",draft);return true;
@@ -132,16 +132,16 @@ function renderGym(){setTimeout(()=>{try{renderToday()}catch(e){console.error(e)
   ["step3","step4"].forEach(id=>document.getElementById(id).hidden=!picked&&!editing);
   document.getElementById("step1").classList.toggle("compact",(picked||editing)&&!document.getElementById("v-gym").hidden);document.getElementById("step2").hidden=picked||editing;
   // resume a workout only if sets were actually logged (weights alone are pre-filled from last time)
-  if(!picked&&PROGS[draft.prog]&&(draft.started&&(draft.day||DAY)===DAY||draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.ok||x.reps!==""&&x.reps!=null)))){picked=true;cur=draft.prog}
+  if(!picked&&PROGS[draft.prog]&&(draft.started&&(draft.day||DAY)===DAY||draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.ok||x.reps!==""&&x.reps!=null)))){picked=true;cur=draft.prog;if(draft.loc&&locById(draft.loc))curLoc=draft.loc}
   document.getElementById("pick-hint").hidden=picked;document.getElementById("exs").hidden=!picked&&!editing;
   document.getElementById("step4").classList.toggle("locked",!picked);
   document.getElementById("sn-2").classList.toggle("done",picked);document.getElementById("sn-3").classList.toggle("done",picked&&draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.ok)));
   document.getElementById("sn-1").classList.add("done");
   const sb=document.getElementById("start-w"),row=document.getElementById("start-row");row.hidden=picked||editing||!chosen||!PROGS[cur];if(!row.hidden)sb.textContent=`▶ ${t("เริ่มออก")} · ${PROGS[cur].name}`;
   document.getElementById("wo-add").hidden=!picked||editing;document.getElementById("edit-mode").hidden=cur==="free";const t3=document.querySelector("#step3 .step-t");if(t3)t3.textContent=PROGS[cur]&&picked?`${PROGS[cur].name} · ${t("กำลังเล่น")}`:t("กรอกน้ำหนัก");
-  renderProgs();renderEx();renderSessions();document.getElementById("step4").hidden=editing||!picked;updWoBar()}
+  renderProgs();renderEx();renderSessions();document.getElementById("step4").hidden=editing||!picked;updWoBar();try{renderLocPick()}catch(e){console.error(e)}}
 document.getElementById("edit-w").addEventListener("click",()=>{if(!PROGS[cur])return;pmOnly=cur;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false;window.scrollTo(0,0)});
-document.getElementById("start-w").addEventListener("click",()=>{if(!PROGS[cur])return;draft.prog=cur;draft.started=1;draft.day=DAY;draft.t0=Date.now();picked=true;chosen=false;save("gymdraft",draft);renderGym();
+document.getElementById("start-w").addEventListener("click",()=>{if(!PROGS[cur])return;draft.prog=cur;draft.started=1;draft.day=DAY;draft.loc=curLoc;draft.t0=Date.now();picked=true;chosen=false;save("gymdraft",draft);renderGym();
   setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});
 
 /* ---------- collapsible step sections (Pick a program / Log your sets) ---------- */
@@ -159,6 +159,6 @@ document.getElementById("wo-finish").addEventListener("click",finishWorkout);
 document.getElementById("wo-add").addEventListener("click",()=>openLib({skip:new Set(sessEx().map(e=>e.id)),onPick:x=>{
   draft.extra=draft.extra||[];draft.extra.push({...libPick(x),s:3,r:"8-12"});save("gymdraft",draft);renderEx();updWoBar();
   setTimeout(()=>{const c=[...document.querySelectorAll("#exs .ex")].pop();if(c)c.scrollIntoView({behavior:"smooth",block:"center"})},60)}}));
-function startEmpty(){PROGS.free={name:t("ออกแบบอิสระ"),sub:"",ex:[]};cur="free";draft={prog:"free",ex:{},extra:[],started:1,day:DAY,t0:Date.now()};picked=true;chosen=false;
+function startEmpty(){PROGS.free={name:t("ออกแบบอิสระ"),sub:"",ex:[]};cur="free";draft={prog:"free",loc:curLoc,ex:{},extra:[],started:1,day:DAY,t0:Date.now()};picked=true;chosen=false;
   save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("wo-add").click(),80)}
 document.getElementById("empty-w").addEventListener("click",startEmpty);

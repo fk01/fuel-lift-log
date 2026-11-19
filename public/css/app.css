@@ -488,3 +488,18 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 .sx-row{align-items:center}
 .how-btn:not(.lbl){padding:0;width:34px}.ex-name .how-btn{width:30px;height:30px;min-width:30px}
 .how-gif{display:block;margin:0 auto;align-self:center}
+/* locations */
+#v-gym.picking>:not(#locpick){display:none!important}
+.locpick{display:grid;gap:12px}.lp-h{font-family:var(--f-display);font-weight:400;font-size:1.6rem;margin:4px 0}
+.lp-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:grid;gap:4px;cursor:pointer}
+.lp-card.on{border-color:var(--fg)}.lp-card small{color:var(--muted);font-size:.8rem}.lp-card a{color:var(--fg)}
+.lp-top{display:flex;align-items:center;gap:8px}.lp-top b{font-size:1.1rem;flex:1;min-width:0}
+.pill{font-family:var(--f-num);font-size:.65rem;border:1px solid var(--line);border-radius:99px;padding:2px 8px}
+.lp-more{min-width:44px;min-height:44px;display:grid;place-items:center;margin:-12px -10px -12px 0;color:var(--muted)}
+.lp-add{border-style:dashed}
+.td-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.loc-chip{border:1px solid var(--line);background:none;color:var(--fg);border-radius:99px;padding:4px 12px;font:inherit;font-size:.8rem;cursor:pointer}.loc-chip:disabled{opacity:.7;cursor:default}
+.le{display:grid;gap:10px}.le-row{display:flex;gap:8px;align-items:center}.le-in{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;color:var(--fg);font:inherit;flex:1;min-width:0}.le-ic{flex:0 0 52px;text-align:center}
+.mv{display:grid;gap:6px;margin:6px 0}.mv-row{display:flex;justify-content:space-between;gap:8px;font-size:.85rem;color:var(--muted)}.mv-row b{color:var(--fg)}.mv-row i{color:var(--warn)}
+.btn.warn{color:#e07a6a}
+.swap-tag{color:var(--warn);font-size:.7rem;font-style:normal}

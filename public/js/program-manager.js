@@ -70,20 +70,20 @@ function renderPM(){
     return}
   if(pmOnly)return pmEditOne(box,pmOnly);
   // list view: one compact row per program; tap a row to edit that program
-  const keys=Object.keys(PROGS).filter(k=>k!=="free");
+  const keys=progsHere();const lh=document.createElement("div");lh.className="pick-h";lh.textContent=`${hereLoc().icon||"📍"} ${t(hereLoc().name)}`;box.appendChild(lh);
   keys.forEach((k,i)=>{const p=PROGS[k];const r=document.createElement("div");r.className="pm-li";
     r.innerHTML=`<button class="pm-open" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}"><b>${esc(p.name)}</b><small>${esc(t(p.sub||""))}</small><small>${nU(p.ex.length,"ท่า")} ›</small></button>
-      <div class="pm-li-act"><button class="btn sm" data-up ${i===0?"disabled":""} aria-label="up">↑</button><button class="btn sm" data-down ${i===keys.length-1?"disabled":""} aria-label="down">↓</button><button class="btn sm ghost" data-del aria-label="${t("ลบโปรแกรม")}">🗑</button></div>`;
+      <div class="pm-li-act"><button class="btn sm" data-up ${i===0?"disabled":""} aria-label="up">↑</button><button class="btn sm" data-down ${i===keys.length-1?"disabled":""} aria-label="down">↓</button><button class="btn sm" data-mv aria-label="${t("คัดลอกไป…")}">⇄</button><button class="btn sm ghost" data-del aria-label="${t("ลบโปรแกรม")}">🗑</button></div>`;
     const on=(s,ev,fn)=>r.querySelector(s).addEventListener(ev,fn);
     on(".pm-open","click",()=>{pmOnly=k;pmFromList=true;renderPM();document.getElementById("pm-modal").scrollTop=0});
-    const move=d=>{const o={};const ks=keys.slice();ks.splice(i+d,0,ks.splice(i,1)[0]);ks.forEach(x=>o[x]=PROGS[x]);PROGS=o;saveProgs();renderPM();renderGym()};
-    on("[data-up]","click",()=>move(-1));on("[data-down]","click",()=>move(1));
+    const move=d=>{const o={};const ks=Object.keys(PROGS),a=ks.indexOf(k),b=ks.indexOf(keys[i+d]);ks[a]=keys[i+d];ks[b]=k;ks.forEach(x=>o[x]=PROGS[x]);PROGS=o;saveProgs();renderPM();renderGym()};
+    on("[data-mv]","click",()=>openProgMove(k));on("[data-up]","click",()=>move(-1));on("[data-down]","click",()=>move(1));
     on("[data-del]","click",ev=>{const b=ev.currentTarget;if(p.ex.some(e=>isLocked(k,e))){toast("🔒 "+t("ท่าหลักห้ามลบหรือเปลี่ยน"));return}if(keys.length<2){toast(t("ต้องมีอย่างน้อย 1 โปรแกรม"));return}
       if(!b.dataset.sure){b.dataset.sure=1;b.textContent=t("ลบ")+"?";return}
       const o={...PROGS};delete o[k];pmCommit(o);renderPM();renderGym()});
     box.appendChild(r)});
   const a=document.createElement("button");a.className="btn primary";a.textContent="+ "+t("เพิ่มโปรแกรม");
-  a.addEventListener("click",()=>{const k="p"+Date.now().toString(36);PROGS[k]={name:t("โปรแกรมใหม่"),sub:"",ex:[]};saveProgs();renderGym();
+  a.addEventListener("click",()=>{const k="p"+Date.now().toString(36);PROGS[k]={name:t("โปรแกรมใหม่"),sub:"",ex:[],loc:curLoc};saveProgs();renderGym();
     pmOnly=k;pmFromList=true;renderPM();const n=document.querySelector('#pm-body [data-f="name"]');if(n){n.focus();n.select()}});
   box.appendChild(a)}
 // single-program editor: name, description, exercises
