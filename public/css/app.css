@@ -555,3 +555,8 @@ body.loc-picking:has(#v-gym:not([hidden])) .wrap>header,body.loc-picking:has(#v-
 .flog-row .macro{color:var(--muted);font-family:var(--f-num);font-size:.78rem;white-space:nowrap}
 .flog-rec{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.flog-rec .chip{white-space:nowrap}
 .fl-num{flex:1;display:grid;gap:4px;min-width:0}.fl-num span{color:var(--muted);font-size:.75rem}.fl-num input{font-family:var(--f-num)}
+/* recovery % */
+.rec-t .rec-p{font-family:var(--f-num);font-size:.95rem;color:var(--fg)}
+.rec-bar{display:block;height:3px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:2px}.rec-bar>i{display:block;height:100%}
+.rec-bar.big{height:6px;margin:4px 0 2px}
+.today .td-w{color:var(--warn);font-size:.85rem}
