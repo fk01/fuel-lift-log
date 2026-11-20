@@ -7,7 +7,7 @@
     "deploy": "wrangler deploy",
     "vapid": "node scripts/gen-vapid.mjs",
     "test": "node tests/smoke.cjs",
-    "test:api": "node tests/api.mjs"
+    "test:api": "bash tests/api-run.sh"
   },
   "devDependencies": {
     "wrangler": "^4.40.0"

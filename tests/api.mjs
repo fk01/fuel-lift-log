@@ -1,6 +1,6 @@
 // API test against a running `wrangler dev --local` (BASE, default http://localhost:8799) with ACCESS_PIN=1234 and legacy docs seeded.
 const BASE = process.env.BASE || "http://localhost:8799";
-const jar = () => { let c = ""; return async (path, body, method) => { const r = await fetch(BASE + path, { method: method || (body ? "POST" : "GET"), headers: { "content-type": "application/json", cookie: c }, body: body ? JSON.stringify(body) : undefined });
+const jar = () => { let c = ""; const ip = "10.0." + Math.floor(Math.random() * 250) + "." + Math.floor(Math.random() * 250); return async (path, body, method) => { const r = await fetch(BASE + path, { method: method || (body ? "POST" : "GET"), headers: { "content-type": "application/json", cookie: c, "CF-Connecting-IP": ip }, body: body ? JSON.stringify(body) : undefined });
   const sc = r.headers.get("set-cookie"); if (sc) c = sc.split(";")[0]; let j = null; try { j = await r.json() } catch (e) {} return { s: r.status, j } } };
 const ok = (c, m) => { if (!c) { console.error("FAIL", m); process.exit(1) } console.log("ok", m) };
 const a = jar(), b = jar(), email = (n) => `t${n}${Date.now()}@ex.com`;
@@ -23,4 +23,19 @@ ok((await a("/api/logout", {})).s === 200 && (await a("/api/docs")).s === 401, "
 ok((await a("/api/auth/login", { email: ea, password: "wrong-pass" })).s === 401, "wrong password");
 ok((await a("/api/auth/login", { email: ea.toUpperCase(), password: "password-a" })).s === 200 && (await a("/api/docs")).j.length >= 2, "sign in again (email case-insensitive)");
 ok((await a("/api/auth/google", { credential: "x.y.z" })).s === 401, "bogus Google token refused");
+// ---- community ----
+const c = jar(); ok((await c("/api/auth/signup", { email: email("c"), password: "password-c", name: "Coach C" })).s === 200, "sign up C");
+const pub = await c("/api/plans", { kind: "workout", title: "Upper/Lower Gym", desc: "4 days", tags: ["build", "gym"], summary: "4 programs", data: { v: 1, progs: [] } });
+ok(pub.s === 200 && pub.j.id, "C shares a plan"); const pid = pub.j.id;
+ok((await b("/api/plans?kind=workout")).j.some((x) => x.id === pid && x.author.name === "Coach C"), "B sees it in Explore");
+ok((await b("/api/plans?q=upper")).j.some((x) => x.id === pid), "search by title");
+ok((await b(`/api/plans/${pid}/like`, {})).j.on === true && (await b(`/api/plans/${pid}`)).j.likes === 1, "B likes");
+ok((await b(`/api/plans/${pid}/save`, {})).j.on === true && (await b("/api/plans?saved=1")).j.length === 1, "B saves");
+ok((await b(`/api/plans/${pid}/use`, {})).s === 200 && (await b(`/api/plans/${pid}`)).j.uses === 1, "B uses (count)");
+ok((await b(`/api/plans/${pid}`, { title: "hack" }, "PUT")).s === 403, "B can't edit C's plan");
+const cid = (await b("/api/people?q=coach")).j[0]; ok(cid && cid.name === "Coach C" && cid.plans === 1, "search people by name");
+ok((await b(`/api/people/${cid.id}/follow`, {})).j.on === true && (await b("/api/plans?following=1")).j.length === 1, "B follows C → plans from people I follow");
+ok((await c(`/api/people/${cid.id}`)).j.followers === 1, "C has 1 follower");
+ok((await c("/api/me/profile", { name: "Coach C2", bio: "PT" }, "PUT")).s === 200 && (await b(`/api/people/${cid.id}`)).j.name === "Coach C2", "profile name updates");
+ok((await c(`/api/plans/${pid}`, null, "DELETE")).s === 200 && (await b("/api/plans")).j.every((x) => x.id !== pid), "C removes the plan");
 console.log("API PASS");

@@ -1,0 +1,63 @@
+// explore.js — community: share your workout / meal plans, browse other people's, like / save / use, find people and follow them.
+// Classic script: shares globals with the other files in /js (load order is set in index.html).
+const ICH='<svg class="xi" viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3.3 5 6.8 5c2 0 3.4 1.1 5.2 3 1.8-1.9 3.2-3 5.2-3 3.5 0 5.6 3.6 4.3 6.8C19.5 16.4 12 21 12 21z"/></svg>',ICB='<svg class="xi" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12v18l-6-4-6 4z"/></svg>',ICU='<svg class="xi" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg>';
+let exTab="for",exQ="",exT=null;
+const apiJ=async(u,o)=>{const r=await fetch(u,{credentials:"same-origin",headers:{"content-type":"application/json"},...o});if(r.status===401)throw new Error("signin");if(!r.ok)throw new Error((await r.json().catch(()=>({}))).error||r.status);return r.json()};
+const EX_TABS=[["for","สำหรับคุณ"],["following","กำลังติดตาม"],["workout","ออกกำลังกาย"],["meal","การกิน"],["people","คน"],["saved","บันทึกไว้"]];
+function renderExplore(){const box=document.getElementById("v-explore");if(!box)return;
+  if(!box.querySelector(".ex-head")){box.innerHTML=`<div class="ex-head"><div class="chips ex-tabs"></div><input class="le-in ex-q" type="search" placeholder="🔍"></div><div class="ex-list stack" style="gap:10px"></div>`;
+    box.querySelector(".ex-q").addEventListener("input",ev=>{exQ=ev.target.value;clearTimeout(exT);exT=setTimeout(exLoad,300)})}
+  box.querySelector(".ex-tabs").innerHTML=EX_TABS.map(([k,l])=>`<button class="chip${exTab===k?" on":""}" data-xt="${k}">${t(l)}</button>`).join("");
+  box.querySelectorAll("[data-xt]").forEach(b=>b.addEventListener("click",()=>{exTab=b.dataset.xt;renderExplore()}));
+  box.querySelector(".ex-q").placeholder="🔍 "+t(exTab==="people"?"ค้นหาคน":"ค้นหาแผน หรือคน");exLoad()}
+async function exLoad(){const list=document.querySelector("#v-explore .ex-list");if(!list)return;list.innerHTML=`<small class="note">${t("กำลังโหลด…")}</small>`;
+  const q=encodeURIComponent(exQ.trim());
+  try{if(exTab==="people"||(exTab==="following"&&!q&&false)){const ps=await apiJ(`/api/people?q=${q}`);list.innerHTML=ps.map(personCard).join("")||exEmpty(q?"ไม่พบคนที่ค้นหา":"ยังไม่มีคนแชร์แผน");bindEx(list);return}
+    const qs=exTab==="workout"||exTab==="meal"?`kind=${exTab}`:exTab==="saved"?"saved=1":exTab==="following"?"following=1&sort=new":"";
+    const [ps,people]=await Promise.all([apiJ(`/api/plans?${qs}&q=${q}`),exTab==="for"&&q?apiJ(`/api/people?q=${q}`):Promise.resolve([])]);
+    list.innerHTML=(people.length?`<div class="pa-step">${t("คน")}</div>`+people.slice(0,3).map(personCard).join("")+`<div class="pa-step">${t("แผน")}</div>`:"")+(ps.map(planCard).join("")||exEmpty(exTab==="following"?"ติดตามคนที่ชอบ แล้วแผนของเขาจะขึ้นที่นี่":exTab==="saved"?"กด บันทึก ที่แผนเพื่อเก็บไว้ดูทีหลัง":q?"ไม่พบแผนที่ค้นหา":"ยังไม่มีใครแชร์ — เป็นคนแรกเลย!"));bindEx(list)}
+  catch(e){list.innerHTML=exEmpty(e.message==="signin"?"เข้าสู่ระบบก่อนเพื่อดูชุมชน":"โหลดไม่ได้ — ลองใหม่")}}
+const exEmpty=m=>`<div class="card ex-empty"><small class="note">${t(m)}</small></div>`;
+const planCard=p=>`<button class="card ex-card" data-plan="${esc(p.id)}"><span class="ex-top"><b>${esc(p.title)}</b><small>${ICH} ${p.likes} · ${ICU} ${p.uses}</small></span>
+  <small class="ex-by">${licon(p.kind==="meal"?"bowl":"dumbbell")} ${esc(p.author.name)}${p.mine?" · "+t("ของคุณ"):""}</small>${p.tags.length?`<span class="chips ex-tags">${p.tags.map(x=>`<span class="chip">${esc(t(x))}</span>`).join("")}</span>`:""}<small class="note">${esc(p.summary)}</small></button>`;
+const personCard=u=>`<button class="card ex-card ex-person" data-person="${esc(u.id)}"><span class="ex-av">${esc((u.name||"?").slice(0,1).toUpperCase())}</span><span class="ex-pt"><b>${esc(u.name)}</b><small>${nU(u.plans,"แผน")} · ${u.followers} ${t("ผู้ติดตาม")}${u.bio?" · "+esc(u.bio):""}</small></span><span class="pc-go ex-fol${u.following?" on":""}">${t(u.following?"กำลังติดตาม":"ติดตาม")}</span></button>`;
+function bindEx(el){el.querySelectorAll("[data-plan]").forEach(b=>b.addEventListener("click",()=>openPlanView(b.dataset.plan)));
+  el.querySelectorAll("[data-person]").forEach(b=>b.addEventListener("click",ev=>{if(ev.target.closest(".ex-fol")){ev.stopPropagation();toggleFollow(b.dataset.person).then(exLoad);return}openPerson(b.dataset.person)}))}
+async function toggleFollow(id){try{const r=await apiJ(`/api/people/${id}/follow`,{method:"POST",body:"{}"});toast(r.on?"✓ "+t("ติดตามแล้ว"):t("เลิกติดตามแล้ว"));return r.on}catch(e){toast(t("ทำไม่สำเร็จ"))}}
+// ---- one plan ----
+async function openPlanView(id){let p;try{p=await apiJ(`/api/plans/${id}`)}catch(e){toast(t("โหลดไม่ได้"));return}const d=p.data||{};
+  const body=p.kind==="meal"?`<div class="card">${(d.meals||[]).map(m=>`<div class="tm-row"><span class="time">${esc(m.time||"")}</span><span class="tm-tx"><b>${esc(t(m.name||""))}</b><small>${+m.k||0} kcal · P${+m.p||0}${(m.items||[]).length?" · "+esc(m.items.join(", ")):""}</small></span></div>`).join("")}</div><small class="note">${t("เป้า")} ${(+d.k||0).toLocaleString()} kcal · ${t("โปรตีน")} ${+d.p||0} g</small>`
+    :(d.progs||[]).map(g=>`<div class="card"><b>${esc(g.name)}</b>${(g.ex||[]).map(e=>`<div class="pi-ex"><span>${esc(e.n)}</span><small>${+e.s||0}×${esc(e.r||"")}</small></div>`).join("")}</div>`).join("")+(d.place&&d.place.name?`<small class="note">${t("ที่")} ${esc(d.place.icon||"")} ${esc(d.place.name)}</small>`:"");
+  openGen(esc(p.title),`<button class="linkb ex-author" data-person="${esc(p.author.id)}">👤 ${esc(p.author.name)}</button>${p.desc?`<p class="note" style="margin:0">${esc(p.desc)}</p>`:""}
+    ${p.tags.length?`<span class="chips ex-tags">${p.tags.map(x=>`<span class="chip">${esc(t(x))}</span>`).join("")}</span>`:""}${body}
+    <div class="chips"><button class="chip${p.liked?" on":""}" data-pa="like">${ICH} ${p.likes}</button><button class="chip${p.saved?" on":""}" data-pa="save">${ICB} ${t(p.saved?"บันทึกแล้ว":"บันทึก")}</button>${p.mine?`<button class="chip" data-pa="del">🗑 ${t("ถอนออก")}</button>`:""}</div>
+    <div class="actions sheet-act"><button class="btn" data-gen-close>${t("ปิด")}</button><button class="btn primary" data-pa="use" style="flex:1">↓ ${t("นำไปใช้")}</button></div>`,b=>{
+    b.querySelector("[data-person]").addEventListener("click",()=>openPerson(p.author.id));
+    b.querySelectorAll("[data-pa]").forEach(x=>x.addEventListener("click",async()=>{const a=x.dataset.pa;
+      if(a==="like"||a==="save"){try{await apiJ(`/api/plans/${id}/${a}`,{method:"POST",body:"{}"});openPlanView(id);exLoad()}catch(e){toast(t("ทำไม่สำเร็จ"))}return}
+      if(a==="del"){if(!x.dataset.sure){x.dataset.sure=1;x.textContent=t("แตะอีกครั้งเพื่อถอน");return}await apiJ(`/api/plans/${id}`,{method:"DELETE"}).catch(()=>{});closeGen();exLoad();toast(t("ถอนออกแล้ว"));return}
+      if(a==="use"){apiJ(`/api/plans/${id}/use`,{method:"POST",body:"{}"}).catch(()=>{});
+        if(p.kind==="workout"){closeGen();openImport(d);return}
+        MP={meals:(d.meals||[]).map((m,i)=>({id:"m"+(i+1),time:String(m.time||""),name:String(m.name||"").slice(0,40),k:+m.k||0,p:+m.p||0,items:(m.items||[]).map(s=>String(s).slice(0,80)).slice(0,12),...(m.vit?{vit:1}:{})})),run:EXTRAS.run,bad:EXTRAS.bad,k:+d.k||K_GOAL,p:+d.p||P_TARGET};
+        mpApply();save("mealplan",MP);undoLoud("↓ "+t("ใช้แผนกินนี้แล้ว"));closeGen();try{renderFood()}catch(e){}location.hash="food"}}))})}
+// ---- a person ----
+async function openPerson(id){let u,ps;try{[u,ps]=await Promise.all([apiJ(`/api/people/${id}`),apiJ(`/api/plans?by=${id}&sort=new`)])}catch(e){toast(t("โหลดไม่ได้"));return}
+  openGen(esc(u.name),`<div class="ex-prof"><span class="ex-av big">${esc((u.name||"?").slice(0,1).toUpperCase())}</span><div><small class="note">${u.bio?esc(u.bio):""}</small><small class="note" style="display:block">${nU(u.plans,"แผน")} · ${u.followers} ${t("ผู้ติดตาม")} · ${t("กำลังติดตาม")} ${u.followingCount}</small></div></div>
+    ${u.me?"":`<button class="btn${u.following?"":" primary"}" data-fol>${t(u.following?"กำลังติดตาม ✓":"+ ติดตาม")}</button>`}<div class="stack" style="gap:8px">${ps.map(planCard).join("")||exEmpty("ยังไม่ได้แชร์แผน")}</div>`,b=>{
+    b.querySelector("[data-fol]")?.addEventListener("click",async()=>{await toggleFollow(id);openPerson(id);exLoad()});bindEx(b)})}
+// ---- share to the community ----
+const SHARE_TAGS=["ลดไขมัน","เพิ่มกล้าม","รักษาหุ่น","ฟิตเนส","ที่บ้าน","ตัวเปล่า","มือใหม่","3 วัน","4 วัน","5 วัน","6 วัน","คาร์ดิโอ","คลีน","โปรตีนสูง"];
+function publishPlan(kind,data,title,summary){const tags=new Set();
+  openGen(t("แชร์ให้ชุมชน"),`<input class="le-in" id="pub-t" maxlength="80" value="${esc(title||"")}" placeholder="${t("ชื่อแผน")}"><textarea class="le-in" id="pub-d" rows="3" maxlength="500" placeholder="${t("เล่าสั้นๆ ว่าแผนนี้เหมาะกับใคร")}"></textarea>
+    <div class="pa-step">${t("แท็ก")}</div><div class="chips">${SHARE_TAGS.map(x=>`<button class="chip" data-tag="${x}">${t(x)}</button>`).join("")}</div>
+    <small class="note">${esc(summary)} · ${t("คนอื่นเห็นชื่อของคุณกับแผนนี้เท่านั้น — ไม่เห็นอีเมล ประวัติ หรือน้ำหนัก")}</small>
+    <div class="actions sheet-act"><button class="btn" data-gen-close>${t("ยกเลิก")}</button><button class="btn primary" data-pub style="flex:1">↗ ${t("แชร์")}</button></div>`,b=>{
+    b.querySelectorAll("[data-tag]").forEach(x=>x.addEventListener("click",()=>{const v=x.dataset.tag;if(tags.has(v))tags.delete(v);else tags.add(v);x.classList.toggle("on",tags.has(v))}));
+    b.querySelector("[data-pub]").addEventListener("click",async()=>{const ti=b.querySelector("#pub-t").value.trim();if(!ti){toast(t("ใส่ชื่อแผน"));return}
+      try{await apiJ("/api/plans",{method:"POST",body:JSON.stringify({kind,title:ti,desc:b.querySelector("#pub-d").value.trim(),tags:[...tags],summary,data})});closeGen();toast("✓ "+t("แชร์แล้ว — ดูได้ที่ Explore"));exLoad()}
+      catch(e){toast(t(e.message==="signin"?"เข้าสู่ระบบก่อน":e.message==="too many plans"?"แชร์ได้สูงสุด 30 แผน":"แชร์ไม่สำเร็จ"))}})})}
+function publishWorkout(keys,locId){const d=shareData(keys,locId);if(!d.progs.length){toast(t("ไม่มีโปรแกรมเวทให้แชร์"));return}
+  publishPlan("workout",d,d.progs.length===1?d.progs[0].name:(locById(locId)||{}).name,`${nProgs(d.progs.length)} · ${nU(d.progs.reduce((a,p)=>a+p.ex.length,0),"ท่า")}`)}
+function publishMeals(){const d={meals:MEALS.map(m=>({time:m.time,name:m.name,k:m.k,p:m.p,items:m.items||[],...(m.vit?{vit:1}:{})})),k:K_GOAL,p:P_TARGET};
+  publishPlan("meal",d,t("แผนกินของฉัน"),`${MEALS.length} ${t("มื้อ")} · ${K_GOAL.toLocaleString()} kcal · P${P_TARGET}`)}
+Object.assign(EN,{"สำหรับคุณ":"For you","กำลังติดตาม":"Following","ออกกำลังกาย":"Workouts","การกิน":"Meals","คน":"People","บันทึกไว้":"Saved","ค้นหาคน":"Search people","ค้นหาแผน หรือคน":"Search plans or people","กำลังโหลด…":"Loading…","ไม่พบคนที่ค้นหา":"No one found","ยังไม่มีคนแชร์แผน":"No one has shared yet","แผน":"Plans","ติดตามคนที่ชอบ แล้วแผนของเขาจะขึ้นที่นี่":"Follow people and their plans show up here","กด บันทึก ที่แผนเพื่อเก็บไว้ดูทีหลัง":"Tap 🔖 on a plan to keep it here","ไม่พบแผนที่ค้นหา":"No plans found","ยังไม่มีใครแชร์ — เป็นคนแรกเลย!":"Nothing shared yet — be the first!","เข้าสู่ระบบก่อนเพื่อดูชุมชน":"Sign in to see the community","โหลดไม่ได้ — ลองใหม่":"Couldn't load — try again","ของคุณ":"yours","ผู้ติดตาม":"followers","ติดตาม":"Follow","ติดตามแล้ว":"Following","เลิกติดตามแล้ว":"Unfollowed","ทำไม่สำเร็จ":"Didn't work","โหลดไม่ได้":"Couldn't load","บันทึก":"Save","บันทึกแล้ว":"Saved","ถอนออก":"Remove","แตะอีกครั้งเพื่อถอน":"Tap again to remove","ถอนออกแล้ว":"Removed","นำไปใช้":"Use this","ใช้แผนกินนี้แล้ว":"Meal plan applied","กำลังติดตาม ✓":"Following ✓","+ ติดตาม":"+ Follow","ยังไม่ได้แชร์แผน":"No plans shared yet","แชร์ให้ชุมชน":"Share with community","ชื่อแผน":"Plan name","เล่าสั้นๆ ว่าแผนนี้เหมาะกับใคร":"Who is this plan for?","แท็ก":"Tags","คนอื่นเห็นชื่อของคุณกับแผนนี้เท่านั้น — ไม่เห็นอีเมล ประวัติ หรือน้ำหนัก":"Others see only your name and this plan — not your email, history or weight","ใส่ชื่อแผน":"Enter a plan name","แชร์แล้ว — ดูได้ที่ Explore":"Shared — see it in Explore","เข้าสู่ระบบก่อน":"Sign in first","แชร์ได้สูงสุด 30 แผน":"Up to 30 shared plans","แชร์ไม่สำเร็จ":"Couldn't share","แผนกินของฉัน":"My meal plan","มื้อ":"meals","ที่บ้าน":"Home","มือใหม่":"Beginner","5 วัน":"5 days","คาร์ดิโอ":"Cardio","คลีน":"Clean eating","โปรตีนสูง":"High protein","Explore":"Explore"});

@@ -8,11 +8,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Fuel & Lift">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=132000">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=133500">
 <title>Fuel &amp; Lift Log</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+Thai:wght@400;500&family=Share+Tech+Mono&family=Orbitron:wght@500;700&display=swap">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*{-webkit-tap-highlight-color:transparent}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
-<link rel="stylesheet" href="/css/app.css?v=132000">
+<link rel="stylesheet" href="/css/app.css?v=133500">
 </head><body>
 
 <div class="wrap">
@@ -31,6 +31,9 @@
 
   <!-- HOME: the three questions -->
   <div id="v-home" class="stack" style="gap:14px" hidden></div>
+
+  <!-- EXPLORE: community -->
+  <div id="v-explore" class="stack" style="gap:14px" hidden></div>
 
   <!-- FOOD -->
   <div id="v-food" class="stack" style="gap:18px">
@@ -52,7 +55,7 @@
       </div>
     </section>
 
-    <div class="mp-open-row"><button class="btn sm" id="mp-open">✎ <span data-i="จัดการแผน">จัดการแผน</span></button></div>
+    <div class="mp-open-row"><button class="btn sm" id="mp-pub">↗ <span data-i="แชร์แผนกิน">แชร์แผนกิน</span></button><button class="btn sm" id="mp-open">✎ <span data-i="จัดการแผน">จัดการแผน</span></button></div>
     <section class="stack" id="meals"></section>
     <div class="card stack" style="gap:12px"><div class="card-h"><b data-i="โภชนาการ">โภชนาการ</b></div><div class="stack" id="food-hist"></div></div>
     <button class="btn ghost" id="reset" style="align-self:start" data-i="ล้างวันนี้">ล้างวันนี้</button>
@@ -160,6 +163,7 @@
   <button class="tab" role="tab" id="tab-food" data-v="food"><span><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v8a2 2 0 0 0 2 2v8M5 3v5M9 3v5M17 3c-2 0-3 3-3 6s1 4 3 4v8"/></svg></span><small data-i="กิน">กิน</small></button>
   <button class="tab" role="tab" id="tab-gym" data-v="gym"><span><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10v4M6 7v10M18 7v10M21 10v4M6 12h12"/></svg></span><small data-i="ออกกำลัง">ออกกำลัง</small></button>
   <button class="tab" role="tab" id="tab-stats" data-v="stats"><span><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><small data-i="สถิติ">สถิติ</small></button>
+  <button class="tab" role="tab" id="tab-explore" data-v="explore"><span><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></span><small data-i="Explore">Explore</small></button>
   <button class="tab" role="tab" id="tab-more" data-v="more"><span><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></span><small data-i="เพิ่มเติม">เพิ่มเติม</small></button>
 </nav>
 <div class="toast" id="toast" hidden></div>
@@ -273,35 +277,36 @@
   </div>
 </div>
 
-<script src="/js/core.js?v=132000"></script>
-<script src="/js/food.js?v=132000"></script>
-<script src="/js/locations.js?v=132000"></script>
-<script src="/js/programs.js?v=132000"></script>
-<script src="/js/run.js?v=132000"></script>
-<script src="/js/workout.js?v=132000"></script>
-<script src="/js/exercise-edit.js?v=132000"></script>
-<script src="/js/edit-tx.js?v=132000"></script>
-<script src="/js/exercise-library.js?v=132000"></script>
-<script src="/js/program-manager.js?v=132000"></script>
-<script src="/js/hero.js?v=132000"></script>
-<script src="/js/rest-timer.js?v=132000"></script>
-<script src="/js/auth.js?v=132000"></script>
-<script src="/js/push.js?v=132000"></script>
-<script src="/js/data-io.js?v=132000"></script>
-<script src="/js/sync.js?v=132000"></script>
-<script src="/js/muscle-map.js?v=132000"></script>
-<script src="/js/progress.js?v=132000"></script>
-<script src="/js/history-chart.js?v=132000"></script>
-<script src="/js/stats-extra.js?v=132000"></script>
-<script src="/js/meal-plan.js?v=132000"></script>
-<script src="/js/undo.js?v=132000"></script>
-<script src="/js/home.js?v=132000"></script>
-<script src="/js/share.js?v=132000"></script>
-<script src="/js/onboarding.js?v=132000"></script>
-<script src="/js/account.js?v=132000"></script>
-<script src="/js/share-card.js?v=132000"></script>
-<script src="/js/number-pad.js?v=132000"></script>
-<script src="/js/refresh.js?v=132000"></script>
-<script src="/js/app.js?v=132000"></script>
+<script src="/js/core.js?v=133500"></script>
+<script src="/js/food.js?v=133500"></script>
+<script src="/js/locations.js?v=133500"></script>
+<script src="/js/programs.js?v=133500"></script>
+<script src="/js/run.js?v=133500"></script>
+<script src="/js/workout.js?v=133500"></script>
+<script src="/js/exercise-edit.js?v=133500"></script>
+<script src="/js/edit-tx.js?v=133500"></script>
+<script src="/js/exercise-library.js?v=133500"></script>
+<script src="/js/program-manager.js?v=133500"></script>
+<script src="/js/hero.js?v=133500"></script>
+<script src="/js/rest-timer.js?v=133500"></script>
+<script src="/js/auth.js?v=133500"></script>
+<script src="/js/push.js?v=133500"></script>
+<script src="/js/data-io.js?v=133500"></script>
+<script src="/js/sync.js?v=133500"></script>
+<script src="/js/muscle-map.js?v=133500"></script>
+<script src="/js/progress.js?v=133500"></script>
+<script src="/js/history-chart.js?v=133500"></script>
+<script src="/js/stats-extra.js?v=133500"></script>
+<script src="/js/meal-plan.js?v=133500"></script>
+<script src="/js/undo.js?v=133500"></script>
+<script src="/js/home.js?v=133500"></script>
+<script src="/js/share.js?v=133500"></script>
+<script src="/js/explore.js?v=133500"></script>
+<script src="/js/onboarding.js?v=133500"></script>
+<script src="/js/account.js?v=133500"></script>
+<script src="/js/share-card.js?v=133500"></script>
+<script src="/js/number-pad.js?v=133500"></script>
+<script src="/js/refresh.js?v=133500"></script>
+<script src="/js/app.js?v=133500"></script>
 
 </body></html>

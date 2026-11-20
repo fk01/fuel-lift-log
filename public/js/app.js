@@ -3,7 +3,7 @@
 /* ---------- tabs ---------- */
 // four screens behind a bottom tab bar (same layout an iOS app would use): food · workout · stats · more
 // five screens: วันนี้ (3 questions) · ร่างกาย · กิน · ออกกำลัง · เพิ่มเติม. "body" and "stats" share the stats view (Body / Training pane).
-const VIEWS=["home","food","gym","stats","more"],TITLES={home:"แท็บวันนี้",food:"กิน",gym:"ออกกำลัง",stats:"สถิติ",body:"สถิติ",more:"เพิ่มเติม"};
+const VIEWS=["home","food","gym","stats","explore","more"],TITLES={home:"แท็บวันนี้",food:"กิน",gym:"ออกกำลัง",stats:"สถิติ",body:"สถิติ",explore:"Explore",more:"เพิ่มเติม"};
 let curView="home",lastMain="gym";
 function show(v){const tab=v;if(v==="body"){stTab="body";applyStTab();v="stats"}else if(v==="stats")applyStTab();if(!VIEWS.includes(v))v="home";curView=v;if(v==="food"||v==="gym")lastMain=v;
   VIEWS.forEach(x=>document.getElementById("v-"+x).hidden=x!==v);
@@ -11,6 +11,7 @@ function show(v){const tab=v;if(v==="body"){stTab="body";applyStTab();v="stats"}
   const sel=tab==="body"?"stats":tab;document.querySelectorAll(".tabbar .tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===sel));
   document.getElementById("h1").textContent=t(TITLES[tab]||TITLES[v]);scrollAppTop();
   if(v==="food")try{renderFood()}catch(e){}
+  if(v==="explore")try{renderExplore()}catch(e){console.error(e)}
   if(v==="home")try{renderHome()}catch(e){console.error(e)}
   if(v==="stats")try{renderHistChart();renderStatsExtra();renderRecovery(document.getElementById("rec-body"))}catch(e){}}
 const viewOf=()=>location.hash.slice(1)||"home";

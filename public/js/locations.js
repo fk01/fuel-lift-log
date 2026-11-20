@@ -186,7 +186,7 @@ function openLocEdit(id){const isNew=!id,l=isNew?{id:"l"+Date.now().toString(36)
     <div class="le-eq"><div class="label" style="margin:4px 0 0">${t("อุปกรณ์")}</div>
     <div class="chips" data-eq>${EQ.map(([k,n])=>`<button class="chip" data-q="${k}" aria-pressed="${k==="body"||l.eq.includes(k)}"${k==="body"?" disabled":""}>${t(n)}</button>`).join("")}</div>
     <label class="le-row" style="justify-content:space-between">${t("ดัมเบลหนักสุด (kg)")}<input class="le-in" data-f="dbMax" type="number" inputmode="decimal" value="${l.dbMax||""}" style="width:90px;text-align:right"></label></div>
-    <button class="btn primary" data-save>${t("บันทึก")}</button>${isNew?"":`<button class="btn" data-lshare>↗ ${t("แชร์ยิมนี้")}</button><button class="btn ghost warn" data-del>${t("ลบสถานที่นี้")}</button>`}<button class="btn" data-gen-close>${t("ปิด")}</button></div>`,b=>{
+    <button class="btn primary" data-save>${t("บันทึก")}</button>${isNew?"":`<button class="btn" data-lshare>↗ ${t("แชร์ยิมนี้")}</button><button class="btn" data-lpub>🌐 ${t("แชร์ให้ชุมชน")}</button><button class="btn ghost warn" data-del>${t("ลบสถานที่นี้")}</button>`}<button class="btn" data-gen-close>${t("ปิด")}</button></div>`,b=>{
     b.querySelectorAll("[data-q],[data-a]").forEach(c=>c.addEventListener("click",()=>{if(c.disabled)return;c.setAttribute("aria-pressed",c.getAttribute("aria-pressed")!=="true");eqVis()}));
     const eqVis=()=>{b.querySelector(".le-eq").hidden=b.querySelector('[data-a="gym"]').getAttribute("aria-pressed")!=="true"};eqVis();
     b.querySelector("[data-geo]").addEventListener("click",()=>{if(!navigator.geolocation){toast(t("หาตำแหน่งไม่ได้"));return}
@@ -196,6 +196,7 @@ function openLocEdit(id){const isNew=!id,l=isNew?{id:"l"+Date.now().toString(36)
       l.types=[...b.querySelectorAll("[data-a]")].filter(c=>c.getAttribute("aria-pressed")==="true").map(c=>c.dataset.a);if(!l.types.length)l.types=["gym"];delete l.act;
       l.eq=[...b.querySelectorAll("[data-q]")].filter(c=>c.getAttribute("aria-pressed")==="true").map(c=>c.dataset.q);
       const i=LOCS.findIndex(q=>q.id===l.id);if(i>=0)LOCS[i]=l;else LOCS.push(l);saveLocs();closeGen();renderGym()});
+    b.querySelector("[data-lpub]")?.addEventListener("click",()=>publishWorkout(Object.keys(PROGS).filter(k=>k!=="free"&&locOf(PROGS[k])===l.id),l.id));
     b.querySelector("[data-lshare]")?.addEventListener("click",()=>openShareLink(Object.keys(PROGS).filter(k=>k!=="free"&&locOf(PROGS[k])===l.id),l.id));
     const d=b.querySelector("[data-del]");if(d)d.addEventListener("click",()=>{if(LOCS.length<2){toast(t("ต้องมีอย่างน้อย 1 สถานที่"));return}
       if(!d.dataset.sure){d.dataset.sure=1;d.textContent=t("ลบสถานที่นี้?");return}
@@ -319,9 +320,9 @@ function openPlanItem(k){const p=PROGS[k],cx=isCardio(p),L=locById(locOf(p)==="*
   const last=logs.filter(l=>l.prog===k).slice(-1)[0];
   const ex=cx?"":p.ex.slice(0,6).map(e=>`<div class="pi-ex"><span>${esc(e.n)}</span><small>${e.s}×${esc(e.r)}</small></div>`).join("")+(p.ex.length>6?`<small class="note">+${p.ex.length-6} ${t("ท่า")}</small>`:"");
   openGen(esc(p.name),`<div class="pi-top"><small class="note">${cx?t("คาร์ดิโอ"):nU(p.ex.length,"ท่า")}${last?" · "+t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):""}</small>${ip?"":`<button class="loc-chip" data-pil>${esc(L.icon||"📍")} ${esc(t(L.name))} ⌄</button>`}</div>${ex}
-    <div class="pm-menu">${cx?"":`<button class="menu-row" data-pis2><span class="mi">↗</span><span class="mt"><b>${t("แชร์ลิงก์")}</b></span><span class="mc">›</span></button><button class="menu-row" data-pie><span class="mi">✎</span><span class="mt"><b>${t("แก้โปรแกรม")}</b></span><span class="mc">›</span></button>`}${ip?"":`<button class="menu-row" data-pid><span class="mi">✕</span><span class="mt"><b>${t("เอาออกจากวันนี้")}</b></span></button>`}</div>
+    <div class="pm-menu">${cx?"":`<button class="menu-row" data-pis2><span class="mi">↗</span><span class="mt"><b>${t("แชร์ลิงก์")}</b></span><span class="mc">›</span></button><button class="menu-row" data-pub2><span class="mi">🌐</span><span class="mt"><b>${t("แชร์ให้ชุมชน")}</b></span><span class="mc">›</span></button><button class="menu-row" data-pie><span class="mi">✎</span><span class="mt"><b>${t("แก้โปรแกรม")}</b></span><span class="mc">›</span></button>`}${ip?"":`<button class="menu-row" data-pid><span class="mi">✕</span><span class="mt"><b>${t("เอาออกจากวันนี้")}</b></span></button>`}</div>
     <div class="actions sheet-act"><button class="btn" data-gen-close>${t("ปิด")}</button><button class="btn primary" data-pis style="flex:1">▶ ${t(ip?"กลับไปเล่น":"เริ่ม")}</button></div>`,
-    b=>{b.querySelector("[data-pil]")?.addEventListener("click",()=>openPlanPlace(k));b.querySelector("[data-pis2]")?.addEventListener("click",()=>openShareLink([k],locOf(p)));
+    b=>{b.querySelector("[data-pil]")?.addEventListener("click",()=>openPlanPlace(k));b.querySelector("[data-pis2]")?.addEventListener("click",()=>openShareLink([k],locOf(p)));b.querySelector("[data-pub2]")?.addEventListener("click",()=>publishWorkout([k],locOf(p)));
       b.querySelector("[data-pie]")?.addEventListener("click",()=>{closeGen();pmReturn=()=>openPlanItem(k);pmOnly=k;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false});
       b.querySelector("[data-pid]")?.addEventListener("click",()=>{closeGen();planDel(k);renderGym()});
       b.querySelector("[data-pis]").addEventListener("click",()=>{closeGen();if(ip){setDayMode("train");renderGym();scrollAppTop();return}startPlanItem(k,true)})})}
