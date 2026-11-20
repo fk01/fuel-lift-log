@@ -3,11 +3,11 @@
 
 import { json } from "../utils.js";
 
-export async function docsRoutes(req, env, url) {
+export async function docsRoutes(req, env, url, uid) {
   const p = url.pathname, m = req.method;
 
   if (p === "/api/docs" && m === "GET") {
-    const { results } = await env.DB.prepare("SELECT id, value FROM docs").all();
+    const { results } = await env.DB.prepare("SELECT id, value FROM udocs WHERE uid = ?1").bind(uid).all();
     return json(results.map((r) => ({ id: r.id, value: JSON.parse(r.value) })));
   }
   const dm = p.match(/^\/api\/docs\/(.+)$/);
@@ -20,26 +20,26 @@ export async function docsRoutes(req, env, url) {
       let doc = JSON.parse(body), value = body;
       // settings: never let a device with an older copy of the programs / exercise library overwrite a newer one
       if (id === "settings" && doc && typeof doc === "object") {
-        const cur = await env.DB.prepare("SELECT value FROM docs WHERE id = ?1").bind(id).first();
+        const cur = await env.DB.prepare("SELECT value FROM udocs WHERE uid = ?2 AND id = ?1").bind(id, uid).first();
         const old = cur ? JSON.parse(cur.value) : null;
         if (old && (+old.progsRev || 0) > (+doc.progsRev || 0)) {
           doc = { ...doc, progs: old.progs, locs: old.locs, lib: old.lib, progsRev: old.progsRev, scheme: old.scheme ?? doc.scheme };
           value = JSON.stringify(doc);
         }
       }
-      await env.DB.prepare("INSERT INTO docs (id, value, updated) VALUES (?1, ?2, ?3) ON CONFLICT(id) DO UPDATE SET value = ?2, updated = ?3")
-        .bind(id, value, Date.now()).run();
+      await env.DB.prepare("INSERT INTO udocs (uid, id, value, updated) VALUES (?4, ?1, ?2, ?3) ON CONFLICT(uid, id) DO UPDATE SET value = ?2, updated = ?3")
+        .bind(id, value, Date.now(), uid).run();
       return json({ ok: true });
     }
     if (m === "DELETE") {
-      await env.DB.prepare("DELETE FROM docs WHERE id = ?1").bind(id).run();
+      await env.DB.prepare("DELETE FROM udocs WHERE uid = ?2 AND id = ?1").bind(id, uid).run();
       return json({ ok: true });
     }
   }
   if (p === "/api/import" && m === "POST") {
     const data = await req.json();
     const stmts = [];
-    const put = (id, v) => stmts.push(env.DB.prepare("INSERT INTO docs (id, value, updated) VALUES (?1, ?2, ?3) ON CONFLICT(id) DO UPDATE SET value = ?2, updated = ?3").bind(id, JSON.stringify(v), Date.now()));
+    const put = (id, v) => stmts.push(env.DB.prepare("INSERT INTO udocs (uid, id, value, updated) VALUES (?4, ?1, ?2, ?3) ON CONFLICT(uid, id) DO UPDATE SET value = ?2, updated = ?3").bind(id, JSON.stringify(v), Date.now(), uid));
     for (const [date, v] of Object.entries(data.food || {})) if (/^\d{4}-\d\d-\d\d$/.test(date)) put("f-" + date, { date, ...v });
     for (const l of data.gymLogs || []) put(`g-${l.date}-${l.prog}`, l);
     if (data.programs || data.restSettings) put("settings", { restCfg: data.restSettings || {}, draft: {}, progs: data.programs, lib: data.exerciseLibrary, unit: data.displayUnit || "kg", scheme: 3 });

@@ -14,6 +14,8 @@
   // ทุก 15 นาที (UTC) — โค้ดแปลงเป็นเวลาไทยแล้วเช็กมื้อที่ถึงเวลา
   "triggers": { "crons": ["*/15 * * * *"] },
   "observability": { "enabled": true },
+  // Google Sign-In (public OAuth client id, not a secret)
+  "vars": { "GOOGLE_CLIENT_ID": "124800862517-17lnbjsseeqp4af5strmm5t41eisvbme.apps.googleusercontent.com" },
   // เก็บ Variables ที่ตั้งใน Dashboard ไว้ ไม่ให้ถูกลบตอน deploy
   "keep_vars": true
 }

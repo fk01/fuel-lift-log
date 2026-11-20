@@ -1,0 +1,26 @@
+// API test against a running `wrangler dev --local` (BASE, default http://localhost:8799) with ACCESS_PIN=1234 and legacy docs seeded.
+const BASE = process.env.BASE || "http://localhost:8799";
+const jar = () => { let c = ""; return async (path, body, method) => { const r = await fetch(BASE + path, { method: method || (body ? "POST" : "GET"), headers: { "content-type": "application/json", cookie: c }, body: body ? JSON.stringify(body) : undefined });
+  const sc = r.headers.get("set-cookie"); if (sc) c = sc.split(";")[0]; let j = null; try { j = await r.json() } catch (e) {} return { s: r.status, j } } };
+const ok = (c, m) => { if (!c) { console.error("FAIL", m); process.exit(1) } console.log("ok", m) };
+const a = jar(), b = jar(), email = (n) => `t${n}${Date.now()}@ex.com`;
+ok((await a("/api/docs")).s === 401, "docs need sign-in");
+const ea = email("a");
+ok((await a("/api/auth/signup", { email: ea, password: "short" })).s === 400, "short password rejected");
+ok((await a("/api/auth/signup", { email: ea, password: "password-a", name: "A" })).s === 200, "sign up A");
+ok((await b("/api/auth/signup", { email: ea, password: "password-b" })).s === 409, "duplicate email rejected");
+ok((await b("/api/auth/signup", { email: email("b"), password: "password-b", name: "B" })).s === 200, "sign up B");
+const st = (await a("/api/auth/status")).j; ok(st.me && st.me.name === "A" && st.legacy, "status: me + legacy data waiting");
+ok((await a("/api/docs/f-2026-01-01", { done: { m1: true } }, "PUT")).s === 200, "A writes a doc");
+ok((await b("/api/docs")).j.length === 0, "B can't see A's docs");
+ok((await a("/api/docs")).j.length === 1, "A sees own doc");
+ok((await b("/api/auth/claim", { pin: "0000" })).s === 401, "claim with wrong PIN refused");
+ok((await a("/api/auth/claim", { pin: "1234" })).s === 200, "A claims old data with PIN");
+ok((await a("/api/docs")).j.some((d) => d.id === "settings"), "old data now in A");
+ok((await b("/api/docs")).j.length === 0, "B still empty");
+ok((await b("/api/auth/claim", { pin: "1234" })).s === 409, "second claim refused");
+ok((await a("/api/logout", {})).s === 200 && (await a("/api/docs")).s === 401, "sign out ends session");
+ok((await a("/api/auth/login", { email: ea, password: "wrong-pass" })).s === 401, "wrong password");
+ok((await a("/api/auth/login", { email: ea.toUpperCase(), password: "password-a" })).s === 200 && (await a("/api/docs")).j.length >= 2, "sign in again (email case-insensitive)");
+ok((await a("/api/auth/google", { credential: "x.y.z" })).s === 401, "bogus Google token refused");
+console.log("API PASS");
