@@ -776,3 +776,7 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 /* the ••• hit-area pseudo was stretching over the whole card (pc-more is static on row cards) → taps on ▶ Start opened the editor */
 .prog .pc-more{position:relative!important}.prog .pc-more::before{inset:-4px!important}
 .pc-go{position:relative;z-index:1}
+/* hit-area fix (stronger than .prog.row-card/.prog.cardio rules) */
+.prog.row-card .pc-more,.prog.cardio .pc-more{position:relative!important}
+.prog.row-card .pc-more::before,.prog.cardio .pc-more::before{inset:-4px!important}
+#v-food{padding-bottom:84px}
