@@ -863,3 +863,9 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 .pl-row .pc-more{width:40px;height:40px}
 .pl-add-main{min-height:52px}
 .pl-empty{text-align:center;padding:8px 0}
+/* multi-select add sheet */
+.pa-box{width:26px;height:26px;border-radius:8px;border:1.5px solid var(--line);display:grid;place-items:center;font-weight:800;color:var(--on-accent);flex:none}
+.pa-row.sel .pa-box{background:var(--grad);border-color:transparent;box-shadow:0 0 10px #3dff8c66}
+.pa-row.sel{background:#2ee6ff10}
+.pa-row.in{opacity:.55}.pa-row.in .pa-box{border:0;color:var(--green)}
+.btn.primary:disabled{opacity:.45;box-shadow:none!important}

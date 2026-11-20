@@ -93,7 +93,8 @@ const steps = [
     const txt = document.body.innerText; const m = txt.match(/\p{Extended_Pictographic}/u); if (m && !/[✓✕✎☰↗★⚠]/.test(m[0])) throw new Error("emoji left: " + m[0]);
     if (getComputedStyle(document.getElementById("hero")).display !== "none") throw new Error("level character should be hidden"); }],
   ["day-queue", () => { location.hash = "gym"; const saved = logs.filter(l => l.date === TODAY); logs = logs.filter(l => l.date !== TODAY); cancelProg(); setDayMode(null); dayPlan = {}; renderGym();
-    openPlanAdd(); document.querySelector('#gen-body [data-padd="pull"]').click(); closeGen(); const row = document.querySelector('#locpick [data-pl="pull"]'); if (!row || !row.classList.contains("st-pend")) throw new Error("added row pending");
+    openPlanAdd(); document.querySelector('#gen-body [data-padd="pull"]').click(); document.querySelector('#gen-body [data-padd="push2"]').click(); document.querySelector("#gen-body [data-pgo]").click();
+    if (!document.querySelector('#locpick [data-pl="push2"]')) throw new Error("multi-select adds both"); const row = document.querySelector('#locpick [data-pl="pull"]'); if (!row || !row.classList.contains("st-pend")) throw new Error("added row pending");
     row.querySelector('[data-plgo="start"]').click(); if (!picked || cur !== "pull") throw new Error("start from list");
     setDayMode(null); renderGym(); if (!document.querySelector('#locpick [data-pl="pull"].st-prog')) throw new Error("in progress row");
     cancelProg(); setDayMode(null); renderGym(); document.querySelector('#locpick [data-pl="pull"] [data-pldel]').click(); if (document.querySelector('#locpick [data-pl="pull"]')) throw new Error("remove row");
