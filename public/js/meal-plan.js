@@ -27,8 +27,8 @@ Object.assign(EN,{"แผนกิน":"Meal plan","เป้าต่อวั�
 document.getElementById("mp-open")?.addEventListener("click",openMealPlan);
 // "What to eat?" on the Today screen: the whole food view is moved under the plan (and back before each re-render)
 const FOOD_HOME=document.createComment("food-home");document.getElementById("v-food").before(FOOD_HOME);
-function foodHomeBack(){const fv=document.getElementById("v-food");if(fv&&fv.parentNode!==FOOD_HOME.parentNode)FOOD_HOME.after(fv);if(fv)fv.hidden=true}
+function foodHomeBack(){const fv=document.getElementById("v-food");if(fv&&fv.parentNode!==FOOD_HOME.parentNode)FOOD_HOME.after(fv)}
 document.getElementById("day-type")?.appendChild(document.getElementById("reset"));
-function todayMeals(box){if(!box||box.querySelector(".eat-h"))return;const h=document.createElement("h2");h.className="dp-sub eat-h";h.textContent=t("วันนี้กินอะไร?");
+function todayMeals(box){return;if(!box||box.querySelector(".eat-h"))return;const h=document.createElement("h2");h.className="dp-sub eat-h";h.textContent=t("วันนี้กินอะไร?");
   const slot=document.createElement("div");slot.className="eat-slot";const fv=document.getElementById("v-food");fv.hidden=curView!=="gym";slot.appendChild(fv);box.append(h,slot);try{renderFood()}catch(e){}}
 Object.assign(EN,{"วันนี้กินอะไร?":"What to eat?","สำรอง / นำเข้า":"Backup / import","มื้อ เวลา เป้า kcal และโปรตีน":"Meals, times, kcal & protein targets","ท่า เซ็ต วันในตาราง":"Exercises, sets, schedule","โปรแกรม":"Programs","การกิน":"Eating","ตั้งค่า":"Settings","เปิด":"Turn on"});
