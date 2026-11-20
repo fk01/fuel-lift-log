@@ -1041,3 +1041,14 @@ input,select,textarea{border-width:1.5px!important}
 .acct-mark{display:block;margin:0 auto -6px;filter:drop-shadow(0 0 12px #2ee6ff55)}
 .acct-logo{background:linear-gradient(180deg,#f4f8fb,#9aa7b3);-webkit-background-clip:text;background-clip:text;color:transparent!important;letter-spacing:.01em}
 .acct-sub{margin:-8px 0 2px;font-size:.7rem;letter-spacing:.32em;color:var(--muted)}
+/* ---- harden ---- */
+/* iOS zooms the page when a focused field is under 16px */
+input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:max(16px,1em)}
+.sets input,.bstep input{font-size:max(16px,1em)}
+/* long user-generated text (plan titles, names, bios, comments) never pushes the layout */
+.ex-top b,.ex-pt b,.ex-by,.ex-card .note,.pl-row .row-tx b,.hq-a,.cm p,.pi-ex span,.tm-tx b,.sheet-h b{overflow-wrap:anywhere;min-width:0}
+.ex-top{min-width:0}.ex-top b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sheet-h b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mp-vit input{width:22px;height:22px;accent-color:var(--green,#3dff8c)}
+.ex-by{display:flex!important;gap:6px;align-items:center;min-width:0}.ex-by>span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.ex-empty{display:grid;gap:10px;justify-items:center}

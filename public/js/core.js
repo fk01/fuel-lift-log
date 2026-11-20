@@ -26,7 +26,7 @@ const emptyBox=(ic,title,hint)=>`<div class="empty"><svg viewBox="0 0 24 24" wid
 Object.assign(EN,{"ยังไม่มีประวัติเวท":"No workouts yet","เริ่มจากการ์ดวันนี้ในหน้าเวท":"Start from the Today card on Workout","ยังไม่มีบันทึกอาหาร":"No meals logged yet","ติ๊กมื้อในหน้าอาหาร":"Tick meals on the Meals tab","ยังไม่มีบันทึกร่างกาย":"No body logs yet","กด + บันทึกร่างกาย เพื่อเริ่ม":"Tap + Log body to start","ยังไม่มีข้อมูลการฝึก":"No training data yet"});
 const t=k=>lang==="th"?k:(EN[k]??k);
 const thDate=(s,o)=>new Date(s+"T12:00:00").toLocaleDateString(LOC(),o);
-function applyStatic(){document.querySelectorAll("[data-i]").forEach(el=>el.textContent=(el.dataset.pre||"")+t(el.dataset.i));document.getElementById("lang").textContent=lang==="th"?"EN":"TH";document.documentElement.lang=lang}
+function applyStatic(){document.documentElement.lang=lang==="th"?"th":"en";document.querySelectorAll("[data-i]").forEach(el=>el.textContent=(el.dataset.pre||"")+t(el.dataset.i));document.getElementById("lang").textContent=lang==="th"?"EN":"TH";document.documentElement.lang=lang}
 // the app scrolls inside .wrap (not the window)
 const appScroll=()=>document.querySelector(".wrap");
 let scrollReset=false;   // set when code deliberately scrolls to top, so closing a sheet does not undo it
