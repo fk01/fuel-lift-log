@@ -921,3 +921,9 @@ body.tx-open #app,body.tx-open main{padding-bottom:110px}
 .undo-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:50;display:flex;gap:12px;align-items:center;background:#0e131c;border:1px solid color-mix(in srgb,var(--cyan,#2ee6ff) 45%,transparent);border-radius:999px;padding:6px 6px 6px 16px;box-shadow:0 8px 24px #0008;white-space:nowrap}
 .undo-bar[hidden]{display:none}.undo-bar span{font-size:.85rem}.undo-bar .btn{color:var(--cyan,#2ee6ff)}
 body.tx-open .undo-bar{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+/* workout focus mode: only the session on screen; "‹ Today" leaves it running */
+body.wo-focus #step1,body.wo-focus #lochead,body.wo-focus #today,body.wo-focus #step2,body.wo-focus #hero,body.wo-focus #share-last,body.wo-focus header{display:none!important}
+.wo-back{font:inherit;font-size:.85rem;background:none;border:0;color:var(--cyan,#2ee6ff);padding:6px 4px;cursor:pointer;white-space:nowrap}
+.wo-top{flex-wrap:nowrap}#wo-loc{cursor:pointer}
+.pi-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pi-ex{display:flex;justify-content:space-between;padding:7px 0;border-top:1px solid var(--line);font-size:.9rem}.pi-ex small{color:var(--muted)}

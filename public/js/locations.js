@@ -162,7 +162,7 @@ function renderLocHead(){try{updLocSum()}catch(e){}const h=document.getElementBy
   if(picked)it.forEach(x=>{if(x[1]!=="mode")x[1]=null});h.innerHTML=crumbs(it,false);bindCrumbs(h)}
 const eqSum=l=>l.eq.filter(q=>q!=="body").map(q=>t((EQ.find(x=>x[0]===q)||[0,q])[1])).join(" · ")+(l.dbMax&&l.eq.includes("db")?` ≤ ${l.dbMax} kg`:"")||t("ตัวเปล่า");
 const mapUrl=m=>{m=(m||"").trim();if(!m)return "";return /^https?:\/\//.test(m)?safeUrl(m):"https://maps.google.com/?q="+encodeURIComponent(m)};
-function renderLocPick(){const box=document.getElementById("locpick");if(!box)return;foodHomeBack();const rc0=document.getElementById("rec-card"),home=document.querySelector(".rec-home");if(rc0&&home&&box.contains(rc0))home.after(rc0);const show=needPick();box.hidden=!show;document.getElementById("v-gym").classList.toggle("picking",show);document.getElementById("v-gym").classList.toggle("resting",resting());document.body.classList.toggle("loc-picking",show);renderLocHead();if(!show)return;
+function renderLocPick(){const box=document.getElementById("locpick");if(!box)return;foodHomeBack();const rc0=document.getElementById("rec-card"),home=document.querySelector(".rec-home");if(rc0&&home&&box.contains(rc0))home.after(rc0);const show=needPick();box.hidden=!show;document.body.classList.toggle("wo-focus",picked&&!editing&&DAY===TODAY&&!show);document.getElementById("v-gym").classList.toggle("picking",show);document.getElementById("v-gym").classList.toggle("resting",resting());document.body.classList.toggle("loc-picking",show);renderLocHead();if(!show)return;
   if(needDay()){if(hasPlanToday())renderPlan(box);else renderDayPick(box);return}
   const lastId=locDay.id||curLoc,todayAt=l=>planKeys(DAY).find(k=>locOf(PROGS[k])===l.id);
   const kd=pickAnyway?null:kindToday(),list=LOCS.filter(l=>!kd||hasType(l,kd)).sort((x,y)=>(!!todayAt(y)-!!todayAt(x))||((y.id===lastId)-(x.id===lastId)));
@@ -278,7 +278,9 @@ const inProg=k=>picked&&cur===k&&!planItemDone(k);
 function planItemDone(k){const p=PROGS[k];if(isCardio(p))return cxGet(k);const l=logs.find(x=>x.date===DAY&&x.prog===k);return l||null}
 function planStat(){const ks=planList();return [ks.filter(planItemDone).length,ks.length]}
 function planSummary(k,v){const p=PROGS[k];if(isCardio(p))return "✓ "+cxTxt(k,v);const n=Object.values(v.ex).reduce((a,s)=>a+s.length,0);return `✓ ${nU(n,"เซ็ต")} · ${Math.round(volOf(v)).toLocaleString()} kg`}
-function startPlanItem(k,go){const p=PROGS[k];dayKind={date:TODAY,k:isCardio(p)?"cardio":"gym"};save("daykind",dayKind);setDayMode("train");
+function startPlanItem(k,go){const p=PROGS[k];
+  // another weights session is running: ask what to do with it first
+  if(go&&!isCardio(p)&&picked&&PROGS[cur]&&cur!==k){if(woProgress().any){openSwitchAsk(k);return}cancelProg()}dayKind={date:TODAY,k:isCardio(p)?"cardio":"gym"};save("daykind",dayKind);setDayMode("train");
   curLoc=locOf(p)==="*"?(locById(p.lastLoc)?p.lastLoc:curLoc):locOf(p);pickAnyway=false;locPrev=null;locDay={date:TODAY,id:curLoc,prog:k};save("locday",locDay);
   if(isCardio(p)){renderGym();if(go)openCardio(k);return}
   if(!picked){if(cur!==k)draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft);if(go){chosen=true;document.getElementById("start-w").click();return}}renderGym();scrollAppTop()}
@@ -295,12 +297,33 @@ function renderPlan(box){const ks=planList(),[d,n]=planStat();
   const rc=document.getElementById("rec-card");if(rc){box.querySelector(".rec-slot").appendChild(rc);try{renderRecovery()}catch(e){}}
   box.querySelectorAll("[data-pl]").forEach(r=>{const k=r.dataset.pl;r.addEventListener("click",ev=>{if(ev.target.closest("[data-pldel]")){planDel(k);renderGym();return}if(ev.target.closest("[data-plloc]")){openPlanPlace(k);return}
     const g=ev.target.closest("[data-plgo]");if(g&&g.dataset.plgo==="resume"){setDayMode("train");renderGym();setTimeout(()=>document.getElementById("step3")?.scrollIntoView({block:"start"}),50);return}
-    if(planItemDone(k)){openDoneItem(k);return}startPlanItem(k,!!g)})});
+    if(planItemDone(k)){openDoneItem(k);return}if(g)startPlanItem(k,true);else openPlanItem(k)})});
   box.querySelector("[data-plrest]")?.addEventListener("click",()=>chooseDay("rest"));
   box.querySelector("[data-pladd]").addEventListener("click",openPlanAdd);todayMeals(box)}
 // "where?" sheet for one row of today's plan. Weights (option A): each place has its own copy of a program,
 // so picking a place swaps today's row to that place's copy. Cardio: any cardio place, remembered as lastLoc.
 // a done row can always be reopened: edit (cardio) or remove what was saved
+function openSwitchAsk(k){const o=PROGS[cur].name,n=PROGS[k].name,s=woProgress();
+  openGen(`${esc(o)} ${t("ยังเล่นค้างอยู่")} (${s.done}/${s.total})`,`<small class="note">${t("จะทำยังไงกับ")} ${esc(o)} ${t("ก่อนเริ่ม")} ${esc(n)}?</small><div class="pm-menu">
+    <button class="menu-row" data-sw="keep"><span class="mi">▶</span><span class="mt"><b>${t("เล่นต่อ")} ${esc(o)}</b><small>${t("ยังไม่เริ่ม")} ${esc(n)}</small></span></button>
+    <button class="menu-row" data-sw="save"><span class="mi">✓</span><span class="mt"><b>${t("บันทึก")} ${esc(o)} ${t("แล้วเริ่ม")} ${esc(n)}</b><small>${t("เก็บเซ็ตที่ทำไว้")}</small></span></button>
+    <button class="menu-row warn" data-sw="drop"><span class="mi">✕</span><span class="mt"><b>${t("ทิ้ง")} ${esc(o)} ${t("แล้วเริ่ม")} ${esc(n)}</b><small>${t("กด ↺ เลิกทำ ได้")}</small></span></button></div>
+    <button class="btn" data-gen-close>${t("ยกเลิก")}</button>`,b=>b.querySelectorAll("[data-sw]").forEach(x=>x.addEventListener("click",()=>{const a=x.dataset.sw;closeGen();
+      if(a==="keep"){setDayMode("train");renderGym();return}
+      if(a==="save"){if(!commitDraft(DAY,cur)){toast(t("เซ็ตที่ติ๊กยังไม่ได้ใส่น้ำหนัก"));return}picked=false;chosen=false;stopRest&&stopRest()}
+      else{cancelProg();undoLoud(t("ทิ้งแล้ว"))}startPlanItem(k,true)})))}
+// tapping a row (not ▶): details sheet — exercises, place, edit, remove, Start
+function openPlanItem(k){const p=PROGS[k],cx=isCardio(p),L=locById(locOf(p)==="*"?p.lastLoc:locOf(p))||hereLoc(),ip=inProg(k);
+  const last=logs.filter(l=>l.prog===k).slice(-1)[0];
+  const ex=cx?"":p.ex.slice(0,6).map(e=>`<div class="pi-ex"><span>${esc(e.n)}</span><small>${e.s}×${esc(e.r)}</small></div>`).join("")+(p.ex.length>6?`<small class="note">+${p.ex.length-6} ${t("ท่า")}</small>`:"");
+  openGen(esc(p.name),`<div class="pi-top"><small class="note">${cx?t("คาร์ดิโอ"):nU(p.ex.length,"ท่า")}${last?" · "+t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):""}</small>${ip?"":`<button class="loc-chip" data-pil>${esc(L.icon||"📍")} ${esc(t(L.name))} ⌄</button>`}</div>${ex}
+    <div class="pm-menu">${cx?"":`<button class="menu-row" data-pie><span class="mi">✎</span><span class="mt"><b>${t("แก้โปรแกรม")}</b></span><span class="mc">›</span></button>`}${ip?"":`<button class="menu-row" data-pid><span class="mi">✕</span><span class="mt"><b>${t("เอาออกจากวันนี้")}</b></span></button>`}</div>
+    <div class="actions sheet-act"><button class="btn" data-gen-close>${t("ปิด")}</button><button class="btn primary" data-pis style="flex:1">▶ ${t(ip?"กลับไปเล่น":"เริ่ม")}</button></div>`,
+    b=>{b.querySelector("[data-pil]")?.addEventListener("click",()=>openPlanPlace(k));
+      b.querySelector("[data-pie]")?.addEventListener("click",()=>{closeGen();pmOnly=k;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false});
+      b.querySelector("[data-pid]")?.addEventListener("click",()=>{closeGen();planDel(k);renderGym()});
+      b.querySelector("[data-pis]").addEventListener("click",()=>{closeGen();if(ip){setDayMode("train");renderGym();scrollAppTop();return}startPlanItem(k,true)})})}
+Object.assign(EN,{"ยังเล่นค้างอยู่":"is still in progress","จะทำยังไงกับ":"What to do with","ก่อนเริ่ม":"before starting","ยังไม่เริ่ม":"Don't start","แล้วเริ่ม":"and start","เก็บเซ็ตที่ทำไว้":"Keeps the sets you did","กด ↺ เลิกทำ ได้":"You can ↺ Undo","เอาออกจากวันนี้":"Remove from today","เล่นต่อ":"Continue"});
 function openDoneItem(k){const p=PROGS[k],cx=isCardio(p),v=planItemDone(k);
   openGen(esc(p.name),`<small class="note">${esc(planSummary(k,v))}</small><div class="pm-menu">${cx?`<button class="menu-row" data-dm="edit"><span class="mi">✎</span><span class="mt"><b>${t("แก้ไข")}</b></span></button>`:""}
     <button class="menu-row warn" data-dm="del"><span class="mi">↺</span><span class="mt"><b>${t("ยกเลิกที่บันทึก")}</b><small>${t("กลับเป็นยังไม่ได้ทำ")}</small></span></button></div><button class="btn" data-gen-close>${t("ปิด")}</button>`,
