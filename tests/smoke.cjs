@@ -149,6 +149,10 @@ const steps = [
   ["eat-in-today", () => { location.hash = "gym"; cancelProg(); setDayMode(null); dayPlan = {}; planAdd("push"); renderGym(); const c = document.querySelector("#locpick .eat-slot #meals input[type=checkbox]"); if (!c) throw new Error("food inside today");
     const id = c.id.slice(2); c.click(); if (!fs().done[id]) throw new Error("tick meal"); document.querySelector(`#locpick #c-${id}`).click(); if (fs().done[id]) throw new Error("untick meal"); renderGym(); if (!document.querySelector("#locpick #v-food")) throw new Error("food survives re-render");
     dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
+  ["undo-setup", () => { location.hash = "gym"; dayPlan = {}; save("dayplan", dayPlan); userAt = Date.now(); planAdd("pull"); }],
+  ["undo-run", () => { const b = document.getElementById("undo-bar"); if (!b || b.hidden) throw new Error("undo bar after save"); b.querySelector("[data-undo]").click(); if (planList().includes("pull") && !planKeys(DAY).includes("pull")) throw new Error("undo restores today plan");
+    userAt = 0; const n = logs.length; logs.push({ date: DAY, prog: "pull", ex: { x: [{ kg: 1, reps: 1 }] } }); save("gymlog", logs); setDayMode(null); planAdd("pull"); renderGym(); const r = document.querySelector('#locpick [data-pl="pull"]'); if (!r) throw new Error("done row"); r.click();
+    const d = document.querySelector('#gen-body [data-dm="del"]'); if (!d) throw new Error("done sheet"); d.click(); if (logs.length !== n) throw new Error("remove saved workout"); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

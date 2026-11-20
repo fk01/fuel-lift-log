@@ -295,11 +295,18 @@ function renderPlan(box){const ks=planList(),[d,n]=planStat();
   const rc=document.getElementById("rec-card");if(rc){box.querySelector(".rec-slot").appendChild(rc);try{renderRecovery()}catch(e){}}
   box.querySelectorAll("[data-pl]").forEach(r=>{const k=r.dataset.pl;r.addEventListener("click",ev=>{if(ev.target.closest("[data-pldel]")){planDel(k);renderGym();return}if(ev.target.closest("[data-plloc]")){openPlanPlace(k);return}
     const g=ev.target.closest("[data-plgo]");if(g&&g.dataset.plgo==="resume"){setDayMode("train");renderGym();setTimeout(()=>document.getElementById("step3")?.scrollIntoView({block:"start"}),50);return}
-    if(planItemDone(k))return;startPlanItem(k,!!g)})});
+    if(planItemDone(k)){openDoneItem(k);return}startPlanItem(k,!!g)})});
   box.querySelector("[data-plrest]")?.addEventListener("click",()=>chooseDay("rest"));
   box.querySelector("[data-pladd]").addEventListener("click",openPlanAdd);todayMeals(box)}
 // "where?" sheet for one row of today's plan. Weights (option A): each place has its own copy of a program,
 // so picking a place swaps today's row to that place's copy. Cardio: any cardio place, remembered as lastLoc.
+// a done row can always be reopened: edit (cardio) or remove what was saved
+function openDoneItem(k){const p=PROGS[k],cx=isCardio(p),v=planItemDone(k);
+  openGen(esc(p.name),`<small class="note">${esc(planSummary(k,v))}</small><div class="pm-menu">${cx?`<button class="menu-row" data-dm="edit"><span class="mi">✎</span><span class="mt"><b>${t("แก้ไข")}</b></span></button>`:""}
+    <button class="menu-row warn" data-dm="del"><span class="mi">↺</span><span class="mt"><b>${t("ยกเลิกที่บันทึก")}</b><small>${t("กลับเป็นยังไม่ได้ทำ")}</small></span></button></div><button class="btn" data-gen-close>${t("ปิด")}</button>`,
+    b=>b.querySelectorAll("[data-dm]").forEach(x=>x.addEventListener("click",()=>{closeGen();if(x.dataset.dm==="edit"){openCardio(k);return}
+      if(cx)cxSet(k,null);else{logs=logs.filter(l=>!(l.date===DAY&&l.prog===k));save("gymlog",logs)}renderAll()})))}
+Object.assign(EN,{"ยกเลิกที่บันทึก":"Undo this entry","กลับเป็นยังไม่ได้ทำ":"Back to not done"});
 function openPlanPlace(k){const p=PROGS[k],cx=isCardio(p);
   const sib=cx?[]:Object.keys(PROGS).filter(q=>q!=="free"&&!isCardio(PROGS[q])&&PROGS[q].name.trim().toLowerCase()===p.name.trim().toLowerCase());
   const opts=cx?LOCS.filter(l=>hasType(l,"cardio")).map(l=>[l.id,l.id]):sib.map(q=>[locOf(PROGS[q]),q]).filter(([id])=>locById(id));
