@@ -162,6 +162,11 @@ const steps = [
   ["scroll-keep-3", () => { if (Math.abs(appScroll().scrollTop - window._y) > 5) throw new Error("scroll restored after closing a sheet: " + appScroll().scrollTop + "/" + window._y); renderGym(); if (Math.abs(appScroll().scrollTop - window._y) > 5) throw new Error("scroll kept across re-render"); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
   ["eat-calendar", () => { location.hash = "food"; show("food"); renderFood(); const d = document.querySelectorAll("#eat-cal .ec-d"); if (d.length !== 7) throw new Error("eat week"); if (!document.querySelector("#v-food #food-hist")) throw new Error("nutrition in Eat");
     if (!document.getElementById("step1").hidden) throw new Error("workout calendar not on Eat"); show("gym"); if (document.getElementById("step1").hidden) throw new Error("workout calendar on Train"); }],
+  ["quick-create", () => { location.hash = "gym"; paTab = "gym"; openPlanAdd(); const nl = LOCS.length, np = Object.keys(PROGS).length; document.querySelector('#gen-body [data-pcnew]').click(); document.getElementById("qp-name").value = "Home2"; document.querySelector("#gen-body [data-qs]").click();
+    const l = LOCS.find(x => x.name === "Home2"); if (!l || LOCS.length !== nl + 1 || paLoc !== l.id || Object.keys(PROGS).length !== np) throw new Error("new place only");
+    document.querySelector('#gen-body [data-pnew]').click(); document.getElementById("qg-name").value = "Quick A"; document.querySelector("#gen-body [data-qs]").click();
+    const k = Object.keys(PROGS).find(q => PROGS[q].name === "Quick A"); if (!k || PROGS[k].loc !== l.id || !document.querySelector(`#gen-body [data-padd="${k}"].sel`)) throw new Error("new program under place, picked");
+    closeGen(); delete PROGS[k]; LOCS = LOCS.filter(x => x !== l); paLoc = null; }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
