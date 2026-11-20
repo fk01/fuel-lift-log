@@ -7,9 +7,10 @@ import { passkeyRoutes } from "./routes/passkey.js";
 import { pushRoutes } from "./routes/push.js";
 import { sessionRoutes } from "./routes/session.js";
 import { socialRoutes } from "./routes/social.js";
+import { communityRoutes } from "./routes/community.js";
 import { json } from "./utils.js";
 
-const PRIVATE_ROUTES = [passkeyRoutes, docsRoutes, pushRoutes, socialRoutes];
+const PRIVATE_ROUTES = [passkeyRoutes, docsRoutes, pushRoutes, communityRoutes, socialRoutes];
 
 export async function api(req, env, url) {
   const open = await sessionRoutes(req, env, url);

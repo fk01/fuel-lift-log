@@ -128,7 +128,8 @@ const hasPlanToday=()=>DAY===TODAY;   // today always shows the day list (schedu
 const freshDay=()=>DAY===TODAY&&!editing&&(!picked||!dayMode());
 const needDay=()=>freshDay()&&!dayMode();
 const resting=()=>freshDay()&&dayMode()==="rest";
-const needPick=()=>needDay()||(freshDay()&&dayMode()==="train"&&(locDay.date!==TODAY||pickAnyway));
+const pastDay=()=>DAY!==TODAY&&!picked&&!editing;
+const needPick=()=>pastDay()||resting()||needDay()||(freshDay()&&dayMode()==="train"&&(locDay.date!==TODAY||pickAnyway));
 let dayKind=load("daykind",{});const kindToday=()=>dayKind.date===TODAY?dayKind.k:null;
 function chooseDay(m){if(m==="cardio"||m==="train"){dayKind={date:TODAY,k:m==="cardio"?"cardio":"gym"};save("daykind",dayKind);m="train"}setDayMode(m);if(m==="train"){pickAnyway=false;locPrev=null;if(locDay.date===TODAY){locPrev=locDay;locDay={};save("locday",locDay);pickAnyway=true}}renderGym();scrollAppTop()}
 function weakest(n){try{const R=recPct();return REC_ORDER.filter(m=>R[m]&&R[m].pct<100&&R[m].days<=NEGLECT).sort((a,b)=>R[a].pct-R[b].pct).slice(0,n).map(m=>[m,R[m].pct])}catch(e){return []}}
@@ -163,8 +164,9 @@ function renderLocHead(){try{updLocSum()}catch(e){}const h=document.getElementBy
 const eqSum=l=>l.eq.filter(q=>q!=="body").map(q=>t((EQ.find(x=>x[0]===q)||[0,q])[1])).join(" · ")+(l.dbMax&&l.eq.includes("db")?` ≤ ${l.dbMax} kg`:"")||t("ตัวเปล่า");
 const mapUrl=m=>{m=(m||"").trim();if(!m)return "";return /^https?:\/\//.test(m)?safeUrl(m):"https://maps.google.com/?q="+encodeURIComponent(m)};
 const S1_HOME=document.createComment("step1-home");document.getElementById("step1").before(S1_HOME);
-function renderLocPick(){const box=document.getElementById("locpick");if(!box)return;foodHomeBack();{const s1=document.getElementById("step1");if(s1.parentNode!==S1_HOME.parentNode)S1_HOME.after(s1)}const rc0=document.getElementById("rec-card"),home=document.querySelector(".rec-home");if(rc0&&home&&box.contains(rc0))home.after(rc0);const show=needPick();box.hidden=!show;{const f=picked&&!editing&&DAY===TODAY&&!show,was=document.body.classList.contains("wo-focus");document.body.classList.toggle("wo-focus",f);if(f&&!was)setTimeout(()=>scrollAppTop(),0)}document.getElementById("v-gym").classList.toggle("picking",show);document.getElementById("v-gym").classList.toggle("resting",resting());document.body.classList.toggle("loc-picking",show);renderLocHead();if(!show)return;
-  if(needDay()){if(hasPlanToday())renderPlan(box);else renderDayPick(box);return}
+function renderLocPick(){const box=document.getElementById("locpick");if(!box)return;foodHomeBack();{const s1=document.getElementById("step1");if(s1.parentNode!==S1_HOME.parentNode)S1_HOME.after(s1)}const rc0=document.getElementById("rec-card"),home=document.querySelector(".rec-home");if(rc0&&home&&box.contains(rc0))home.after(rc0);const show=needPick();box.hidden=!show;{const f=picked&&!editing&&!show,was=document.body.classList.contains("wo-focus");document.body.classList.toggle("wo-focus",f);if(f&&!was)setTimeout(()=>scrollAppTop(),0)}document.getElementById("v-gym").classList.toggle("picking",show);document.getElementById("v-gym").classList.toggle("resting",resting());document.body.classList.toggle("loc-picking",show);renderLocHead();if(!show)return;
+  if(pastDay()){renderPastDay(box);return}
+  if(needDay()||resting()){renderPlan(box);return}
   const lastId=locDay.id||curLoc,todayAt=l=>planKeys(DAY).find(k=>locOf(PROGS[k])===l.id);
   const kd=pickAnyway?null:kindToday(),list=LOCS.filter(l=>!kd||hasType(l,kd)).sort((x,y)=>(!!todayAt(y)-!!todayAt(x))||((y.id===lastId)-(x.id===lastId)));
   box.innerHTML=crumbs([[modeChip(),"mode"],[t("ไปที่ไหน?"),null]])+`<h1 class="lp-h">${t("ไปที่ไหน?")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}</div>`+list.map(l=>{const k=todayAt(l),p=k&&PROGS[k],n=Object.keys(PROGS).filter(q=>q!=="free"&&locOf(PROGS[q])===l.id).length;
@@ -287,6 +289,20 @@ function startPlanItem(k,go){const p=PROGS[k];
   curLoc=locOf(p)==="*"?(locById(p.lastLoc)?p.lastLoc:curLoc):locOf(p);pickAnyway=false;locPrev=null;locDay={date:TODAY,id:curLoc,prog:k};save("locday",locDay);
   if(isCardio(p)){renderGym();if(go)openCardio(k);return}
   if(!picked){if(cur!==k)draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft);if(go){chosen=true;document.getElementById("start-w").click();return}}renderGym();scrollAppTop()}
+// a past day: what was logged + log something late (no old "pick a program" screen)
+function renderPastDay(box){const ls=logs.filter(l=>l.date===DAY),cx=Object.keys(PROGS).filter(k=>isCardio(PROGS[k])&&cxGet(k));
+  box.innerHTML=`<h1 class="dp-h">${t("ออกกำลัง")}</h1><div class="cal-slot"></div><h2 class="dp-sub pl-h">${t("ย้อนหลัง")} · ${thDate(DAY,{weekday:"long",day:"numeric",month:"short"})}</h2>
+    ${ls.map(l=>`<div class="pl-row st-done" data-pl="${esc(l.prog)}"><span class="row-ic">${licon("checkc")}</span><span class="row-tx"><span class="pl-st st-done">${t("Done")}</span><b>${esc(progName(l.prog))}</b><small>${esc(planSummary(l.prog,l))}</small></span></div>`).join("")}
+    ${cx.map(k=>`<div class="pl-row st-done" data-pl="${esc(k)}"><span class="row-ic g">${licon("checkc")}</span><span class="row-tx"><span class="pl-st st-done">${t("Done")}</span><b>${esc(PROGS[k].name)}</b><small>${esc(cxTxt(k,cxGet(k)))}</small></span></div>`).join("")}
+    ${ls.length||cx.length?"":`<small class="note pl-empty">${t("วันนี้ไม่ได้บันทึกอะไรไว้")}</small>`}
+    <div class="pl-acts"><button class="btn primary pl-add-main" data-late>+ ${t("บันทึกย้อนหลัง")}</button><button class="btn pl-rest" data-today>${t("กลับวันนี้")}</button></div>`;
+  {const s1=document.getElementById("step1");box.querySelector(".cal-slot").appendChild(s1);s1.hidden=false}
+  box.querySelectorAll("[data-pl]").forEach(r=>r.addEventListener("click",()=>openDoneItem(r.dataset.pl)));
+  box.querySelector("[data-today]").addEventListener("click",()=>{DAY=TODAY;renderAll()});
+  box.querySelector("[data-late]").addEventListener("click",()=>{const ks=Object.keys(PROGS).filter(k=>k!=="free");
+    openGen(t("บันทึกย้อนหลัง"),`<div class="pm-menu">${ks.map(k=>`<button class="menu-row" data-lk="${esc(k)}"><span class="mi">${licon(isCardio(PROGS[k])?"run":"dumbbell")}</span><span class="mt"><b>${esc(PROGS[k].name)}</b><small>${esc(t((locById(locOf(PROGS[k]))||{}).name||""))}</small></span><span class="mc">›</span></button>`).join("")}</div>`,
+      b=>b.querySelectorAll("[data-lk]").forEach(x=>x.addEventListener("click",()=>{const k=x.dataset.lk;closeGen();if(isCardio(PROGS[k])){openCardio(k);return}
+        cur=k;draft={prog:k,ex:{},started:1,day:DAY,loc:locOf(PROGS[k])};save("gymdraft",draft);picked=true;chosen=true;renderGym();scrollAppTop()})))})}
 function renderPlan(box){const ks=planList(),[d,n]=planStat();let sugK=null;try{sugK=(recSuggest()||[])[0]}catch(e){}
   const row=k=>{const p=PROGS[k],v=planItemDone(k),ip=inProg(k),L=locById(locOf(p)==="*"?p.lastLoc:locOf(p))||{},tod=(TOD.find(q=>q[0]===p.tod)||[])[1];
     const st=v?["done","Done"]:ip?["prog","In progress"]:["pend","Pending"];
@@ -294,14 +310,14 @@ function renderPlan(box){const ks=planList(),[d,n]=planStat();let sugK=null;try{
     return `<div class="pl-row st-${st[0]}" data-pl="${esc(k)}"><span class="row-ic${isCardio(p)?" g":""}">${v?licon("checkc"):isCardio(p)?licon(LI[EMO[p.icon]]?EMO[p.icon]:"run"):licon("dumbbell")}</span>
       <span class="row-tx"><span class="pl-st st-${st[0]}">${t(st[1])}</span>${sugK===k&&!v&&!ip?`<span class="pl-sug">${t("แนะนำ")}</span>`:""}<b>${esc(p.name)}</b><span class="pl-sub"><small>${esc(sub)}</small>${v||ip?"":`<button class="loc-chip" data-plloc aria-label="${t("เล่นที่ไหน?")}">${esc(L.icon||"📍")} ${esc(t(L.name||""))} ⌄</button>`}</span></span><span class="pc-act">${v?"":ip?`<button class="pc-go" data-plgo="resume">${t("กลับไปเล่น")}</button>`:`<button class="pc-go" data-plgo="start">▶ ${t("เริ่ม")}</button><button class="pc-more" data-pldel aria-label="${t("เอาออก")}">✕</button>`}</span></div>`};
   box.innerHTML=`<h1 class="dp-h">${t("ออกกำลัง")}</h1><div class="cal-slot"></div><div class="rec-slot"></div>
-    <h2 class="dp-sub pl-h">${t(n&&d===n?"ครบแล้ววันนี้ ✓":"วันนี้จะทำอะไร?")} ${n?`<span class="pill">${d}/${n}</span>`:""}</h2>${ks.map(row).join("")||`<small class="note pl-empty">${t("ยังไม่มีอะไรในวันนี้ — เพิ่มโปรแกรมที่จะทำ")}</small>`}
-    <div class="pl-acts"><button class="${n?"pl-add":"btn primary pl-add-main"}" data-pladd>+ ${t("เพิ่มเข้าวันนี้")}</button>${d||ks.some(inProg)?"":`<button class="btn pl-rest" data-plrest>${licon("moon")||""} ${t("พักวันนี้ดีกว่า")}</button>`}</div>`;
+    ${dayMode()==="rest"?`<div class="card rest-card"><b>${licon("moon")} ${t("พักวันนี้")}</b><small class="note">${t("ให้กล้ามได้ฟื้น — พรุ่งนี้กลับมาใหม่")}</small><button class="btn sm" data-unrest>${t("เปลี่ยนใจ — ออกกำลังกาย")}</button></div>`:""}<h2 class="dp-sub pl-h">${t(n&&d===n?"ครบแล้ววันนี้ ✓":"วันนี้จะทำอะไร?")} ${n?`<span class="pill">${d}/${n}</span>`:""}</h2>${ks.map(row).join("")||`<small class="note pl-empty">${t("ยังไม่มีอะไรในวันนี้ — เพิ่มโปรแกรมที่จะทำ")}</small>`}
+    <div class="pl-acts"><button class="${n?"pl-add":"btn primary pl-add-main"}" data-pladd>+ ${t("เพิ่มเข้าวันนี้")}</button>${d||ks.some(inProg)||dayMode()==="rest"?"":`<button class="btn pl-rest" data-plrest>${licon("moon")||""} ${t("พักวันนี้ดีกว่า")}</button>`}</div>`;
   const rc=document.getElementById("rec-card");if(rc){box.querySelector(".rec-slot").appendChild(rc);try{renderRecovery()}catch(e){}}
   {const s1=document.getElementById("step1");box.querySelector(".cal-slot").appendChild(s1);s1.hidden=false}
   box.querySelectorAll("[data-pl]").forEach(r=>{const k=r.dataset.pl;r.addEventListener("click",ev=>{if(ev.target.closest("[data-pldel]")){planDel(k);renderGym();return}if(ev.target.closest("[data-plloc]")){openPlanPlace(k);return}
     const g=ev.target.closest("[data-plgo]");if(g&&g.dataset.plgo==="resume"){setDayMode("train");renderGym();setTimeout(()=>document.getElementById("step3")?.scrollIntoView({block:"start"}),50);return}
     if(planItemDone(k)){openDoneItem(k);return}if(g)startPlanItem(k,true);else openPlanItem(k)})});
-  box.querySelector("[data-plrest]")?.addEventListener("click",()=>chooseDay("rest"));
+  box.querySelector("[data-plrest]")?.addEventListener("click",()=>{setDayMode("rest");renderGym()});box.querySelector("[data-unrest]")?.addEventListener("click",()=>{setDayMode(null);renderGym()});
   box.querySelector("[data-pladd]").addEventListener("click",openPlanAdd);trainLinks(box)}
 // "where?" sheet for one row of today's plan. Weights (option A): each place has its own copy of a program,
 // so picking a place swaps today's row to that place's copy. Cardio: any cardio place, remembered as lastLoc.
@@ -326,7 +342,7 @@ function openPlanItem(k){const p=PROGS[k],cx=isCardio(p),L=locById(locOf(p)==="*
       b.querySelector("[data-pie]")?.addEventListener("click",()=>{closeGen();pmReturn=()=>openPlanItem(k);pmOnly=k;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false});
       b.querySelector("[data-pid]")?.addEventListener("click",()=>{closeGen();planDel(k);renderGym()});
       b.querySelector("[data-pis]").addEventListener("click",()=>{closeGen();if(ip){setDayMode("train");renderGym();scrollAppTop();return}startPlanItem(k,true)})})}
-Object.assign(EN,{"ยังเล่นค้างอยู่":"is still in progress","จะทำยังไงกับ":"What to do with","ก่อนเริ่ม":"before starting","ยังไม่เริ่ม":"Don't start","แล้วเริ่ม":"and start","เก็บเซ็ตที่ทำไว้":"Keeps the sets you did","กด ↺ เลิกทำ ได้":"You can ↺ Undo","เอาออกจากวันนี้":"Remove from today","เล่นต่อ":"Continue"});
+Object.assign(EN,{"ย้อนหลัง":"Past day","วันนี้ไม่ได้บันทึกอะไรไว้":"Nothing logged this day","บันทึกย้อนหลัง":"Log for this day","กลับวันนี้":"Back to today","ให้กล้ามได้ฟื้น — พรุ่งนี้กลับมาใหม่":"Let your muscles recover — back tomorrow","เปลี่ยนใจ — ออกกำลังกาย":"Changed my mind — train","ยังเล่นค้างอยู่":"is still in progress","จะทำยังไงกับ":"What to do with","ก่อนเริ่ม":"before starting","ยังไม่เริ่ม":"Don't start","แล้วเริ่ม":"and start","เก็บเซ็ตที่ทำไว้":"Keeps the sets you did","กด ↺ เลิกทำ ได้":"You can ↺ Undo","เอาออกจากวันนี้":"Remove from today","เล่นต่อ":"Continue"});
 function openDoneItem(k){const p=PROGS[k],cx=isCardio(p),v=planItemDone(k);
   openGen(esc(p.name),`<small class="note">${esc(planSummary(k,v))}</small><div class="pm-menu">${cx?`<button class="menu-row" data-dm="edit"><span class="mi">✎</span><span class="mt"><b>${t("แก้ไข")}</b></span></button>`:""}
     <button class="menu-row warn" data-dm="del"><span class="mi">↺</span><span class="mt"><b>${t("ยกเลิกที่บันทึก")}</b><small>${t("กลับเป็นยังไม่ได้ทำ")}</small></span></button></div><button class="btn" data-gen-close>${t("ปิด")}</button>`,

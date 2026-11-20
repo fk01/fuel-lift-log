@@ -24,7 +24,7 @@ async function drawRun(d,clear){try{await document.fonts.ready}catch(e){}
   [[t("ระยะทาง"),`${(+d.km).toFixed(2)} km`],["Pace",`${fmtPace(d.sec/d.km)} /km`],[t("เวลา"),fmtDur(d.sec)]].forEach(([lab,val])=>{
     x.fillStyle=FG;x.font=`600 30px ${sans}`;x.fillText(lab,W/2,y);x.font=`700 76px ${sans}`;x.fillText(val,W/2,y+80);y+=170});
   const im=HERO_IMG[tierOf(lvOf(heroXP()))];if(im.complete){x.imageSmoothingEnabled=false;x.drawImage(im,W/2-80,y-30,160,160)}
-  x.fillStyle=OR;x.font=`800 italic 44px ${sans}`;x.fillText("FUEL & LIFT",W/2,y+190);
+  x.fillStyle=OR;x.font=`800 italic 44px ${sans}`;x.fillText("WEIGHTGRAM",W/2,y+190);
   x.fillStyle="rgba(255,255,255,.75)";x.font=`500 26px ${sans}`;x.fillText(new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"numeric"}),W/2,y+235);
   const jpg=runPhoto&&!clear;return new Promise((r,no)=>c.toBlob(b=>b?r(b):no(new Error("toBlob")),jpg?"image/jpeg":"image/png",.9))}
 document.getElementById("run-photo").addEventListener("change",async ev=>{const f=ev.target.files[0];if(!f){runPhoto=null;return}

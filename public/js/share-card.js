@@ -15,7 +15,7 @@ async function drawCard(l){
   x.fillStyle="#000";x.fillRect(0,0,W,H);
   x.strokeStyle="#262625";x.lineWidth=3;x.beginPath();x.roundRect?x.roundRect(30,30,W-60,H-60,48):x.rect(30,30,W-60,H-60);x.stroke();
   // header
-  x.fillStyle=FG;x.font=`700 40px ${mono}`;x.fillText("FUEL & LIFT",P,P+70);
+  x.fillStyle=FG;x.font=`700 40px ${mono}`;x.fillText("WEIGHTGRAM",P,P+70);
   x.fillStyle=MUTED;x.font=`400 38px ${sans}`;
   x.fillText(new Date(l.date+"T12:00:00").toLocaleDateString(LOC(),{month:"short",day:"numeric",year:"numeric"}),P,P+135);
   const pname=progName(l.prog);x.fillText(pname,P,P+185);

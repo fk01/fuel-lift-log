@@ -19,7 +19,7 @@ async function passkeyLogin(){
   if(res.ok){location.reload();return true}return false}
 async function passkeyRegister(){
   const o=await post("/api/passkey/register/options");const opt=await o.json();
-  const cred=await navigator.credentials.create({publicKey:{challenge:unb64u(opt.challenge),rp:{id:opt.rpId,name:"Fuel & Lift"},user:{id:unb64u(opt.userId),name:opt.userName||"user",displayName:opt.userName||"Fuel & Lift"},
+  const cred=await navigator.credentials.create({publicKey:{challenge:unb64u(opt.challenge),rp:{id:opt.rpId,name:"WeightGram"},user:{id:unb64u(opt.userId),name:opt.userName||"user",displayName:opt.userName||"WeightGram"},
     pubKeyCredParams:[{type:"public-key",alg:-7}],authenticatorSelection:{residentKey:"preferred",userVerification:"required"},excludeCredentials:opt.exclude.map(id=>({type:"public-key",id:unb64u(id)})),timeout:60000}});
   const r=cred.response;const pk=r.getPublicKey&&r.getPublicKey();if(!pk)throw new Error("This browser cannot export the passkey");
   const res=await post("/api/passkey/register",{id:b64u(cred.rawId),publicKey:b64u(pk),alg:r.getPublicKeyAlgorithm(),clientDataJSON:b64u(r.clientDataJSON),name:navigator.platform});

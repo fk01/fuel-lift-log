@@ -23,7 +23,7 @@ export async function sessionRoutes(req, env, url) {
   if (p === "/api/auth/status" && m === "GET") {
     const uid = await authed(req, env), c = await conf(env), lg = await legacyState(env);
     let me = null;
-    if (uid) { const u = await env.DB.prepare("SELECT id, email, name, gsub, pw, bio FROM users WHERE id = ?1").bind(uid).first(); if (u) me = { id: u.id, email: u.email, name: u.name, google: !!u.gsub, password: !!u.pw, bio: u.bio || "", owner: c.LEGACY_OWNER === u.id }; }
+    if (uid) { const u = await env.DB.prepare("SELECT id, email, name, gsub, pw, bio, priv FROM users WHERE id = ?1").bind(uid).first(); if (u) me = { id: u.id, email: u.email, name: u.name, google: !!u.gsub, password: !!u.pw, bio: u.bio || "", privacy: JSON.parse(u.priv || "{}"), owner: c.LEGACY_OWNER === u.id, admin: c.LEGACY_OWNER === u.id }; }
     return json({ me, googleClientId: c.GOOGLE_CLIENT_ID || "", ...lg });
   }
   if (p === "/api/auth/signup" && m === "POST") {

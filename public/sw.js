@@ -3,8 +3,8 @@ self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim()));
 self.addEventListener("push", (e) => {
   let d = {};
-  try { d = e.data ? e.data.json() : {}; } catch (_) { d = { title: "Fuel & Lift", body: e.data && e.data.text() }; }
-  e.waitUntil(self.registration.showNotification(d.title || "Fuel & Lift", {
+  try { d = e.data ? e.data.json() : {}; } catch (_) { d = { title: "WeightGram", body: e.data && e.data.text() }; }
+  e.waitUntil(self.registration.showNotification(d.title || "WeightGram", {
     body: d.body || "", tag: d.tag, icon: "/icon-192.png", badge: "/icon-192.png", data: { url: d.url || "/" },
   }));
 });

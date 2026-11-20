@@ -2,13 +2,14 @@
 // Returns a Response when the route matches, otherwise null.
 
 import { json } from "../utils.js";
+import { logActivity } from "./community.js";
 
 const str = (v, n) => String(v == null ? "" : v).slice(0, n);
 const newId = () => "s" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const cleanTags = (t) => (Array.isArray(t) ? t : []).map((x) => str(x, 24).trim()).filter(Boolean).slice(0, 8);
 const LIST = `SELECT p.id, p.uid, p.kind, p.title, p.descr, p.tags, p.summary, p.likes, p.uses, p.created, p.updated, u.name author,
   EXISTS(SELECT 1 FROM likes l WHERE l.pid = p.id AND l.uid = ?1) liked, EXISTS(SELECT 1 FROM saves s WHERE s.pid = p.id AND s.uid = ?1) saved
-  FROM plans p JOIN users u ON u.id = p.uid WHERE p.hidden = 0`;
+  FROM plans p JOIN users u ON u.id = p.uid WHERE p.hidden = 0 AND p.uid NOT IN (SELECT bid FROM blocks WHERE uid = ?1 UNION SELECT uid FROM blocks WHERE bid = ?1)`;
 const row = (r) => ({ id: r.id, kind: r.kind, title: r.title, desc: r.descr || "", tags: JSON.parse(r.tags || "[]"), summary: r.summary || "", likes: r.likes, uses: r.uses,
   author: { id: r.uid, name: r.author || "" }, liked: !!r.liked, saved: !!r.saved, mine: false, created: r.created, updated: r.updated });
 
@@ -36,6 +37,7 @@ export async function socialRoutes(req, env, url, uid) {
     const id = newId(), now = Date.now();
     await env.DB.prepare("INSERT INTO plans (id, uid, kind, title, descr, tags, summary, data, created, updated) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?9)")
       .bind(id, uid, b.kind, str(b.title, 80).trim(), str(b.desc, 500), JSON.stringify(cleanTags(b.tags)), str(b.summary, 120), data, now).run();
+    await logActivity(env, uid, "share", { pid: id, title: str(b.title, 80).trim(), kind: b.kind });
     return json({ ok: true, id });
   }
   const pm = p.match(/^\/api\/plans\/([\w]{4,40})(\/(like|save|use))?$/);
@@ -53,6 +55,7 @@ export async function socialRoutes(req, env, url, uid) {
       if (data.length > 60000) return json({ error: "too large" }, 413);
       await env.DB.prepare("UPDATE plans SET title = ?2, descr = ?3, tags = ?4, summary = ?5, data = ?6, updated = ?7 WHERE id = ?1")
         .bind(id, str(b.title || plan.title, 80).trim(), str(b.desc ?? plan.descr, 500), JSON.stringify(cleanTags(b.tags || JSON.parse(plan.tags || "[]"))), str(b.summary ?? plan.summary, 120), data, Date.now()).run();
+      await logActivity(env, uid, "update", { pid: id, title: str(b.title || plan.title, 80).trim(), kind: plan.kind });
       return json({ ok: true });
     }
     if (!act && m === "DELETE") {
@@ -79,7 +82,7 @@ export async function socialRoutes(req, env, url, uid) {
   const person = (r) => ({ id: r.id, name: r.name || "", bio: r.bio || "", plans: r.plans, followers: r.followers, followingCount: r.following_n, following: !!r.following, me: r.id === uid });
   if (p === "/api/people" && m === "GET") {
     const s = str(q.get("q"), 60).trim().toLowerCase(), args = [uid];
-    let sql = PEOPLE + " WHERE u.id != ?1";
+    let sql = PEOPLE + " WHERE u.id != ?1 AND u.id NOT IN (SELECT bid FROM blocks WHERE uid = ?1)";
     if (s) { args.push(`%${s}%`); sql += " AND lower(coalesce(u.name, '')) LIKE ?2"; } else sql += " AND EXISTS(SELECT 1 FROM plans x WHERE x.uid = u.id AND x.hidden = 0)";
     if (q.get("following")) sql += " AND u.id IN (SELECT fid FROM follows WHERE uid = ?1)";
     const { results } = await env.DB.prepare(sql + " ORDER BY followers DESC, plans DESC LIMIT 50").bind(...args).all();
@@ -96,7 +99,7 @@ export async function socialRoutes(req, env, url, uid) {
       else await env.DB.prepare("INSERT INTO follows (uid, fid, created) VALUES (?1, ?2, ?3)").bind(uid, id, Date.now()).run();
       return json({ ok: true, on: !r.following });
     }
-    if (!um[2] && m === "GET") return json(person(r));
+    if (!um[2] && m === "GET") { const bl = await env.DB.prepare("SELECT 1 FROM blocks WHERE uid = ?1 AND bid = ?2").bind(uid, id).first(); return json({ ...person(r), blocked: !!bl }); }
   }
   if (p === "/api/me/profile" && m === "PUT") {
     const b = await req.json().catch(() => ({}));

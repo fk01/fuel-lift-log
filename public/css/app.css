@@ -1028,3 +1028,16 @@ input,select,textarea{border-width:1.5px!important}
 .ex-fol{font-size:.75rem}.ex-fol.on{background:transparent;color:var(--cyan,#2ee6ff);border:1.5px solid var(--edge)}
 .ex-prof{display:flex;gap:12px;align-items:center}.ex-author{justify-self:start}.ex-empty{text-align:center;padding:24px}
 .xi{vertical-align:-2px}.ex-top small .xi{color:#ff6b8a}.chip.on .xi{color:#ff6b8a}
+/* comments, feed, switches */
+.cm{padding:10px 0;border-top:1px solid var(--line)}.cm.rep{margin-left:18px;border-top:0;padding-top:4px}
+.cm-h{display:flex;gap:8px;align-items:center}.cm-h small{color:var(--muted);margin-left:auto}.cm p{margin:4px 0;white-space:pre-wrap;word-break:break-word}
+.cm-a{display:flex;gap:14px;font-size:.78rem}.cm-a .linkb{color:var(--muted)}.cm-row{display:grid;grid-template-columns:1fr auto;gap:8px}
+.ex-feed .ex-line{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.ex-mod{text-align:center;font-size:.8rem;color:var(--muted)}.ex-mod .linkb{color:var(--muted)}
+.sw{width:42px;height:24px;border-radius:12px;background:var(--line);position:relative;flex:none}.sw i{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s}
+.sw.on{background:var(--green,#3dff8c)}.sw.on i{left:21px}.menu-row[disabled]{opacity:.45}
+.rest-card{display:grid;gap:6px;justify-items:start}.rest-card b{display:flex;gap:6px;align-items:center}
+/* the old breadcrumb is replaced by the plan screen + workout focus bar */#lochead{display:none!important}
+/* WeightGram brand */
+.acct-mark{display:block;margin:0 auto -6px;filter:drop-shadow(0 0 12px #2ee6ff55)}
+.acct-logo{background:linear-gradient(180deg,#f4f8fb,#9aa7b3);-webkit-background-clip:text;background-clip:text;color:transparent!important;letter-spacing:.01em}
+.acct-sub{margin:-8px 0 2px;font-size:.7rem;letter-spacing:.32em;color:var(--muted)}
