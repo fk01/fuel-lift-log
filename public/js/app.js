@@ -4,8 +4,8 @@
 // four screens behind a bottom tab bar (same layout an iOS app would use): food · workout · stats · more
 const VIEWS=["food","gym","stats","more"],TITLES={food:"วันนี้กินครบหรือยัง",gym:"เวทวันนี้",stats:"สถิติ",more:"เพิ่มเติม"};
 let curView="food",lastMain="gym";
-function show(v){if(!VIEWS.includes(v))v="food";curView=v;if(v==="food"||v==="gym")lastMain=v;
-  VIEWS.forEach(x=>document.getElementById("v-"+x).hidden=x!==v);
+function show(v){const eat=v==="food";if(!VIEWS.includes(v)||eat)v="gym";if(eat)setTimeout(()=>document.querySelector(".eat-h")?.scrollIntoView({block:"start"}),60);curView=v;if(v==="food"||v==="gym")lastMain=v;
+  VIEWS.forEach(x=>{if(x!=="food")document.getElementById("v-"+x).hidden=x!==v});{const fv=document.getElementById("v-food");fv.hidden=v!=="gym"||!fv.closest(".eat-slot")}
   document.getElementById("step1").hidden=!(v==="food"||v==="gym");document.getElementById("share-last").hidden=v!=="gym";
   document.querySelectorAll(".tabbar .tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
   document.getElementById("h1").textContent=t(TITLES[v]);scrollAppTop();
