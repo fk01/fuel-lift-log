@@ -843,3 +843,7 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 .sx-row{grid-template-columns:44px minmax(0,1fr) 40px 92px!important}
 .sx-row>.mrole{font-size:.7rem;padding:3px 8px;justify-self:end}
 .sx-row>span:not(.sx-mini):not(.how-btn) b{overflow-wrap:anywhere}
+/* every layer of the muscle figure must have the same box, or colours drift off the muscles */
+.body-fig>img,.body-fig>i{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;object-fit:fill!important;filter:none!important}
+.body-fig{filter:drop-shadow(0 0 10px #2ee6ff33)}
+#rec-card .rec-fig .body-fig{width:min(100%,var(--fw,320px))}

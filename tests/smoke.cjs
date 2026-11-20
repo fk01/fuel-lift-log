@@ -112,6 +112,8 @@ const steps = [
     const bad = [...document.querySelectorAll("#v-gym button,#v-gym [role=button]")].filter(e => { const r = e.getBoundingClientRect(); if (!r.width || r.top < 0 || r.bottom > innerHeight - 100) return false;
       const h = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return h && h !== e && !e.contains(h) && !h.closest(".wo-top"); });
     if (bad.length) throw new Error("covered buttons: " + bad.map(e => e.className + "|" + e.textContent.trim().slice(0, 15)).join(", ")); }],
+  ["figure-layers", () => { setDayMode(null); renderGym(); openMuscle("delt"); const bad = [...document.querySelectorAll(".body-fig")].filter(f => new Set([...f.children].map(c => { const r = c.getBoundingClientRect(); return [r.width, r.height, r.left, r.top].map(Math.round).join() })).size > 1);
+    closeGen(); if (bad.length) throw new Error(bad.length + " muscle figures have misaligned colour layers"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
