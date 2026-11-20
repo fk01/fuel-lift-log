@@ -22,7 +22,7 @@ function openMealPlan(){MP=MP||mpClone();if(!MP.meals)MP=mpClone();
       r.querySelectorAll("[data-mv]").forEach(x=>x.addEventListener("click",()=>{const j=i+ +x.dataset.mv;MP.meals.splice(j,0,MP.meals.splice(i,1)[0]);mpTouch();draw(b)}));
       r.querySelector("[data-del]")?.addEventListener("click",ev=>{const x=ev.currentTarget;if(!x.dataset.sure){x.dataset.sure=1;x.textContent=t("ลบ?");return}MP.meals.splice(i,1);mpTouch();draw(b)})});
     body.querySelector("[data-addm]").addEventListener("click",()=>{MP.meals.push({id:"m"+Date.now().toString(36),time:"",name:"",k:0,p:0,items:[]});mpTouch();draw(b);const r=b.querySelectorAll('.mp-row[data-kind="meal"]');r[r.length-1]?.querySelector('[data-f="name"]').focus()})};
-  openGen("✎ "+t("แผนกิน"),`<div class="mp-body stack" style="gap:10px"></div>`,b=>{txBegin("gen",{onEnd:()=>{document.getElementById("gen-sheet").hidden=true;try{renderFood();renderGym()}catch(e){}}});draw(b)})}
+  openGen("✎ "+t("แผนกิน"),`<div class="mp-body stack" style="gap:10px"></div>`,b=>{txBegin("gen",{onEnd:()=>{genBack();try{renderFood();renderGym()}catch(e){}}});draw(b)})}
 Object.assign(EN,{"แผนกิน":"Meal plan","เป้าต่อวัน":"Daily targets","มื้อประจำวัน":"Daily meals","มื้อเสริมตามกิจกรรม":"Activity extras","เพิ่มมื้อ":"Add meal","ชื่อมื้อ":"Meal name","ลบมื้อ":"Delete meal","รายการอาหาร (บรรทัดละ 1 อย่าง)":"Items (one per line)","วิตามิน":"Vitamins","จัดการแผน":"Manage plan","แผนกินวันนี้":"Today's meals","กินแล้ว":"Eaten"});
 document.getElementById("mp-open")?.addEventListener("click",openMealPlan);
 // "What to eat?" on the Today screen: the whole food view is moved under the plan (and back before each re-render)

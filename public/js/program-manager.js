@@ -93,7 +93,9 @@ function renderPM(){
   const j=document.createElement("button");j.className="btn text sm";j.style.justifySelf="center";j.textContent=t("แก้แบบ JSON (ขั้นสูง)");j.addEventListener("click",()=>{pmTab="json";renderPM()});
   box.appendChild(a);box.appendChild(j)}
 // single-program editor: name, description, exercises
-function pmEditOne(box,k){const p=PROGS[k];txBegin("pm",{onEnd:()=>{if(pmFromList){pmOnly=null;pmFromList=false;renderPM()}else{document.getElementById("pm-modal").hidden=true}renderGym()}});
+let pmReturn=null;   // where closing the program editor goes back to (e.g. the plan item sheet it was opened from)
+function pmBackOut(){const f=pmReturn;pmReturn=null;if(f)setTimeout(f,0)}
+function pmEditOne(box,k){const p=PROGS[k];txBegin("pm",{onEnd:()=>{if(pmFromList){pmOnly=null;pmFromList=false;renderPM()}else{document.getElementById("pm-modal").hidden=true;pmBackOut()}renderGym()}});
   if(pmFromList){const back=document.createElement("button");back.className="btn sm";back.style.justifySelf="start";back.textContent="‹ "+t("ทุกโปรแกรม");
     back.addEventListener("click",()=>txLeave());box.appendChild(back)}
   const c=document.createElement("div");c.className="ex";
@@ -110,5 +112,5 @@ function pmEditOne(box,k){const p=PROGS[k];txBegin("pm",{onEnd:()=>{if(pmFromLis
   on('[data-f="sub"]',"change",ev=>{p.sub=ev.target.value.trim();saveProgs();renderGym()});
   box.appendChild(c)}
 document.getElementById("pm-open").addEventListener("click",()=>{pmOnly=null;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false});
-document.getElementById("pm-close").addEventListener("click",()=>txLeave(()=>{document.getElementById("pm-modal").hidden=true;renderGym()}));
+document.getElementById("pm-close").addEventListener("click",()=>txLeave(()=>{const was=!document.getElementById("pm-modal").hidden;document.getElementById("pm-modal").hidden=true;renderGym();if(was)pmBackOut()}));
 document.querySelectorAll("#pm-tabs .chip").forEach(c=>c.addEventListener("click",()=>{pmTab=c.dataset.tab;renderPM()}));
