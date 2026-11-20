@@ -812,3 +812,9 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 .prog.cardio .row-tx{flex:1;min-width:0;display:grid;gap:1px}
 .prog.cardio .pc-act{margin-left:auto;align-self:center}
 .prog.cardio .pc-more{margin:0!important;top:auto!important;right:auto!important;align-self:center}
+/* list rows with how-to + role (muscle sheet, program sheet): fixed columns so ▶ and pills line up */
+.sx-row{display:grid!important;grid-template-columns:44px minmax(0,1fr) 44px auto;align-items:center;column-gap:12px}
+.sx-row>.sx-mini{grid-column:1}.sx-row>span:not(.sx-mini):not(.how-btn){grid-column:2;min-width:0}
+.sx-row>.how-btn{grid-column:3;justify-self:center}
+.sx-row>.mrole,.sx-row>i:last-child{grid-column:4;justify-self:end}
+.how-btn{width:40px;height:40px;border-radius:12px!important;background:#ffffff0d!important;border:1px solid transparent!important;display:inline-grid;place-items:center;color:var(--green)}
