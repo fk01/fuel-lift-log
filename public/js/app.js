@@ -65,7 +65,7 @@ applyStTab();
 /* ---------- startup ---------- */
 pkState();
 if("serviceWorker" in navigator){navigator.serviceWorker.register("/sw.js").then(pushState).catch(()=>{})}else{pushState()}
-cloudLoad();
+acctBoot();
 autoCommitOld();
 document.querySelectorAll("#sessions").forEach(()=>{});
 document.getElementById("today-btn").addEventListener("click",()=>{DAY=TODAY;draft.ex={};renderAll()});

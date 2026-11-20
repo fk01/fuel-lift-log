@@ -14,11 +14,12 @@ export async function api(req, env, url) {
   const open = await sessionRoutes(req, env, url);
   if (open) return open;
 
-  if (!(await authed(req, env))) return json({ error: "unauthorized" }, 401);
+  const uid = await authed(req, env);
+  if (!uid) return json({ error: "unauthorized" }, 401);
   if (limited(req, url.pathname, req.method)) return json({ error: "too many requests" }, 429, { "Retry-After": "10" });
 
   for (const route of PRIVATE_ROUTES) {
-    const res = await route(req, env, url);
+    const res = await route(req, env, url, uid);
     if (res) return res;
   }
   return json({ error: "not found" }, 404);

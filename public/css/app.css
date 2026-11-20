@@ -1006,3 +1006,9 @@ input,select,textarea{border-width:1.5px!important}
 .rcf-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .rcf-v{min-width:54px;text-align:center}.rcf-v.ch{color:var(--cyan,#2ee6ff);font-weight:700}.rcf-row{cursor:default}
 .sh-url{margin-top:10px;padding:10px;border:1px dashed var(--edge);border-radius:10px;font-family:var(--f-num);font-size:.7rem;color:var(--muted);word-break:break-all;max-height:5.5em;overflow:hidden}
+/* sign in / claim */
+.acct{text-align:center;gap:12px}.acct-logo{font-size:2rem;margin:0}.acct-tag{margin:-6px 0 10px}
+.g-btn{display:flex;justify-content:center;min-height:44px}
+.acct-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.8rem}.acct-or::before,.acct-or::after{content:"";flex:1;height:1px;background:var(--line)}
+.acct .le-in{text-align:left}.linkb{background:none;border:0;color:var(--cyan,#2ee6ff);font:inherit;padding:0;cursor:pointer}
+#login,#claim{z-index:60;background:var(--bg)}
