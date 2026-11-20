@@ -160,7 +160,7 @@ const mapUrl=m=>{m=(m||"").trim();if(!m)return "";return /^https?:\/\//.test(m)?
 function renderLocPick(){const box=document.getElementById("locpick");if(!box)return;const rc0=document.getElementById("rec-card"),home=document.querySelector(".rec-home");if(rc0&&home&&box.contains(rc0))home.after(rc0);const show=needPick();box.hidden=!show;document.getElementById("v-gym").classList.toggle("picking",show);document.getElementById("v-gym").classList.toggle("resting",resting());document.body.classList.toggle("loc-picking",show);renderLocHead();if(!show)return;
   if(needDay()){if(hasPlanToday())renderPlan(box);else renderDayPick(box);return}
   const lastId=locDay.id||curLoc,todayAt=l=>planKeys(DAY).find(k=>locOf(PROGS[k])===l.id);
-  const kd=kindToday(),list=LOCS.filter(l=>!kd||hasType(l,kd)).sort((x,y)=>(!!todayAt(y)-!!todayAt(x))||((y.id===lastId)-(x.id===lastId)));
+  const kd=pickAnyway?null:kindToday(),list=LOCS.filter(l=>!kd||hasType(l,kd)).sort((x,y)=>(!!todayAt(y)-!!todayAt(x))||((y.id===lastId)-(x.id===lastId)));
   box.innerHTML=crumbs([[modeChip(),"mode"],[t("ไปที่ไหน?"),null]])+`<h1 class="lp-h">${t("ไปที่ไหน?")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}</div>`+list.map(l=>{const k=todayAt(l),p=k&&PROGS[k],n=Object.keys(PROGS).filter(q=>q!=="free"&&locOf(PROGS[q])===l.id).length;
     const line=p?`${isCardio(p)?(p.icon||"🏃"):"▶"} ${esc(p.name)}${isCardio(p)?"":" · "+nU(p.ex.length,"ท่า")} · ${t("วันนี้")}`:nProgs(n);
     return `<div class="lp-card${l.id===lastId?" on":""}" role="button" tabindex="0" data-loc="${esc(l.id)}"><span class="lp-ic">${esc(l.icon||"📍")}</span><span class="lp-tx"><span class="lp-top"><b>${esc(t(l.name))}</b>${l.id===lastId?`<span class="pill">${t("ล่าสุด")}</span>`:""}</span><small>${line}</small></span><span class="lp-more" role="button" tabindex="0" data-locedit="${esc(l.id)}" aria-label="${t("แก้ไขสถานที่")}">•••</span><span class="dp-go">›</span></div>`}).join("")
@@ -246,9 +246,9 @@ function updLocSum(){const e=document.getElementById("loc-sum");if(e&&LOCS)e.tex
 
 /* ---------- program chip: today's program at this place (picked, else scheduled) ---------- */
 const kindOk=k=>{const kd=kindToday();return !kd||(kd==="cardio")===isCardio(PROGS[k])};
-function selProg(){const k=locDay.date===TODAY&&locDay.prog;if(k&&PROGS[k]&&locOf(PROGS[k])===curLoc&&kindOk(k))return k;const pl=planFor(DAY);return pl&&PROGS[pl]&&locOf(PROGS[pl])===curLoc&&kindOk(pl)?pl:null}
-function chooseProg(k){locDay={...locDay,date:TODAY,id:curLoc,prog:k};save("locday",locDay);if(!isCardio(PROGS[k])&&!picked){if(cur!==k)draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft)}closeGen();renderGym()}
-function openProgPick(){const L=hereLoc(),sel=selProg(),pl=planFor(DAY),kd=kindToday(),w=kd==="cardio"?[]:weightsHere(),c=kd==="gym"?[]:cardioHere();
+function selProg(){const k=locDay.date===TODAY&&locDay.prog;if(k&&PROGS[k]&&locOf(PROGS[k])===curLoc)return k;const pl=planFor(DAY);return pl&&PROGS[pl]&&locOf(PROGS[pl])===curLoc&&kindOk(pl)?pl:null}
+function chooseProg(k){dayKind={date:TODAY,k:isCardio(PROGS[k])?"cardio":"gym"};save("daykind",dayKind);locDay={...locDay,date:TODAY,id:curLoc,prog:k};save("locday",locDay);if(!isCardio(PROGS[k])&&!picked){if(cur!==k)draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft)}closeGen();renderGym()}
+function openProgPick(){const L=hereLoc(),sel=selProg(),pl=planFor(DAY),w=weightsHere(),c=cardioHere();
   const row=k=>{const p=PROGS[k],cx=isCardio(p);return `<button class="menu-row" data-pp="${esc(k)}"><span class="mi">${cx?esc(p.icon||"🏃"):"📋"}</span><span class="mt"><b>${esc(p.name)}</b><small>${cx?"":nU(p.ex.length,"ท่า")+" · "+esc([...new Set(p.ex.map(e=>groupName(groupOf(e))))].join(" "))}${k===pl?" · "+t("ตามตาราง"):""}</small></span><span class="mc">${k===sel?"✓":"›"}</span></button>`};
   openGen(`${t("เลือกโปรแกรม")} · ${esc(L.icon||"📍")} ${esc(t(L.name))}`,`${w.length?`<div class="label" style="margin:0">${t("เวท")}</div><div class="pm-menu">${w.map(row).join("")}</div>`:""}
     ${c.length?`<div class="label" style="margin:0">${t("คาร์ดิโอ")}</div><div class="pm-menu">${c.map(row).join("")}</div>`:""}
