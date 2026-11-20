@@ -871,3 +871,14 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 .btn.primary:disabled{opacity:.45;box-shadow:none!important}
 .cw{display:grid;gap:8px;margin-bottom:6px}.cw-new{display:flex;gap:8px}.cw-new input{flex:1}
 .pa-tabs{margin-bottom:4px}
+/* explicit Save / Cancel bar for editors (edit-tx.js) */
+.tx-bar{position:fixed;left:0;right:0;bottom:0;z-index:35;background:var(--bg);border-top:1px solid var(--line);padding:8px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:grid;gap:6px}
+.tx-bar .tx-dot{font-size:.75rem;color:#ffb84d;min-height:0}.tx-bar .tx-dot:empty{display:none}
+.tx-btns{display:grid;grid-template-columns:1fr 2fr;gap:10px;max-width:420px;width:100%;justify-self:center}
+.tx-btns .btn{padding:13px;font-size:1rem}.tx-bar .btn.primary:disabled{opacity:.4}
+body.tx-open .modal,body.tx-open .modal.sheet{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+body.tx-open #app,body.tx-open main{padding-bottom:110px}
+.tx-ask{position:fixed;inset:0;z-index:45;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:16px}
+.tx-ask[hidden]{display:none}
+.tx-ask-in{background:var(--card,#1a2230);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:8px;max-width:360px;width:100%}
+.tx-ask-in small{color:var(--muted)}.tx-ask .btn.warn{color:#ff5d73;border-color:#ff5d7366}

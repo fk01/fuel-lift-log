@@ -132,6 +132,12 @@ const steps = [
     document.getElementById("run-modal").hidden = true; Object.assign(tg, kt); LOCS = LOCS.filter(l => l !== park); pickLoc("gym");
     openPlanAdd(); document.querySelector('#gen-body [data-pt="cardio"]').click(); if (document.querySelectorAll("#gen-body [data-padd]").length < 1 || [...document.querySelectorAll("#gen-body [data-padd]")].some(x => !isCardio(PROGS[x.dataset.padd]))) throw new Error("cardio tab");
     const n = Object.keys(PROGS).length; document.querySelector("#gen-body [data-pnew]").click(); closeGen(); if (Object.keys(PROGS).length !== n) throw new Error("closing create must not add a program"); paTab = "gym"; }],
+  ["explicit-save", () => { TXS.length = 0; txBar(); location.hash = "gym"; const nm0 = PROGS.push.name, stored = () => JSON.parse(localStorage.getItem("progs") || "{}").push?.name;
+    const edit = v => { pmOnly = "push"; pmFromList = false; renderPM(); document.getElementById("pm-modal").hidden = false; const i = document.querySelector('#pm-body [data-f="name"]'); i.value = v; i.dispatchEvent(new Event("change")); };
+    edit("Draft X"); if (stored() === "Draft X") throw new Error("edit stored before Save"); const bar = document.getElementById("tx-bar"); if (bar.hidden || bar.querySelector("[data-tx-save]").disabled) throw new Error("save bar");
+    bar.querySelector("[data-tx-cancel]").click(); document.querySelector("#tx-ask [data-drop]").click(); if (PROGS.push.name !== nm0 || !bar.hidden) throw new Error("cancel restores");
+    edit("Saved Y"); bar.querySelector("[data-tx-save]").click(); if (stored() !== "Saved Y" || TXS.length) throw new Error("save stores");
+    PROGS.push.name = nm0; saveProgs(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

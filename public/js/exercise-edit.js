@@ -2,14 +2,15 @@
 // Classic script: shares globals with the other files in /js (load order is set in index.html).
 /* ---------- unit + edit exercises ---------- */
 function updUnitBtn(){document.getElementById("edit-mode").textContent=editing?t("เสร็จแล้ว"):t("แก้ไขท่า")}
-document.getElementById("edit-mode").addEventListener("click",()=>{editing=!editing;updUnitBtn();renderGym()});
+document.getElementById("edit-mode").addEventListener("click",()=>{if(editing){txLeave();return}editing=true;updUnitBtn();renderGym()});
+const gymTx=()=>txBegin("gymedit",{onEnd:()=>{editing=false;editId=null;updUnitBtn();renderGym()}});
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function saveProgs(){save("progs",PROGS)}
 function safeUrl(u){if(!u)return "";try{const x=new URL(u.trim());return /^https?:$/.test(x.protocol)?x.href:""}catch(e){return ""}}
 // main lifts of Push/Pull programs are locked: they cannot be swapped, removed or un-marked (sets/reps can still change)
 const isLocked=(k,e)=>!!e.main&&/^(push|pull)/i.test(k)&&!!DEFAULT_PROGS[k]&&DEFAULT_PROGS[k].ex.some(d=>d.id===e.id&&d.main);
 function editCard(box,e,i){
-  const lock=isLocked(cur,e);
+  const lock=isLocked(cur,e);gymTx();
   const list=PROGS[cur].ex;{
     const c=document.createElement("div");c.className="ex";
     c.innerHTML=`<div class="row-head" style="align-items:center"><span class="ex-name">${e.z} ${esc(e.n)}</span>${lock?`<span class="macro">🔒 ${t("ท่าหลัก")}</span>`:""}<button class="btn sm" data-mus-ed>💪 ${t("กล้ามที่โดน")}</button><button class="btn sm" data-swap ${lock?"hidden":""}>⇄ ${t("เปลี่ยนท่า")}</button></div>
@@ -26,7 +27,7 @@ function editCard(box,e,i){
       if(draft.ex)delete draft.ex[e.id];const n={...libPick(x),s:e.s,r:e.r};if(e.main)n.main=1;list[i]=n;if(editId===e.id)editId=x.id;
       saveProgs();save("gymdraft",draft);renderEx()}}));
     on(`#em-${e.id}`,"change",ev=>{if(lock){ev.target.checked=true;return}e.main=ev.target.checked?1:0;saveProgs()});
-    on("[data-done]","click",()=>{editId=null;if(editing){editing=false;updUnitBtn()}renderGym()});
+    on("[data-done]","click",()=>{if(editing){editId=null;renderGym()}else txSave()});
     on("[data-up]","click",()=>{list.splice(i-1,0,list.splice(i,1)[0]);saveProgs();renderEx()});
     on("[data-down]","click",()=>{list.splice(i+1,0,list.splice(i,1)[0]);saveProgs();renderEx()});
     on("[data-del]","click",ev=>{if(lock)return;const b=ev.target;if(!b.dataset.sure){b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน");return}
