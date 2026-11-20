@@ -869,3 +869,5 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 .pa-row.sel{background:#2ee6ff10}
 .pa-row.in{opacity:.55}.pa-row.in .pa-box{border:0;color:var(--green)}
 .btn.primary:disabled{opacity:.45;box-shadow:none!important}
+.cw{display:grid;gap:8px;margin-bottom:6px}.cw-new{display:flex;gap:8px}.cw-new input{flex:1}
+.pa-tabs{margin-bottom:4px}

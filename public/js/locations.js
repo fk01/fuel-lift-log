@@ -5,7 +5,7 @@ Object.assign(EN,{"วันนี้ออกที่ไหน?":"Where today?
   "ลิงก์ Google Maps":"Google Maps link","ใช้ตำแหน่งปัจจุบัน":"Use current location","ดัมเบลหนักสุด (kg)":"Heaviest dumbbell (kg)","บันทึก":"Save","แผนที่":"Map",
   "ต้องมีอย่างน้อย 1 สถานที่":"Keep at least one place","ไม่มีท่าแทน → ตัดออก":"No substitute → removed","คัดลอก":"Copy","ย้าย":"Move","คัดลอก แล้วแก้ต่อ":"Copy, then edit",
   "ย้าย แล้วแก้ต่อ":"Move, then edit","ไม่มีสถานที่อื่น":"No other place","ท่าหลักย้ายไม่ได้ ใช้คัดลอกแทน":"Locked lifts can't move — copy instead","ยังไม่เคยเล่นที่นี่":"Not trained here yet",
-  "ที่นี่":"Here","ยิม":"Gym","คอนโด":"Condo","สถานที่":"Place","เปลี่ยน":"Change","ทำแล้ววันนี้":"Done today","กำลังเล่น":"In progress","เลือกได้หลายโปรแกรม":"Tick to add, untick to remove","อยู่ในวันนี้แล้ว":"Already in today","เพิ่มเข้าวันนี้":"Add to today","สร้างโปรแกรมใหม่":"Create new program","พักวันนี้ดีกว่า":"Rest today","กลับไปเล่น":"Resume","เอาออก":"Remove","ครบแล้ววันนี้ ✓":"All done today ✓","ยังไม่มีอะไรในวันนี้ — เพิ่มโปรแกรมที่จะทำ":"Nothing planned yet — add what you'll do","เพิ่มโปรแกรม":"Add program","แผน":"Plan","แผนวันนี้":"Today's plan","ถัดไป":"Next","เพิ่มกิจกรรม":"Add activity","ครบแผนวันนี้":"Plan done","พักวันนี้":"Rest today","เช้า":"Morning","กลางวัน":"Midday","เย็น":"Evening","ค่ำ":"Night","ช่วงเวลา":"Time of day","เวทเทรนนิ่ง":"Weight training","เลือกโปรแกรมเวท":"Pick a weights program","วิ่ง ตีแบด ว่ายน้ำ …":"Run, badminton, swim …","ให้กล้ามได้ฟื้น":"Let muscles recover","วันนี้จะทำอะไร?":"What today?","ความพร้อมของกล้าม":"Muscle readiness","มัด":"muscles","เมื่อวาน":"yesterday","วันนี้…":"Today…","ออกกำลังกาย":"Train","พัก":"Rest","แนะนำ":"Suggested","ตามตาราง":"Scheduled","นอกตาราง — เลือกเองได้":"Off schedule — pick anything","กล้ามฟื้นครบแล้ว":"All recovered","พักวันนี้":"Resting today","ให้กล้ามได้ฟื้น — กลับมาพรุ่งนี้":"Let your muscles recover — back tomorrow","เปลี่ยนใจ ออกกำลังกาย":"Changed my mind — train","พักแทน":"Rest instead","ไปที่ไหน?":"Where to?","กลับ":"Back","ออก":"Train","เลือกโปรแกรม":"Pick a program","ไม่มีโปรแกรมในตารางวันนี้ที่นี่":"Nothing scheduled here today","ดูโปรแกรม":"See programs","วันพัก · ออกได้ถ้าอยากออก":"Rest day · train if you like","หาตำแหน่งไม่ได้":"Couldn't get location",
+  "ที่นี่":"Here","ยิม":"Gym","คอนโด":"Condo","สถานที่":"Place","เปลี่ยน":"Change","ประเภท":"Type","ยังไม่มีโปรแกรม":"No programs yet","คาร์ดิโอทำได้ทุกที่ — เลือกที่ตอนบันทึก":"Cardio can be done anywhere — pick the place when you log it","สร้าง + เพิ่มเข้าวันนี้":"Create + add to today","สร้าง":"Create","ใส่ชื่อโปรแกรม":"Enter a name","ที่ใหม่":"New place","ที่ไหน":"Where","ทำแล้ววันนี้":"Done today","กำลังเล่น":"In progress","เลือกได้หลายโปรแกรม":"Tick to add, untick to remove","อยู่ในวันนี้แล้ว":"Already in today","เพิ่มเข้าวันนี้":"Add to today","สร้างโปรแกรมใหม่":"Create new program","พักวันนี้ดีกว่า":"Rest today","กลับไปเล่น":"Resume","เอาออก":"Remove","ครบแล้ววันนี้ ✓":"All done today ✓","ยังไม่มีอะไรในวันนี้ — เพิ่มโปรแกรมที่จะทำ":"Nothing planned yet — add what you'll do","เพิ่มโปรแกรม":"Add program","แผน":"Plan","แผนวันนี้":"Today's plan","ถัดไป":"Next","เพิ่มกิจกรรม":"Add activity","ครบแผนวันนี้":"Plan done","พักวันนี้":"Rest today","เช้า":"Morning","กลางวัน":"Midday","เย็น":"Evening","ค่ำ":"Night","ช่วงเวลา":"Time of day","เวทเทรนนิ่ง":"Weight training","เลือกโปรแกรมเวท":"Pick a weights program","วิ่ง ตีแบด ว่ายน้ำ …":"Run, badminton, swim …","ให้กล้ามได้ฟื้น":"Let muscles recover","วันนี้จะทำอะไร?":"What today?","ความพร้อมของกล้าม":"Muscle readiness","มัด":"muscles","เมื่อวาน":"yesterday","วันนี้…":"Today…","ออกกำลังกาย":"Train","พัก":"Rest","แนะนำ":"Suggested","ตามตาราง":"Scheduled","นอกตาราง — เลือกเองได้":"Off schedule — pick anything","กล้ามฟื้นครบแล้ว":"All recovered","พักวันนี้":"Resting today","ให้กล้ามได้ฟื้น — กลับมาพรุ่งนี้":"Let your muscles recover — back tomorrow","เปลี่ยนใจ ออกกำลังกาย":"Changed my mind — train","พักแทน":"Rest instead","ไปที่ไหน?":"Where to?","กลับ":"Back","ออก":"Train","เลือกโปรแกรม":"Pick a program","ไม่มีโปรแกรมในตารางวันนี้ที่นี่":"Nothing scheduled here today","ดูโปรแกรม":"See programs","วันพัก · ออกได้ถ้าอยากออก":"Rest day · train if you like","หาตำแหน่งไม่ได้":"Couldn't get location",
   "ดัมเบล":"Dumbbells","บาร์เบล":"Barbell","เคเบิล":"Cable","เครื่อง":"Machines","ม้านั่ง":"Bench","บาร์โหน":"Pull-up bar","ยางยืด":"Bands","ตัวเปล่า":"Bodyweight"});
 const EQ=[["db","ดัมเบล"],["bb","บาร์เบล"],["cable","เคเบิล"],["machine","เครื่อง"],["bench","ม้านั่ง"],["bar","บาร์โหน"],["band","ยางยืด"],["body","ตัวเปล่า"]];
 const EQ_ALL=EQ.map(q=>q[0]);
@@ -25,10 +25,10 @@ const daysOf=(k,p)=>{p=p||PROGS[k];if(!p)return [];if(Array.isArray(p.days))retu
 const planKeys=ds=>{const wd=new Date(ds+"T12:00:00").getDay();return Object.keys(PROGS).filter(k=>k!=="free"&&daysOf(k).includes(wd))};
 // cardio state lives in the day's food tags (run / bad keep their old tags so meals and history still work; others in tags.cx)
 const fsOf=ds=>(food[ds]||{}).tags||{};
-function cxGet(k,ds){const p=PROGS[k],tg=fsOf(ds||DAY);if(!p)return null;if(p.tag==="run")return tg.run?(tg.runData||{}):null;if(p.tag==="bad")return tg.bad?{}:null;const v=(tg.cx||{})[k];return v?(v===true?{}:v):null}
+function cxGet(k,ds){const p=PROGS[k],tg=fsOf(ds||DAY);if(!p)return null;if(p.tag==="run")return tg.run?{...(tg.runData||{}),loc:tg.runLoc}:null;if(p.tag==="bad")return tg.bad?{loc:tg.badLoc}:null;const v=(tg.cx||{})[k];return v?(v===true?{}:v):null}
 function cxSet(k,val){if(val&&DAY===TODAY)try{if(hasPlanToday())setTimeout(()=>{setDayMode(null);renderGym()},0)}catch(e){}const p=PROGS[k],tg=fs().tags;if(p.tag==="run"){tg.run=!!val;if(val){tg.runData=val.km?{km:val.km,sec:val.sec}:null;tg.runLoc=curLoc}else delete tg.runData}
-  else if(p.tag==="bad"){tg.bad=!!val;if(val)tg.badLoc=curLoc}else{tg.cx=tg.cx||{};if(val)tg.cx[k]={...val,loc:curLoc};else delete tg.cx[k]}save("mealcheck",food)}
-const cxTxt=(k,v)=>v&&v.km?`${v.km} km · ${fmtPace(v.sec/v.km)}/km`:"✓ "+t("บันทึกแล้ว");
+  else if(p.tag==="bad"){tg.bad=!!val;if(val)tg.badLoc=curLoc}else{tg.cx=tg.cx||{};if(val)tg.cx[k]={...val,loc:curLoc};else delete tg.cx[k]}if(val&&p.loc==="*"){p.lastLoc=curLoc;saveProgs()}save("mealcheck",food)}
+const cxTxt=(k,v)=>(v&&v.km?`${v.km} km · ${fmtPace(v.sec/v.km)}/km`:"✓ "+t("บันทึกแล้ว"))+(v&&v.loc&&locById(v.loc)?" · "+t(locById(v.loc).name):"");
 const cxAny=ds=>{const tg=fsOf(ds);return !!(tg.run||tg.bad||Object.keys(tg.cx||{}).length)};
 // today's plan: the scheduled program at this place first, else anywhere
 function planAct(){const k=planFor(DAY);return !k?null:isCardio(PROGS[k])?"cardio":"gym"}
@@ -71,7 +71,7 @@ const locName=id=>{const l=locById(id);return l?t(l.name):"?"};
 const hereLoc=()=>locById(curLoc)||(LOCS||[])[0]||DEF_LOCS()[0];
 const locOf=p=>(p&&p.loc)||"gym";
 const logLoc=l=>l.loc||locOf(PROGS[l.prog]);
-const progsHere=()=>Object.keys(PROGS).filter(k=>k!=="free"&&locOf(PROGS[k])===curLoc);
+const progsHere=()=>Object.keys(PROGS).filter(k=>k!=="free"&&(locOf(PROGS[k])===curLoc||locOf(PROGS[k])==="*"));
 const slotOf=(k,p)=>(p&&p.slot)||k;
 function slotKeyAt(s,loc){if(!s||!loc)return null;return Object.keys(PROGS).find(k=>k!=="free"&&locOf(PROGS[k])===loc&&slotOf(k,PROGS[k])===s)||null}
 function slotKey(s){return slotKeyAt(s,curLoc)}
@@ -105,6 +105,11 @@ function ensureLocs(){if(LOCS&&LOCS.length){if(LOCS.some(l=>l.act||l.types))retu
     PROGS["c-"+k]={name:p.name,sub:p.sub||"",loc:"condo",slot:k,ex:c};PROGS["c-"+k].sub=descFor(PROGS["c-"+k])});
   try{localStorage.setItem("locs",JSON.stringify(LOCS))}catch(e){}return true}
 // v3: places get program types; every program gets its weekdays; run / badminton become cardio programs
+function ensureV4(){const cs=Object.keys(PROGS).filter(k=>isCardio(PROGS[k]));if(cs.every(k=>PROGS[k].loc==="*"))return false;
+  const keep={};cs.forEach(k=>{const p=PROGS[k],key=(p.tag||p.name||"").toLowerCase().trim();if(!keep[key]){keep[key]=k;if(p.loc!=="*")p.lastLoc=p.loc;p.loc="*";return}
+    const q=PROGS[keep[key]];q.days=[...new Set((q.days||[]).concat(p.days||[]))];if(!q.tod&&p.tod)q.tod=p.tod;
+    Object.values(food).forEach(d=>{const cx=d&&d.tags&&d.tags.cx;if(cx&&cx[k]){cx[keep[key]]=cx[k];delete cx[k]}});delete PROGS[k]});
+  try{localStorage.setItem("mealcheck",JSON.stringify(food))}catch(e){}return true}
 function ensureV3(){if(LOCS.every(l=>l.types)&&Object.values(PROGS).some(p=>Array.isArray(p.days)))return false;
   LOCS.forEach(l=>{const a=l.act||["gym","run"];l.types=typesOf(l);
     if(a.includes("run")&&!Object.values(PROGS).some(p=>p.tag==="run"&&p.loc===l.id))PROGS["cr-"+l.id]={name:t("วิ่ง")+" 10 km",kind:"cardio",icon:"🏃",tag:"run",track:"dist",goal:10,loc:l.id,ex:[],days:[1]};
@@ -221,7 +226,7 @@ function bindToggle(b,sel){b.querySelectorAll(sel).forEach(c=>c.addEventListener
 let addToToday=false;
 function newWeights(){const k="p"+Date.now().toString(36);PROGS[k]={name:t("โปรแกรมใหม่"),sub:"",ex:[],loc:curLoc,days:[]};saveProgs();if(addToToday){planAdd(k);addToToday=false}renderGym();
   pmOnly=k;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false;const n=document.querySelector('#pm-body [data-f="name"]');if(n){n.focus();n.select()}}
-function openAddProg(){const L=hereLoc(),ty=typesOf(L);if(ty.length===1){ty[0]==="gym"?newWeights():openCardioEdit(null);return}
+function openAddProg(){openCreateProg({type:hasType(hereLoc(),"gym")?"gym":"cardio"});return;const L=hereLoc(),ty=typesOf(L);if(ty.length===1){ty[0]==="gym"?newWeights():openCardioEdit(null);return}
   openGen(`${t("เพิ่มโปรแกรมที่")} ${esc(L.icon||"📍")} ${esc(t(L.name))}`,`<div class="pm-menu"><button class="menu-row" data-ty="gym"><span class="mi">🏋️</span><span class="mt">${t("เวท")}<small>${t("ท่า · เซ็ต · ครั้ง")}</small></span></button>
     <button class="menu-row" data-ty="cardio"><span class="mi">🏃</span><span class="mt">${t("คาร์ดิโอ")}<small>${t("บันทึกระยะ/เวลา หรือ ✓")}</small></span></button></div><button class="btn" data-gen-close>${t("ปิด")}</button>`,
     b=>b.querySelectorAll("[data-ty]").forEach(c=>c.addEventListener("click",()=>{closeGen();c.dataset.ty==="gym"?newWeights():openCardioEdit(null)})))}
@@ -274,11 +279,11 @@ function planItemDone(k){const p=PROGS[k];if(isCardio(p))return cxGet(k);const l
 function planStat(){const ks=planList();return [ks.filter(planItemDone).length,ks.length]}
 function planSummary(k,v){const p=PROGS[k];if(isCardio(p))return "✓ "+cxTxt(k,v);const n=Object.values(v.ex).reduce((a,s)=>a+s.length,0);return `✓ ${nU(n,"เซ็ต")} · ${Math.round(volOf(v)).toLocaleString()} kg`}
 function startPlanItem(k,go){const p=PROGS[k];dayKind={date:TODAY,k:isCardio(p)?"cardio":"gym"};save("daykind",dayKind);setDayMode("train");
-  curLoc=locOf(p);pickAnyway=false;locPrev=null;locDay={date:TODAY,id:curLoc,prog:k};save("locday",locDay);
+  curLoc=locOf(p)==="*"?(locById(p.lastLoc)?p.lastLoc:curLoc):locOf(p);pickAnyway=false;locPrev=null;locDay={date:TODAY,id:curLoc,prog:k};save("locday",locDay);
   if(isCardio(p)){renderGym();if(go)openCardio(k);return}
   if(!picked){if(cur!==k)draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft);if(go){chosen=true;document.getElementById("start-w").click();return}}renderGym();scrollAppTop()}
 function renderPlan(box){const ks=planList(),[d,n]=planStat();
-  const row=k=>{const p=PROGS[k],v=planItemDone(k),ip=inProg(k),L=locById(locOf(p))||{},tod=(TOD.find(q=>q[0]===p.tod)||[])[1];
+  const row=k=>{const p=PROGS[k],v=planItemDone(k),ip=inProg(k),L=locById(locOf(p)==="*"?p.lastLoc:locOf(p))||{},tod=(TOD.find(q=>q[0]===p.tod)||[])[1];
     const st=v?["done","Done"]:ip?["prog","In progress"]:["pend","Pending"];
     const sets=ip?Object.values(draft.ex||{}).flat():[],sub=v?planSummary(k,v):ip?`${t(L.name||"")} · ${sets.filter(x=>x.ok).length}/${sets.length} ${t("เซ็ต")}`:`${t(L.name||"")}${tod?" · "+t(tod):""}`;
     return `<div class="pl-row st-${st[0]}" data-pl="${esc(k)}"><span class="row-ic${isCardio(p)?" g":""}">${v?licon("checkc"):isCardio(p)?licon(LI[EMO[p.icon]]?EMO[p.icon]:"run"):licon("dumbbell")}</span>
@@ -293,13 +298,43 @@ function renderPlan(box){const ks=planList(),[d,n]=planStat();
     if(planItemDone(k))return;startPlanItem(k,!!g)})});
   box.querySelector("[data-plrest]")?.addEventListener("click",()=>chooseDay("rest"));
   box.querySelector("[data-pladd]").addEventListener("click",openPlanAdd)}
-function openPlanAdd(){const ks=new Set(planList()),sel=new Set(ks),locked=k=>!!planItemDone(k)||inProg(k);
-  openGen(t("เพิ่มเข้าวันนี้"),`<small class="note" style="margin:-4px 0 2px">${t("เลือกได้หลายโปรแกรม")}</small>`+LOCS.map(L=>{const ps=Object.keys(PROGS).filter(k=>k!=="free"&&locOf(PROGS[k])===L.id);if(!ps.length)return "";
-    return `<div class="label" style="margin:0">${esc(t(L.name))}</div><div class="pm-menu">${ps.map(k=>{const p=PROGS[k],on=ks.has(k),lk=locked(k);return `<button class="menu-row pa-row${on?" sel":""}${lk?" in":""}" data-padd="${esc(k)}"${lk?" disabled":""}><span class="mi">${isCardio(p)?licon(LI[EMO[p.icon]]?EMO[p.icon]:"run"):licon("dumbbell")}</span><span class="mt"><b>${esc(p.name)}</b><small>${lk?t(planItemDone(k)?"ทำแล้ววันนี้":"กำลังเล่น"):isCardio(p)?t("คาร์ดิโอ"):nU(p.ex.length,"ท่า")}</small></span><span class="pa-box">${on?"✓":""}</span></button>`}).join("")}</div>`}).join("")
-    +`<button class="btn ghost" data-pnew>+ ${t("สร้างโปรแกรมใหม่")}</button><button class="btn primary sticky-b" data-pgo disabled>${t("เลือกโปรแกรม")}</button>`,
-    b=>{const go=b.querySelector("[data-pgo]");const upd=()=>{const add=[...sel].filter(k=>!ks.has(k)).length,del=[...ks].filter(k=>!sel.has(k)).length;go.disabled=!add&&!del;go.textContent=add||del?(lang==="th"?`บันทึก · วันนี้ ${sel.size} โปรแกรม`:`Save · ${sel.size} today`):t("เลือกโปรแกรม")};
+let paTab="gym";
+function openPlanAdd(keepSel){const ks=new Set(planList()),sel=keepSel instanceof Set?keepSel:new Set(ks),locked=k=>!!planItemDone(k)||inProg(k);
+  const row=k=>{const p=PROGS[k],cx=isCardio(p),on=sel.has(k),lk=locked(k),L=locById(cx?p.lastLoc:locOf(p));
+    const sub=lk?t(planItemDone(k)?"ทำแล้ววันนี้":"กำลังเล่น"):cx?(L?`${t("ล่าสุด")} ${t(L.name)}`:t("ยังไม่เคยเล่น")):`${L?t(L.name)+" · ":""}${nU(p.ex.length,"ท่า")}`;
+    return `<button class="menu-row pa-row${on?" sel":""}${lk?" in":""}" data-padd="${esc(k)}"${lk?" disabled":""}><span class="mi">${cx?licon(LI[EMO[p.icon]]?EMO[p.icon]:"run"):licon("dumbbell")}</span><span class="mt"><b>${esc(p.name)}</b><small>${esc(sub)}</small></span><span class="pa-box">${on?"✓":""}</span></button>`};
+  const all=Object.keys(PROGS).filter(k=>k!=="free"),list=paTab==="cardio"?all.filter(k=>isCardio(PROGS[k])):all.filter(k=>!isCardio(PROGS[k])).sort((a,b)=>String(locOf(PROGS[a])).localeCompare(locOf(PROGS[b])));
+  openGen(t("เพิ่มเข้าวันนี้"),`<div class="segc pa-tabs"><button class="chip" data-pt="gym" aria-pressed="${paTab==="gym"}">${t("เวท")}</button><button class="chip" data-pt="cardio" aria-pressed="${paTab==="cardio"}">${t("คาร์ดิโอ")}</button></div>
+    <small class="note" style="margin:-4px 0 2px">${t("เลือกได้หลายโปรแกรม")}</small><div class="pm-menu">${list.map(row).join("")||`<small class="note" style="padding:12px">${t("ยังไม่มีโปรแกรม")}</small>`}</div>
+    <button class="btn ghost" data-pnew>+ ${t("สร้างโปรแกรมใหม่")}</button><button class="btn primary sticky-b" data-pgo disabled>${t("เลือกโปรแกรม")}</button>`,
+    b=>{const go=b.querySelector("[data-pgo]");const upd=()=>{const add=[...sel].filter(k=>!ks.has(k)).length,del=[...ks].filter(k=>!sel.has(k)).length;go.disabled=!add&&!del;go.textContent=add||del?(lang==="th"?`บันทึก · วันนี้ ${sel.size} โปรแกรม`:`Save · ${sel.size} today`):t("เลือกโปรแกรม")};upd();
+      b.querySelectorAll("[data-pt]").forEach(x=>x.addEventListener("click",()=>{paTab=x.dataset.pt;openPlanAdd(sel)}));
       b.querySelectorAll("[data-padd]").forEach(x=>x.addEventListener("click",()=>{const k=x.dataset.padd;if(sel.has(k))sel.delete(k);else sel.add(k);x.classList.toggle("sel",sel.has(k));x.querySelector(".pa-box").textContent=sel.has(k)?"✓":"";upd()}));
       go.addEventListener("click",()=>{sel.forEach(k=>{if(!ks.has(k))planAdd(k)});ks.forEach(k=>{if(!sel.has(k))planDel(k)});closeGen();renderGym()});
-      b.querySelector("[data-pnew]").addEventListener("click",()=>{closeGen();addToToday=true;openAddProg()})})}
+      b.querySelector("[data-pnew]").addEventListener("click",()=>openCreateProg({type:paTab,today:true}))})}
+// one form, nothing is created until Create is tapped
+function openCreateProg(o){o=o||{};let ty=o.type||"gym",loc=hasType(hereLoc(),"gym")?curLoc:(LOCS.find(l=>hasType(l,"gym"))||{}).id;
+  const draw=()=>{const gl=LOCS.filter(l=>hasType(l,"gym"));
+    openGen(t("สร้างโปรแกรมใหม่"),`<div class="le"><div class="label" style="margin:0">${t("ประเภท")}</div><div class="segc"><button class="chip" data-ct="gym" aria-pressed="${ty==="gym"}">${t("เวท")}</button><button class="chip" data-ct="cardio" aria-pressed="${ty==="cardio"}">${t("คาร์ดิโอ")}</button></div>
+      ${ty==="gym"?`<div class="label" style="margin:0">${t("สถานที่")}</div><div class="chips">${gl.map(l=>`<button class="chip" data-cl="${esc(l.id)}" aria-pressed="${l.id===loc}">${esc(l.icon||"📍")} ${esc(t(l.name))}</button>`).join("")}</div>`:`<small class="note">${t("คาร์ดิโอทำได้ทุกที่ — เลือกที่ตอนบันทึก")}</small>`}
+      <input class="le-in" id="cp-name" placeholder="${t("ชื่อโปรแกรม")}" aria-label="${t("ชื่อโปรแกรม")}" value="${esc(o.name||"")}">
+      <button class="btn primary" data-cgo>${t(o.today?"สร้าง + เพิ่มเข้าวันนี้":"สร้าง")}</button></div>`,b=>{
+      const keepName=()=>{o.name=b.querySelector("#cp-name").value};
+      b.querySelectorAll("[data-ct]").forEach(x=>x.addEventListener("click",()=>{keepName();ty=x.dataset.ct;draw()}));
+      b.querySelectorAll("[data-cl]").forEach(x=>x.addEventListener("click",()=>{keepName();loc=x.dataset.cl;draw()}));
+      setTimeout(()=>b.querySelector("#cp-name")?.focus(),50);
+      b.querySelector("[data-cgo]").addEventListener("click",()=>{const n=b.querySelector("#cp-name").value.trim();if(!n){toast(t("ใส่ชื่อโปรแกรม"));return}
+        const k=(ty==="gym"?"p":"x")+Date.now().toString(36);
+        PROGS[k]=ty==="gym"?{name:n,sub:"",ex:[],loc,days:[]}:{name:n,kind:"cardio",icon:"🏃",track:"dist",ex:[],loc:"*",days:[]};saveProgs();if(o.today)planAdd(k);closeGen();
+        if(ty==="gym"){curLoc=loc;pmOnly=k;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false}else openCardioEdit(k);renderGym()})})};draw()}
+
 const todChips=sel=>`<div class="label" style="margin:2px 0 0">${t("ช่วงเวลา")}</div><div class="chips" data-todc>${TOD.map(([k,n])=>`<button type="button" class="chip" data-tod="${k}" aria-pressed="${sel===k}">${t(n)}</button>`).join("")}</div>`;
 function bindTod(box,p,after){box.querySelectorAll("[data-tod]").forEach(c=>c.addEventListener("click",()=>{p.tod=p.tod===c.dataset.tod?undefined:c.dataset.tod;if(!p.tod)delete p.tod;box.querySelectorAll("[data-tod]").forEach(x=>x.setAttribute("aria-pressed",x.dataset.tod===p.tod));after&&after()}))}
+
+/* ---------- cardio: where did you do it? ---------- */
+function cardioWhere(host,k){if(!host)return;let w=host.querySelector(".cw");if(!w){w=document.createElement("div");w.className="cw";const h=host.querySelector(":scope>.sheet-h,:scope>.label");if(h)h.after(w);else host.prepend(w)}
+  const p=PROGS[k];if(!p){w.innerHTML="";return}if(!locById(curLoc)||(p.lastLoc&&locById(p.lastLoc)&&locDay.date!==TODAY))curLoc=p.lastLoc||curLoc;
+  w.innerHTML=`<div class="label" style="margin:0">${t("ที่ไหน")}</div><div class="chips">${LOCS.map(l=>`<button type="button" class="chip" data-cw="${esc(l.id)}" aria-pressed="${l.id===curLoc}">${esc(l.icon||"📍")} ${esc(t(l.name))}</button>`).join("")}<button type="button" class="chip" data-cwnew>＋ ${t("ที่ใหม่")}</button></div><div class="cw-new" hidden><input class="le-in" placeholder="${t("ชื่อสถานที่")}"><button type="button" class="btn sm primary">${t("บันทึก")}</button></div>`;
+  w.querySelectorAll("[data-cw]").forEach(c=>c.addEventListener("click",()=>{curLoc=c.dataset.cw;cardioWhere(host,k)}));
+  w.querySelector("[data-cwnew]").addEventListener("click",()=>{const n=w.querySelector(".cw-new");n.hidden=false;n.querySelector("input").focus()});
+  w.querySelector(".cw-new .btn").addEventListener("click",()=>{const v=w.querySelector(".cw-new input").value.trim();if(!v)return;const l={id:"l"+Date.now().toString(36),name:v,icon:"📍",map:"",eq:["body"],types:["cardio"]};LOCS.push(l);saveLocs();curLoc=l.id;cardioWhere(host,k)})}

@@ -23,7 +23,6 @@ const steps = [
     (document.querySelector('#locpick [data-dm="rest"]') || document.querySelector("#locpick [data-plrest]")).click(); renderToday(); if (!document.getElementById("v-gym").classList.contains("resting") || !/พักวันนี้|Resting/.test(document.getElementById("today").textContent)) throw new Error("rest mode");
     document.querySelector('#today [data-today="train"]').click(); dayKind = {}; save("daykind", dayKind); renderGym(); }],
   ["gyms-picker", () => { if (document.getElementById("locpick").hidden || document.querySelectorAll("#locpick .lp-card").length !== 3) throw new Error("picker should show 3 places");
-    if (!/ตีแบด|Badminton/.test(document.querySelector("#locpick .lp-card").textContent)) throw new Error("court with today's badminton should be first");
     if (getComputedStyle(document.getElementById("step1")).display !== "none") throw new Error("picker should be full screen");; }],
   ["gyms-condo", () => { pickLoc("condo"); if (!document.getElementById("locpick").hidden) throw new Error("picker should close");
     const ks = weightsHere(); if (ks.length !== 4) throw new Error("condo should have 4 weight programs, got " + ks.length);
@@ -31,7 +30,7 @@ const steps = [
     if (!/คอนโด|Condo/.test(document.querySelector("#lochead").textContent)) throw new Error("place header"); }],
   ["gyms-cardio", () => { renderToday(); const td = document.getElementById("today");
     if (/ไม่ได้|Not possible|Can't/.test(document.getElementById("v-gym").textContent)) throw new Error("no 'can't' text");
-    if (cardioHere().some(k => PROGS[k].tag === "bad")) throw new Error("condo has badminton");
+    if (Object.keys(PROGS).filter(k => PROGS[k].tag === "run").length !== 1) throw new Error("one run program for all places");
     if (!td.hidden || !/เลือกโปรแกรม|Pick a program/.test(document.getElementById("lochead").textContent)) throw new Error("condo on badminton day: card hidden, chip asks to pick");
     if (document.querySelectorAll("#v-gym .loc-chip,#v-gym .loc-h").length || !document.querySelector("#lochead .crumbs")) throw new Error("place shown once in header");
     openCardioEdit(null); const g = document.getElementById("gen-body"); g.querySelector('[data-f="name"]').value = "Swim"; g.querySelector('[data-f="icon"]').value = "🏊";
@@ -99,11 +98,11 @@ const steps = [
     setDayMode(null); renderGym(); if (!document.querySelector('#locpick [data-pl="pull"].st-prog')) throw new Error("in progress row");
     cancelProg(); setDayMode(null); renderGym(); document.querySelector('#locpick [data-pl="pull"] [data-pldel]').click(); if (document.querySelector('#locpick [data-pl="pull"]')) throw new Error("remove row");
     logs.push(...saved); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
-  ["plan-multi", () => { location.hash = "gym"; const run = Object.keys(PROGS).find(k => PROGS[k].tag === "run" && locOf(PROGS[k]) === "condo"), wd = new Date(TODAY + "T12:00:00").getDay();
+  ["plan-multi", () => { location.hash = "gym"; const run = Object.keys(PROGS).find(k => PROGS[k].tag === "run"), wd = new Date(TODAY + "T12:00:00").getDay();
     const keep = { r: PROGS[run].days.slice(), p: PROGS.push.days.slice() }; PROGS[run].days.push(wd); PROGS.push.days.push(wd);
     const saved = logs.filter(l => l.date === TODAY); logs = logs.filter(l => l.date !== TODAY); const tg = fs().tags, kt = { run: tg.run, runData: tg.runData, bad: tg.bad }; tg.run = tg.bad = false;
     setDayMode(null); renderGym(); const rows = document.querySelectorAll("#locpick [data-pl]"); if (rows.length < 2) throw new Error("plan rows " + rows.length);
-    document.querySelector(`#locpick [data-pl="${run}"]`).click(); if (curLoc !== "condo") throw new Error("row picks the place");
+    document.querySelector(`#locpick [data-pl="${run}"]`).click(); 
     cxSet(run, { km: 5, sec: 1800 }); setDayMode(null); renderGym(); if (!document.querySelector(`#locpick [data-pl="${run}"].st-done`)) throw new Error("done row");
     PROGS[run].days = keep.r; PROGS.push.days = keep.p; cxSet(run, null); Object.assign(tg, kt); logs.push(...saved); setDayMode("train"); pickLoc("gym"); }],
   ["pick-after-cardio", () => { location.hash = "gym"; dayKind = { date: TODAY, k: "cardio" }; setDayMode("train"); pickLoc("gym"); renderGym();
@@ -126,6 +125,13 @@ const steps = [
   ["untick-in-sheet", () => { location.hash = "gym"; cancelProg(); dayPlan = {}; planAdd("pull"); setDayMode(null); renderGym(); openPlanAdd(); const r = document.querySelector('#gen-body [data-padd="pull"]');
     if (r.disabled || !r.classList.contains("sel")) throw new Error("added row should be ticked and tappable"); r.click(); document.querySelector("#gen-body [data-pgo]").click();
     if (planList().includes("pull")) throw new Error("untick removes from today"); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
+  ["cardio-anywhere", () => { location.hash = "gym"; const run = Object.keys(PROGS).find(k => PROGS[k].tag === "run"); if (locOf(PROGS[run]) !== "*") throw new Error("cardio not tied to a place");
+    const tg = fs().tags, kt = { run: tg.run, runData: tg.runData, runLoc: tg.runLoc }; openCardio(run); const w = document.querySelector("#run-modal .cw"); if (!w) throw new Error("where row");
+    w.querySelector("[data-cwnew]").click(); w.querySelector(".cw-new input").value = "Park"; w.querySelector(".cw-new .btn").click();
+    const park = LOCS.find(l => l.name === "Park"); if (!park || curLoc !== park.id) throw new Error("new place picked"); cxSet(run, { km: 5, sec: 1500 }); if (!/Park/.test(cxTxt(run, cxGet(run)))) throw new Error("place in summary");
+    document.getElementById("run-modal").hidden = true; Object.assign(tg, kt); LOCS = LOCS.filter(l => l !== park); pickLoc("gym");
+    openPlanAdd(); document.querySelector('#gen-body [data-pt="cardio"]').click(); if (document.querySelectorAll("#gen-body [data-padd]").length < 1 || [...document.querySelectorAll("#gen-body [data-padd]")].some(x => !isCardio(PROGS[x.dataset.padd]))) throw new Error("cardio tab");
+    const n = Object.keys(PROGS).length; document.querySelector("#gen-body [data-pnew]").click(); closeGen(); if (Object.keys(PROGS).length !== n) throw new Error("closing create must not add a program"); paTab = "gym"; }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
