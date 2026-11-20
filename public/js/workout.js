@@ -121,13 +121,19 @@ function updWoBar(){const c=document.getElementById("wo-count");if(!c)return;con
   const top=document.getElementById("wo-top");top.hidden=!picked||editing;const wl=document.getElementById("wo-loc");if(wl){const L=hereLoc();wl.textContent=`${L.icon||"📍"} ${t(L.name)}`}
   const vol=Object.values(draft.ex||{}).flat().filter(r=>r.ok).reduce((a,r)=>a+(+r.kg||0)*(+r.reps||0),0);
   document.getElementById("wo-vol").textContent=Math.round(vol).toLocaleString();document.getElementById("wo-sets").textContent=p.done;tickClock();
-  document.getElementById("tab-gym").classList.toggle("live",picked)}
-function cancelProg(){const back=draft.fromHist;picked=false;chosen=false;editing=false;editId=null;draft={prog:cur};save("gymdraft",draft);stopRest&&stopRest();updUnitBtn();if(back){DAY=TODAY;renderAll()}else renderGym()}
+  document.getElementById("tab-gym").classList.toggle("live",picked);
+  document.body.classList.toggle("wo-focus",picked&&!editing&&DAY===TODAY&&document.getElementById("locpick").hidden)}
+// focus mode: "‹ Today" leaves the session running (row shows In progress → Resume)
+document.getElementById("wo-back").addEventListener("click",()=>{setDayMode(null);pickAnyway=false;locPrev=null;renderGym();scrollAppTop()});
+// place of the running session can change any time
+document.getElementById("wo-loc").addEventListener("click",()=>{const ls=LOCS.filter(l=>hasType(l,"gym"));
+  openGen(t("เล่นที่ไหน?"),`<div class="chips">${ls.map(l=>`<button class="chip${l.id===curLoc?" on":""}" data-wl="${esc(l.id)}">${esc(l.icon||"📍")} ${esc(t(l.name))}</button>`).join("")}</div><button class="menu-row" data-wlman><span class="mi">⚙</span><span class="mt"><b>${t("จัดการสถานที่")}</b></span><span class="mc">›</span></button>`,
+    b=>{b.querySelectorAll("[data-wl]").forEach(c=>c.addEventListener("click",()=>{curLoc=c.dataset.wl;draft.loc=curLoc;save("gymdraft",draft);locDay={date:TODAY,id:curLoc,prog:cur};save("locday",locDay);closeGen();renderGym()}));
+      b.querySelector("[data-wlman]").addEventListener("click",openPlaces)})});
+function cancelProg(){const back=draft.fromHist;if(picked&&!back&&DAY===TODAY)setDayMode(null);picked=false;chosen=false;editing=false;editId=null;draft={prog:cur};save("gymdraft",draft);stopRest&&stopRest();updUnitBtn();if(back){DAY=TODAY;renderAll()}else renderGym()}
 // cancel: ask once (tap again within 3 s) when sets were already logged, so nothing is lost by accident
-document.getElementById("cancel-w").addEventListener("click",ev=>{const b=ev.currentTarget;
-  if(woProgress().any&&!b.dataset.sure){b.dataset.sure=1;b.querySelector("span").textContent=t("แตะอีกครั้งเพื่อทิ้ง");b.classList.add("warn");
-    clearTimeout(b._t);b._t=setTimeout(()=>{delete b.dataset.sure;b.classList.remove("warn");b.querySelector("span").textContent=t("ยกเลิก")},3000);return}
-  delete b.dataset.sure;b.classList.remove("warn");b.querySelector("span").textContent=t("ยกเลิก");cancelProg();toast(t("ยกเลิกการออกแล้ว"))});
+// discard: immediate, with Undo (the bar brings the sets back)
+document.getElementById("cancel-w").addEventListener("click",()=>{const any=woProgress().any;cancelProg();if(any)undoLoud(t("ทิ้งแล้ว"));else toast(t("ยกเลิกการออกแล้ว"))});
 function renderGym(){setTimeout(()=>{try{renderToday()}catch(e){console.error(e)}},0);if(draft.prog==="free"&&!PROGS.free)PROGS.free={name:t("ออกแบบอิสระ"),sub:"",ex:[]};try{renderProgress()}catch(e){}try{renderStatsExtra()}catch(e){}try{renderHero()}catch(e){}
   ["step3","step4"].forEach(id=>document.getElementById(id).hidden=!picked&&!editing);
   document.getElementById("step1").classList.toggle("compact",(picked||editing)&&!document.getElementById("v-gym").hidden);document.getElementById("step2").hidden=picked||editing;

@@ -153,6 +153,11 @@ const steps = [
   ["undo-run", () => { const b = document.getElementById("undo-bar"); if (!b || b.hidden) throw new Error("undo bar after save"); b.querySelector("[data-undo]").click(); if (planList().includes("pull") && !planKeys(DAY).includes("pull")) throw new Error("undo restores today plan");
     userAt = 0; const n = logs.length; logs.push({ date: DAY, prog: "pull", ex: { x: [{ kg: 1, reps: 1 }] } }); save("gymlog", logs); setDayMode(null); planAdd("pull"); renderGym(); const r = document.querySelector('#locpick [data-pl="pull"]'); if (!r) throw new Error("done row"); r.click();
     const d = document.querySelector('#gen-body [data-dm="del"]'); if (!d) throw new Error("done sheet"); d.click(); if (logs.length !== n) throw new Error("remove saved workout"); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
+  ["back-flow", () => { location.hash = "gym"; cancelProg(); dayPlan = {}; planAdd("push"); planAdd("pull"); setDayMode(null); renderGym(); startPlanItem("push", true);
+    if (!document.body.classList.contains("wo-focus")) throw new Error("focus mode"); draft.ex = draft.ex || {}; const id = PROGS.push.ex[0].id; draft.ex[id] = [{ kg: "40", reps: "5", ok: true }]; save("gymdraft", draft);
+    document.getElementById("wo-back").click(); if (document.body.classList.contains("wo-focus") || !picked) throw new Error("back keeps session"); startPlanItem("pull", true);
+    if (!document.querySelector('#gen-body [data-sw="keep"]')) throw new Error("switch ask"); document.querySelector('#gen-body [data-sw="keep"]').click(); if (cur !== "push" || !picked) throw new Error("keep session");
+    cancelProg(); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
