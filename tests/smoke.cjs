@@ -175,6 +175,8 @@ const steps = [
     document.querySelector("#gen-body [data-pnew]").click(); document.querySelector("#gen-body [data-qb]").click(); want(title(), ad); x(); want(title(), "(closed)");
     openPlanItem("push"); document.querySelector("#gen-body [data-pie]").click(); document.getElementById("pm-close").click(); }],
   ["back-one-level-2", () => { const t2 = document.getElementById("gen-sheet").hidden ? "" : document.querySelector("#gen-body .sheet-h b").textContent; if (t2 !== PROGS.push.name) throw new Error("closing the program editor should return to its sheet, got: " + t2); closeGen(); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
+  ["delete-from-add", () => { location.hash = "gym"; closeGen(); PROGS["ztest"] = { name: "ZTest", sub: "", ex: [], loc: "gym", days: [] }; paTab = "gym"; paLoc = "gym"; openPlanAdd(); document.querySelector("#gen-body [data-pedit]").click();
+    const r = () => document.querySelector('#gen-body [data-pdel="ztest"]'); r().click(); if (!PROGS.ztest) throw new Error("first tap only asks"); r().click(); if (PROGS.ztest) throw new Error("deleted on second tap"); closeGen(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
