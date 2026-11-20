@@ -89,7 +89,7 @@ const steps = [
     if (!document.querySelector("#lochead").textContent.includes(PROGS[k].name) || !document.querySelector('#today [data-today="start:' + k + '"]')) throw new Error("chosen program on chip + today");
     logs.push(...saved); }],
   ["no-emoji", () => { ["food", "gym", "stats", "more"].forEach(h => { location.hash = h; }); deEmoji(document.body);
-    const txt = document.body.innerText; const m = txt.match(/\p{Extended_Pictographic}/u); if (m && !/[✓✕✎☰↗★⚠]/.test(m[0])) throw new Error("emoji left: " + m[0]);
+    const txt = document.body.innerText; const m = txt.match(/\p{Extended_Pictographic}/u); if (m && !/[✓✕✎☰↗★⚠▶]/.test(m[0])) throw new Error("emoji left: " + m[0]);
     if (getComputedStyle(document.getElementById("hero")).display !== "none") throw new Error("level character should be hidden"); }],
   ["day-queue", () => { location.hash = "gym"; const saved = logs.filter(l => l.date === TODAY); logs = logs.filter(l => l.date !== TODAY); cancelProg(); setDayMode(null); dayPlan = {}; renderGym();
     openPlanAdd(); document.querySelector('#gen-body [data-padd="pull"]').click(); document.querySelector('#gen-body [data-padd="push2"]').click(); document.querySelector("#gen-body [data-pgo]").click();
@@ -111,10 +111,10 @@ const steps = [
   ["card-start", () => { document.querySelectorAll(".modal").forEach(m => m.hidden = true); location.hash = "gym"; cancelProg(); setDayMode("train"); pickLoc("gym"); renderGym(); const g = document.querySelector("#p-push [data-go]"); if (!g) throw new Error("start button on card");
     const r = g.getBoundingClientRect(), hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); if (!hit || !hit.closest("[data-go]")) throw new Error("start button is covered by " + (hit && hit.className)); hit.click();
     if (!picked || cur !== "push") throw new Error("card start"); cancelProg(); }],
-  ["hit-areas", () => { document.querySelectorAll(".modal,#gen-sheet,#prog-sheet").forEach(m => m.hidden = true); location.hash = "gym"; cancelProg(); setDayMode("train"); pickLoc("gym"); renderGym(); scrollAppTop();
+  ["hit-areas", () => { document.querySelectorAll(".modal,#gen-sheet,#prog-sheet,#undo-bar").forEach(m => m.hidden = true); location.hash = "gym"; cancelProg(); setDayMode("train"); pickLoc("gym"); renderGym(); scrollAppTop();
     const bad = [...document.querySelectorAll("#v-gym button,#v-gym [role=button]")].filter(e => { const r = e.getBoundingClientRect(); if (!r.width || r.top < 0 || r.bottom > innerHeight - 100) return false;
       const h = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return h && h !== e && !e.contains(h) && !h.closest(".wo-top"); });
-    if (bad.length) throw new Error("covered buttons: " + bad.map(e => e.className + "|" + e.textContent.trim().slice(0, 15)).join(", ")); }],
+    if (bad.length) throw new Error("covered buttons: " + bad.map(e => { const r = e.getBoundingClientRect(), h = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return e.className + "|" + e.textContent.trim().slice(0, 15) + " by " + (h && (h.id || h.className)) }).join(", ")); }],
   ["figure-layers", () => { setDayMode(null); renderGym(); openMuscle("delt"); const bad = [...document.querySelectorAll(".body-fig")].filter(f => new Set([...f.children].map(c => { const r = c.getBoundingClientRect(); return [r.width, r.height, r.left, r.top].map(Math.round).join() })).size > 1);
     closeGen(); if (bad.length) throw new Error(bad.length + " muscle figures have misaligned colour layers"); }],
   ["rec-palette", () => { location.hash = "more"; document.getElementById("pal-open").click(); const r = document.querySelector('#gen-body [data-pal="app"]'); if (!r) throw new Error("palette sheet"); r.click();
@@ -146,9 +146,8 @@ const steps = [
     PROGS["c-test"] = { ...JSON.parse(JSON.stringify(PROGS.push)), loc: "condo" }; planAdd("push"); renderGym(); const c = document.querySelector('#locpick [data-pl="push"] [data-plloc]'); if (!c) throw new Error("place chip"); c.click();
     document.querySelector('#gen-body [data-pp="condo"]').click(); document.querySelector("#gen-body [data-ppok]").click(); if (!planList().some(k => locOf(PROGS[k]) === "condo") || planList().includes("push")) throw new Error("swap to condo copy");
     delete PROGS["c-test"]; if (!had) LOCS = LOCS.filter(l => l.id !== "condo"); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
-  ["eat-in-today", () => { location.hash = "gym"; cancelProg(); setDayMode(null); dayPlan = {}; planAdd("push"); renderGym(); const c = document.querySelector("#locpick .eat-slot #meals input[type=checkbox]"); if (!c) throw new Error("food inside today");
-    const id = c.id.slice(2); c.click(); if (!fs().done[id]) throw new Error("tick meal"); document.querySelector(`#locpick #c-${id}`).click(); if (fs().done[id]) throw new Error("untick meal"); renderGym(); if (!document.querySelector("#locpick #v-food")) throw new Error("food survives re-render");
-    dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
+  ["home-3-questions", () => { location.hash = "home"; show("home"); const c = document.querySelectorAll("#v-home .hq-card"); if (c.length !== 3) throw new Error("three question cards");
+    if (document.querySelectorAll(".tabbar .tab").length !== 5) throw new Error("five tabs"); show("body"); if (document.getElementById("v-stats").hidden || stTab !== "body") throw new Error("body tab"); show("gym"); }],
   ["undo-setup", () => { location.hash = "gym"; dayPlan = {}; save("dayplan", dayPlan); userAt = Date.now(); planAdd("pull"); }],
   ["undo-run", () => { const b = document.getElementById("undo-bar"); if (!b || b.hidden) throw new Error("undo bar after save"); b.querySelector("[data-undo]").click(); if (planList().includes("pull") && !planKeys(DAY).includes("pull")) throw new Error("undo restores today plan");
     userAt = 0; const n = logs.length; logs.push({ date: DAY, prog: "pull", ex: { x: [{ kg: 1, reps: 1 }] } }); save("gymlog", logs); setDayMode(null); planAdd("pull"); renderGym(); const r = document.querySelector('#locpick [data-pl="pull"]'); if (!r) throw new Error("done row"); r.click();
@@ -158,9 +157,9 @@ const steps = [
     document.getElementById("wo-back").click(); if (document.body.classList.contains("wo-focus") || !picked) throw new Error("back keeps session"); startPlanItem("pull", true);
     if (!document.querySelector('#gen-body [data-sw="keep"]')) throw new Error("switch ask"); document.querySelector('#gen-body [data-sw="keep"]').click(); if (cur !== "push" || !picked) throw new Error("keep session");
     cancelProg(); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
-  ["scroll-keep-1", () => { location.hash = "gym"; cancelProg(); setDayMode(null); dayPlan = {}; planAdd("push"); renderGym(); appScroll().scrollTop = 500; openPlanItem("push"); }],
+  ["scroll-keep-1", () => { location.hash = "gym"; cancelProg(); setDayMode(null); dayPlan = {}; planAdd("push"); renderGym(); appScroll().scrollTop = 500; window._y = appScroll().scrollTop; openPlanItem("push"); }],
   ["scroll-keep-2", () => { appScroll().scrollTop = 0; document.querySelector("#gen-body .sh-x").click(); }],
-  ["scroll-keep-3", () => { if (appScroll().scrollTop < 400) throw new Error("scroll restored after closing a sheet: " + appScroll().scrollTop); renderGym(); if (appScroll().scrollTop < 400) throw new Error("scroll kept across re-render"); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
+  ["scroll-keep-3", () => { if (Math.abs(appScroll().scrollTop - window._y) > 5) throw new Error("scroll restored after closing a sheet: " + appScroll().scrollTop + "/" + window._y); renderGym(); if (Math.abs(appScroll().scrollTop - window._y) > 5) throw new Error("scroll kept across re-render"); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

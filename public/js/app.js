@@ -2,15 +2,17 @@
 // Classic script: shares globals with the other files in /js (load order is set in index.html).
 /* ---------- tabs ---------- */
 // four screens behind a bottom tab bar (same layout an iOS app would use): food · workout · stats · more
-const VIEWS=["food","gym","stats","more"],TITLES={food:"วันนี้กินครบหรือยัง",gym:"เวทวันนี้",stats:"สถิติ",more:"เพิ่มเติม"};
-let curView="food",lastMain="gym";
-function show(v){const eat=v==="food";if(!VIEWS.includes(v)||eat)v="gym";if(eat)setTimeout(()=>document.querySelector(".eat-h")?.scrollIntoView({block:"start"}),60);curView=v;if(v==="food"||v==="gym")lastMain=v;
-  VIEWS.forEach(x=>{if(x!=="food")document.getElementById("v-"+x).hidden=x!==v});{const fv=document.getElementById("v-food");fv.hidden=v!=="gym"||!fv.closest(".eat-slot")}
-  document.getElementById("step1").hidden=!(v==="food"||v==="gym");document.getElementById("share-last").hidden=v!=="gym";
-  document.querySelectorAll(".tabbar .tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
-  document.getElementById("h1").textContent=t(TITLES[v]);scrollAppTop();
-  if(v==="stats")try{renderHistChart()}catch(e){}}
-const viewOf=()=>location.hash.slice(1)||"gym";
+// five screens: วันนี้ (3 questions) · ร่างกาย · กิน · ออกกำลัง · เพิ่มเติม. "body" and "stats" share the stats view (Body / Training pane).
+const VIEWS=["home","food","gym","stats","more"],TITLES={home:"แท็บวันนี้",food:"กิน",gym:"ออกกำลัง",stats:"สถิติการฝึก",body:"ร่างกาย",more:"เพิ่มเติม"};
+let curView="home",lastMain="gym";
+function show(v){const tab=v;if(v==="body"||v==="stats"){stTab=v==="body"?"body":"train";applyStTab();v="stats"}if(!VIEWS.includes(v))v="home";curView=v;if(v==="food"||v==="gym")lastMain=v;
+  VIEWS.forEach(x=>document.getElementById("v-"+x).hidden=x!==v);
+  document.getElementById("step1").hidden=v!=="food";document.getElementById("share-last").hidden=v!=="gym";
+  const sel=tab==="stats"?"gym":tab;document.querySelectorAll(".tabbar .tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===sel));
+  document.getElementById("h1").textContent=t(TITLES[tab]||TITLES[v]);scrollAppTop();
+  if(v==="home")try{renderHome()}catch(e){console.error(e)}
+  if(v==="stats")try{renderHistChart();renderStatsExtra();if(stTab==="body")renderRecovery(document.getElementById("rec-body"))}catch(e){}}
+const viewOf=()=>location.hash.slice(1)||"home";
 document.querySelectorAll(".tabbar .tab").forEach(b=>b.addEventListener("click",()=>{if(location.hash==="#"+b.dataset.v)show(b.dataset.v);else location.hash=b.dataset.v}));
 window.addEventListener("hashchange",()=>show(viewOf()));
 // week strip: the 7 days of the selected date's week; dot = workout / run / badminton logged
@@ -55,7 +57,7 @@ let modalY=null;(()=>{const sync=()=>{const on=[...document.querySelectorAll(".m
   if(x==="meal")openMealPlan();else if(x==="io"){const b=document.getElementById("io-blk");b.hidden=!b.hidden}else if(x==="pk"){if(ev.target.id!=="pk-add")document.getElementById("pk-add").click()}else if(x==="push"){if(ev.target.id!=="push-on")document.getElementById("push-on").click()}else if(x==="rm")open1RM();else if(x==="badges")openBadges();else if(x==="lang"){document.getElementById("lang").click();updMoreLang()}else if(x==="refresh")doRefresh()}));
 function updMoreLang(){const e=document.getElementById("more-lang");if(e)e.textContent=lang==="th"?"ไทย":"English"}
 /* ---------- Stats sub-tabs: Training | Body ---------- */
-let stTab=(()=>{try{return localStorage.getItem("sttab")||"train"}catch(e){return "train"}})();
+let stTab="train";
 function applyStTab(){document.querySelectorAll("#st-tabs [data-st]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.st===stTab));document.querySelectorAll(".st-pane").forEach(p=>p.hidden=p.dataset.pane!==stTab)}
 document.getElementById("st-tabs").addEventListener("click",ev=>{const b=ev.target.closest("[data-st]");if(!b)return;stTab=b.dataset.st;try{localStorage.setItem("sttab",stTab)}catch(e){}applyStTab();scrollAppTop();try{renderStatsExtra();renderHistChart()}catch(e){}});
 applyStTab();

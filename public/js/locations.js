@@ -142,7 +142,7 @@ function renderDayPick(box){setTimeout(()=>todayMeals(box),0);const pk=planFor(D
   const bars=`<small>${w.length?`${t("ให้กล้ามได้ฟื้น")} · ${w.map(([m])=>t(MUS_NAME[m])).join(", ")}`:t("กล้ามฟื้นครบแล้ว")}</small>`;
   const card=(m,name,body,col)=>`<button class="dp-card${m===sug?" on":""}" data-dm="${m}">${ico(m,col)}<span class="dp-tx"><span class="dp-t"><b>${t(name)}</b>${m===sug?`<span class="sug">${t("แนะนำ")}</span>`:""}</span>${body}</span><span class="dp-go">›</span></button>`;
   let ready=0,tot=0;try{const R=recPct();REC_ORDER.forEach(m=>{if(R[m]){tot++;if(R[m].pct>=100)ready++}})}catch(e){}
-  box.innerHTML=`<h1 class="dp-h">${t("วันนี้…")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}</div>
+  box.innerHTML=`<h1 class="dp-h">${t("ออกกำลัง")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}</div>
     <div class="rec-slot"></div>
     <h2 class="dp-sub">${t("วันนี้จะทำอะไร?")}</h2>${card("train","เวทเทรนนิ่ง",`<small>${tl}</small>`,"var(--cyan)")}${card("cardio","คาร์ดิโอ",`<small>${cl}</small>`,"var(--green)")}${card("rest","พัก",bars,"var(--muted)")}`;
   const rc=document.getElementById("rec-card");if(rc){box.querySelector(".rec-slot").appendChild(rc);try{renderRecovery()}catch(e){}}
@@ -290,7 +290,7 @@ function renderPlan(box){const ks=planList(),[d,n]=planStat();let sugK=null;try{
     const sets=ip?Object.values(draft.ex||{}).flat():[],sub=v?planSummary(k,v):ip?`${t(L.name||"")} · ${sets.filter(x=>x.ok).length}/${sets.length} ${t("เซ็ต")}`:`${isCardio(p)?t("คาร์ดิโอ"):nU(p.ex.length,"ท่า")}${tod?" · "+t(tod):""}`;
     return `<div class="pl-row st-${st[0]}" data-pl="${esc(k)}"><span class="row-ic${isCardio(p)?" g":""}">${v?licon("checkc"):isCardio(p)?licon(LI[EMO[p.icon]]?EMO[p.icon]:"run"):licon("dumbbell")}</span>
       <span class="row-tx"><span class="pl-st st-${st[0]}">${t(st[1])}</span>${sugK===k&&!v&&!ip?`<span class="pl-sug">${t("แนะนำ")}</span>`:""}<b>${esc(p.name)}</b><span class="pl-sub"><small>${esc(sub)}</small>${v||ip?"":`<button class="loc-chip" data-plloc aria-label="${t("เล่นที่ไหน?")}">${esc(L.icon||"📍")} ${esc(t(L.name||""))} ⌄</button>`}</span></span><span class="pc-act">${v?"":ip?`<button class="pc-go" data-plgo="resume">${t("กลับไปเล่น")}</button>`:`<button class="pc-go" data-plgo="start">▶ ${t("เริ่ม")}</button><button class="pc-more" data-pldel aria-label="${t("เอาออก")}">✕</button>`}</span></div>`};
-  box.innerHTML=`<h1 class="dp-h">${t("วันนี้…")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}</div><div class="rec-slot"></div>
+  box.innerHTML=`<h1 class="dp-h">${t("ออกกำลัง")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}</div><div class="rec-slot"></div>
     <h2 class="dp-sub pl-h">${t(n&&d===n?"ครบแล้ววันนี้ ✓":"วันนี้จะทำอะไร?")} ${n?`<span class="pill">${d}/${n}</span>`:""}</h2>${ks.map(row).join("")||`<small class="note pl-empty">${t("ยังไม่มีอะไรในวันนี้ — เพิ่มโปรแกรมที่จะทำ")}</small>`}
     <div class="pl-acts"><button class="${n?"pl-add":"btn primary pl-add-main"}" data-pladd>+ ${t("เพิ่มเข้าวันนี้")}</button>${d||ks.some(inProg)?"":`<button class="btn pl-rest" data-plrest>${licon("moon")||""} ${t("พักวันนี้ดีกว่า")}</button>`}</div>`;
   const rc=document.getElementById("rec-card");if(rc){box.querySelector(".rec-slot").appendChild(rc);try{renderRecovery()}catch(e){}}
@@ -298,7 +298,7 @@ function renderPlan(box){const ks=planList(),[d,n]=planStat();let sugK=null;try{
     const g=ev.target.closest("[data-plgo]");if(g&&g.dataset.plgo==="resume"){setDayMode("train");renderGym();setTimeout(()=>document.getElementById("step3")?.scrollIntoView({block:"start"}),50);return}
     if(planItemDone(k)){openDoneItem(k);return}if(g)startPlanItem(k,true);else openPlanItem(k)})});
   box.querySelector("[data-plrest]")?.addEventListener("click",()=>chooseDay("rest"));
-  box.querySelector("[data-pladd]").addEventListener("click",openPlanAdd);todayMeals(box)}
+  box.querySelector("[data-pladd]").addEventListener("click",openPlanAdd);trainLinks(box)}
 // "where?" sheet for one row of today's plan. Weights (option A): each place has its own copy of a program,
 // so picking a place swaps today's row to that place's copy. Cardio: any cardio place, remembered as lastLoc.
 // a done row can always be reopened: edit (cardio) or remove what was saved

@@ -981,3 +981,9 @@ input,select,textarea{border-width:1.5px!important}
 /* tab bar */
 .tabbar{border:1.5px solid var(--edge)!important;box-shadow:0 0 18px #2ee6ff22,0 8px 24px #0008!important}
 .tab[aria-selected=true]{color:var(--cyan,#2ee6ff)!important;text-shadow:0 0 10px #2ee6ff88}
+/* home: three questions */
+.hq-card{display:grid;gap:4px;text-align:left;width:100%;font:inherit;color:var(--fg);padding:16px;cursor:pointer;background:var(--card);border:1.5px solid var(--edge);border-radius:18px;box-shadow:inset 0 1px 0 #ffffff0d,0 6px 18px #0006,0 0 16px #2ee6ff14}
+.hq-h{display:flex;justify-content:space-between;align-items:center;gap:8px}.hq-q{display:flex;gap:6px;align-items:center;font-weight:700;color:#cfe0ee}.hq-l{color:var(--cyan,#2ee6ff);font-size:.8rem;white-space:nowrap}
+.hq-a{font-size:1.2rem;font-weight:800;line-height:1.3}.hq-s{color:var(--muted);font-size:.82rem}
+.tr-links{margin-top:14px}
+.tabbar{grid-template-columns:repeat(5,1fr)!important}.tabbar .tab small{font-size:.66rem;white-space:nowrap}
