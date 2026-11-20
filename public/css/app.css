@@ -773,3 +773,6 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 /* clear start button on every program card */
 .pc-act{display:flex;align-items:center;gap:6px;margin-left:auto;flex:none}
 .pc-go{background:var(--grad);color:var(--on-accent);font-weight:700;font-size:.85rem;border-radius:999px;padding:8px 14px;min-height:36px;display:inline-flex;align-items:center;box-shadow:0 0 12px #2ee6ff55;cursor:pointer;white-space:nowrap}
+/* the ••• hit-area pseudo was stretching over the whole card (pc-more is static on row cards) → taps on ▶ Start opened the editor */
+.prog .pc-more{position:relative!important}.prog .pc-more::before{inset:-4px!important}
+.pc-go{position:relative;z-index:1}
