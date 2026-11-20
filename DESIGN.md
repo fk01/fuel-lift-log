@@ -1,225 +1,233 @@
 ---
 name: WeightGram
-description: A dark, glowing training console that tells a beginner what to do today.
+description: Weightgramming — body, eat, train, today. A dark night-gym console for people who lift on their own.
 colors:
-  console-navy: "#141a24"
-  panel-slate: "#1c2431"
-  panel-slate-raised: "#232d3c"
-  input-well: "#121821"
+  night-navy: "#141a24"
+  console-panel: "#1c2431"
+  console-panel-raised: "#232d3c"
+  card-top: "#1f2938"
+  card-bottom: "#19212d"
+  chalk: "#e8f1f7"
+  steel-muted: "#a9bccf"
+  rail: "#33475f"
   signal-cyan: "#2ee6ff"
   go-green: "#3dff8c"
-  cyan-wash: "#1d3342"
   on-signal: "#06121a"
-  ice-text: "#e8f1f7"
-  steel-muted: "#a9bccf"
-  rail-line: "#33475f"
-  divider: "#2e3b4e"
   amber-warn: "#ffb15c"
-  coral-danger: "#ff8a7a"
+  alarm-red: "#ff5d73"
 typography:
-  headline:
+  display:
     fontFamily: "IBM Plex Sans Thai, system-ui, sans-serif"
     fontSize: "2rem"
     fontWeight: 800
     lineHeight: 1.15
     letterSpacing: "-0.01em"
-  title:
+  headline:
     fontFamily: "IBM Plex Sans Thai, system-ui, sans-serif"
     fontSize: "1.12rem"
     fontWeight: 800
+    lineHeight: 1.3
+  title:
+    fontFamily: "IBM Plex Sans Thai, system-ui, sans-serif"
+    fontSize: "1.05rem"
+    fontWeight: 700
+    lineHeight: 1.3
   body:
     fontFamily: "IBM Plex Sans Thai, system-ui, sans-serif"
     fontSize: "15px"
     fontWeight: 400
     lineHeight: 1.5
   label:
-    fontFamily: "system-ui, -apple-system, IBM Plex Sans Thai, sans-serif"
-    fontSize: "0.8rem"
+    fontFamily: "IBM Plex Sans Thai, system-ui, sans-serif"
+    fontSize: "12px"
     fontWeight: 600
-  numeral:
+    lineHeight: 1.2
+  numeric:
     fontFamily: "Share Tech Mono, IBM Plex Mono, ui-monospace, monospace"
-    fontSize: "1.6rem"
+    fontSize: "1rem"
     fontWeight: 400
     fontFeature: "tnum"
 rounded:
-  track: "2px"
-  input: "6px"
-  control: "12px"
-  dashed: "14px"
-  card: "18px"
+  sm: "10px"
+  md: "12px"
+  lg: "18px"
   pill: "999px"
 spacing:
-  xs: "6px"
+  xs: "4px"
   sm: "8px"
   md: "12px"
   lg: "16px"
-  section: "18px"
+  xl: "24px"
 components:
   button-primary:
     backgroundColor: "{colors.signal-cyan}"
     textColor: "{colors.on-signal}"
     rounded: "{rounded.pill}"
-    height: "40px"
-    padding: "0 14px"
+    padding: "12px 18px"
+    height: "48px"
   button-secondary:
-    backgroundColor: "{colors.panel-slate-raised}"
-    textColor: "{colors.ice-text}"
-    rounded: "{rounded.control}"
+    backgroundColor: "{colors.console-panel}"
+    textColor: "{colors.chalk}"
+    rounded: "{rounded.md}"
+    padding: "10px 14px"
+    height: "44px"
+  chip:
+    backgroundColor: "{colors.night-navy}"
+    textColor: "{colors.chalk}"
+    rounded: "{rounded.pill}"
+    padding: "6px 14px"
     height: "40px"
-    padding: "0 14px"
-  button-text:
-    textColor: "{colors.steel-muted}"
-    height: "36px"
-  button-icon:
-    backgroundColor: "{colors.panel-slate-raised}"
-    textColor: "{colors.ice-text}"
-    rounded: "{rounded.control}"
-    width: "44px"
-    height: "40px"
-  card:
-    backgroundColor: "{colors.panel-slate}"
-    textColor: "{colors.ice-text}"
-    rounded: "{rounded.card}"
-    padding: "16px"
-  input-set:
-    backgroundColor: "{colors.input-well}"
-    textColor: "{colors.ice-text}"
-    rounded: "{rounded.input}"
-    padding: "7px 6px"
-  pill-status:
-    backgroundColor: "{colors.cyan-wash}"
+  chip-selected:
+    backgroundColor: "{colors.night-navy}"
     textColor: "{colors.go-green}"
     rounded: "{rounded.pill}"
-    padding: "2px 9px"
+  card:
+    backgroundColor: "{colors.card-top}"
+    textColor: "{colors.chalk}"
+    rounded: "{rounded.lg}"
+    padding: "14px"
+  input:
+    backgroundColor: "{colors.night-navy}"
+    textColor: "{colors.chalk}"
+    rounded: "{rounded.sm}"
+    padding: "10px"
+    height: "44px"
+  tab-bar:
+    backgroundColor: "{colors.console-panel}"
+    textColor: "{colors.steel-muted}"
+    rounded: "{rounded.pill}"
+    height: "60px"
 ---
 
 # Design System: WeightGram
 
 ## Overview
 
-**Creative North Star: "The Training Console"**
+**Creative North Star: "The Night Gym Console"**
 
-WeightGram looks like a control panel at night. The background is deep blue-grey, every panel is a heavy outlined card, and a cyan-to-green signal tells you where to act next. The console is not there for decoration. It reads the user's day and lights up the one thing to do now: the next meal, today's program, the set in progress. A beginner should never have to work out what is important, because the glow already shows it.
+WeightGram is the control panel of a gym after dark: a deep navy room, chalk-white type, and instruments that light up only when they have something to say. The person holding it is mid-workout or half-awake in the morning, phone in one hand. Everything is built so the three morning answers — body, eat, train — and the next set can be read in a glance and acted on with a thumb.
 
-Density is set for one hand in the gym. The content sits in one narrow column (max 560px). Cards are large, and controls are thick and easy to press with confidence. The UI chrome uses a plain sans-serif font. Numbers use a mono instrument face (Share Tech Mono) and glow cyan like a readout. There is one dark look, chosen on purpose, and no light theme.
+Density is medium: cards stack in one column, numbers are large and tabular, labels are short. Personality comes from the signal colors (cyan for "this is live", green for "done / go") and from the WG barbell mark, not from decoration. Controls feel heavy and certain, like gym equipment: big pill buttons, firm borders, nothing flimsy.
 
-The cream-and-serif look that came first (`#0e0e0d`, Noto Serif Thai, uppercase mono labels) has been retired. It still sits at the top of `app.css` and is fully overridden by the neon layer. Do not bring it back.
+Glow is a signal, not a finish. A card glows because it is in progress, selected or the next thing to do; at rest it is a dark panel with a quiet edge.
 
 **Key Characteristics:**
-- Deep navy console with a faint 32px grid and two soft corner glows of cyan and green
-- Heavy outlined cards (1.5px cyan edge, 18px corners) that light up when they are the current item
-- A single cyan→green gradient that means "go"
-- Glowing mono numerals for kcal, protein, clocks, volume and %
-- Line icons instead of emoji; pill badges for status
+- Dark night-navy room, chalk-white text, one cyan→green signal gradient
+- Tabular monospace numerals for every count, weight and time
+- Heavy, rounded, thumb-sized controls (44 px targets, 48 px primary actions)
+- Neon edge only on live / selected / next items
+- Thai-first copy in IBM Plex Sans Thai; English uses the same face
 
 ## Colors
 
-A cold, high-contrast night palette. One signal gradient does all the emphasis, and the neutrals stay out of its way.
+A near-black navy console lit by two signal colors that always travel together as one gradient.
 
 ### Primary
-- **Signal Cyan** (`signal-cyan`): The console's voice. It starts the gradient and is used for focus rings, active tab text, glowing numerals, chart series, and the edges of cards (as `#2ee6ff47`, or `#2ee6ff8c` when highlighted).
-
-### Secondary
-- **Go Green** (`go-green`): Done, gains and readiness. It ends the gradient and is used for ticked checkboxes, the "done" card edge, up-arrows, and the text of status pills.
+- **Signal Cyan** (#2ee6ff): live state — in-progress rows, focus, links, the start of the action gradient.
+- **Go Green** (#3dff8c): done / reached / ready — completed rows, goal hit, the end of the action gradient.
 
 ### Neutral
-- **Console Navy** (`console-navy`): The page background, also used as the translucent tab-bar fill (`#141a24ee`).
-- **Panel Slate / Raised** (`panel-slate`, `panel-slate-raised`): Card bodies. Cards use a vertical gradient from `#1f2938` to `#19212d`.
-- **Input Well** (`input-well`): Recessed number fields in set rows.
-- **Ice Text** (`ice-text`): Primary text.
-- **Steel Muted** (`steel-muted`): Secondary text. Never go dimmer than this, because it has to keep ≥4.5:1 contrast on navy.
-- **Rail Line / Divider** (`rail-line`, `divider`): Borders, dashed add-buttons, and dividers between menu rows.
-- **Amber Warn** (`amber-warn`): Overdue meals and warnings.
-- **Coral Danger** (`coral-danger`): Destructive buttons, shown as text on a 14% coral wash.
+- **Night Navy** (#141a24): app background and input wells.
+- **Console Panel** (#1c2431) and **Console Panel Raised** (#232d3c): sheets, menus, raised rows.
+- **Card Gradient** (#1f2938 → #19212d): every card surface, top-lit.
+- **Chalk** (#e8f1f7): primary text.
+- **Steel Muted** (#a9bccf): secondary text, captions (≥4.5:1 on Night Navy).
+- **Rail** (#33475f): dividers and resting borders.
+- **On Signal** (#06121a): text on the cyan→green gradient.
+
+### Status
+- **Amber Warn** (#ffb15c): recovering muscles, unsaved state, overdue meal.
+- **Alarm Red** (#ff5d73): just-trained muscles, below goal, destructive actions.
 
 ### Named Rules
-**The One Signal Rule.** The cyan→green gradient (`linear-gradient(90deg, #2ee6ff, #3dff8c)`) belongs only to the single primary action, the selected tab/chip, and progress fills. If two things on one screen carry the gradient, one of them is wrong.
+**The Signal Pair Rule.** Cyan and green appear together as the action gradient (`linear-gradient(90deg, #2ee6ff, #3dff8c)`) on the one primary action per screen; alone, cyan means live and green means done. No other accent hues.
 
-**The No Purple Rule.** Neglected or "due" states read as neutral or ready, never as alarming purple or red. Red-ish coral is only for destructive actions.
+**The Recovery Palette Rule.** The muscle map uses its own user-selectable palette (`REC_PALS`); never reuse those colors for UI chrome.
 
 ## Typography
 
-**UI Font:** IBM Plex Sans Thai (system-ui fallback). Chrome (buttons, chips, labels) uses the system stack first.
-**Numeral Font:** Share Tech Mono (IBM Plex Mono fallback)
+**Body / UI Font:** IBM Plex Sans Thai (system-ui fallback)
+**Numeric Font:** Share Tech Mono (IBM Plex Mono fallback), tabular
 
-**Character:** A sturdy Thai-first sans in heavy weights for headings, with a technical mono reserved for numbers. Headings feel bold and sure of themselves. Numbers feel like instrument readouts.
+**Character:** One humanist sans carries Thai and English at every size; a narrow technical mono carries the numbers so weights, sets and times line up like a console readout.
 
 ### Hierarchy
-- **Headline** (800, 2rem, 1.15): Page titles. Plain text with a thin glowing gradient underline.
-- **Title** (800, 1.12rem): Section titles and sheet headers.
-- **Body** (400, 15px, 1.5): Meal items, exercise notes, descriptions.
-- **Label** (600, 0.8rem, sentence case, steel-muted): Group headers and field labels. Not uppercase, no letter-spacing.
-- **Numeral** (Share Tech Mono, tabular, cyan with `text-shadow: 0 0 10px #2ee6ff66`): kcal/protein totals, the workout clock, recovery %, volume.
+- **Display** (800, 2rem, 1.15): screen titles — วันนี้, กิน, ออกกำลัง.
+- **Headline** (800, 1.12rem): section heads — "วันนี้จะทำอะไร?", "คอมเมนต์".
+- **Title** (700, 1.05rem): card and row titles — program and plan names.
+- **Body** (400, 15px, 1.5): descriptions, comments, meal items.
+- **Label** (600, 12px): tab labels, chips, captions. 12 px is the floor for any functional text.
+- **Numeric** (mono, tabular): kcal, kg, sets, timers, counts.
 
 ### Named Rules
-**The Mono Is For Numbers Rule.** Share Tech Mono appears only on figures (kg, reps, sets, times, %). Words never use it.
+**The 12 px Floor Rule.** No functional text below 12 px; inputs never below 16 px (iOS zoom).
 
-**The No Shouting Rule.** No all-caps, letter-spaced labels or buttons. Sentence case everywhere. Exercise names stay in English.
+**The No-Shouting Rule.** Labels are sentence case in the UI face; no forced uppercase or letter-spaced mono labels.
 
 ## Layout
 
-There is one column, max 560px, with side padding of max(16px, safe-area) and an 18px gap between sections. The page itself never scrolls: `.wrap` is the scroll area sized from `--app-h`, above a floating tab bar inset from the edges, so iOS fixed bars stay put. Sticky bars (workout summary at the top, finish/cancel at the bottom, undo, rest) stack above the tab bar, and toasts clear all of them. Full-screen modals and sheets keep their title and Close button pinned, clear of the Dynamic Island. During a workout, focus mode shows only the current session.
-
-**The Today First Rule.** What needs doing today always gets the first viewport. History and stats are reached by going deeper, never by scrolling past today.
+Single column, phone-first, 16 px side gutters, cards separated by 10–14 px. A floating pill tab bar (60 px) sits above the home indicator; sheets rise from the bottom with a sticky Cancel / primary action bar. Focus mode (an active workout) hides everything but the session and a top bar with "‹ วันนี้". Spacing steps: 4 / 8 / 12 / 16 / 24.
 
 ## Elevation & Depth
 
-Depth comes from light, not from material. Cards sit on the console with a stacked shadow: an inner top highlight, a dark hairline, a soft drop, and a faint cyan halo. The current item is "lit": a brighter cyan edge and a larger halo. Glow is used only to signal state. It is never decoration.
+Depth is tonal first: Night Navy room → top-lit card gradient → raised panel for sheets. Every card has a soft neutral drop (`0 6px 18px #0006`) and a 1 px inset highlight. Neon glow is reserved for state.
 
 ### Shadow Vocabulary
-- **Card rest** (`inset 0 1px 0 #ffffff0d, 0 0 0 1px #00000040, 0 6px 18px #0006, 0 0 16px #2ee6ff14`): every card, menu, and sheet.
-- **Card lit** (`inset 0 1px 0 #ffffff12, 0 0 0 1px #2ee6ff55, 0 0 22px #2ee6ff33`): next meal, current program, selected place.
-- **Signal glow** (`0 0 0 1px #2ee6ff55, 0 0 14px #2ee6ff40`): focused inputs, the Today card.
-- **Primary halo** (`0 0 0 1px #3dff8c55, 0 0 18px #2ee6ff40`): the primary button.
-- **Tab bar float** (`0 0 18px #2ee6ff22, 0 8px 24px #0008`).
+- **Card rest** (`inset 0 1px 0 #ffffff0d, 0 6px 18px #0006`): every card at rest.
+- **Signal live** (`0 0 0 1px #2ee6ff55, 0 0 22px #2ee6ff33`): in-progress, selected, next-up items.
+- **Action glow** (`0 0 0 1px #3dff8c55, 0 0 18px #2ee6ff40`): the primary gradient button.
 
 ### Named Rules
-**The Lit Means Now Rule.** Only the item the user should act on next gets the lit edge. Done items get a green edge (`#3dff8c66`) and step back.
+**The Glow Means Live Rule.** A card glows only when it is in progress, selected or next. Resting cards carry the Rail edge and the neutral drop, no colored halo.
 
 ## Shapes
 
-Corners are generous and consistent. Cards and sheets use 18px. Controls and icon tiles use 12px. Dashed "add" outlines use 14px. Set inputs use 6px. Pills, chips, and the primary button are fully round. Borders are heavy (1.5px) on cards, secondary buttons, inputs, and the tab bar. Placeholder "add" actions use a dashed rail-line border instead of a fill.
+Generous, equipment-like rounding: cards 18 px, buttons and inputs 10–12 px, chips, primary actions and the tab bar fully pill-shaped. Borders are 1.5 px. Icons are line SVGs at a single stroke weight (1.8–2 px) inside 12 px-rounded tiles.
 
 ## Components
 
 ### Buttons
-Thick, clear, and pressed with confidence. The app uses one system everywhere:
-- **Primary:** a gradient pill with dark text (`on-signal`), weight 700–800, the primary halo, and a minimum height of 40px (48px in sheets). Use one per screen.
-- **Secondary:** a 12px rounded box with a soft white fill (`#ffffff0d`), a 1.5px cyan edge, and weight 600. On press, the fill deepens to `#ffffff1a`.
-- **Icon:** a 44×40 box (the ••• menu, gear, close). The hit area is always at least 44pt.
-- **Text:** plain steel-muted text, at least 36px tall.
-- **Warn:** coral text on a coral wash.
+- **Shape:** pill (999px) for primary, 12px for secondary.
+- **Primary:** cyan→green gradient, On Signal text, 800 weight, 48 px tall, Action glow. One per screen.
+- **Secondary:** Console Panel fill, 1.5 px signal-tinted edge, Chalk text, 44 px.
+- **Text links:** Signal Cyan, 44 px tap height even when the text is small.
+- **Focus:** 2 px Signal Cyan outline, 2 px offset.
 
-### Chips / Tabs
-These are round pills with a rail-line outline. When selected, they fill with the gradient and dark text and get a `0 0 12px #2ee6ff44` glow.
+### Chips
+- **Style:** pill, Night Navy fill, Rail border, 40 px (36 px inside dense rows).
+- **Selected:** Go Green border and text; filters and segmented tabs use the gradient fill for the active segment.
 
 ### Cards / Containers
-Cards are 18px with the vertical slate gradient, a 1.5px cyan edge (`#2ee6ff47`), card-rest shadow, and about 16px padding. Program and library items are horizontal row cards: icon tile, name and meta, then a fixed last column so ▶ Start and the pills line up.
+- **Corner Style:** 18 px.
+- **Background:** Card Gradient.
+- **Border:** 1.5 px edge; brighter cyan edge + Signal live glow when active; green edge when done.
+- **Internal Padding:** 12–16 px.
 
 ### Inputs / Fields
-The inputs are recessed wells (`input-well`) with a 1.5px border and centred mono digits. On focus, the border turns cyan and gets the signal glow, with no outline. Number entry goes through a custom number pad and never the system keyboard. Checkboxes use go-green.
+- **Style:** Night Navy well, Rail border, 10 px radius, ≥16 px text, 44 px tall.
+- **Focus:** Signal Cyan border with the live glow.
 
 ### Navigation
-The tab bar floats at the bottom: translucent navy, a 1.5px cyan edge, and the float shadow. It shows line icons with small labels. The active tab is cyan with a text glow and a short gradient underline that glows. The bar slides away while you scroll and comes back when you stop.
+- Floating pill tab bar, six tabs (Today · Eat · Train · Stats · Explore · More), line icons over 12 px labels; active tab Signal Cyan with an underline.
 
-### Progress Track
-A 4px track with 2px corners on rail-line, filled with the gradient. Used for kcal/protein and XP.
+### Signature: Plan Row
+Status pill (Pending / In progress / Done) + title + subtitle with a place chip + ▶ Start pill. In progress = Signal live; done = green edge and check.
 
-### Status Pill
-A small round badge: green text on a green wash (`#3dff8c22`) with a `#3dff8c55` border, at 0.68rem, weight 600.
+### Signature: Three Questions Card
+Today's cards: question line with a line icon, a large 800-weight answer, a muted detail line, and a cyan link to its tab.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** give the single next action the lit edge and the gradient button, and keep everything else calm.
-- **Do** set every figure in Share Tech Mono, with tabular numbers, in cyan.
-- **Do** keep tap targets at 44pt or larger, and make primary buttons 48px tall inside sheets.
-- **Do** use line icons in the same stroke style, not emoji.
-- **Do** bump the `?v=` asset query in `index.html` after any CSS change.
+- **Do** keep one gradient primary action per screen.
+- **Do** use the mono numeric face for every number a person compares (kg, sets, kcal, time).
+- **Do** give every tappable thing 44 px of height.
+- **Do** let state carry the glow: live = cyan, done = green, warn = amber, alarm = red.
+- **Do** write Thai first and keep English the same length or shorter.
 
 ### Don't:
-- **Don't** bring back the retired cream/serif look (Noto Serif Thai headings, uppercase letter-spaced mono labels, `#0e0e0d` background).
-- **Don't** put the gradient on more than one action per screen.
-- **Don't** use purple, and don't use red for anything that isn't destructive.
-- **Don't** let muted text drop below `steel-muted` contrast.
-- **Don't** add a light theme. The single dark look is deliberate.
+- **Don't** put colored glow on resting cards (Glow Means Live).
+- **Don't** introduce new accent hues beyond cyan, green, amber and red.
+- **Don't** use emoji as icons; use the line icon set.
+- **Don't** set functional text under 12 px or inputs under 16 px.
+- **Don't** use forced-uppercase letter-spaced labels.

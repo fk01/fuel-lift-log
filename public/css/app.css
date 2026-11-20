@@ -1041,3 +1041,52 @@ input,select,textarea{border-width:1.5px!important}
 .acct-mark{display:block;margin:0 auto -6px;filter:drop-shadow(0 0 12px #2ee6ff55)}
 .acct-logo{background:linear-gradient(180deg,#f4f8fb,#9aa7b3);-webkit-background-clip:text;background-clip:text;color:transparent!important;letter-spacing:.01em}
 .acct-sub{margin:-8px 0 2px;font-size:.7rem;letter-spacing:.32em;color:var(--muted)}
+/* ---- harden ---- */
+/* iOS zooms the page when a focused field is under 16px */
+input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:max(16px,1em)}
+.sets input,.bstep input{font-size:max(16px,1em)}
+/* long user-generated text (plan titles, names, bios, comments) never pushes the layout */
+.ex-top b,.ex-pt b,.ex-by,.ex-card .note,.pl-row .row-tx b,.hq-a,.cm p,.pi-ex span,.tm-tx b,.sheet-h b{overflow-wrap:anywhere;min-width:0}
+.ex-top{min-width:0}.ex-top b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sheet-h b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mp-vit input{width:22px;height:22px;accent-color:var(--green,#3dff8c)}
+.ex-by{display:flex!important;gap:6px;align-items:center;min-width:0}.ex-by>span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.ex-empty{display:grid;gap:10px;justify-items:center}
+/* ---- adapt: one-handed at the gym — targets ≥44px, nothing wider than the screen ---- */
+.sh-x{margin:-8px 0 0 0!important}
+#gen-body .sheet-h{padding-right:0}
+.linkb{display:inline-flex;align-items:center;min-height:44px;padding:0 6px}
+.acct-sw .linkb,.cm-a .linkb,.ex-mod .linkb{min-height:44px}
+.pa-new{min-height:44px;padding:0 4px!important}
+.ex-tabs .chip,#st-tabs .chip,.chips.seg .chip,.pa-tabs .chip,.ex-head .chip{min-height:44px}
+.chips .chip{min-height:40px}
+.rc-chip{min-height:36px}.rc-map{min-height:44px}
+.loc-chip{min-height:36px;padding:6px 10px}
+[data-pad="kg"],.sets .h .btn,.unit-tog,.sets .h button{min-height:32px}
+.mp-num .mp-vit{min-height:44px}
+.sets button[data-unit]{min-height:36px}
+/* ---- typeset: functional text floor 12px; labels in the UI face, not uppercase mono ---- */
+.tabbar .tab small{font-size:12px!important;letter-spacing:0!important;text-transform:none!important;line-height:1.15}
+.stat span{font-size:12px!important;letter-spacing:.02em!important;text-transform:none!important}
+.ec-d small,.ec-d span{font-size:12px}.ec-d span{font-variant-numeric:tabular-nums}
+.wk-dow,#week small{font-size:12px}
+/* ---- animate: one consistent motion language — quick, exponential ease-out, nothing decorative ---- */
+:root{--ease-out:cubic-bezier(.22,1,.36,1)}
+.modal.sheet .sheet-in{animation:sheetUp .32s var(--ease-out)}
+.undo-bar:not([hidden]){animation:barIn .28s var(--ease-out)}
+@keyframes barIn{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
+.toast:not([hidden]){animation:toastIn .24s var(--ease-out)}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+/* the one authored moment: ticking a set */
+.sets input[type=checkbox]:checked{animation:tick .3s var(--ease-out)}
+@keyframes tick{0%{transform:scale(.8)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+.tx-bar:not([hidden]){animation:barUp .28s var(--ease-out)}@keyframes barUp{from{transform:translateY(100%)}to{transform:none}}
+/* reduced motion: keep every state change, replace travel with a short fade */
+@media (prefers-reduced-motion:reduce){
+  .modal.sheet .sheet-in,.drawer-in,.tx-bar:not([hidden]){animation:fadeIn .15s linear!important}
+  .undo-bar:not([hidden]),.toast:not([hidden]){animation:fadeInC .15s linear!important}
+  .sets input[type=checkbox]:checked,.hero.lv canvas{animation:none!important}
+  .tabbar,.rest,.wo-bar,.sw i,.fill{transition:none!important}
+  #ptr.spin #ptr-i{animation-duration:2s}
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes fadeInC{from{opacity:0}to{opacity:1}}

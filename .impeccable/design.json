@@ -1,95 +1,109 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-20T13:27:02.286894Z",
+  "generatedAt": "2026-11-20T13:58:29.524176Z",
   "title": "Design System: WeightGram",
   "extensions": {
     "colorMeta": {
+      "night-navy": {
+        "role": "neutral",
+        "displayName": "Night Navy"
+      },
+      "console-panel": {
+        "role": "neutral",
+        "displayName": "Console Panel"
+      },
+      "chalk": {
+        "role": "neutral",
+        "displayName": "Chalk"
+      },
+      "steel-muted": {
+        "role": "neutral",
+        "displayName": "Steel Muted"
+      },
+      "rail": {
+        "role": "neutral",
+        "displayName": "Rail"
+      },
       "signal-cyan": {
         "role": "primary",
         "displayName": "Signal Cyan",
         "tonalRamp": [
-          "#03343b",
-          "#06505b",
-          "#0a7180",
-          "#1196a8",
+          "#06323a",
+          "#0a5361",
+          "#0f7a8d",
+          "#16a3bb",
           "#2ee6ff",
           "#6aeeff",
           "#a6f5ff",
-          "#e0fbff"
+          "#e0fcff"
         ]
       },
       "go-green": {
-        "role": "secondary",
+        "role": "primary",
         "displayName": "Go Green",
         "tonalRamp": [
-          "#06331a",
-          "#0a4f28",
-          "#107238",
-          "#18994c",
+          "#073a1f",
+          "#0c5d32",
+          "#128447",
+          "#1fb05f",
           "#3dff8c",
-          "#74ffab",
-          "#aaffca",
-          "#e2ffec"
+          "#78ffaf",
+          "#b2ffd0",
+          "#e6fff0"
         ]
       },
-      "console-navy": {
-        "role": "neutral",
-        "displayName": "Console Navy",
-        "tonalRamp": [
-          "#0b0f15",
-          "#141a24",
-          "#1c2431",
-          "#232d3c",
-          "#33475f",
-          "#5b6f86",
-          "#a9bccf",
-          "#e8f1f7"
-        ]
+      "amber-warn": {
+        "role": "tertiary",
+        "displayName": "Amber Warn"
+      },
+      "alarm-red": {
+        "role": "tertiary",
+        "displayName": "Alarm Red"
       }
     },
     "typographyMeta": {
-      "headline": {
-        "displayName": "Headline",
-        "purpose": "Page titles, 800 weight."
+      "display": {
+        "displayName": "Display",
+        "purpose": "Screen titles"
       },
-      "numeral": {
-        "displayName": "Numeral",
-        "purpose": "All figures; glowing cyan readout."
+      "numeric": {
+        "displayName": "Numeric",
+        "purpose": "Every count, weight, kcal and timer"
       }
     },
     "shadows": [
       {
         "name": "card-rest",
-        "value": "inset 0 1px 0 #ffffff0d,0 0 0 1px #00000040,0 6px 18px #0006,0 0 16px #2ee6ff14",
-        "purpose": "Every card at rest."
+        "value": "inset 0 1px 0 #ffffff0d, 0 6px 18px #0006",
+        "purpose": "Every card at rest"
       },
       {
-        "name": "card-lit",
-        "value": "inset 0 1px 0 #ffffff12,0 0 0 1px #2ee6ff55,0 0 22px #2ee6ff33",
-        "purpose": "The current/next item."
+        "name": "signal-live",
+        "value": "0 0 0 1px #2ee6ff55, 0 0 22px #2ee6ff33",
+        "purpose": "In progress / selected / next"
       },
       {
-        "name": "signal-glow",
-        "value": "0 0 0 1px #2ee6ff55,0 0 14px #2ee6ff40",
-        "purpose": "Focus and the Today card."
-      },
-      {
-        "name": "primary-halo",
-        "value": "0 0 0 1px #3dff8c55,0 0 18px #2ee6ff40",
-        "purpose": "Primary button."
+        "name": "action-glow",
+        "value": "0 0 0 1px #3dff8c55, 0 0 18px #2ee6ff40",
+        "purpose": "Primary gradient button"
       }
     ],
     "motion": [
       {
-        "name": "fill",
-        "value": "width .3s",
-        "purpose": "Progress track fill."
+        "name": "ease-out",
+        "value": "cubic-bezier(.22,1,.36,1)",
+        "purpose": "Sheets 0.32s, bars 0.28s, toasts 0.24s"
+      },
+      {
+        "name": "reduced",
+        "value": "fade 0.15s linear",
+        "purpose": "prefers-reduced-motion replacement for travel"
       }
     ],
     "breakpoints": [
       {
-        "name": "column",
-        "value": "560px"
+        "name": "phone",
+        "value": "375px"
       }
     ]
   },
@@ -98,106 +112,100 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "The one gradient action per screen.",
-      "html": "<button class=\"ds-btn-primary\">▶ เริ่ม Pull A</button>",
-      "css": ".ds-btn-primary{background:linear-gradient(90deg,#2ee6ff,#3dff8c);color:#06121a;border:0;border-radius:999px;min-height:48px;padding:0 22px;font:800 .95rem 'IBM Plex Sans Thai',system-ui,sans-serif;box-shadow:0 0 0 1px #3dff8c55,0 0 18px #2ee6ff40;cursor:pointer}.ds-btn-primary:active{filter:brightness(.9)}.ds-btn-primary:focus-visible{outline:2px solid #e8f1f7;outline-offset:3px}"
+      "description": "The one main action per screen.",
+      "html": "<button class=\"ds-btn-primary\">▶ เริ่ม</button>",
+      "css": ".ds-btn-primary{background:linear-gradient(90deg,#2ee6ff,#3dff8c);color:#06121a;font:800 15px 'IBM Plex Sans Thai',system-ui,sans-serif;border:0;border-radius:999px;padding:12px 22px;min-height:48px;box-shadow:0 0 0 1px #3dff8c55,0 0 18px #2ee6ff40;transition:transform .2s cubic-bezier(.22,1,.36,1)}.ds-btn-primary:active{transform:scale(.97)}.ds-btn-primary:focus-visible{outline:2px solid #2ee6ff;outline-offset:2px}"
     },
     {
       "name": "Secondary Button",
       "kind": "button",
       "refersTo": "button-secondary",
-      "description": "Rounded box with cyan edge.",
-      "html": "<button class=\"ds-btn-sec\">ประวัติ</button>",
-      "css": ".ds-btn-sec{background:#ffffff0d;color:#e8f1f7;border:1.5px solid #2ee6ff47;border-radius:12px;min-height:40px;padding:0 14px;font:600 .92rem system-ui,sans-serif;cursor:pointer}.ds-btn-sec:active{background:#ffffff1a}.ds-btn-sec:focus-visible{border-color:#2ee6ff;box-shadow:0 0 0 1px #2ee6ff55,0 0 14px #2ee6ff40;outline:none}"
+      "description": "Supporting actions.",
+      "html": "<button class=\"ds-btn\">✎ แก้ไข</button>",
+      "css": ".ds-btn{background:#1c2431;color:#e8f1f7;font:600 14px 'IBM Plex Sans Thai',system-ui,sans-serif;border:1.5px solid #2ee6ff47;border-radius:12px;padding:10px 14px;min-height:44px}.ds-btn:hover{border-color:#2ee6ff8c}.ds-btn:focus-visible{outline:2px solid #2ee6ff;outline-offset:2px}"
     },
     {
       "name": "Chip",
       "kind": "chip",
-      "refersTo": "pill-status",
-      "description": "Filter chip; selected takes the gradient.",
-      "html": "<button class=\"ds-chip\">วิ่ง</button> <button class=\"ds-chip on\">เวท</button>",
-      "css": ".ds-chip{border:1px solid #33475f;background:none;color:#e8f1f7;border-radius:999px;padding:6px 14px;font:.85rem system-ui,sans-serif;cursor:pointer}.ds-chip.on{background:linear-gradient(90deg,#2ee6ff,#3dff8c);color:#06121a;border-color:transparent;box-shadow:0 0 12px #2ee6ff44;font-weight:600}"
+      "refersTo": "chip",
+      "description": "Filters, tags, places.",
+      "html": "<span class=\"ds-chip\">ฟิตเนส</span> <span class=\"ds-chip on\">เพิ่มกล้าม</span>",
+      "css": ".ds-chip{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:999px;border:1.5px solid #33475f;background:#141a24;color:#e8f1f7;font:500 14px 'IBM Plex Sans Thai',sans-serif}.ds-chip.on{border-color:#3dff8c;color:#3dff8c}"
     },
     {
-      "name": "Card (lit)",
+      "name": "Card",
       "kind": "card",
       "refersTo": "card",
-      "description": "Heavy outlined card; lit when it is the next item.",
-      "html": "<div class=\"ds-card\"><b>มื้อถัดไป · 12:30</b><div class=\"ds-n\">620 kcal</div></div>",
-      "css": ".ds-card{background:linear-gradient(180deg,#1f2938,#19212d);border:1.5px solid #2ee6ff8c;border-radius:18px;padding:16px;color:#e8f1f7;font:15px 'IBM Plex Sans Thai',sans-serif;box-shadow:inset 0 1px 0 #ffffff12,0 0 0 1px #2ee6ff55,0 0 22px #2ee6ff33}.ds-n{font-family:'Share Tech Mono',monospace;color:#2ee6ff;text-shadow:0 0 10px #2ee6ff66;font-size:1.6rem}"
+      "description": "Every content block.",
+      "html": "<div class=\"ds-card\"><b>Push A</b><small>7 ท่า · ฟิตเนส</small></div>",
+      "css": ".ds-card{display:grid;gap:4px;padding:14px;border-radius:18px;background:linear-gradient(180deg,#1f2938,#19212d);border:1.5px solid #2ee6ff47;box-shadow:inset 0 1px 0 #ffffff0d,0 6px 18px #0006;color:#e8f1f7;font:15px 'IBM Plex Sans Thai',sans-serif}.ds-card small{color:#a9bccf;font-size:13px}"
     },
     {
-      "name": "Set Input",
+      "name": "Input",
       "kind": "input",
-      "refersTo": "input-set",
-      "description": "Recessed mono number well.",
-      "html": "<input class=\"ds-in\" value=\"60\">",
-      "css": ".ds-in{width:72px;background:#121821;border:1.5px solid #33475f;color:#e8f1f7;border-radius:6px;padding:7px 6px;font:.95rem 'Share Tech Mono',monospace;text-align:center}.ds-in:focus{border-color:#2ee6ff;box-shadow:0 0 0 1px #2ee6ff55,0 0 14px #2ee6ff40;outline:none}"
+      "refersTo": "input",
+      "description": "Text and number fields.",
+      "html": "<input class=\"ds-input\" placeholder=\"ชื่อโปรแกรม\">",
+      "css": ".ds-input{background:#141a24;color:#e8f1f7;border:1.5px solid #33475f;border-radius:10px;padding:10px;font:16px 'IBM Plex Sans Thai',sans-serif;min-height:44px}.ds-input:focus{outline:none;border-color:#2ee6ff;box-shadow:0 0 0 1px #2ee6ff55,0 0 14px #2ee6ff40}"
     },
     {
-      "name": "Tab Bar",
-      "kind": "nav",
-      "refersTo": "",
-      "description": "Floating bottom bar, active tab glows cyan.",
-      "html": "<nav class=\"ds-tb\"><a>วันนี้</a><a class=\"on\">เวท</a><a>สถิติ</a><a>เพิ่มเติม</a></nav>",
-      "css": ".ds-tb{display:grid;grid-template-columns:repeat(4,1fr);background:#141a24ee;border:1.5px solid #2ee6ff47;border-radius:999px;padding:10px;box-shadow:0 0 18px #2ee6ff22,0 8px 24px #0008;font:.7rem system-ui,sans-serif;text-align:center;color:#a9bccf}.ds-tb .on{color:#2ee6ff;text-shadow:0 0 10px #2ee6ff88}"
+      "name": "Plan Row",
+      "kind": "custom",
+      "description": "Today's plan item with status, place and Start.",
+      "html": "<div class=\"ds-row\"><span class=\"ds-st\">In progress</span><b>Push A</b><small>7 ท่า · 🏢 ยิม</small></div>",
+      "css": ".ds-row{display:grid;gap:2px;padding:12px 14px;border-radius:18px;background:linear-gradient(180deg,#1f2938,#19212d);border:1.5px solid #2ee6ff8c;box-shadow:0 0 0 1px #2ee6ff55,0 0 22px #2ee6ff33;color:#e8f1f7;font:15px 'IBM Plex Sans Thai',sans-serif}.ds-st{justify-self:start;font-size:12px;padding:1px 8px;border-radius:999px;background:#2ee6ff22;color:#2ee6ff}.ds-row small{color:#a9bccf}"
     }
   ],
   "narrative": {
-    "northStar": "The Training Console",
-    "overview": "WeightGram looks like a control panel at night. The background is deep blue-grey, every panel is a heavy outlined card, and a cyan-to-green signal tells you where to act next. The console is not there for decoration. It reads the user's day and lights up the one thing to do now: the next meal, today's program, the set in progress. A beginner should never have to work out what is important, because the glow already shows it.\n\nDensity is set for one hand in the gym. The content sits in one narrow column (max 560px). Cards are large, and controls are thick and easy to press with confidence. The UI chrome uses a plain sans-serif font. Numbers use a mono instrument face (Share Tech Mono) and glow cyan like a readout. There is one dark look, chosen on purpose, and no light theme.\n\nThe cream-and-serif look that came first (`#0e0e0d`, Noto Serif Thai, uppercase mono labels) has been retired. It still sits at the top of `app.css` and is fully overridden by the neon layer. Do not bring it back.",
+    "northStar": "The Night Gym Console",
+    "overview": "WeightGram is the control panel of a gym after dark: a deep navy room, chalk-white type, and instruments that light up only when they have something to say. Glow is a signal, not a finish.",
     "keyCharacteristics": [
-      "Deep navy console with a faint 32px grid and two soft corner glows of cyan and green",
-      "Heavy outlined cards (1.5px cyan edge, 18px corners) that light up when they are the current item",
-      "A single cyan→green gradient that means \"go\"",
-      "Glowing mono numerals for kcal, protein, clocks, volume and %",
-      "Line icons instead of emoji; pill badges for status"
+      "Dark night-navy room, chalk-white text, one cyan→green signal gradient",
+      "Tabular monospace numerals for every count, weight and time",
+      "Heavy, rounded, thumb-sized controls (44 px targets, 48 px primary actions)",
+      "Neon edge only on live / selected / next items",
+      "Thai-first copy in IBM Plex Sans Thai"
     ],
     "rules": [
       {
-        "name": "The One Signal Rule",
-        "body": "The cyan→green gradient (`linear-gradient(90deg, #2ee6ff, #3dff8c)`) belongs only to the single primary action, the selected tab/chip, and progress fills. If two things on one screen carry the gradient, one of them is wrong.",
+        "name": "The Signal Pair Rule",
+        "body": "Cyan and green travel together as the one primary-action gradient; alone, cyan means live and green means done.",
         "section": "colors"
       },
       {
-        "name": "The No Purple Rule",
-        "body": "Neglected or \"due\" states read as neutral or ready, never as alarming purple or red. Red-ish coral is only for destructive actions.",
+        "name": "The Recovery Palette Rule",
+        "body": "The muscle map palette is its own; never reuse it for UI chrome.",
         "section": "colors"
       },
       {
-        "name": "The Mono Is For Numbers Rule",
-        "body": "Share Tech Mono appears only on figures (kg, reps, sets, times, %). Words never use it.",
+        "name": "The 12 px Floor Rule",
+        "body": "No functional text below 12 px; inputs never below 16 px.",
         "section": "typography"
       },
       {
-        "name": "The No Shouting Rule",
-        "body": "No all-caps, letter-spaced labels or buttons. Sentence case everywhere. Exercise names stay in English.",
+        "name": "The No-Shouting Rule",
+        "body": "Sentence-case labels in the UI face; no forced uppercase mono labels.",
         "section": "typography"
       },
       {
-        "name": "The Today First Rule",
-        "body": "What needs doing today always gets the first viewport. History and stats are reached by going deeper, never by scrolling past today.",
-        "section": "layout"
-      },
-      {
-        "name": "The Lit Means Now Rule",
-        "body": "Only the item the user should act on next gets the lit edge. Done items get a green edge (`#3dff8c66`) and step back.",
+        "name": "The Glow Means Live Rule",
+        "body": "A card glows only when in progress, selected or next.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "**Do** give the single next action the lit edge and the gradient button, and keep everything else calm.",
-      "**Do** set every figure in Share Tech Mono, with tabular numbers, in cyan.",
-      "**Do** keep tap targets at 44pt or larger, and make primary buttons 48px tall inside sheets.",
-      "**Do** use line icons in the same stroke style, not emoji.",
-      "**Do** bump the `?v=` asset query in `index.html` after any CSS change."
+      "Do keep one gradient primary action per screen.",
+      "Do use the mono numeric face for every number a person compares (kg, sets, kcal, time).",
+      "Do give every tappable thing 44 px of height.",
+      "Do let state carry the glow: live = cyan, done = green, warn = amber, alarm = red.",
+      "Do write Thai first and keep English the same length or shorter."
     ],
     "donts": [
-      "**Don't** bring back the retired cream/serif look (Noto Serif Thai headings, uppercase letter-spaced mono labels, `#0e0e0d` background).",
-      "**Don't** put the gradient on more than one action per screen.",
-      "**Don't** use purple, and don't use red for anything that isn't destructive.",
-      "**Don't** let muted text drop below `steel-muted` contrast.",
-      "**Don't** add a light theme. The single dark look is deliberate."
+      "Don't put colored glow on resting cards (Glow Means Live).",
+      "Don't introduce new accent hues beyond cyan, green, amber and red.",
+      "Don't use emoji as icons; use the line icon set.",
+      "Don't set functional text under 12 px or inputs under 16 px.",
+      "Don't use forced-uppercase letter-spaced labels."
     ]
   }
 }
