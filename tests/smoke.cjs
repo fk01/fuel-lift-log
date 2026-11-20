@@ -147,7 +147,7 @@ const steps = [
     document.querySelector('#gen-body [data-pp="condo"]').click(); document.querySelector("#gen-body [data-ppok]").click(); if (!planList().some(k => locOf(PROGS[k]) === "condo") || planList().includes("push")) throw new Error("swap to condo copy");
     delete PROGS["c-test"]; if (!had) LOCS = LOCS.filter(l => l.id !== "condo"); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
   ["home-3-questions", () => { location.hash = "home"; show("home"); const c = document.querySelectorAll("#v-home .hq-card"); if (c.length !== 3) throw new Error("three question cards");
-    if (document.querySelectorAll(".tabbar .tab").length !== 5) throw new Error("five tabs"); show("body"); if (document.getElementById("v-stats").hidden || stTab !== "body") throw new Error("body tab"); show("gym"); }],
+    if (document.querySelectorAll(".tabbar .tab").length !== 6) throw new Error("six tabs"); show("body"); if (document.getElementById("v-stats").hidden || stTab !== "body") throw new Error("body tab"); show("gym"); }],
   ["undo-setup", () => { location.hash = "gym"; dayPlan = {}; save("dayplan", dayPlan); userAt = Date.now(); planAdd("pull"); }],
   ["undo-run", () => { const b = document.getElementById("undo-bar"); if (!b || b.hidden) throw new Error("undo bar after save"); b.querySelector("[data-undo]").click(); if (planList().includes("pull") && !planKeys(DAY).includes("pull")) throw new Error("undo restores today plan");
     userAt = 0; const n = logs.length; logs.push({ date: DAY, prog: "pull", ex: { x: [{ kg: 1, reps: 1 }] } }); save("gymlog", logs); setDayMode(null); planAdd("pull"); renderGym(); const r = document.querySelector('#locpick [data-pl="pull"]'); if (!r) throw new Error("done row"); r.click();
@@ -192,6 +192,8 @@ const steps = [
     if (b.locs.length !== 3 || ws.length !== 8) throw new Error("4 programs × 2 places, got " + ws.length); if (ws.filter(p => p.days.length).length !== 4) throw new Error("only the first place is scheduled");
     if (!Object.values(b.progs).some(p => p.tag === "run")) throw new Error("cardio"); const home = b.locs[1].id; if (ws.filter(p => p.loc === home).some(p => p.ex.some(e => e.z === "🔩"))) throw new Error("no machines at home"); }],
   ["onboarding-ui", () => { openOnboarding(); const m = document.getElementById("onb"); if (m.hidden || !m.querySelector("[data-p='age']")) throw new Error("step 1"); for (let i = 0; i < 3; i++) m.querySelector('[data-onb="next"]').click(); if (!m.querySelector("[data-plan]")) throw new Error("step 4"); m.hidden = true; }],
+  ["explore-ui", () => { location.hash = "explore"; show("explore"); if (document.querySelectorAll("#v-explore [data-xt]").length !== 6) throw new Error("explore tabs");
+    publishMeals(); if (!document.querySelector("#gen-body #pub-t") || document.querySelectorAll("#gen-body [data-tag]").length < 10) throw new Error("share sheet"); closeGen(); location.hash = "gym"; }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

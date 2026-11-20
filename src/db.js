@@ -24,6 +24,13 @@ export async function init(env) {
     // per-user documents; the old single-user table "docs" stays untouched until its owner claims it (it is copied, not moved)
     env.DB.prepare("CREATE TABLE IF NOT EXISTS udocs (uid TEXT NOT NULL, id TEXT NOT NULL, value TEXT NOT NULL, updated INTEGER NOT NULL, PRIMARY KEY (uid, id))"),
   ]);
+  await env.DB.batch([
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS plans (id TEXT PRIMARY KEY, uid TEXT NOT NULL, kind TEXT NOT NULL, title TEXT NOT NULL, descr TEXT, tags TEXT, summary TEXT, data TEXT NOT NULL, likes INTEGER NOT NULL DEFAULT 0, uses INTEGER NOT NULL DEFAULT 0, hidden INTEGER NOT NULL DEFAULT 0, created INTEGER NOT NULL, updated INTEGER NOT NULL)"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS likes (uid TEXT NOT NULL, pid TEXT NOT NULL, PRIMARY KEY (uid, pid))"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS saves (uid TEXT NOT NULL, pid TEXT NOT NULL, created INTEGER NOT NULL, PRIMARY KEY (uid, pid))"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS follows (uid TEXT NOT NULL, fid TEXT NOT NULL, created INTEGER NOT NULL, PRIMARY KEY (uid, fid))"),
+  ]);
+  try { await env.DB.prepare("ALTER TABLE users ADD COLUMN bio TEXT").run(); } catch (e) {}
   for (const t of ["creds", "subs"]) { try { await env.DB.prepare(`ALTER TABLE ${t} ADD COLUMN uid TEXT`).run(); } catch (e) {} }
   ready = true;
 }
