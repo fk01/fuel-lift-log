@@ -387,15 +387,22 @@ function quickPlace(type,done,back){let ic=type==="cardio"?"🏃":"🏢";const i
     b.querySelector("[data-qs]").addEventListener("click",()=>{const n=b.querySelector("#qp-name").value.trim();if(!n){toast(t("ใส่ชื่อสถานที่"));return}
       const l={id:"l"+Date.now().toString(36),name:n,icon:ic,map:"",eq:type==="cardio"?[]:["db","body"],types:[type]};LOCS.push(l);saveLocs();done(l.id)})};
   openGen(t("สถานที่ใหม่"),`<div class="qp stack" style="gap:10px"></div>`,draw)}
-function quickProg(type,loc,done,back){const L=locById(loc),cx=type==="cardio";
-  openGen(t(cx?"กีฬาใหม่":"โปรแกรมใหม่"),`<div class="stack" style="gap:10px">${cx?"":`<small class="note">${t("ที่")} ${esc(L?L.icon+" "+t(L.name):"")}</small>`}
-    <input class="le-in" id="qg-name" placeholder="${t(cx?"เช่น ว่ายน้ำ, ปั่นจักรยาน":"ชื่อโปรแกรม")}" aria-label="${t("ชื่อ")}">
-    <small class="note">${t(cx?"เลือกที่ได้ตอนเพิ่มเข้าวันนี้":"เพิ่มท่าได้ภายหลังที่ ✎ แก้โปรแกรม")}</small>
-    <div class="actions sheet-act"><button class="btn" data-qb>${t("ยกเลิก")}</button><button class="btn primary" data-qs style="flex:1">✓ ${t("สร้าง")}</button></div></div>`,
-    b=>{b.querySelector("[data-qb]").addEventListener("click",back);setTimeout(()=>b.querySelector("#qg-name")?.focus(),50);
-      b.querySelector("[data-qs]").addEventListener("click",()=>{const n=b.querySelector("#qg-name").value.trim();if(!n){toast(t("ใส่ชื่อโปรแกรม"));return}
-        const k=(cx?"x":"p")+Date.now().toString(36);PROGS[k]=cx?{name:n,kind:"cardio",icon:"🏃",track:"dist",ex:[],loc:"*",days:[]}:{name:n,sub:"",ex:[],loc,days:[]};saveProgs();done(k)})})}
-Object.assign(EN,{"สถานที่ใหม่":"New place","สร้างสถานที่":"Create place","ใช้สำหรับคาร์ดิโอ":"For cardio","ใช้สำหรับเวท":"For weights","แก้อุปกรณ์ได้ภายหลังที่ เพิ่มเติม › สถานที่":"Edit equipment later in More › Places","ใส่ชื่อสถานที่":"Enter a place name","กีฬาใหม่":"New sport","โปรแกรมใหม่":"New program","ที่":"At","เช่น ว่ายน้ำ, ปั่นจักรยาน":"e.g. swimming, cycling","ชื่อ":"Name","เลือกที่ได้ตอนเพิ่มเข้าวันนี้":"Pick the place when adding to today","เพิ่มท่าได้ภายหลังที่ ✎ แก้โปรแกรม":"Add exercises later via ✎ Edit program","สร้าง":"Create"});
+function quickProg(type,loc,done,back){const L=locById(loc),cx=type==="cardio",ex=[];let nm="";
+  const draw=b=>{const box=b.querySelector(".qg");box.innerHTML=`${cx?"":`<small class="note">${t("ที่")} ${esc(L?L.icon+" "+t(L.name):"")}</small>`}
+    <input class="le-in" id="qg-name" placeholder="${t(cx?"เช่น ว่ายน้ำ, ปั่นจักรยาน":"ชื่อโปรแกรม")}" aria-label="${t("ชื่อ")}" value="${esc(nm)}">
+    ${cx?`<small class="note">${t("เลือกที่ได้ตอนเพิ่มเข้าวันนี้")}</small>`:`<div class="pa-step">${t("ท่าในโปรแกรม")} · ${ex.length}</div>
+    <div class="pm-menu qg-ex">${ex.map((e,i)=>`<div class="menu-row qg-row"><span class="mt"><b>${esc(e.n)}</b></span><span class="qg-sr"><button class="btn sm" data-qd="${i}" data-dd="-1" aria-label="−">−</button><span>${e.s}×${esc(e.r)}</span><button class="btn sm" data-qd="${i}" data-dd="1" aria-label="+">+</button><button class="btn sm ghost" data-qx="${i}" aria-label="${t("ลบท่า")}">✕</button></span></div>`).join("")||`<small class="note" style="padding:12px">${t("ยังไม่มีท่า")}</small>`}</div>
+    <button class="btn" data-qa>+ ${t("เพิ่มท่า")}</button>`}
+    <div class="actions sheet-act"><button class="btn" data-qb>${t("ยกเลิก")}</button><button class="btn primary" data-qs style="flex:1">✓ ${t("สร้าง")}${ex.length?` · ${nU(ex.length,"ท่า")}`:""}</button></div>`;
+    const keep=()=>{nm=box.querySelector("#qg-name").value};
+    box.querySelector("[data-qb]").addEventListener("click",back);if(!nm)setTimeout(()=>box.querySelector("#qg-name")?.focus(),50);
+    box.querySelector("[data-qa]")?.addEventListener("click",()=>{keep();openLib({skip:new Set(ex.map(e=>e.id)),onPick:x=>{ex.push({...libPick(x),s:3,r:"10"});openGen(t("โปรแกรมใหม่"),`<div class="qg stack" style="gap:10px"></div>`,draw)}})});
+    box.querySelectorAll("[data-qd]").forEach(x=>x.addEventListener("click",()=>{keep();const e=ex[+x.dataset.qd];e.s=Math.max(1,Math.min(10,e.s+ +x.dataset.dd));draw(b)}));
+    box.querySelectorAll("[data-qx]").forEach(x=>x.addEventListener("click",()=>{keep();ex.splice(+x.dataset.qx,1);draw(b)}));
+    box.querySelector("[data-qs]").addEventListener("click",()=>{keep();const n=nm.trim();if(!n){toast(t("ใส่ชื่อโปรแกรม"));return}
+      const k=(cx?"x":"p")+Date.now().toString(36);PROGS[k]=cx?{name:n,kind:"cardio",icon:"🏃",track:"dist",ex:[],loc:"*",days:[]}:{name:n,sub:"",ex:ex.slice(),loc,days:[]};saveProgs();done(k)})};
+  openGen(t(cx?"กีฬาใหม่":"โปรแกรมใหม่"),`<div class="qg stack" style="gap:10px"></div>`,draw)}
+Object.assign(EN,{"สถานที่ใหม่":"New place","สร้างสถานที่":"Create place","ใช้สำหรับคาร์ดิโอ":"For cardio","ใช้สำหรับเวท":"For weights","แก้อุปกรณ์ได้ภายหลังที่ เพิ่มเติม › สถานที่":"Edit equipment later in More › Places","ใส่ชื่อสถานที่":"Enter a place name","กีฬาใหม่":"New sport","โปรแกรมใหม่":"New program","ที่":"At","เช่น ว่ายน้ำ, ปั่นจักรยาน":"e.g. swimming, cycling","ชื่อ":"Name","เลือกที่ได้ตอนเพิ่มเข้าวันนี้":"Pick the place when adding to today","เพิ่มท่าได้ภายหลังที่ ✎ แก้โปรแกรม":"Add exercises later via ✎ Edit program","สร้าง":"Create","ท่าในโปรแกรม":"Exercises","ยังไม่มีท่า":"No exercises yet"});
 Object.assign(EN,{"สร้างใหม่":"New","กีฬาอะไร?":"Which sport?","ที่ไหน?":"Where?","ที่นี่ยังไม่มีโปรแกรม":"No programs here yet"});
 // one form, nothing is created until Create is tapped
 function openCreateProg(o){o=o||{};let ty=o.type||"gym",loc=o.loc&&locById(o.loc)?o.loc:hasType(hereLoc(),"gym")?curLoc:(LOCS.find(l=>hasType(l,"gym"))||{}).id;

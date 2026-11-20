@@ -999,3 +999,5 @@ input,select,textarea{border-width:1.5px!important}
 .ec-goal{text-align:center;margin:0}
 .cal-slot #step1{margin:4px 0 6px}
 .tabbar .tab small{font-size:.6rem}
+.qg-row{cursor:default}.qg-sr{display:flex;gap:6px;align-items:center;font-family:var(--f-num);font-size:.85rem}.qg-sr .btn{min-width:34px;padding:4px 8px}
+#lib-modal{z-index:44}
