@@ -26,3 +26,5 @@ function undoRun(){const g=undoLast;undoLast=null;document.getElementById("undo-
     if(g.has("gymdraft")){if(draft.prog&&PROGS[draft.prog]&&Object.values(draft.ex||{}).flat().some(r=>r.ok)){cur=draft.prog;picked=true;chosen=true;setDayMode("train")}else if(!PROGS[cur])cur=nextProg()}
     renderAll()}catch(e){}undoBusy=false;toast("↺ "+t("เลิกทำแล้ว"))}
 Object.assign(EN,{"ทิ้งแล้ว":"Discarded","เลิกทำ":"Undo","เลิกทำแล้ว":"Undone"});
+// re-rendering Today empties and refills the list; keep the reader where they were unless code asked for the top
+{const rg=renderGym;renderGym=function(){const w=appScroll(),y=w?w.scrollTop:0;rg.apply(this,arguments);if(w&&!scrollReset&&y&&Math.abs(w.scrollTop-y)>2)w.scrollTop=y}}

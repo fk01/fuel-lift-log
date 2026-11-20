@@ -29,7 +29,8 @@ const thDate=(s,o)=>new Date(s+"T12:00:00").toLocaleDateString(LOC(),o);
 function applyStatic(){document.querySelectorAll("[data-i]").forEach(el=>el.textContent=(el.dataset.pre||"")+t(el.dataset.i));document.getElementById("lang").textContent=lang==="th"?"EN":"TH";document.documentElement.lang=lang}
 // the app scrolls inside .wrap (not the window)
 const appScroll=()=>document.querySelector(".wrap");
-function scrollAppTop(smooth){const w=appScroll();if(w)w.scrollTo({top:0,behavior:smooth?"smooth":"auto"})}
+let scrollReset=false;   // set when code deliberately scrolls to top, so closing a sheet does not undo it
+function scrollAppTop(smooth){scrollReset=true;setTimeout(()=>scrollReset=false,200);const w=appScroll();if(w)w.scrollTo({top:0,behavior:smooth?"smooth":"auto"})}
 function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,1800)}
 
 // line icons (app-defined things use these; user-chosen emoji stay emoji)
