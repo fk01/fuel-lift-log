@@ -24,7 +24,9 @@ const nU=(n,k)=>lang==="th"||!PL[k]?`${n} ${t(k)}`:`${n} ${PL[k][n===1?0:1]}`;
 const ICON={bar:'<path d="M2 12h20M5 8v8M8 6v12M16 6v12M19 8v8"/>',bowl:'<path d="M3 11h18a9 9 0 0 1-18 0zM8 7c0-2 2-2 2-4M13 7c0-2 2-2 2-4"/>',scale:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 9a4 4 0 0 1 8 0z"/>',chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'};
 const emptyBox=(ic,title,hint)=>`<div class="empty"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${ICON[ic]||ICON.chart}</svg><b>${t(title)}</b>${hint?`<small>${t(hint)}</small>`:""}</div>`;
 Object.assign(EN,{"ยังไม่มีประวัติเวท":"No workouts yet","เริ่มจากการ์ดวันนี้ในหน้าเวท":"Start from the Today card on Workout","ยังไม่มีบันทึกอาหาร":"No meals logged yet","ติ๊กมื้อในหน้าอาหาร":"Tick meals on the Meals tab","ยังไม่มีบันทึกร่างกาย":"No body logs yet","กด + บันทึกร่างกาย เพื่อเริ่ม":"Tap + Log body to start","ยังไม่มีข้อมูลการฝึก":"No training data yet"});
-const t=k=>lang==="th"?k:(EN[k]??k);
+// TH: Thai display text for keys that only exist to be unique (e.g. the tab "Today" vs the word "today")
+const TH={"แท็บวันนี้":"วันนี้"};
+const t=k=>lang==="th"?(TH[k]??k):(EN[k]??k);
 const thDate=(s,o)=>new Date(s+"T12:00:00").toLocaleDateString(LOC(),o);
 function applyStatic(){document.documentElement.lang=lang==="th"?"th":"en";document.querySelectorAll("[data-i]").forEach(el=>el.textContent=(el.dataset.pre||"")+t(el.dataset.i));document.getElementById("lang").textContent=lang==="th"?"EN":"TH";document.documentElement.lang=lang}
 // the app scrolls inside .wrap (not the window)

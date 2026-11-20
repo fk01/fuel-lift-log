@@ -1065,3 +1065,8 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:max(16px,
 [data-pad="kg"],.sets .h .btn,.unit-tog,.sets .h button{min-height:32px}
 .mp-num .mp-vit{min-height:44px}
 .sets button[data-unit]{min-height:36px}
+/* ---- typeset: functional text floor 12px; labels in the UI face, not uppercase mono ---- */
+.tabbar .tab small{font-size:12px!important;letter-spacing:0!important;text-transform:none!important;line-height:1.15}
+.stat span{font-size:12px!important;letter-spacing:.02em!important;text-transform:none!important}
+.ec-d small,.ec-d span{font-size:12px}.ec-d span{font-variant-numeric:tabular-nums}
+.wk-dow,#week small{font-size:12px}
