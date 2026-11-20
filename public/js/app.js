@@ -8,7 +8,7 @@ let curView="home",lastMain="gym";
 function show(v){const tab=v;if(v==="body"||v==="stats"){stTab=v==="body"?"body":"train";applyStTab();v="stats"}if(!VIEWS.includes(v))v="home";curView=v;if(v==="food"||v==="gym")lastMain=v;
   VIEWS.forEach(x=>document.getElementById("v-"+x).hidden=x!==v);
   document.getElementById("step1").hidden=v!=="gym";document.getElementById("share-last").hidden=v!=="gym";
-  const sel=tab==="stats"?"gym":tab;document.querySelectorAll(".tabbar .tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===sel));
+  const sel=tab;document.querySelectorAll(".tabbar .tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===sel));
   document.getElementById("h1").textContent=t(TITLES[tab]||TITLES[v]);scrollAppTop();
   if(v==="food")try{renderFood()}catch(e){}
   if(v==="home")try{renderHome()}catch(e){console.error(e)}

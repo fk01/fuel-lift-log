@@ -147,7 +147,7 @@ const steps = [
     document.querySelector('#gen-body [data-pp="condo"]').click(); document.querySelector("#gen-body [data-ppok]").click(); if (!planList().some(k => locOf(PROGS[k]) === "condo") || planList().includes("push")) throw new Error("swap to condo copy");
     delete PROGS["c-test"]; if (!had) LOCS = LOCS.filter(l => l.id !== "condo"); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
   ["home-3-questions", () => { location.hash = "home"; show("home"); const c = document.querySelectorAll("#v-home .hq-card"); if (c.length !== 3) throw new Error("three question cards");
-    if (document.querySelectorAll(".tabbar .tab").length !== 5) throw new Error("five tabs"); show("body"); if (document.getElementById("v-stats").hidden || stTab !== "body") throw new Error("body tab"); show("gym"); }],
+    if (document.querySelectorAll(".tabbar .tab").length !== 6) throw new Error("six tabs"); show("body"); if (document.getElementById("v-stats").hidden || stTab !== "body") throw new Error("body tab"); show("gym"); }],
   ["undo-setup", () => { location.hash = "gym"; dayPlan = {}; save("dayplan", dayPlan); userAt = Date.now(); planAdd("pull"); }],
   ["undo-run", () => { const b = document.getElementById("undo-bar"); if (!b || b.hidden) throw new Error("undo bar after save"); b.querySelector("[data-undo]").click(); if (planList().includes("pull") && !planKeys(DAY).includes("pull")) throw new Error("undo restores today plan");
     userAt = 0; const n = logs.length; logs.push({ date: DAY, prog: "pull", ex: { x: [{ kg: 1, reps: 1 }] } }); save("gymlog", logs); setDayMode(null); planAdd("pull"); renderGym(); const r = document.querySelector('#locpick [data-pl="pull"]'); if (!r) throw new Error("done row"); r.click();
