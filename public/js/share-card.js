@@ -10,7 +10,7 @@ async function drawCard(l){
   const top=780,avail=H-top-150;const rowRaw=ids.map(id=>Math.max(2,grp(l.ex[id],uOf(id)).length)*52+70);
   const fit=Math.min(1,avail/rowRaw.reduce((a,b)=>a+b,0));const rowH=rowRaw.map(r=>r*fit);
   const c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
-  const sans='"IBM Plex Sans Thai",system-ui,sans-serif',mono='"IBM Plex Mono",monospace',serif='"Noto Serif Thai",Georgia,serif';
+  const sans='"IBM Plex Sans Thai",system-ui,sans-serif',mono='"IBM Plex Mono",monospace',serif=sans;
   const BLUE="#3d7dff",GREEN="#2ad19a",FG="#f2f0ec",MUTED="#8a8780";
   x.fillStyle="#000";x.fillRect(0,0,W,H);
   x.strokeStyle="#262625";x.lineWidth=3;x.beginPath();x.roundRect?x.roundRect(30,30,W-60,H-60,48):x.rect(30,30,W-60,H-60);x.stroke();
