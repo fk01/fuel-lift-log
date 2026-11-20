@@ -39,7 +39,7 @@ function showClaim(st){const m=document.getElementById("claim");m.hidden=false;d
   document.getElementById("claim-sum").textContent=t("แอปนี้มีข้อมูลเดิม (ล็อกด้วย PIN) อยู่")+` · ${st.docs} ${t("รายการ")} — `+t("ใส่ PIN เดิมเพื่อย้ายทั้งหมดเข้าบัญชี")+` ${ME.email||ME.name}`;
   document.getElementById("claim-go").onclick=async()=>{const e=document.getElementById("claim-err");e.hidden=true;
     const r=await post("/api/auth/claim",{pin:document.getElementById("claim-pin").value});
-    if(r.ok){try{localStorage.setItem("uid",ME.id)}catch(x){}location.reload();return}
+    if(r.ok){wipeLocal(ME.id);location.reload();return}   // the server copy is the truth: start from it so stale local data is not uploaded again
     const j=await r.json().catch(()=>({}));e.textContent=t(j.error==="wrong pin"?"PIN ไม่ถูกต้อง":j.error==="too many attempts"?"ลองบ่อยเกินไป รอสักครู่":"ย้ายไม่สำเร็จ");e.hidden=false};
   document.getElementById("claim-skip").onclick=()=>{wipeLocal(ME.id);location.reload()}}
 /* ---- More › account ---- */
