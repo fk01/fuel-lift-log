@@ -179,6 +179,13 @@ const steps = [
     const r = () => document.querySelector('#gen-body [data-pdel="ztest"]'); r().click(); if (!PROGS.ztest) throw new Error("first tap only asks"); r().click(); if (PROGS.ztest) throw new Error("deleted on second tap"); closeGen(); }],
   ["recovery-config", () => { const before = recH("chest"); openRecCfg(); document.querySelector('#gen-body [data-rh="chest"][data-d="12"]').click(); document.querySelector("#gen-body [data-rsave]").click();
     if (recH("chest") !== before + 12 || JSON.parse(localStorage.getItem("rech")).chest !== before + 12) throw new Error("save per-muscle hours"); REC_USER = {}; save("rech", REC_USER); }],
+  ["share-roundtrip", async () => { const d = shareData(["push"], "gym"); const s = await packShare(d); const o = await unpackShare(s); if (o.progs[0].ex.length !== PROGS.push.ex.length) throw new Error("roundtrip");
+    let bad = false; try { await unpackShare("j.!!!") } catch (e) { bad = true } if (!bad) throw new Error("bad link rejected");
+    const nl = LOCS.length, np = Object.keys(PROGS).length; const n = doImport(o, [0], "new"); if (n !== 1 || LOCS.length !== nl + 1 || Object.keys(PROGS).length !== np + 1) throw new Error("import");
+    const nk = Object.keys(PROGS).find(k => locOf(PROGS[k]) === LOCS[LOCS.length - 1].id); if (PROGS[nk].ex.length !== PROGS.push.ex.length) throw new Error("import exercises");
+    delete PROGS[nk]; LOCS.pop(); curLoc = "gym"; }],
+  ["share-sheet", () => { openShareLink(["push"], "gym"); }],
+  ["share-sheet-2", () => { if (!document.querySelector("#gen-body .sh-url") || !/#import=/.test(document.querySelector("#gen-body .sh-url").textContent)) throw new Error("share link shown"); closeGen(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
