@@ -986,7 +986,7 @@ input,select,textarea{border-width:1.5px!important}
 .hq-h{display:flex;justify-content:space-between;align-items:center;gap:8px}.hq-q{display:flex;gap:6px;align-items:center;font-weight:700;color:#cfe0ee}.hq-l{color:var(--cyan,#2ee6ff);font-size:.8rem;white-space:nowrap}
 .hq-a{font-size:1.2rem;font-weight:800;line-height:1.3}.hq-s{color:var(--muted);font-size:.82rem}
 .tr-links{margin-top:14px}
-.tabbar{grid-template-columns:repeat(6,1fr)!important}.tabbar .tab small{font-size:.66rem;white-space:nowrap}
+.tabbar{grid-template-columns:repeat(5,1fr)!important}.tabbar .tab small{font-size:.66rem;white-space:nowrap}
 /* Eat calendar */
 .eat-cal{display:grid;gap:8px;background:var(--card);border:1.5px solid var(--edge);border-radius:18px;padding:12px}
 .ec-h{display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center}.ec-h small{color:var(--green,#3dff8c);font-weight:700}
