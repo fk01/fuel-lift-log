@@ -78,7 +78,7 @@ function renderProgs(){
     b.classList.toggle("open",open);
     b.classList.add("row-card");b.innerHTML=`<span class="row-ic">${licon("dumbbell")}</span><span class="row-tx"><span class="pc-top"><b>${esc(p.name)}</b>${k===selProg()?`<span class="pill p-cyan">${t("วันนี้")}</span>`:""}</span>
       <small>${nU(p.ex.length,"ท่า")} · ${esc(groups)}</small>
-      <small class="pc-when">${last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small></span><span class="pc-act"><span class="pc-go" role="button" tabindex="0" data-go>▶ ${t("เริ่ม")}</span><span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span></span>
+      <small class="pc-when">${t("เล่นล่าสุด:")} ${last?thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคย")}</small></span><span class="pc-act"><span class="pc-go" role="button" tabindex="0" data-go>▶ ${t("เริ่ม")}</span><span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span></span>
       <ul class="prog-ex"${open?"":" hidden"}>${p.ex.map((e,n)=>`<li><b class="no">${n+1}</b><em class="nm">${e.z} ${esc(e.n)}</em><span class="ss">${e.s}×${e.r}</span><i class="mg">${groupName(groupOf(e))}</i></li>`).join("")}</ul>`;
     b.addEventListener("click",ev=>{if(ev.target.closest("[data-go]")){if(picked)return;try{chooseProg(k)}catch(e){}if(cur!==k)draft.ex={};cur=k;draft.prog=k;chosen=true;document.getElementById("start-w").click();return}if(ev.target.closest(".pc-more")){pmOnly=k;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false;return}
       if(!picked){openSheet(k);return}
@@ -86,7 +86,7 @@ function renderProgs(){
       if(cur===k){cancelProg();return}draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});box.appendChild(b)});
   if(hasType(L,"cardio")){if(hasType(L,"gym"))hd("คาร์ดิโอ");
     cardioHere().forEach(k=>{const p=PROGS[k],v=cxGet(k);const b=document.createElement("button");b.className="prog cardio";b.setAttribute("aria-pressed",!!v);
-      b.innerHTML=`<span class="ic">${esc(p.icon||"🏃")}</span><b>${esc(p.name)}</b><span class="pc-act">${v?"":`<span class="pc-go" role="button" tabindex="0" data-go>${t("บันทึก")}</span>`}<span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span></span><small>${v?esc(cxTxt(k,v)):k===pl?`<span class="next">${t("คิวถัดไป")}${p.goal?" · "+p.goal+" km":""}</span>`:t(p.track==="dist"?"ใส่ระยะ / เวลา":"แตะเพื่อบันทึก")}</small>`;
+      b.classList.add("row-card");b.innerHTML=`<span class="row-ic g">${esc(p.icon||"🏃")}</span><span class="row-tx"><span class="pc-top"><b>${esc(p.name)}</b>${k===pl&&!v?`<span class="pill p-cyan">${t("วันนี้")}</span>`:""}</span><small>${v?esc(cxTxt(k,v)):(p.goal?`${t("เป้า")} ${p.goal} km · `:"")+t(p.track==="dist"?"ใส่ระยะ / เวลา":"แตะเพื่อบันทึก")}</small></span><span class="pc-act">${v?"":`<span class="pc-go" role="button" tabindex="0" data-go>▶ ${t("เริ่ม")}</span>`}<span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span></span>`;
       b.addEventListener("click",ev=>{if(ev.target.closest(".pc-more")&&!ev.target.closest("[data-go]")){openCardioEdit(k);return}openCardio(k)});box.appendChild(b)})}
   const ew=document.getElementById("empty-w");if(ew)ew.hidden=!hasType(L,"gym");
   const add=document.createElement("button");add.className="btn ghost sm prog-add";add.textContent="+ "+t("เพิ่มโปรแกรม");add.addEventListener("click",openAddProg);box.appendChild(add);
@@ -127,7 +127,7 @@ document.getElementById("bad-ok").addEventListener("click",()=>{if(!badK)return;
 function openCardio(k){const p=PROGS[k];if(!p)return;if(p.track==="dist"){runK=k;openRun()}else openBad(k)}
 
 /* ---------- "Today" card: what the weekly plan says for the selected day, with one action ---------- */
-Object.assign(EN,{"วันนี้":"Today","วันพัก":"Rest day","พักให้กล้ามฟื้น":"Let your muscles recover","ออกนอกตาราง":"Train anyway","กลับไปเล่นต่อ":"Resume workout","เริ่ม":"Start","บันทึกตีแบด":"Log badminton","บันทึกวิ่ง":"Log run","เสร็จแล้ววันนี้":"Done today","ทำแล้ว":"Done","กำลังเล่น":"in progress"});
+Object.assign(EN,{"เล่นล่าสุด:":"Last trained:","วันนี้":"Today","วันพัก":"Rest day","พักให้กล้ามฟื้น":"Let your muscles recover","ออกนอกตาราง":"Train anyway","กลับไปเล่นต่อ":"Resume workout","เริ่ม":"Start","บันทึกตีแบด":"Log badminton","บันทึกวิ่ง":"Log run","เสร็จแล้ววันนี้":"Done today","ทำแล้ว":"Done","กำลังเล่น":"in progress"});
 function renderToday(){const box=document.getElementById("today");if(!box)return;
   const pl=planFor(DAY),tg=fs().tags||{},done=logs.filter(l=>l.date===DAY),isT=DAY===TODAY,lbl=isT?t("วันนี้"):thDate(DAY,{weekday:"long"});
   let title,sub="",btn="",act="",warn="";
