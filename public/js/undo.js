@@ -2,7 +2,7 @@
 // writes from one tap are grouped, and an "Undo" bar restores them all (memory + storage, then syncs).
 // Classic script: shares globals with the other files in /js (load order is set in index.html).
 const UNDO_SET={gymlog:v=>logs=v,mealcheck:v=>food=v,progs:v=>PROGS=v,locs:v=>LOCS=v,exlib:v=>EXLIB=v,body:v=>BODY=v,dayplan:v=>dayPlan=v,
-  daykind:v=>dayKind=v,locday:v=>locDay=v,daymode:v=>dayModeS=v,gymdraft:v=>draft=v,mealplan:v=>{MP=v;mpApply()},rech:v=>REC_USER=v||{}};
+  daykind:v=>dayKind=v,locday:v=>locDay=v,daymode:v=>dayModeS=v,gymdraft:v=>draft=v,mealplan:v=>{MP=v;mpApply()},rech:v=>REC_USER=v||{},profile:v=>PROFILE=v};
 // keys that alone are routine (ticking a set / a meal is undone by tapping again) — no Undo bar for them
 const UNDO_QUIET=new Set(["gymdraft","mealcheck","daymode","locday","daykind"]);
 const UNDO_VIEW=new Set(["daymode","locday","daykind"]);   // screen state, not data — never rolled back

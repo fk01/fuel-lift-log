@@ -186,6 +186,12 @@ const steps = [
     delete PROGS[nk]; LOCS.pop(); curLoc = "gym"; }],
   ["share-sheet", () => { openShareLink(["push"], "gym"); }],
   ["share-sheet-2", () => { if (!document.querySelector("#gen-body .sh-url") || !/#import=/.test(document.querySelector("#gen-body .sh-url").textContent)) throw new Error("share link shown"); closeGen(); }],
+  ["onboarding-build", () => { const tg = calcTargets({ sex: "m", age: 30, h: 175, w: 72, goal: "bulk", act: "mid" }); if (tg.k < 2400 || tg.k > 3100 || tg.p !== Math.round(72 * 1.8)) throw new Error("targets " + JSON.stringify(tg));
+    const ms = buildMeals(4, tg.k, tg.p); if (ms.length !== 4 || Math.abs(ms.reduce((a, m) => a + m.k, 0) - tg.k) > 40) throw new Error("meals add up");
+    const b = buildPlan({ places: ["gym", "home", "cardio"], days: 4, plan: "tpl" }); const ws = Object.values(b.progs).filter(p => p.ex && p.ex.length);
+    if (b.locs.length !== 3 || ws.length !== 8) throw new Error("4 programs × 2 places, got " + ws.length); if (ws.filter(p => p.days.length).length !== 4) throw new Error("only the first place is scheduled");
+    if (!Object.values(b.progs).some(p => p.tag === "run")) throw new Error("cardio"); const home = b.locs[1].id; if (ws.filter(p => p.loc === home).some(p => p.ex.some(e => e.z === "🔩"))) throw new Error("no machines at home"); }],
+  ["onboarding-ui", () => { openOnboarding(); const m = document.getElementById("onb"); if (m.hidden || !m.querySelector("[data-p='age']")) throw new Error("step 1"); for (let i = 0; i < 3; i++) m.querySelector('[data-onb="next"]').click(); if (!m.querySelector("[data-plan]")) throw new Error("step 4"); m.hidden = true; }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
