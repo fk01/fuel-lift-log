@@ -3,16 +3,16 @@
 /* ---------- tabs ---------- */
 // four screens behind a bottom tab bar (same layout an iOS app would use): food · workout · stats · more
 // five screens: วันนี้ (3 questions) · ร่างกาย · กิน · ออกกำลัง · เพิ่มเติม. "body" and "stats" share the stats view (Body / Training pane).
-const VIEWS=["home","food","gym","stats","more"],TITLES={home:"แท็บวันนี้",food:"กิน",gym:"ออกกำลัง",stats:"สถิติการฝึก",body:"ร่างกาย",more:"เพิ่มเติม"};
+const VIEWS=["home","food","gym","stats","more"],TITLES={home:"แท็บวันนี้",food:"กิน",gym:"ออกกำลัง",stats:"สถิติ",body:"สถิติ",more:"เพิ่มเติม"};
 let curView="home",lastMain="gym";
-function show(v){const tab=v;if(v==="body"||v==="stats"){stTab=v==="body"?"body":"train";applyStTab();v="stats"}if(!VIEWS.includes(v))v="home";curView=v;if(v==="food"||v==="gym")lastMain=v;
+function show(v){const tab=v;if(v==="body"){stTab="body";applyStTab();v="stats"}else if(v==="stats")applyStTab();if(!VIEWS.includes(v))v="home";curView=v;if(v==="food"||v==="gym")lastMain=v;
   VIEWS.forEach(x=>document.getElementById("v-"+x).hidden=x!==v);
   document.getElementById("step1").hidden=v!=="gym";document.getElementById("share-last").hidden=v!=="gym";
-  const sel=tab;document.querySelectorAll(".tabbar .tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===sel));
+  const sel=tab==="body"?"stats":tab;document.querySelectorAll(".tabbar .tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===sel));
   document.getElementById("h1").textContent=t(TITLES[tab]||TITLES[v]);scrollAppTop();
   if(v==="food")try{renderFood()}catch(e){}
   if(v==="home")try{renderHome()}catch(e){console.error(e)}
-  if(v==="stats")try{renderHistChart();renderStatsExtra();if(stTab==="body")renderRecovery(document.getElementById("rec-body"))}catch(e){}}
+  if(v==="stats")try{renderHistChart();renderStatsExtra();renderRecovery(document.getElementById("rec-body"))}catch(e){}}
 const viewOf=()=>location.hash.slice(1)||"home";
 document.querySelectorAll(".tabbar .tab").forEach(b=>b.addEventListener("click",()=>{if(location.hash==="#"+b.dataset.v)show(b.dataset.v);else location.hash=b.dataset.v}));
 window.addEventListener("hashchange",()=>show(viewOf()));
@@ -60,7 +60,7 @@ function updMoreLang(){const e=document.getElementById("more-lang");if(e)e.textC
 /* ---------- Stats sub-tabs: Training | Body ---------- */
 let stTab="train";
 function applyStTab(){document.querySelectorAll("#st-tabs [data-st]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.st===stTab));document.querySelectorAll(".st-pane").forEach(p=>p.hidden=p.dataset.pane!==stTab)}
-document.getElementById("st-tabs").addEventListener("click",ev=>{const b=ev.target.closest("[data-st]");if(!b)return;stTab=b.dataset.st;try{localStorage.setItem("sttab",stTab)}catch(e){}applyStTab();scrollAppTop();try{renderStatsExtra();renderHistChart()}catch(e){}});
+document.getElementById("st-tabs").addEventListener("click",ev=>{const b=ev.target.closest("[data-st]");if(!b)return;stTab=b.dataset.st;try{localStorage.setItem("sttab",stTab)}catch(e){}applyStTab();scrollAppTop();try{renderStatsExtra();renderHistChart();renderRecovery(document.getElementById("rec-body"))}catch(e){}});
 applyStTab();
 /* ---------- startup ---------- */
 pkState();
