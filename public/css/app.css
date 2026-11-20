@@ -909,3 +909,6 @@ body.tx-open #app,body.tx-open main{padding-bottom:110px}
 .mp-top input[type=time]{width:6.6em!important;flex:none}
 .mp-num{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto}
 #gen-body{min-width:0}#gen-body .mp-body{min-width:0;overflow:hidden}
+.tm-eaten{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding-top:8px;border-top:1px solid var(--line)}.tm-eaten small{color:var(--muted)}
+.tm-undo{font:inherit;font-size:.75rem;padding:5px 10px;border-radius:999px;border:1px solid color-mix(in srgb,var(--up,#3dff8c) 45%,transparent);background:transparent;color:var(--up,#3dff8c);cursor:pointer}.tm-undo span{opacity:.7;margin-left:2px}
+.tm-card .rc-h b{cursor:pointer}

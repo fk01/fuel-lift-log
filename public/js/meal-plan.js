@@ -32,6 +32,10 @@ function todayMeals(box){if(!box||DAY!==TODAY||box.querySelector(".tm-card"))ret
   c.innerHTML=`<div class="rc-h"><b>${licon("bowl")} ${t("แผนกินวันนี้")}</b><button class="rc-map" data-mpo>${t("จัดการแผน")} ›</button></div>
     <small class="note">${k.toLocaleString()} / ${K_GOAL.toLocaleString()} kcal · ${t("โปรตีน")} ${p} / ${P_TARGET} g</small><i class="tm-bar"><i style="width:${Math.min(100,p/P_TARGET*100)}%"></i></i>
     ${next.map(m=>`<div class="tm-row"><span class="time">${esc(t(m.time))}</span><span class="tm-tx"><b>${esc(t(m.name))}</b><small>${esc((m.items||[]).map(s=>t(s)).join(" · "))}</small></span><button class="pc-go" data-eat="${esc(m.id)}">✓ ${t("กินแล้ว")}</button></div>`).join("")||`<small class="note">${t("ครบทุกมื้อแล้ว ✅")}</small>`}`;
+  const eaten=meals.filter(m=>d.done[m.id]);if(eaten.length){const e=document.createElement("div");e.className="tm-eaten";
+    e.innerHTML=`<small>${t("กินแล้ว")}:</small>`+eaten.map(m=>`<button class="tm-undo" data-uneat="${esc(m.id)}" aria-label="${t("ยกเลิก")} ${esc(t(m.name))}">✓ ${esc(t(m.name))} <span>↺</span></button>`).join("");c.appendChild(e)}
+  c.querySelectorAll("[data-uneat]").forEach(b=>b.addEventListener("click",()=>{fs().done[b.dataset.uneat]=false;save("mealcheck",food);try{renderFood()}catch(e){}renderGym()}));
   c.querySelector("[data-mpo]").addEventListener("click",openMealPlan);
+  c.querySelector(".rc-h b").addEventListener("click",()=>{location.hash="food"});
   c.querySelectorAll("[data-eat]").forEach(b=>b.addEventListener("click",()=>{fs().done[b.dataset.eat]=true;save("mealcheck",food);try{renderFood()}catch(e){}renderGym()}));
   box.appendChild(c)}
