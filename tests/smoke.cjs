@@ -160,6 +160,8 @@ const steps = [
   ["scroll-keep-1", () => { location.hash = "gym"; cancelProg(); setDayMode(null); dayPlan = {}; planAdd("push"); renderGym(); appScroll().scrollTop = 500; window._y = appScroll().scrollTop; openPlanItem("push"); }],
   ["scroll-keep-2", () => { appScroll().scrollTop = 0; document.querySelector("#gen-body .sh-x").click(); }],
   ["scroll-keep-3", () => { if (Math.abs(appScroll().scrollTop - window._y) > 5) throw new Error("scroll restored after closing a sheet: " + appScroll().scrollTop + "/" + window._y); renderGym(); if (Math.abs(appScroll().scrollTop - window._y) > 5) throw new Error("scroll kept across re-render"); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
+  ["eat-calendar", () => { location.hash = "food"; show("food"); renderFood(); const d = document.querySelectorAll("#eat-cal .ec-d"); if (d.length !== 7) throw new Error("eat week"); if (!document.querySelector("#v-food #food-hist")) throw new Error("nutrition in Eat");
+    if (!document.getElementById("step1").hidden) throw new Error("workout calendar not on Eat"); show("gym"); if (document.getElementById("step1").hidden) throw new Error("workout calendar on Train"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
