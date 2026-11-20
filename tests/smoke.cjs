@@ -164,8 +164,8 @@ const steps = [
     if (!document.getElementById("step1").hidden) throw new Error("workout calendar not on Eat"); show("gym"); if (document.getElementById("step1").hidden) throw new Error("workout calendar on Train"); }],
   ["quick-create", () => { location.hash = "gym"; paTab = "gym"; openPlanAdd(); const nl = LOCS.length, np = Object.keys(PROGS).length; document.querySelector('#gen-body [data-pcnew]').click(); document.getElementById("qp-name").value = "Home2"; document.querySelector("#gen-body [data-qs]").click();
     const l = LOCS.find(x => x.name === "Home2"); if (!l || LOCS.length !== nl + 1 || paLoc !== l.id || Object.keys(PROGS).length !== np) throw new Error("new place only");
-    document.querySelector('#gen-body [data-pnew]').click(); document.getElementById("qg-name").value = "Quick A"; document.querySelector("#gen-body [data-qs]").click();
-    const k = Object.keys(PROGS).find(q => PROGS[q].name === "Quick A"); if (!k || PROGS[k].loc !== l.id || !document.querySelector(`#gen-body [data-padd="${k}"].sel`)) throw new Error("new program under place, picked");
+    document.querySelector('#gen-body [data-pnew]').click(); document.getElementById("qg-name").value = "Quick A"; document.querySelector("#gen-body [data-qa]").click(); if (getComputedStyle(document.getElementById("lib-modal")).zIndex <= getComputedStyle(document.getElementById("gen-sheet")).zIndex) throw new Error("library above the form"); libMode.onPick(EXLIB[0]); document.querySelector("#gen-body [data-qs]").click();
+    const k = Object.keys(PROGS).find(q => PROGS[q].name === "Quick A"); if (!k || PROGS[k].loc !== l.id || PROGS[k].ex.length !== 1 || !document.querySelector(`#gen-body [data-padd="${k}"].sel`)) throw new Error("new program under place, picked");
     closeGen(); delete PROGS[k]; LOCS = LOCS.filter(x => x !== l); paLoc = null; }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
