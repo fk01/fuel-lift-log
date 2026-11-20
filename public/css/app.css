@@ -790,3 +790,21 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 .prog.row-card .pc-more{width:44px;height:40px;min-width:44px!important;min-height:40px!important;border-radius:12px;background:#ffffff0d!important;color:var(--fg)!important;display:grid!important;place-items:center;font-size:.9rem!important;letter-spacing:.08em}
 .prog.cardio.row-card{display:flex!important}
 .prog.cardio .row-ic.g{font-size:1.3rem}
+/* ===== one button system everywhere (matches program cards) =====
+   primary = gradient pill · secondary = rounded box, soft fill · icon = 44×40 box · text = plain link */
+.btn{border-radius:12px!important;border:1px solid transparent!important;background:#ffffff0d!important;color:var(--fg)!important;min-height:40px;padding:0 14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px;box-shadow:none}
+.btn:active{background:#ffffff1a!important}
+.btn.primary{border-radius:999px!important;background:var(--grad)!important;color:var(--on-accent)!important;box-shadow:0 0 12px #2ee6ff55!important;font-weight:700}
+.btn.sm{min-height:36px;padding:0 12px;font-size:.85rem}
+.btn.ghost{background:#ffffff0d!important}
+.btn.warn,.btn.ghost.warn{color:#ff8a7a!important;background:#ff8a7a14!important}
+.btn.text{background:none!important;color:var(--muted)!important;min-height:36px}
+/* icon-only square buttons */
+.bst,.wo-pager .btn,.sh-x,.restset button,.day-gear,.lp-more,.pc-more,.pm-more,[data-up],[data-down]{border-radius:12px!important;background:#ffffff0d!important;border:1px solid transparent!important;color:var(--fg)!important}
+.sh-x,.day-gear{width:44px;height:40px}
+/* dashed "add" buttons keep their dashed outline */
+.prog-add,.pl-add,.lp-add,.empty-w{background:none!important;border:1px dashed var(--line)!important;border-radius:14px!important}
+/* full-width actions in sheets / cards */
+.sheet-act .btn,.le>.btn,#gen-body>.btn{min-height:48px}
+#food-add{color:transparent!important;border-radius:999px!important;min-height:58px}#food-add::before{color:var(--on-accent);font-size:2rem;position:absolute}#food-add>*{display:none}
+.btn.warn,.btn.ghost.warn{border-color:transparent!important}
