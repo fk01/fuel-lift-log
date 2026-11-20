@@ -299,7 +299,7 @@ function renderPlan(box){const ks=planList(),[d,n]=planStat();
   box.querySelector("[data-plrest]")?.addEventListener("click",()=>chooseDay("rest"));
   box.querySelector("[data-pladd]").addEventListener("click",openPlanAdd)}
 let paTab="gym";
-function openPlanAdd(keepSel){const ks=new Set(planList()),sel=keepSel||new Set(ks),locked=k=>!!planItemDone(k)||inProg(k);
+function openPlanAdd(keepSel){const ks=new Set(planList()),sel=keepSel instanceof Set?keepSel:new Set(ks),locked=k=>!!planItemDone(k)||inProg(k);
   const row=k=>{const p=PROGS[k],cx=isCardio(p),on=sel.has(k),lk=locked(k),L=locById(cx?p.lastLoc:locOf(p));
     const sub=lk?t(planItemDone(k)?"ทำแล้ววันนี้":"กำลังเล่น"):cx?(L?`${t("ล่าสุด")} ${t(L.name)}`:t("ยังไม่เคยเล่น")):`${L?t(L.name)+" · ":""}${nU(p.ex.length,"ท่า")}`;
     return `<button class="menu-row pa-row${on?" sel":""}${lk?" in":""}" data-padd="${esc(k)}"${lk?" disabled":""}><span class="mi">${cx?licon(LI[EMO[p.icon]]?EMO[p.icon]:"run"):licon("dumbbell")}</span><span class="mt"><b>${esc(p.name)}</b><small>${esc(sub)}</small></span><span class="pa-box">${on?"✓":""}</span></button>`};
