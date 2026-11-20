@@ -780,3 +780,13 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 .prog.row-card .pc-more,.prog.cardio .pc-more{position:relative!important}
 .prog.row-card .pc-more::before,.prog.cardio .pc-more::before{inset:-4px!important}
 #v-food{padding-bottom:84px}
+/* program cards like the reference: compact rows, small Start pill, boxed ••• */
+.prog.row-card{min-height:0!important;padding:12px 12px 12px 14px!important;gap:12px!important;align-items:center}
+.prog.row-card .row-ic{width:48px;height:48px}
+.prog.row-card .row-tx{gap:1px}.prog.row-card .row-tx small{line-height:1.35}
+.prog.row-card .pc-top b{font-size:1.1rem!important}
+.prog.row-card .pc-act{gap:8px}
+.prog.row-card .pc-go{padding:0 14px;min-height:40px;font-size:.88rem}
+.prog.row-card .pc-more{width:44px;height:40px;min-width:44px!important;min-height:40px!important;border-radius:12px;background:#ffffff0d!important;color:var(--fg)!important;display:grid!important;place-items:center;font-size:.9rem!important;letter-spacing:.08em}
+.prog.cardio.row-card{display:flex!important}
+.prog.cardio .row-ic.g{font-size:1.3rem}
