@@ -158,6 +158,9 @@ const steps = [
     document.getElementById("wo-back").click(); if (document.body.classList.contains("wo-focus") || !picked) throw new Error("back keeps session"); startPlanItem("pull", true);
     if (!document.querySelector('#gen-body [data-sw="keep"]')) throw new Error("switch ask"); document.querySelector('#gen-body [data-sw="keep"]').click(); if (cur !== "push" || !picked) throw new Error("keep session");
     cancelProg(); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
+  ["scroll-keep-1", () => { location.hash = "gym"; cancelProg(); setDayMode(null); dayPlan = {}; planAdd("push"); renderGym(); appScroll().scrollTop = 500; openPlanItem("push"); }],
+  ["scroll-keep-2", () => { appScroll().scrollTop = 0; document.querySelector("#gen-body .sh-x").click(); }],
+  ["scroll-keep-3", () => { if (appScroll().scrollTop < 400) throw new Error("scroll restored after closing a sheet: " + appScroll().scrollTop); renderGym(); if (appScroll().scrollTop < 400) throw new Error("scroll kept across re-render"); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

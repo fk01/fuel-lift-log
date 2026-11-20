@@ -34,7 +34,10 @@ document.getElementById("date").addEventListener("click",()=>{weekOpen=!weekOpen
 function renderAll(){applyStatic();try{updMoreLang()}catch(e){}try{renderWeek()}catch(e){}document.getElementById("today-btn").hidden=DAY===TODAY;document.getElementById("save-day").textContent="→ "+new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"numeric"});document.getElementById("date").textContent=new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{weekday:"short",day:"numeric",month:"long"})+(DAY===TODAY?"":" · "+(lang==="th"?"ย้อนหลัง":"Backfill"));updUnitBtn();renderFood();renderGym();show(viewOf())}
 document.getElementById("lang").addEventListener("click",()=>{lang=lang==="th"?"en":"th";try{localStorage.setItem("lang",lang)}catch(e){}renderAll()});
 /* ---------- lock page scroll while a full-screen modal is open (iOS scrolled the page behind it) ---------- */
-(()=>{const sync=()=>document.documentElement.classList.toggle("modal-open",[...document.querySelectorAll(".modal:not(.pad)")].some(m=>!m.hidden));
+// iOS resets the page's scroll when overflow is locked/unlocked or the list re-renders: remember it and put it back on close
+let modalY=null;(()=>{const sync=()=>{const on=[...document.querySelectorAll(".modal:not(.pad)")].some(m=>!m.hidden),h=document.documentElement,w=appScroll();
+  if(on&&!h.classList.contains("modal-open"))modalY=w?w.scrollTop:0;h.classList.toggle("modal-open",on);
+  if(!on&&modalY!=null&&w){const y=modalY;modalY=null;const put=()=>{if(Math.abs(w.scrollTop-y)>2&&!scrollReset)w.scrollTop=y};put();requestAnimationFrame(put);setTimeout(put,80)}};
   const mo=new MutationObserver(sync);document.querySelectorAll(".modal").forEach(m=>mo.observe(m,{attributes:true,attributeFilter:["hidden"]}));sync()})();
 /* ---------- app height: home-screen iOS can report a viewport shorter than the screen, so size the shell from the screen itself ---------- */
 (()=>{const st=navigator.standalone===true||matchMedia("(display-mode: standalone)").matches;document.documentElement.classList.toggle("standalone",st);
