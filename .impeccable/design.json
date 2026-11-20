@@ -1,0 +1,211 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-20T13:58:29.524176Z",
+  "title": "Design System: WeightGram",
+  "extensions": {
+    "colorMeta": {
+      "night-navy": {
+        "role": "neutral",
+        "displayName": "Night Navy"
+      },
+      "console-panel": {
+        "role": "neutral",
+        "displayName": "Console Panel"
+      },
+      "chalk": {
+        "role": "neutral",
+        "displayName": "Chalk"
+      },
+      "steel-muted": {
+        "role": "neutral",
+        "displayName": "Steel Muted"
+      },
+      "rail": {
+        "role": "neutral",
+        "displayName": "Rail"
+      },
+      "signal-cyan": {
+        "role": "primary",
+        "displayName": "Signal Cyan",
+        "tonalRamp": [
+          "#06323a",
+          "#0a5361",
+          "#0f7a8d",
+          "#16a3bb",
+          "#2ee6ff",
+          "#6aeeff",
+          "#a6f5ff",
+          "#e0fcff"
+        ]
+      },
+      "go-green": {
+        "role": "primary",
+        "displayName": "Go Green",
+        "tonalRamp": [
+          "#073a1f",
+          "#0c5d32",
+          "#128447",
+          "#1fb05f",
+          "#3dff8c",
+          "#78ffaf",
+          "#b2ffd0",
+          "#e6fff0"
+        ]
+      },
+      "amber-warn": {
+        "role": "tertiary",
+        "displayName": "Amber Warn"
+      },
+      "alarm-red": {
+        "role": "tertiary",
+        "displayName": "Alarm Red"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Screen titles"
+      },
+      "numeric": {
+        "displayName": "Numeric",
+        "purpose": "Every count, weight, kcal and timer"
+      }
+    },
+    "shadows": [
+      {
+        "name": "card-rest",
+        "value": "inset 0 1px 0 #ffffff0d, 0 6px 18px #0006",
+        "purpose": "Every card at rest"
+      },
+      {
+        "name": "signal-live",
+        "value": "0 0 0 1px #2ee6ff55, 0 0 22px #2ee6ff33",
+        "purpose": "In progress / selected / next"
+      },
+      {
+        "name": "action-glow",
+        "value": "0 0 0 1px #3dff8c55, 0 0 18px #2ee6ff40",
+        "purpose": "Primary gradient button"
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(.22,1,.36,1)",
+        "purpose": "Sheets 0.32s, bars 0.28s, toasts 0.24s"
+      },
+      {
+        "name": "reduced",
+        "value": "fade 0.15s linear",
+        "purpose": "prefers-reduced-motion replacement for travel"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "375px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one main action per screen.",
+      "html": "<button class=\"ds-btn-primary\">▶ เริ่ม</button>",
+      "css": ".ds-btn-primary{background:linear-gradient(90deg,#2ee6ff,#3dff8c);color:#06121a;font:800 15px 'IBM Plex Sans Thai',system-ui,sans-serif;border:0;border-radius:999px;padding:12px 22px;min-height:48px;box-shadow:0 0 0 1px #3dff8c55,0 0 18px #2ee6ff40;transition:transform .2s cubic-bezier(.22,1,.36,1)}.ds-btn-primary:active{transform:scale(.97)}.ds-btn-primary:focus-visible{outline:2px solid #2ee6ff;outline-offset:2px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Supporting actions.",
+      "html": "<button class=\"ds-btn\">✎ แก้ไข</button>",
+      "css": ".ds-btn{background:#1c2431;color:#e8f1f7;font:600 14px 'IBM Plex Sans Thai',system-ui,sans-serif;border:1.5px solid #2ee6ff47;border-radius:12px;padding:10px 14px;min-height:44px}.ds-btn:hover{border-color:#2ee6ff8c}.ds-btn:focus-visible{outline:2px solid #2ee6ff;outline-offset:2px}"
+    },
+    {
+      "name": "Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Filters, tags, places.",
+      "html": "<span class=\"ds-chip\">ฟิตเนส</span> <span class=\"ds-chip on\">เพิ่มกล้าม</span>",
+      "css": ".ds-chip{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:999px;border:1.5px solid #33475f;background:#141a24;color:#e8f1f7;font:500 14px 'IBM Plex Sans Thai',sans-serif}.ds-chip.on{border-color:#3dff8c;color:#3dff8c}"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Every content block.",
+      "html": "<div class=\"ds-card\"><b>Push A</b><small>7 ท่า · ฟิตเนส</small></div>",
+      "css": ".ds-card{display:grid;gap:4px;padding:14px;border-radius:18px;background:linear-gradient(180deg,#1f2938,#19212d);border:1.5px solid #2ee6ff47;box-shadow:inset 0 1px 0 #ffffff0d,0 6px 18px #0006;color:#e8f1f7;font:15px 'IBM Plex Sans Thai',sans-serif}.ds-card small{color:#a9bccf;font-size:13px}"
+    },
+    {
+      "name": "Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Text and number fields.",
+      "html": "<input class=\"ds-input\" placeholder=\"ชื่อโปรแกรม\">",
+      "css": ".ds-input{background:#141a24;color:#e8f1f7;border:1.5px solid #33475f;border-radius:10px;padding:10px;font:16px 'IBM Plex Sans Thai',sans-serif;min-height:44px}.ds-input:focus{outline:none;border-color:#2ee6ff;box-shadow:0 0 0 1px #2ee6ff55,0 0 14px #2ee6ff40}"
+    },
+    {
+      "name": "Plan Row",
+      "kind": "custom",
+      "description": "Today's plan item with status, place and Start.",
+      "html": "<div class=\"ds-row\"><span class=\"ds-st\">In progress</span><b>Push A</b><small>7 ท่า · 🏢 ยิม</small></div>",
+      "css": ".ds-row{display:grid;gap:2px;padding:12px 14px;border-radius:18px;background:linear-gradient(180deg,#1f2938,#19212d);border:1.5px solid #2ee6ff8c;box-shadow:0 0 0 1px #2ee6ff55,0 0 22px #2ee6ff33;color:#e8f1f7;font:15px 'IBM Plex Sans Thai',sans-serif}.ds-st{justify-self:start;font-size:12px;padding:1px 8px;border-radius:999px;background:#2ee6ff22;color:#2ee6ff}.ds-row small{color:#a9bccf}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Night Gym Console",
+    "overview": "WeightGram is the control panel of a gym after dark: a deep navy room, chalk-white type, and instruments that light up only when they have something to say. Glow is a signal, not a finish.",
+    "keyCharacteristics": [
+      "Dark night-navy room, chalk-white text, one cyan→green signal gradient",
+      "Tabular monospace numerals for every count, weight and time",
+      "Heavy, rounded, thumb-sized controls (44 px targets, 48 px primary actions)",
+      "Neon edge only on live / selected / next items",
+      "Thai-first copy in IBM Plex Sans Thai"
+    ],
+    "rules": [
+      {
+        "name": "The Signal Pair Rule",
+        "body": "Cyan and green travel together as the one primary-action gradient; alone, cyan means live and green means done.",
+        "section": "colors"
+      },
+      {
+        "name": "The Recovery Palette Rule",
+        "body": "The muscle map palette is its own; never reuse it for UI chrome.",
+        "section": "colors"
+      },
+      {
+        "name": "The 12 px Floor Rule",
+        "body": "No functional text below 12 px; inputs never below 16 px.",
+        "section": "typography"
+      },
+      {
+        "name": "The No-Shouting Rule",
+        "body": "Sentence-case labels in the UI face; no forced uppercase mono labels.",
+        "section": "typography"
+      },
+      {
+        "name": "The Glow Means Live Rule",
+        "body": "A card glows only when in progress, selected or next.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep one gradient primary action per screen.",
+      "Do use the mono numeric face for every number a person compares (kg, sets, kcal, time).",
+      "Do give every tappable thing 44 px of height.",
+      "Do let state carry the glow: live = cyan, done = green, warn = amber, alarm = red.",
+      "Do write Thai first and keep English the same length or shorter."
+    ],
+    "donts": [
+      "Don't put colored glow on resting cards (Glow Means Live).",
+      "Don't introduce new accent hues beyond cyan, green, amber and red.",
+      "Don't use emoji as icons; use the line icon set.",
+      "Don't set functional text under 12 px or inputs under 16 px.",
+      "Don't use forced-uppercase letter-spaced labels."
+    ]
+  }
+}
