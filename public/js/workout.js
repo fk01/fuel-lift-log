@@ -122,7 +122,7 @@ function updWoBar(){const c=document.getElementById("wo-count");if(!c)return;con
   const vol=Object.values(draft.ex||{}).flat().filter(r=>r.ok).reduce((a,r)=>a+(+r.kg||0)*(+r.reps||0),0);
   document.getElementById("wo-vol").textContent=Math.round(vol).toLocaleString();document.getElementById("wo-sets").textContent=p.done;tickClock();
   document.getElementById("tab-gym").classList.toggle("live",picked);
-  document.body.classList.toggle("wo-focus",picked&&!editing&&DAY===TODAY&&document.getElementById("locpick").hidden)}
+  document.body.classList.toggle("wo-focus",picked&&!editing&&document.getElementById("locpick").hidden)}
 // focus mode: "‹ Today" leaves the session running (row shows In progress → Resume)
 document.getElementById("wo-back").addEventListener("click",()=>{setDayMode(null);pickAnyway=false;locPrev=null;renderGym();scrollAppTop()});
 // place of the running session can change any time

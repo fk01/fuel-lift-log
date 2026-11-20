@@ -1035,3 +1035,5 @@ input,select,textarea{border-width:1.5px!important}
 .ex-feed .ex-line{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.ex-mod{text-align:center;font-size:.8rem;color:var(--muted)}.ex-mod .linkb{color:var(--muted)}
 .sw{width:42px;height:24px;border-radius:12px;background:var(--line);position:relative;flex:none}.sw i{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s}
 .sw.on{background:var(--green,#3dff8c)}.sw.on i{left:21px}.menu-row[disabled]{opacity:.45}
+.rest-card{display:grid;gap:6px;justify-items:start}.rest-card b{display:flex;gap:6px;align-items:center}
+/* the old breadcrumb is replaced by the plan screen + workout focus bar */#lochead{display:none!important}
