@@ -1052,3 +1052,16 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:max(16px,
 .mp-vit input{width:22px;height:22px;accent-color:var(--green,#3dff8c)}
 .ex-by{display:flex!important;gap:6px;align-items:center;min-width:0}.ex-by>span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .ex-empty{display:grid;gap:10px;justify-items:center}
+/* ---- adapt: one-handed at the gym — targets ≥44px, nothing wider than the screen ---- */
+.sh-x{margin:-8px 0 0 0!important}
+#gen-body .sheet-h{padding-right:0}
+.linkb{display:inline-flex;align-items:center;min-height:44px;padding:0 6px}
+.acct-sw .linkb,.cm-a .linkb,.ex-mod .linkb{min-height:44px}
+.pa-new{min-height:44px;padding:0 4px!important}
+.ex-tabs .chip,#st-tabs .chip,.chips.seg .chip,.pa-tabs .chip,.ex-head .chip{min-height:44px}
+.chips .chip{min-height:40px}
+.rc-chip{min-height:36px}.rc-map{min-height:44px}
+.loc-chip{min-height:36px;padding:6px 10px}
+[data-pad="kg"],.sets .h .btn,.unit-tog,.sets .h button{min-height:32px}
+.mp-num .mp-vit{min-height:44px}
+.sets button[data-unit]{min-height:36px}
