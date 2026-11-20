@@ -119,6 +119,9 @@ const steps = [
     closeGen(); if (bad.length) throw new Error(bad.length + " muscle figures have misaligned colour layers"); }],
   ["rec-palette", () => { location.hash = "more"; document.getElementById("pal-open").click(); const r = document.querySelector('#gen-body [data-pal="app"]'); if (!r) throw new Error("palette sheet"); r.click();
     if (REC_C[3] !== "#3dff8c") throw new Error("palette applied"); document.querySelector('#gen-body [data-pal="heat"]').click(); closeGen(); }],
+  ["create-from-today", () => { location.hash = "gym"; cancelProg(); setDayMode(null); dayPlan = {}; renderGym(); openPlanAdd(); const n = document.querySelector("#gen-body [data-pnew]"); if (!n) throw new Error("create button");
+    const before = Object.keys(PROGS).length; addToToday = true; newWeights(); document.getElementById("pm-modal").hidden = true; const k = Object.keys(PROGS).find(q => !(q in {}) && dp().add.includes(q));
+    if (Object.keys(PROGS).length !== before + 1 || !k) throw new Error("new program added to today"); delete PROGS[k]; dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
