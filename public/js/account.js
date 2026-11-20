@@ -14,7 +14,9 @@ async function acctBoot(){let st;try{st=await acctStatus()}catch(e){cloudLoad();
   const lu=localUid();
   if(st.legacy&&!lu){showClaim(st);return}
   if(lu!==ME.id){if(lu||!st.legacy){wipeLocal(ME.id);location.reload();return}}
-  renderAcct();cloudLoad()}
+  renderAcct();await cloudLoad();
+  // a new person (not the owner who claimed the old data) builds their own plan once
+  if(!PROFILE&&!ME.owner)openOnboarding()}
 /* ---- sign in ---- */
 function showLogin(){const m=document.getElementById("login");m.hidden=false;acctSetMode("login");
   if(window.PublicKeyCredential)document.getElementById("passkey-login").hidden=false;
@@ -39,14 +41,16 @@ function showClaim(st){const m=document.getElementById("claim");m.hidden=false;d
   document.getElementById("claim-sum").textContent=t("แอปนี้มีข้อมูลเดิม (ล็อกด้วย PIN) อยู่")+` · ${st.docs} ${t("รายการ")} — `+t("ใส่ PIN เดิมเพื่อย้ายทั้งหมดเข้าบัญชี")+` ${ME.email||ME.name}`;
   document.getElementById("claim-go").onclick=async()=>{const e=document.getElementById("claim-err");e.hidden=true;
     const r=await post("/api/auth/claim",{pin:document.getElementById("claim-pin").value});
-    if(r.ok){try{localStorage.setItem("uid",ME.id)}catch(x){}location.reload();return}
+    if(r.ok){wipeLocal(ME.id);location.reload();return}   // the server copy is the truth: start from it so stale local data is not uploaded again
     const j=await r.json().catch(()=>({}));e.textContent=t(j.error==="wrong pin"?"PIN ไม่ถูกต้อง":j.error==="too many attempts"?"ลองบ่อยเกินไป รอสักครู่":"ย้ายไม่สำเร็จ");e.hidden=false};
   document.getElementById("claim-skip").onclick=()=>{wipeLocal(ME.id);location.reload()}}
 /* ---- More › account ---- */
 function renderAcct(){const box=document.getElementById("acct-menu");if(!box||!ME)return;
   const how=[ME.google?"Google":"",ME.password?t("อีเมล + รหัสผ่าน"):""].filter(Boolean).join(" · ");
   box.innerHTML=`<div class="menu-row" style="cursor:default"><span class="mi">${licon("user")||"👤"}</span><span class="mt"><b>${esc(ME.name||ME.email||"")}</b><small>${esc(ME.email||"")}${how?" · "+esc(how):""}</small></span></div>
+    <button class="menu-row" data-profile><span class="mi">${licon("dumbbell")}</span><span class="mt"><b>${t("โปรไฟล์")}</b><small>${PROFILE?esc(`${PROFILE.w} kg · ${t({cut:"ลดไขมัน",bulk:"เพิ่มกล้าม",keep:"รักษาหุ่น"}[PROFILE.goal]||"")}`):t("ตั้งค่าเป้าหมาย")}</small></span><span class="mc">›</span></button>
     <button class="menu-row warn" data-logout><span class="mi">↩</span><span class="mt"><b>${t("ออกจากระบบ")}</b><small>${t("ล้างข้อมูลในเครื่องนี้")}</small></span></button>`;
+  box.querySelector("[data-profile]").addEventListener("click",openProfile);
   box.querySelector("[data-logout]").addEventListener("click",async ev=>{const b=ev.currentTarget;if(!b.dataset.sure){b.dataset.sure=1;b.querySelector("b").textContent=t("แตะอีกครั้งเพื่อออก");return}
     try{if(dirty&&dirty.size)await flush()}catch(e){}await post("/api/logout");wipeLocal(null);try{localStorage.removeItem("uid")}catch(e){}location.reload()})}
 Object.assign(EN,{"PIN เดิม":"Old PIN","บัญชี":"Account","หรือ":"or","สมัคร":"Sign up","เข้าสู่ระบบ":"Sign in","มีบัญชีแล้ว?":"Have an account?","ยังไม่มีบัญชี?":"No account yet?","อีเมลนี้มีบัญชีแล้ว — เข้าสู่ระบบแทน":"This email already has an account — sign in instead","อีเมลหรือรหัสผ่านไม่ถูกต้อง":"Wrong email or password","รหัสผ่านอย่างน้อย 8 ตัว":"Password needs at least 8 characters","อีเมลไม่ถูกต้อง":"Invalid email","ลองบ่อยเกินไป รอสักครู่":"Too many tries — wait a moment","เข้าสู่ระบบด้วย Google ไม่สำเร็จ":"Google sign-in failed","เข้าสู่ระบบไม่สำเร็จ":"Sign-in failed","ย้ายข้อมูลเดิมเข้าบัญชี":"Move your old data into this account","แอปนี้มีข้อมูลเดิม (ล็อกด้วย PIN) อยู่":"This app has older data (PIN-locked)","รายการ":"items","ใส่ PIN เดิมเพื่อย้ายทั้งหมดเข้าบัญชี":"enter the old PIN to move it all into","PIN ไม่ถูกต้อง":"Wrong PIN","ย้ายไม่สำเร็จ":"Couldn't move the data","ย้ายข้อมูลเข้าบัญชีนี้":"Move into this account","ไม่ใช่ข้อมูลของฉัน — ข้าม":"Not my data — skip","อีเมล + รหัสผ่าน":"email + password","ออกจากระบบ":"Sign out","ล้างข้อมูลในเครื่องนี้":"Clears data on this device","แตะอีกครั้งเพื่อออก":"Tap again to sign out","ร่างกาย · กิน · ออกกำลัง — วันนี้":"Body · Eat · Train — today","ชื่อ":"Name","อีเมล":"Email","รหัสผ่าน":"Password"});

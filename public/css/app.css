@@ -1012,3 +1012,9 @@ input,select,textarea{border-width:1.5px!important}
 .acct-or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.8rem}.acct-or::before,.acct-or::after{content:"";flex:1;height:1px;background:var(--line)}
 .acct .le-in{text-align:left}.linkb{background:none;border:0;color:var(--cyan,#2ee6ff);font:inherit;padding:0;cursor:pointer}
 #login,#claim{z-index:60;background:var(--bg)}
+/* onboarding */
+#onb{z-index:58;background:var(--bg);place-items:start center}
+.onb-in{gap:12px;padding-bottom:20px}.onb-in h1{margin:4px 0;font-size:1.5rem}
+.onb-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}.onb-bar i{height:4px;border-radius:2px;background:var(--line)}.onb-bar i.on{background:var(--cyan,#2ee6ff)}
+.onb-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.onb-3 label{display:grid;gap:4px;font-size:.75rem;color:var(--muted)}.onb-3 input{width:100%;min-width:0;box-sizing:border-box}
+.onb-nav{max-width:none;margin-top:6px}
