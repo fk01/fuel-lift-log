@@ -839,3 +839,7 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 .le-row:has(.ico-pick){flex-direction:column;align-items:stretch}
 .ico-pick{display:flex!important;flex-wrap:wrap;gap:8px}
 .le label.le-row input[data-f="dbMax"]{flex:0 0 110px}
+/* last column has a fixed width so ▶ lines up even when pills differ (primary vs secondary) */
+.sx-row{grid-template-columns:44px minmax(0,1fr) 40px 92px!important}
+.sx-row>.mrole{font-size:.7rem;padding:3px 8px;justify-self:end}
+.sx-row>span:not(.sx-mini):not(.how-btn) b{overflow-wrap:anywhere}
