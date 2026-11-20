@@ -54,7 +54,14 @@ function lastTrained(){const out={},by={};logs.filter(l=>l.date<=TODAY).forEach(
 let recSel=null;
 // all 16 muscles always shown, fixed anatomical order; state: 0 never · 1 just trained (≤1d) · 2 recovering (2d) · 3 ready (3–7d) · 4 neglected (>7d)
 const REC_ORDER=["chest","delt","rear","traps","lats","bi","tri","fore","abs","obl","glute","quad","ham","add","abd","calf"],NEGLECT=7;
-const REC_C=["#55606f","#e07a6a","#d9a46c","#7cc47a","#7cc47a"];   // neglected = ready (green); the tile says how long ago
+// recovery colour sets (never, <40%, recovering, ready, neglected=ready); picked in More › Settings, stored per device
+const REC_PALS={heat:["ความร้อน",["#3a4658","#ff5a4e","#ff9f43","#5ad1ff"]],classic:["ไฟจราจร",["#55606f","#e07a6a","#d9a46c","#7cc47a"]],neon:["นีออน",["#3a4658","#ff4f8b","#ffd23f","#2ee6ff"]],app:["โทนแอป",["#3a4658","#b46bff","#2ee6ff","#3dff8c"]],mono:["ฟ้าไล่ระดับ",["#3a4658","#1e5a8a","#2e9bd6","#7fe3ff"]]};
+let recPal=(()=>{try{return localStorage.getItem("recpal")||"heat"}catch(e){return "heat"}})();if(!REC_PALS[recPal])recPal="heat";
+const REC_C=[];function applyRecPal(){const c=REC_PALS[recPal][1];REC_C.length=0;REC_C.push(...c,c[3])}applyRecPal();
+Object.assign(EN,{"สีการฟื้นตัว":"Recovery colours","ความร้อน":"Heat","ไฟจราจร":"Traffic light","นีออน":"Neon","โทนแอป":"App tones","ฟ้าไล่ระดับ":"Blue scale"});
+function openRecPal(){openGen(t("สีการฟื้นตัว"),`<div class="pm-menu">${Object.entries(REC_PALS).map(([k,[n,c]])=>`<button class="menu-row" data-pal="${k}"><span class="pal-dots">${c.map(x=>`<i style="background:${x}"></i>`).join("")}</span><span class="mt"><b>${t(n)}</b><small>${[t("ยังไม่เคยเล่น"),"< 40%",t("กำลังฟื้น"),t("พร้อม")].join(" · ")}</small></span><span class="mc">${k===recPal?"✓":""}</span></button>`).join("")}</div>`,
+  b=>b.querySelectorAll("[data-pal]").forEach(r=>r.addEventListener("click",()=>{recPal=r.dataset.pal;try{localStorage.setItem("recpal",recPal)}catch(e){}applyRecPal();openRecPal();try{renderGym();renderStatsExtra();updPalSum()}catch(e){}})))}
+function updPalSum(){const e=document.getElementById("pal-sum");if(e)e.textContent=t(REC_PALS[recPal][0])}
 Object.assign(EN,{"ฟื้น":"Recovered","พร้อมเต็มที่":"fully ready","พร้อมแล้ว":"Ready","พรุ่งนี้":"Tomorrow","เล่นล่าสุด":"last trained","ยังไม่ฟื้นเต็ม":"not fully recovered","กำลังฟื้น":"Recovering","พร้อม":"Ready","ยังไม่เคยเล่น":"Never","ยังไม่เคย":"Never","ละเลย":"Neglected","ควรเล่น":"Due","ท่าที่เล่นล่าสุด":"Last exercises"});
 // recovery %: hours since the last session that hit the muscle ÷ full recovery time (by muscle size, scaled by that session's sets)
 const REC_H={chest:72,lats:72,quad:72,ham:72,glute:72,delt:48,rear:48,traps:48,bi:48,tri:48,add:48,abd:48,calf:36,abs:36,obl:36,fore:36};
@@ -171,3 +178,4 @@ function openMuscle(m){const lt=lastTrained(),d=lt[m]?Math.round((ds2d(TODAY)-ds
 Object.assign(EN,{"แตะกล้ามเพื่อดูบนหุ่น":"Tap a muscle to highlight it · set muscles per exercise in Edit workout (💪)"});
 
 setInterval(()=>{try{if(!document.getElementById("v-stats").hidden)renderRecovery()}catch(e){}},3e5);
+document.getElementById("pal-open")?.addEventListener("click",openRecPal);setTimeout(updPalSum,0);

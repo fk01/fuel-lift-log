@@ -114,6 +114,8 @@ const steps = [
     if (bad.length) throw new Error("covered buttons: " + bad.map(e => e.className + "|" + e.textContent.trim().slice(0, 15)).join(", ")); }],
   ["figure-layers", () => { setDayMode(null); renderGym(); openMuscle("delt"); const bad = [...document.querySelectorAll(".body-fig")].filter(f => new Set([...f.children].map(c => { const r = c.getBoundingClientRect(); return [r.width, r.height, r.left, r.top].map(Math.round).join() })).size > 1);
     closeGen(); if (bad.length) throw new Error(bad.length + " muscle figures have misaligned colour layers"); }],
+  ["rec-palette", () => { location.hash = "more"; document.getElementById("pal-open").click(); const r = document.querySelector('#gen-body [data-pal="app"]'); if (!r) throw new Error("palette sheet"); r.click();
+    if (REC_C[3] !== "#3dff8c") throw new Error("palette applied"); document.querySelector('#gen-body [data-pal="heat"]').click(); closeGen(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

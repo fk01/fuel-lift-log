@@ -850,3 +850,4 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 /* colours were muddied by the line overlay: full-strength colour, lighter line pass */
 .body-fig>i{opacity:1!important}
 .body-fig .bf-lines{mix-blend-mode:soft-light!important;opacity:.55!important}
+.pal-dots{display:flex;gap:3px;flex:none}.pal-dots i{width:14px;height:28px;border-radius:4px}
