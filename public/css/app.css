@@ -808,3 +808,7 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 .sheet-act .btn,.le>.btn,#gen-body>.btn{min-height:48px}
 #food-add{color:transparent!important;border-radius:999px!important;min-height:58px}#food-add::before{color:var(--on-accent);font-size:2rem;position:absolute}#food-add>*{display:none}
 .btn.warn,.btn.ghost.warn{border-color:transparent!important}
+/* cardio card: same alignment as weights (••• was offset, text ran under the buttons) */
+.prog.cardio .row-tx{flex:1;min-width:0;display:grid;gap:1px}
+.prog.cardio .pc-act{margin-left:auto;align-self:center}
+.prog.cardio .pc-more{margin:0!important;top:auto!important;right:auto!important;align-self:center}
