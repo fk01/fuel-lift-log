@@ -32,7 +32,9 @@ function applyStatic(){document.documentElement.lang=lang==="th"?"th":"en";docum
 // the app scrolls inside .wrap (not the window)
 const appScroll=()=>document.querySelector(".wrap");
 let scrollReset=false;   // set when code deliberately scrolls to top, so closing a sheet does not undo it
-function scrollAppTop(smooth){scrollReset=true;setTimeout(()=>scrollReset=false,200);const w=appScroll();if(w)w.scrollTo({top:0,behavior:smooth?"smooth":"auto"})}
+// smooth scrolling only for people who have not asked the OS to reduce motion
+const smoothB=()=>matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
+function scrollAppTop(smooth){if(smooth&&smoothB()==="auto")smooth=false;scrollReset=true;setTimeout(()=>scrollReset=false,200);const w=appScroll();if(w)w.scrollTo({top:0,behavior:smooth?"smooth":"auto"})}
 function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,1800)}
 
 // line icons (app-defined things use these; user-chosen emoji stay emoji)

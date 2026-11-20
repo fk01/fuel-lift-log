@@ -148,7 +148,7 @@ function renderGym(){setTimeout(()=>{try{renderToday()}catch(e){console.error(e)
   renderProgs();renderEx();applyPager();renderSessions();document.getElementById("step4").hidden=editing||!picked;updWoBar();try{renderLocPick()}catch(e){console.error(e)}}
 document.getElementById("edit-w").addEventListener("click",()=>{if(!PROGS[cur])return;pmOnly=cur;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false;window.scrollTo(0,0)});
 document.getElementById("start-w").addEventListener("click",()=>{if(!PROGS[cur])return;draft.prog=cur;draft.started=1;draft.day=DAY;draft.loc=curLoc;draft.t0=Date.now();picked=true;chosen=false;save("gymdraft",draft);renderGym();
-  setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});
+  setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:smoothB(),block:"start"}),50)});
 
 /* ---------- collapsible step sections (Pick a program / Log your sets) ---------- */
 // step sections are plain headed sections now (no collapse, no numbers)
@@ -164,7 +164,7 @@ document.getElementById("wo-finish").addEventListener("click",finishWorkout);
 /* ---------- + add an exercise to the running workout (session only), and the empty "free" workout ---------- */
 document.getElementById("wo-add").addEventListener("click",()=>openLib({skip:new Set(sessEx().map(e=>e.id)),onPick:x=>{
   draft.extra=draft.extra||[];draft.extra.push({...libPick(x),s:3,r:"8-12"});save("gymdraft",draft);renderEx();updWoBar();
-  setTimeout(()=>{const c=[...document.querySelectorAll("#exs .ex")].pop();if(c)c.scrollIntoView({behavior:"smooth",block:"center"})},60)}}));
+  setTimeout(()=>{const c=[...document.querySelectorAll("#exs .ex")].pop();if(c)c.scrollIntoView({behavior:smoothB(),block:"center"})},60)}}));
 function startEmpty(){PROGS.free={name:t("ออกแบบอิสระ"),sub:"",ex:[]};cur="free";draft={prog:"free",loc:curLoc,ex:{},extra:[],started:1,day:DAY,t0:Date.now()};picked=true;chosen=false;
   save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("wo-add").click(),80)}
 document.getElementById("empty-w").addEventListener("click",startEmpty);
@@ -179,6 +179,6 @@ function applyPager(){const box=document.getElementById("exs");if(!box)return;co
   const nav=document.createElement("div");nav.className="wo-pager";
   nav.innerHTML=`<button class="btn sm" data-pg="-1" ${woIdx?"":"disabled"} aria-label="prev">‹</button><span class="pg-mid"><small>${woIdx+1}/${cards.length}</small><span class="pg-dots">${ex.map((x,i)=>`<i class="${i===woIdx?"cur":done(x)?"ok":""}"></i>`).join("")}</span></span><button class="btn sm" data-pg="1" ${woIdx<cards.length-1?"":"disabled"} aria-label="next">›</button>`;
   cards[0].before(nav);nav.querySelectorAll("[data-pg]").forEach(b=>b.addEventListener("click",()=>goEx(woIdx+ +b.dataset.pg)))}
-function goEx(i){woIdx=i;applyPager();const n=document.querySelector("#exs .wo-pager");if(n)n.scrollIntoView({block:"start",behavior:"smooth"})}
+function goEx(i){woIdx=i;applyPager();const n=document.querySelector("#exs .wo-pager");if(n)n.scrollIntoView({block:"start",behavior:smoothB()})}
 (()=>{const box=document.getElementById("exs");let x0=null,y0=0;box.addEventListener("touchstart",e=>{if(!box.classList.contains("paged")||e.target.closest("input,textarea"))return;x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
   box.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)goEx(woIdx+(dx<0?1:-1))},{passive:true})})();

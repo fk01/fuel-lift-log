@@ -82,8 +82,8 @@ function renderProgs(){
       <ul class="prog-ex"${open?"":" hidden"}>${p.ex.map((e,n)=>`<li><b class="no">${n+1}</b><em class="nm">${e.z} ${esc(e.n)}</em><span class="ss">${e.s}×${e.r}</span><i class="mg">${groupName(groupOf(e))}</i></li>`).join("")}</ul>`;
     b.addEventListener("click",ev=>{if(ev.target.closest("[data-go]")){if(picked)return;try{chooseProg(k)}catch(e){}if(cur!==k)draft.ex={};cur=k;draft.prog=k;chosen=true;document.getElementById("start-w").click();return}if(ev.target.closest(".pc-more")){pmOnly=k;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false;return}
       if(!picked){openSheet(k);return}
-      if(!picked){if(chosen&&cur===k){chosen=false;renderGym();return}if(cur!==k){draft.ex={}}cur=k;draft.prog=k;chosen=true;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("start-row").scrollIntoView({behavior:"smooth",block:"center"}),50);return}
-      if(cur===k){cancelProg();return}draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});box.appendChild(b)});
+      if(!picked){if(chosen&&cur===k){chosen=false;renderGym();return}if(cur!==k){draft.ex={}}cur=k;draft.prog=k;chosen=true;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("start-row").scrollIntoView({behavior:smoothB(),block:"center"}),50);return}
+      if(cur===k){cancelProg();return}draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:smoothB(),block:"start"}),50)});box.appendChild(b)});
   if(hasType(L,"cardio")){if(hasType(L,"gym"))hd("คาร์ดิโอ");
     cardioHere().forEach(k=>{const p=PROGS[k],v=cxGet(k);const b=document.createElement("button");b.className="prog cardio";b.setAttribute("aria-pressed",!!v);
       b.classList.add("row-card");b.innerHTML=`<span class="row-ic g">${esc(p.icon||"🏃")}</span><span class="row-tx"><span class="pc-top"><b>${esc(p.name)}</b>${k===pl&&!v?`<span class="pill p-cyan">${t("วันนี้")}</span>`:""}</span><small>${v?esc(cxTxt(k,v)):(p.goal?`${t("เป้า")} ${p.goal} km · `:"")+t(p.track==="dist"?"ใส่ระยะ / เวลา":"แตะเพื่อบันทึก")}</small></span><span class="pc-act">${v?"":`<span class="pc-go" role="button" tabindex="0" data-go>▶ ${t("เริ่ม")}</span>`}<span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span></span>`;
@@ -152,6 +152,6 @@ function renderToday(){const box=document.getElementById("today");if(!box)return
     if(a.startsWith("cx:")){openCardio(a.slice(3));return}
     if(a==="pick"){openProgPick();return}
     if(a==="rest"){chooseDay("rest");return}if(a==="train"){chooseDay("train");return}
-    if(a==="resume")document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"});
-    else if(a==="any"){if(!pl&&locDay.date!==TODAY){openLocChange();return}document.getElementById("step2").scrollIntoView({behavior:"smooth",block:"start"})}
+    if(a==="resume")document.getElementById("step3").scrollIntoView({behavior:smoothB(),block:"start"});
+    else if(a==="any"){if(!pl&&locDay.date!==TODAY){openLocChange();return}document.getElementById("step2").scrollIntoView({behavior:smoothB(),block:"start"})}
     else if(a.startsWith("start:")){const k=a.slice(6);if(cur!==k)draft.ex={};cur=k;draft.prog=k;chosen=true;document.getElementById("start-w").click()}}))}

@@ -1070,3 +1070,23 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:max(16px,
 .stat span{font-size:12px!important;letter-spacing:.02em!important;text-transform:none!important}
 .ec-d small,.ec-d span{font-size:12px}.ec-d span{font-variant-numeric:tabular-nums}
 .wk-dow,#week small{font-size:12px}
+/* ---- animate: one consistent motion language — quick, exponential ease-out, nothing decorative ---- */
+:root{--ease-out:cubic-bezier(.22,1,.36,1)}
+.modal.sheet .sheet-in{animation:sheetUp .32s var(--ease-out)}
+.undo-bar:not([hidden]){animation:barIn .28s var(--ease-out)}
+@keyframes barIn{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
+.toast:not([hidden]){animation:toastIn .24s var(--ease-out)}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+/* the one authored moment: ticking a set */
+.sets input[type=checkbox]:checked{animation:tick .3s var(--ease-out)}
+@keyframes tick{0%{transform:scale(.8)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+.tx-bar:not([hidden]){animation:barUp .28s var(--ease-out)}@keyframes barUp{from{transform:translateY(100%)}to{transform:none}}
+/* reduced motion: keep every state change, replace travel with a short fade */
+@media (prefers-reduced-motion:reduce){
+  .modal.sheet .sheet-in,.drawer-in,.tx-bar:not([hidden]){animation:fadeIn .15s linear!important}
+  .undo-bar:not([hidden]),.toast:not([hidden]){animation:fadeInC .15s linear!important}
+  .sets input[type=checkbox]:checked,.hero.lv canvas{animation:none!important}
+  .tabbar,.rest,.wo-bar,.sw i,.fill{transition:none!important}
+  #ptr.spin #ptr-i{animation-duration:2s}
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes fadeInC{from{opacity:0}to{opacity:1}}
