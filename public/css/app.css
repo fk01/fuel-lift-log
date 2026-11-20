@@ -1090,3 +1090,10 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:max(16px,
   #ptr.spin #ptr-i{animation-duration:2s}
 }
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes fadeInC{from{opacity:0}to{opacity:1}}
+/* polish: Glow Means Live — resting surfaces lose colored halos */
+.card,.hq-card{box-shadow:inset 0 1px 0 #ffffff0d,0 6px 18px #0006!important}
+.wo-clock,.rec-p,.btiles .bt b,#kcal-t,#p-t,.stats b,.vol-h b{text-shadow:none}
+#food-ring svg,.lp-card .lp-ic,.dp-ic,#rec-card .rec-fig svg,#rec-card .rec-fig img,.body-fig,.row-ic,.menu .mi,.acct-mark{filter:none!important}
+.tabbar{box-shadow:0 8px 24px #0008!important}
+.tab[aria-selected=true]{text-shadow:none}
+.lp-h{box-shadow:none}
