@@ -80,8 +80,8 @@ const steps = [
     if ((!planDone() && !h.querySelector('[data-cr="mode"]')) || !h.querySelector('[data-cr="place"]')) throw new Error("crumbs on place page");
     const saved = logs.filter(l => l.date === TODAY); logs = logs.filter(l => l.date !== TODAY); const tg = fs().tags; const keep = { run: tg.run, bad: tg.bad, cx: tg.cx }; tg.run = tg.bad = false; tg.cx = {}; renderGym();
     h.querySelector('[data-cr="place"]').click(); if (!document.querySelector('#locpick [data-cr="mode"]')) throw new Error("crumbs on picker");
-    document.querySelector('#locpick [data-cr="mode"]').click(); if (!document.querySelector("#locpick [data-dm]")) throw new Error("back to train/rest");
-    document.querySelector('#locpick [data-dm="rest"]').click(); renderLocHead(); if (!/พัก|Rest/.test(h.textContent) || !h.querySelector('.cr.cur')) throw new Error("rest crumb");
+    document.querySelector('#locpick [data-cr="mode"]').click(); if (!document.querySelector("#locpick [data-pladd]")) throw new Error("back to today's list");
+    document.querySelector("#locpick [data-plrest]").click(); renderLocHead(); if (!/พัก|Rest/.test(h.textContent) || !h.querySelector('.cr.cur')) throw new Error("rest crumb");
     setDayMode("train"); pickLoc("gym"); logs.push(...saved); Object.assign(tg, keep); }],
   ["crumb-program", () => { location.hash = "gym"; setDayMode("train"); pickLoc("gym"); const saved = logs.filter(l => l.date === TODAY); logs = logs.filter(l => l.date !== TODAY); renderGym();
     renderToday(); if (!selProg() && !document.getElementById("today").hidden) throw new Error("no card before a program is picked");
@@ -92,15 +92,18 @@ const steps = [
   ["no-emoji", () => { ["food", "gym", "stats", "more"].forEach(h => { location.hash = h; }); deEmoji(document.body);
     const txt = document.body.innerText; const m = txt.match(/\p{Extended_Pictographic}/u); if (m && !/[✓✕✎☰↗★⚠]/.test(m[0])) throw new Error("emoji left: " + m[0]);
     if (getComputedStyle(document.getElementById("hero")).display !== "none") throw new Error("level character should be hidden"); }],
-  ["three-choices", () => { location.hash = "gym"; setDayMode(null); locDay = {}; renderGym(); const n = document.querySelectorAll("#locpick [data-dm]").length; if (n !== 3) throw new Error("3 choices, got " + n);
-    document.querySelector('#locpick [data-dm="cardio"]').click(); const names = [...document.querySelectorAll("#locpick .lp-card")].map(c => c.dataset.loc); if (names.some(id => !hasType(locById(id), "cardio"))) throw new Error("cardio filters places");
-    setDayMode(null); dayKind = {}; pickLoc("gym"); setDayMode("train"); }],
+  ["day-queue", () => { location.hash = "gym"; const saved = logs.filter(l => l.date === TODAY); logs = logs.filter(l => l.date !== TODAY); cancelProg(); setDayMode(null); dayPlan = {}; renderGym();
+    openPlanAdd(); document.querySelector('#gen-body [data-padd="pull"]').click(); closeGen(); const row = document.querySelector('#locpick [data-pl="pull"]'); if (!row || !row.classList.contains("st-pend")) throw new Error("added row pending");
+    row.querySelector('[data-plgo="start"]').click(); if (!picked || cur !== "pull") throw new Error("start from list");
+    setDayMode(null); renderGym(); if (!document.querySelector('#locpick [data-pl="pull"].st-prog')) throw new Error("in progress row");
+    cancelProg(); setDayMode(null); renderGym(); document.querySelector('#locpick [data-pl="pull"] [data-pldel]').click(); if (document.querySelector('#locpick [data-pl="pull"]')) throw new Error("remove row");
+    logs.push(...saved); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
   ["plan-multi", () => { location.hash = "gym"; const run = Object.keys(PROGS).find(k => PROGS[k].tag === "run" && locOf(PROGS[k]) === "condo"), wd = new Date(TODAY + "T12:00:00").getDay();
     const keep = { r: PROGS[run].days.slice(), p: PROGS.push.days.slice() }; PROGS[run].days.push(wd); PROGS.push.days.push(wd);
     const saved = logs.filter(l => l.date === TODAY); logs = logs.filter(l => l.date !== TODAY); const tg = fs().tags, kt = { run: tg.run, runData: tg.runData, bad: tg.bad }; tg.run = tg.bad = false;
     setDayMode(null); renderGym(); const rows = document.querySelectorAll("#locpick [data-pl]"); if (rows.length < 2) throw new Error("plan rows " + rows.length);
     document.querySelector(`#locpick [data-pl="${run}"]`).click(); if (curLoc !== "condo") throw new Error("row picks the place");
-    cxSet(run, { km: 5, sec: 1800 }); setDayMode(null); renderGym(); if (!document.querySelector(`#locpick [data-pl="${run}"].ok`)) throw new Error("done row");
+    cxSet(run, { km: 5, sec: 1800 }); setDayMode(null); renderGym(); if (!document.querySelector(`#locpick [data-pl="${run}"].st-done`)) throw new Error("done row");
     PROGS[run].days = keep.r; PROGS.push.days = keep.p; cxSet(run, null); Object.assign(tg, kt); logs.push(...saved); setDayMode("train"); pickLoc("gym"); }],
   ["pick-after-cardio", () => { location.hash = "gym"; dayKind = { date: TODAY, k: "cardio" }; setDayMode("train"); pickLoc("gym"); renderGym();
     document.querySelector('#lochead [data-cr="prog"]').click(); const b = document.querySelector('#gen-body [data-pp="push"]'); if (!b) throw new Error("weights must be pickable after cardio"); b.click(); renderToday();

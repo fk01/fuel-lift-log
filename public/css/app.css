@@ -851,3 +851,15 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 .body-fig>i{opacity:1!important}
 .body-fig .bf-lines{mix-blend-mode:soft-light!important;opacity:.55!important}
 .pal-dots{display:flex;gap:3px;flex:none}.pal-dots i{width:14px;height:28px;border-radius:4px}
+/* today queue */
+.pl-row{display:flex;align-items:center;gap:12px;min-height:76px;cursor:pointer}
+.pl-st{font-size:.66rem;font-weight:700;letter-spacing:.02em;justify-self:start;padding:1px 8px;border-radius:999px;margin-bottom:2px;width:max-content}
+.pl-st.st-pend{background:#ffffff10;color:var(--muted)}
+.pl-st.st-prog{background:#2ee6ff22;color:var(--cyan);border:1px solid #2ee6ff55}
+.pl-st.st-done{background:#3dff8c22;color:var(--green);border:1px solid #3dff8c55}
+.pl-row.st-prog{background:linear-gradient(var(--surface),var(--surface)) padding-box,var(--grad) border-box;border-color:transparent;box-shadow:var(--glow)}
+.pl-row.st-done{opacity:.7}.pl-row.st-done .row-ic{color:var(--green);background:#3dff8c14}
+.pl-row .pc-act{display:flex;gap:6px;margin-left:auto}
+.pl-row .pc-more{width:40px;height:40px}
+.pl-add-main{min-height:52px}
+.pl-empty{text-align:center;padding:8px 0}
