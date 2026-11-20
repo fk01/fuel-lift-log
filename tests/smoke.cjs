@@ -167,6 +167,14 @@ const steps = [
     document.querySelector('#gen-body [data-pnew]').click(); document.getElementById("qg-name").value = "Quick A"; document.querySelector("#gen-body [data-qa]").click(); if (getComputedStyle(document.getElementById("lib-modal")).zIndex <= getComputedStyle(document.getElementById("gen-sheet")).zIndex) throw new Error("library above the form"); libMode.onPick(EXLIB[0]); document.querySelector("#gen-body [data-qs]").click();
     const k = Object.keys(PROGS).find(q => PROGS[q].name === "Quick A"); if (!k || PROGS[k].loc !== l.id || PROGS[k].ex.length !== 1 || !document.querySelector(`#gen-body [data-padd="${k}"].sel`)) throw new Error("new program under place, picked");
     closeGen(); delete PROGS[k]; LOCS = LOCS.filter(x => x !== l); paLoc = null; }],
+  ["back-one-level", () => { location.hash = "gym"; cancelProg(); setDayMode(null); dayPlan = {}; planAdd("push"); renderGym(); closeGen();
+    const x = () => document.querySelector("#gen-body .sh-x").click(), title = () => document.getElementById("gen-sheet").hidden ? "(closed)" : document.querySelector("#gen-body .sheet-h b").textContent, want = (v, w) => { if (v !== w) throw new Error("back went to " + v + " instead of " + w) };
+    openPlanItem("push"); const it = title(); document.querySelector("#gen-body [data-pil]").click(); const pl = title(); document.querySelector("#gen-body [data-ppman]").click(); const mp = title();
+    document.querySelector("#gen-body [data-pl]").click(); x(); want(title(), mp); x(); want(title(), pl); x(); want(title(), it); x(); want(title(), "(closed)");
+    openPlanAdd(); const ad = title(); document.querySelector("#gen-body [data-pcnew]").click(); document.querySelector("#gen-body [data-qb]").click(); want(title(), ad);
+    document.querySelector("#gen-body [data-pnew]").click(); document.querySelector("#gen-body [data-qb]").click(); want(title(), ad); x(); want(title(), "(closed)");
+    openPlanItem("push"); document.querySelector("#gen-body [data-pie]").click(); document.getElementById("pm-close").click(); }],
+  ["back-one-level-2", () => { const t2 = document.getElementById("gen-sheet").hidden ? "" : document.querySelector("#gen-body .sheet-h b").textContent; if (t2 !== PROGS.push.name) throw new Error("closing the program editor should return to its sheet, got: " + t2); closeGen(); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

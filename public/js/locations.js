@@ -200,7 +200,7 @@ function openLocEdit(id){const isNew=!id,l=isNew?{id:"l"+Date.now().toString(36)
       if(!d.dataset.sure){d.dataset.sure=1;d.textContent=t("ลบสถานที่นี้?");return}
       LOCS=LOCS.filter(q=>q.id!==l.id);Object.keys(PROGS).forEach(k=>{if(k!=="free"&&locOf(PROGS[k])===l.id)delete PROGS[k]});saveProgs();saveLocs();
       if(curLoc===l.id){curLoc=LOCS[0].id;locDay={};save("locday",locDay);cur=nextProg()}closeGen();renderGym()})})}
-function closeGen(){document.getElementById("gen-sheet").hidden=true}
+function closeGen(){document.getElementById("gen-sheet").hidden=true;GEN_STACK.length=0;genTitle=""}
 // copy / move a program to another place, converting exercises the target can't do
 function openProgMove(k,m0){const p=PROGS[k],others=LOCS.filter(l=>l.id!==locOf(p));if(!others.length){toast(t("ไม่มีสถานที่อื่น"));return}
   let to=others[0].id,mode=m0||"copy";
@@ -321,7 +321,7 @@ function openPlanItem(k){const p=PROGS[k],cx=isCardio(p),L=locById(locOf(p)==="*
     <div class="pm-menu">${cx?"":`<button class="menu-row" data-pie><span class="mi">✎</span><span class="mt"><b>${t("แก้โปรแกรม")}</b></span><span class="mc">›</span></button>`}${ip?"":`<button class="menu-row" data-pid><span class="mi">✕</span><span class="mt"><b>${t("เอาออกจากวันนี้")}</b></span></button>`}</div>
     <div class="actions sheet-act"><button class="btn" data-gen-close>${t("ปิด")}</button><button class="btn primary" data-pis style="flex:1">▶ ${t(ip?"กลับไปเล่น":"เริ่ม")}</button></div>`,
     b=>{b.querySelector("[data-pil]")?.addEventListener("click",()=>openPlanPlace(k));
-      b.querySelector("[data-pie]")?.addEventListener("click",()=>{closeGen();pmOnly=k;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false});
+      b.querySelector("[data-pie]")?.addEventListener("click",()=>{closeGen();pmReturn=()=>openPlanItem(k);pmOnly=k;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false});
       b.querySelector("[data-pid]")?.addEventListener("click",()=>{closeGen();planDel(k);renderGym()});
       b.querySelector("[data-pis]").addEventListener("click",()=>{closeGen();if(ip){setDayMode("train");renderGym();scrollAppTop();return}startPlanItem(k,true)})})}
 Object.assign(EN,{"ยังเล่นค้างอยู่":"is still in progress","จะทำยังไงกับ":"What to do with","ก่อนเริ่ม":"before starting","ยังไม่เริ่ม":"Don't start","แล้วเริ่ม":"and start","เก็บเซ็ตที่ทำไว้":"Keeps the sets you did","กด ↺ เลิกทำ ได้":"You can ↺ Undo","เอาออกจากวันนี้":"Remove from today","เล่นต่อ":"Continue"});
@@ -383,7 +383,7 @@ function quickPlace(type,done,back){let ic=type==="cardio"?"🏃":"🏢";const i
     <small class="note">${t(type==="cardio"?"ใช้สำหรับคาร์ดิโอ":"ใช้สำหรับเวท")} · ${t("แก้อุปกรณ์ได้ภายหลังที่ เพิ่มเติม › สถานที่")}</small>
     <div class="actions sheet-act"><button class="btn" data-qb>${t("ยกเลิก")}</button><button class="btn primary" data-qs style="flex:1">✓ ${t("สร้างสถานที่")}</button></div>`;
     b.querySelectorAll("[data-qi]").forEach(x=>x.addEventListener("click",()=>{b._n=b.querySelector("#qp-name").value;ic=x.dataset.qi;draw(b)}));
-    b.querySelector("[data-qb]").addEventListener("click",back);setTimeout(()=>b.querySelector("#qp-name")?.focus(),50);
+    b.querySelector("[data-qb]").addEventListener("click",()=>genBack());setTimeout(()=>b.querySelector("#qp-name")?.focus(),50);
     b.querySelector("[data-qs]").addEventListener("click",()=>{const n=b.querySelector("#qp-name").value.trim();if(!n){toast(t("ใส่ชื่อสถานที่"));return}
       const l={id:"l"+Date.now().toString(36),name:n,icon:ic,map:"",eq:type==="cardio"?[]:["db","body"],types:[type]};LOCS.push(l);saveLocs();done(l.id)})};
   openGen(t("สถานที่ใหม่"),`<div class="qp stack" style="gap:10px"></div>`,draw)}
@@ -395,7 +395,7 @@ function quickProg(type,loc,done,back){const L=locById(loc),cx=type==="cardio",e
     <button class="btn" data-qa>+ ${t("เพิ่มท่า")}</button>`}
     <div class="actions sheet-act"><button class="btn" data-qb>${t("ยกเลิก")}</button><button class="btn primary" data-qs style="flex:1">✓ ${t("สร้าง")}${ex.length?` · ${nU(ex.length,"ท่า")}`:""}</button></div>`;
     const keep=()=>{nm=box.querySelector("#qg-name").value};
-    box.querySelector("[data-qb]").addEventListener("click",back);if(!nm)setTimeout(()=>box.querySelector("#qg-name")?.focus(),50);
+    box.querySelector("[data-qb]").addEventListener("click",()=>genBack());if(!nm)setTimeout(()=>box.querySelector("#qg-name")?.focus(),50);
     box.querySelector("[data-qa]")?.addEventListener("click",()=>{keep();openLib({skip:new Set(ex.map(e=>e.id)),onPick:x=>{ex.push({...libPick(x),s:3,r:"10"});openGen(t("โปรแกรมใหม่"),`<div class="qg stack" style="gap:10px"></div>`,draw)}})});
     box.querySelectorAll("[data-qd]").forEach(x=>x.addEventListener("click",()=>{keep();const e=ex[+x.dataset.qd];e.s=Math.max(1,Math.min(10,e.s+ +x.dataset.dd));draw(b)}));
     box.querySelectorAll("[data-qx]").forEach(x=>x.addEventListener("click",()=>{keep();ex.splice(+x.dataset.qx,1);draw(b)}));

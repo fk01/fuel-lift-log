@@ -88,8 +88,16 @@ function renderRecovery(full){const box=full||document.getElementById("rec-card"
     <div class="rec-grid">${tiles}</div>
     <div class="rec-leg">${[[1,"< 40%"],[2,"กำลังฟื้น"],[3,"พร้อม"],[0,"ยังไม่เคยเล่น"]].map(([k,l])=>`<span><i style="background:${REC_C[k]}"></i>${t(l)}</span>`).join("")}</div>`}
 /* ---------- generic bottom sheet ---------- */
-function openGen(title,html,after){document.getElementById("gen-body").innerHTML=`<div class="sheet-h has-x"><b>${title}</b><button class="sh-x" data-gen-close aria-label="${t("ปิด")}">✕</button></div>${html}`;document.getElementById("gen-sheet").hidden=false;if(after)after(document.getElementById("gen-body"))}
-document.getElementById("gen-sheet").addEventListener("click",ev=>{if(ev.target.id==="gen-sheet"||ev.target.closest("[data-gen-close]"))document.getElementById("gen-sheet").hidden=true});
+// sheet stack: a sheet opened from another sheet remembers it; ✕ / backdrop / Cancel go back ONE level (not to the page).
+// Same title = re-render (replace). Re-opening a title that is lower in the stack returns to it. closeGen() closes everything.
+const GEN_STACK=[];let genTitle="";
+function openGen(title,html,after){const sh=document.getElementById("gen-sheet"),body=document.getElementById("gen-body");
+  if(!sh.hidden&&genTitle&&title!==genTitle){const j=GEN_STACK.findIndex(x=>x.title===title);if(j>=0)GEN_STACK.length=j;else{const f=document.createDocumentFragment();while(body.firstChild)f.appendChild(body.firstChild);GEN_STACK.push({title:genTitle,frag:f})}}
+  else if(sh.hidden)GEN_STACK.length=0;
+  genTitle=title;body.innerHTML=`<div class="sheet-h has-x"><b>${title}</b><button class="sh-x" data-gen-close aria-label="${t("ปิด")}">✕</button></div>${html}`;sh.hidden=false;if(after)after(body)}
+function genBack(){const sh=document.getElementById("gen-sheet"),body=document.getElementById("gen-body"),p=GEN_STACK.pop();
+  if(!p){sh.hidden=true;genTitle="";return}body.innerHTML="";body.appendChild(p.frag);genTitle=p.title;sh.hidden=false}
+document.getElementById("gen-sheet").addEventListener("click",ev=>{if(ev.target.id==="gen-sheet"||ev.target.closest("[data-gen-close]"))genBack()});
 /* ---------- 1RM calculator ---------- */
 Object.assign(EN,{"คำนวณ 1RM":"1RM calculator","น้ำหนัก":"Weight","ครั้ง":"Reps","เหรียญรางวัล":"Badges","ปิด":"Close"});
 function open1RM(){PAD.kg1={steps:[1,2.5,5,10],def:40};PAD.rp1={chips:Array.from({length:15},(_,i)=>i+1),cols:5};
