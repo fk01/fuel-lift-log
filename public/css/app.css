@@ -1037,3 +1037,7 @@ input,select,textarea{border-width:1.5px!important}
 .sw.on{background:var(--green,#3dff8c)}.sw.on i{left:21px}.menu-row[disabled]{opacity:.45}
 .rest-card{display:grid;gap:6px;justify-items:start}.rest-card b{display:flex;gap:6px;align-items:center}
 /* the old breadcrumb is replaced by the plan screen + workout focus bar */#lochead{display:none!important}
+/* WeightGram brand */
+.acct-mark{display:block;margin:0 auto -6px;filter:drop-shadow(0 0 12px #2ee6ff55)}
+.acct-logo{background:linear-gradient(180deg,#f4f8fb,#9aa7b3);-webkit-background-clip:text;background-clip:text;color:transparent!important;letter-spacing:.01em}
+.acct-sub{margin:-8px 0 2px;font-size:.7rem;letter-spacing:.32em;color:var(--muted)}

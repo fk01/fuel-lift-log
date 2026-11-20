@@ -1,6 +1,6 @@
 {
-  "name": "Fuel & Lift Log",
-  "short_name": "Fuel & Lift",
+  "name": "WeightGram",
+  "short_name": "WeightGram",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
