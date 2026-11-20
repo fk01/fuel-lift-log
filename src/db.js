@@ -30,7 +30,13 @@ export async function init(env) {
     env.DB.prepare("CREATE TABLE IF NOT EXISTS saves (uid TEXT NOT NULL, pid TEXT NOT NULL, created INTEGER NOT NULL, PRIMARY KEY (uid, pid))"),
     env.DB.prepare("CREATE TABLE IF NOT EXISTS follows (uid TEXT NOT NULL, fid TEXT NOT NULL, created INTEGER NOT NULL, PRIMARY KEY (uid, fid))"),
   ]);
-  try { await env.DB.prepare("ALTER TABLE users ADD COLUMN bio TEXT").run(); } catch (e) {}
+  await env.DB.batch([
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS comments (id TEXT PRIMARY KEY, pid TEXT NOT NULL, uid TEXT NOT NULL, parent TEXT, body TEXT NOT NULL, hidden INTEGER NOT NULL DEFAULT 0, created INTEGER NOT NULL)"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS activity (id TEXT PRIMARY KEY, uid TEXT NOT NULL, kind TEXT NOT NULL, data TEXT NOT NULL, created INTEGER NOT NULL)"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS reports (id TEXT PRIMARY KEY, uid TEXT NOT NULL, kind TEXT NOT NULL, target TEXT NOT NULL, reason TEXT, done INTEGER NOT NULL DEFAULT 0, created INTEGER NOT NULL)"),
+    env.DB.prepare("CREATE TABLE IF NOT EXISTS blocks (uid TEXT NOT NULL, bid TEXT NOT NULL, PRIMARY KEY (uid, bid))"),
+  ]);
+  for (const c of ["bio TEXT", "priv TEXT"]) { try { await env.DB.prepare(`ALTER TABLE users ADD COLUMN ${c}`).run(); } catch (e) {} }
   for (const t of ["creds", "subs"]) { try { await env.DB.prepare(`ALTER TABLE ${t} ADD COLUMN uid TEXT`).run(); } catch (e) {} }
   ready = true;
 }

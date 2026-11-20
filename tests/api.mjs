@@ -37,5 +37,21 @@ const cid = (await b("/api/people?q=coach")).j[0]; ok(cid && cid.name === "Coach
 ok((await b(`/api/people/${cid.id}/follow`, {})).j.on === true && (await b("/api/plans?following=1")).j.length === 1, "B follows C → plans from people I follow");
 ok((await c(`/api/people/${cid.id}`)).j.followers === 1, "C has 1 follower");
 ok((await c("/api/me/profile", { name: "Coach C2", bio: "PT" }, "PUT")).s === 200 && (await b(`/api/people/${cid.id}`)).j.name === "Coach C2", "profile name updates");
+// comments, feed, privacy, block, report, admin
+ok((await b(`/api/plans/${pid}/comments`, { body: "ใช้ดัมเบลแทนได้ไหม" })).s === 200, "B comments");
+const cms = (await c(`/api/plans/${pid}/comments`)).j; ok(cms.length === 1 && cms[0].canDelete, "plan owner sees + can delete comments");
+ok((await c(`/api/plans/${pid}/comments`, { body: "ได้ครับ", parent: cms[0].id })).s === 200 && (await b(`/api/plans/${pid}/comments`)).j.some((x) => x.parent === cms[0].id && x.byOwner), "owner replies");
+ok((await b(`/api/plans/${pid}/comments`, { body: "again" })).s === 429, "comment rate limit");
+ok((await b("/api/feed")).j.some((x) => x.kind === "share" && x.author.name === "Coach C2"), "feed shows a shared plan from someone I follow");
+ok((await c("/api/activity", { kind: "workout", data: { prog: "Upper A", sets: 20, mins: 50, vol: 9000 } })).j.logged === false, "workout not shared while privacy is off");
+ok((await c("/api/me/privacy", { acts: true, kg: false, eat: true }, "PUT")).s === 200, "C turns on activity sharing");
+ok((await c("/api/activity", { kind: "workout", data: { prog: "Upper A", sets: 20, mins: 50, vol: 9000 } })).j.logged === true, "workout shared");
+const fw = (await b("/api/feed")).j.find((x) => x.kind === "workout"); ok(fw && fw.data.sets === 20 && fw.data.vol === undefined, "B sees the workout without kg (kg off)");
+ok((await c("/api/me/privacy", { acts: false, eat: false }, "PUT")).s === 200 && !(await b("/api/feed")).j.some((x) => x.kind === "workout"), "turning off removes workout activity");
+ok((await b("/api/report", { kind: "plan", id: pid, reason: "spam" })).s === 200, "B reports the plan");
+ok((await b("/api/admin/reports")).s === 403, "non-admin can't read reports");
+ok((await a("/api/admin/reports")).j.some((r) => r.target === pid), "owner (admin) sees the report");
+ok((await c(`/api/people/${(await b("/api/auth/status")).j.me.id}/block`, {})).j.on === true, "C blocks B");
+ok((await b(`/api/plans/${pid}/comments`, { body: "hi again" })).s === 403 || (await b("/api/plans")).j.every((x) => x.id !== pid), "blocked: B can't comment / doesn't see C");
 ok((await c(`/api/plans/${pid}`, null, "DELETE")).s === 200 && (await b("/api/plans")).j.every((x) => x.id !== pid), "C removes the plan");
 console.log("API PASS");
