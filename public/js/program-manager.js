@@ -93,9 +93,9 @@ function renderPM(){
   const j=document.createElement("button");j.className="btn text sm";j.style.justifySelf="center";j.textContent=t("แก้แบบ JSON (ขั้นสูง)");j.addEventListener("click",()=>{pmTab="json";renderPM()});
   box.appendChild(a);box.appendChild(j)}
 // single-program editor: name, description, exercises
-function pmEditOne(box,k){const p=PROGS[k];
+function pmEditOne(box,k){const p=PROGS[k];txBegin("pm",{onEnd:()=>{if(pmFromList){pmOnly=null;pmFromList=false;renderPM()}else{document.getElementById("pm-modal").hidden=true}renderGym()}});
   if(pmFromList){const back=document.createElement("button");back.className="btn sm";back.style.justifySelf="start";back.textContent="‹ "+t("ทุกโปรแกรม");
-    back.addEventListener("click",()=>{pmOnly=null;pmFromList=false;renderPM()});box.appendChild(back)}
+    back.addEventListener("click",()=>txLeave());box.appendChild(back)}
   const c=document.createElement("div");c.className="ex";
   c.innerHTML=`<input data-f="name" value="${esc(p.name)}" aria-label="${t("ชื่อโปรแกรม")}" style="${pmFld};font-family:var(--f-display);font-size:1.05rem">
     <input data-f="sub" value="${esc(p.sub||"")}" placeholder="${t("คำอธิบาย")}" aria-label="${t("คำอธิบาย")}" style="${pmFld};font-size:.85rem">
@@ -110,5 +110,5 @@ function pmEditOne(box,k){const p=PROGS[k];
   on('[data-f="sub"]',"change",ev=>{p.sub=ev.target.value.trim();saveProgs();renderGym()});
   box.appendChild(c)}
 document.getElementById("pm-open").addEventListener("click",()=>{pmOnly=null;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false});
-document.getElementById("pm-close").addEventListener("click",()=>{document.getElementById("pm-modal").hidden=true;renderGym()});
+document.getElementById("pm-close").addEventListener("click",()=>txLeave(()=>{document.getElementById("pm-modal").hidden=true;renderGym()}));
 document.querySelectorAll("#pm-tabs .chip").forEach(c=>c.addEventListener("click",()=>{pmTab=c.dataset.tab;renderPM()}));

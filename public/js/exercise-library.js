@@ -51,9 +51,9 @@ function closeLib(){const n=EXLIB.length;EXLIB=EXLIB.filter(libNamed);if(EXLIB.l
 function libDone(x){
   if(!libNamed(x)){toast(t("ใส่ชื่อท่าก่อน"));return}
   if(EXLIB.some(q=>q!==x&&q.n.trim().toLowerCase()===x.n.trim().toLowerCase())){toast(t("มีท่าชื่อนี้อยู่แล้ว"));return}
-  libEdit=null;if(libMode){const m=libMode;closeLib();m.onPick(x)}else renderLib()}
+  txSave();if(libMode){const m=libMode;closeLib();m.onPick(x)}}
 function libForm(x){
-  const c=document.createElement("div");c.className="ex";const used=libUsed(x.id);
+  const c=document.createElement("div");c.className="ex";const used=libUsed(x.id);txBegin("lib",{onEnd:()=>{libEdit=null;renderLib()}});if(txTop().id==="lib")txTop().save=()=>libDone(x);
   const fld="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px;font:inherit";
   const sel="background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:7px;font:inherit;min-width:0";
   c.innerHTML=howTo(x)+`<input data-f="n" value="${esc(x.n)}" placeholder="${t("ชื่อท่า")}" aria-label="${t("ชื่อท่า")}" style="${fld}">
@@ -66,7 +66,7 @@ function libForm(x){
       <div class="chips">${MUS_KEYS.map(m=>{const [p,s]=musOf(x),st=p.includes(m)?"p":s.includes(m)?"s":"";return `<button class="chip mchip ${st}" data-mus="${m}">${t(MUS_NAME[m])}</button>`}).join("")}</div></div>
     <input data-f="link" ${gifOf(x)&&!x.link?"hidden":""} type="url" inputmode="url" value="${esc(x.link||"")}" placeholder="${t("ลิงก์วิธีเล่น (YouTube / TikTok)")}" aria-label="link" style="${fld};font-size:.85rem">
     <div class="zone">${used.length?t("ใช้ใน")+": "+used.map(esc).join(", "):t("ยังไม่ได้ใช้ในโปรแกรม")}</div>
-    <div class="actions"><button class="btn sm ghost" data-del>${t("ลบท่า")}</button><button class="btn sm primary" data-done style="margin-left:auto">${t("เสร็จ")}</button></div>`;
+    <div class="actions"><button class="btn sm ghost" data-del>${t("ลบท่า")}</button></div>`;
   const on=(s,ev,fn)=>c.querySelector(s).addEventListener(ev,fn);
   on('[data-f="n"]',"input",ev=>{const v=ev.target.value.trim();if(v||!libUsed(x.id).length)libUpdate(x.id,{n:v})});
   on('[data-f="g"]',"change",ev=>libUpdate(x.id,{g:ev.target.value}));
@@ -76,11 +76,10 @@ function libForm(x){
   c.querySelectorAll("[data-mus]").forEach(b=>b.addEventListener("click",()=>{const [p0,s0]=musOf(x),m=b.dataset.mus;let p=p0.filter(q=>q!==m),s=s0.filter(q=>q!==m);
     if(p0.includes(m))s.push(m);else if(!s0.includes(m))p.push(m);
     libUpdate(x.id,{mp:p,ms:s});const keep=libEdit;renderLib();libEdit=keep}));
-  on("[data-done]","click",()=>libDone(x));
   on("[data-del]","click",ev=>{const b=ev.target;
     if(libUsed(x.id).length){toast(t("ยังใช้อยู่ในโปรแกรม ลบออกจากโปรแกรมก่อน"));return}
     if(libNamed(x)&&!b.dataset.sure){b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน");return}
-    EXLIB=EXLIB.filter(q=>q!==x);save("exlib",EXLIB);libEdit=null;renderLib();if(libNamed(x))toast(t("ลบท่าแล้ว"))});
+    EXLIB=EXLIB.filter(q=>q!==x);save("exlib",EXLIB);txSave();if(libNamed(x))toast(t("ลบท่าแล้ว"))});
   return c}
 let libView=(()=>{try{return localStorage.getItem("libView")||"list"}catch(e){return "list"}})();
 document.querySelectorAll("[data-lv]").forEach(b=>b.addEventListener("click",()=>{libView=b.dataset.lv;try{localStorage.setItem("libView",libView)}catch(e){}renderLib()}));
@@ -118,7 +117,7 @@ function renderLib(){const G=libView==="grid",FS=G?96:40;document.querySelectorA
 document.getElementById("lib-new").addEventListener("click",()=>{
   EXLIB=EXLIB.filter(libNamed);const x={id:"c"+Date.now().toString(36),n:"",z:"🔩"};if(libGroup!=="all")x.g=libGroup;EXLIB.push(x);libEdit=x.id;renderLib();
   const inp=document.querySelector('#lib-list [data-f="n"]');if(inp){inp.scrollIntoView({block:"center"});inp.focus()}});
-document.getElementById("lib-close").addEventListener("click",closeLib);
+document.getElementById("lib-close").addEventListener("click",()=>txLeave(closeLib));
 document.getElementById("lib-q").addEventListener("input",ev=>{libQ=ev.target.value;renderLib()});
 document.getElementById("lib-open").addEventListener("click",()=>openLib());
 
@@ -128,7 +127,7 @@ function openMusPick(id,name,after){const x=EXLIB.find(q=>q.id===id)||{id,n:name
     b.querySelectorAll("[data-mus]").forEach(c=>{const m=c.dataset.mus;c.className="chip mchip "+(p.includes(m)?"p":s.includes(m)?"s":"")})};
   openGen("💪 "+esc(name),`<small class="note">${t("แตะ 1 ครั้ง = หลัก, 2 = รอง, 3 = ไม่โดน")}</small><div class="mus-fig"></div>
     <div class="chips">${MUS_KEYS.map(m=>`<button class="chip mchip" data-mus="${m}">${t(MUS_NAME[m])}</button>`).join("")}</div>
-    <button class="btn primary" data-gen-close>${t("เสร็จ")}</button>`,b=>{draw(b);
+`,b=>{txBegin("gen",{onEnd:()=>{document.getElementById("gen-sheet").hidden=true;if(after)after()}});draw(b);
     b.querySelectorAll("[data-mus]").forEach(c=>c.addEventListener("click",()=>{const [p0,s0]=musOf(x),m=c.dataset.mus;let p=p0.filter(q=>q!==m),s=s0.filter(q=>q!==m);
       if(p0.includes(m))s.push(m);else if(!s0.includes(m))p.push(m);
       if(!EXLIB.some(q=>q.id===id)){EXLIB.push({...x});}libUpdate(id,{mp:p,ms:s});x.mp=p;x.ms=s;draw(b);if(after)after()}))})}
