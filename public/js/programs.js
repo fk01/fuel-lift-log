@@ -124,7 +124,7 @@ document.getElementById("bad-cancel").addEventListener("click",closeBad);
 document.getElementById("bad-modal").addEventListener("click",ev=>{if(ev.target.id==="bad-modal")closeBad()});
 document.getElementById("bad-ok").addEventListener("click",()=>{if(!badK)return;const on=!cxGet(badK);cxSet(badK,on?{}:null);closeBad();try{renderFood()}catch(e){}renderGym();toast(on?PROGS[badK].name+" ✓"+(PROGS[badK].tag==="bad"?" +50 XP":""):t("ยกเลิกแล้ว"))});
 // open the right logger for a cardio program
-function openCardio(k){const p=PROGS[k];if(!p)return;if(p.track==="dist"){runK=k;openRun()}else openBad(k)}
+function openCardio(k){const p=PROGS[k];if(!p)return;if(p.track==="dist"){runK=k;openRun();cardioWhere(document.querySelector("#run-modal .run-in"),k)}else{openBad(k);cardioWhere(document.querySelector("#bad-modal .sheet-in"),k)}}
 
 /* ---------- "Today" card: what the weekly plan says for the selected day, with one action ---------- */
 Object.assign(EN,{"เล่นล่าสุด:":"Last trained:","วันนี้":"Today","วันพัก":"Rest day","พักให้กล้ามฟื้น":"Let your muscles recover","ออกนอกตาราง":"Train anyway","กลับไปเล่นต่อ":"Resume workout","เริ่ม":"Start","บันทึกตีแบด":"Log badminton","บันทึกวิ่ง":"Log run","เสร็จแล้ววันนี้":"Done today","ทำแล้ว":"Done","กำลังเล่น":"in progress"});
