@@ -54,7 +54,7 @@ function lastTrained(){const out={},by={};logs.filter(l=>l.date<=TODAY).forEach(
 let recSel=null;
 // all 16 muscles always shown, fixed anatomical order; state: 0 never · 1 just trained (≤1d) · 2 recovering (2d) · 3 ready (3–7d) · 4 neglected (>7d)
 const REC_ORDER=["chest","delt","rear","traps","lats","bi","tri","fore","abs","obl","glute","quad","ham","add","abd","calf"],NEGLECT=7;
-const REC_C=["#55606f","#e07a6a","#d9a46c","#7cc47a","#7cc47a"];   // neglected = ready (green); the tile says how long ago
+const REC_C=["#3a4658","#ff5a4e","#ff9f43","#5ad1ff","#5ad1ff"];   // heat palette: red/orange = still fatigued, light blue = ready; neglected = ready; the tile says how long ago
 Object.assign(EN,{"ฟื้น":"Recovered","พร้อมเต็มที่":"fully ready","พร้อมแล้ว":"Ready","พรุ่งนี้":"Tomorrow","เล่นล่าสุด":"last trained","ยังไม่ฟื้นเต็ม":"not fully recovered","กำลังฟื้น":"Recovering","พร้อม":"Ready","ยังไม่เคยเล่น":"Never","ยังไม่เคย":"Never","ละเลย":"Neglected","ควรเล่น":"Due","ท่าที่เล่นล่าสุด":"Last exercises"});
 // recovery %: hours since the last session that hit the muscle ÷ full recovery time (by muscle size, scaled by that session's sets)
 const REC_H={chest:72,lats:72,quad:72,ham:72,glute:72,delt:48,rear:48,traps:48,bi:48,tri:48,add:48,abd:48,calf:36,abs:36,obl:36,fore:36};
