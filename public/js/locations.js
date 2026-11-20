@@ -346,19 +346,35 @@ function openPlanPlace(k){const p=PROGS[k],cx=isCardio(p);
     b.querySelector("[data-ppok]").addEventListener("click",()=>{if(cx){p.lastLoc=sel;saveProgs()}else{const nk=(opts.find(([id])=>id===sel)||[])[1];if(nk&&nk!==k){planDel(k);planAdd(nk)}}closeGen();renderGym()})};
   openGen(esc(p.name)+" — "+t("เล่นที่ไหน?"),`<div class="pp-body stack" style="gap:10px"></div>`,draw)}
 let paTab="gym";
-function openPlanAdd(keepSel){const ks=new Set(planList()),sel=keepSel instanceof Set?keepSel:new Set(ks),locked=k=>!!planItemDone(k)||inProg(k);
-  const row=k=>{const p=PROGS[k],cx=isCardio(p),on=sel.has(k),lk=locked(k),L=locById(cx?p.lastLoc:locOf(p));
-    const sub=lk?t(planItemDone(k)?"ทำแล้ววันนี้":"กำลังเล่น"):cx?(L?`${t("ล่าสุด")} ${t(L.name)}`:t("ยังไม่เคยเล่น")):`${L?t(L.name)+" · ":""}${nU(p.ex.length,"ท่า")}`;
-    return `<button class="menu-row pa-row${on?" sel":""}${lk?" in":""}" data-padd="${esc(k)}"${lk?" disabled":""}><span class="mi">${cx?licon(LI[EMO[p.icon]]?EMO[p.icon]:"run"):licon("dumbbell")}</span><span class="mt"><b>${esc(p.name)}</b><small>${esc(sub)}</small></span><span class="pa-box">${on?"✓":""}</span></button>`};
-  const all=Object.keys(PROGS).filter(k=>k!=="free"),list=paTab==="cardio"?all.filter(k=>isCardio(PROGS[k])):all.filter(k=>!isCardio(PROGS[k])).sort((a,b)=>String(locOf(PROGS[a])).localeCompare(locOf(PROGS[b])));
+// Add to today. Weights: place first, then that place's programs. Cardio: sport first, then where (per sport).
+let paLoc=null,paCx={};
+function openPlanAdd(keepSel){const fresh=!(keepSel instanceof Set),ks=new Set(planList()),sel=fresh?new Set(ks):keepSel,locked=k=>!!planItemDone(k)||inProg(k);if(fresh)paCx={};
+  const gymLocs=LOCS.filter(l=>hasType(l,"gym")),cxLocs=LOCS.filter(l=>hasType(l,"cardio"));
+  if(!paLoc||!gymLocs.some(l=>l.id===paLoc))paLoc=(gymLocs.find(l=>l.id===curLoc)||gymLocs[0]||{}).id;
+  const row=k=>{const p=PROGS[k],cx=isCardio(p),on=sel.has(k),lk=locked(k);
+    const sub=lk?t(planItemDone(k)?"ทำแล้ววันนี้":"กำลังเล่น"):cx?"":nU(p.ex.length,"ท่า")+(p.sub?" · "+t(p.sub):"");
+    return `<button class="menu-row pa-row${on?" sel":""}${lk?" in":""}" data-padd="${esc(k)}"${lk?" disabled":""}><span class="mi">${cx?licon(LI[EMO[p.icon]]?EMO[p.icon]:"run"):licon("dumbbell")}</span><span class="mt"><b>${esc(p.name)}</b>${sub?`<small>${esc(sub)}</small>`:""}</span><span class="pa-box">${on?"✓":""}</span></button>`};
+  const cxWhere=k=>{const p=PROGS[k],cur0=paCx[k]||(locById(p.lastLoc)?p.lastLoc:curLoc);paCx[k]=cur0;
+    return `<div class="pa-where"><small>${t("ที่ไหน?")}</small>${cxLocs.map(l=>`<button class="chip${l.id===cur0?" on":""}" data-pcx="${esc(k)}" data-pcl="${esc(l.id)}">${esc(l.icon||"📍")} ${esc(t(l.name))}</button>`).join("")}<button class="chip" data-pcnew>+ ${t("ที่ใหม่")}</button></div>`};
+  const all=Object.keys(PROGS).filter(k=>k!=="free");let body;
+  if(paTab==="cardio"){const list=all.filter(k=>isCardio(PROGS[k]));
+    body=`<div class="pa-step">1 · ${t("กีฬาอะไร?")}</div><div class="pm-menu">${list.map(k=>row(k)+(sel.has(k)&&!locked(k)?cxWhere(k):"")).join("")||`<small class="note" style="padding:12px">${t("ยังไม่มีโปรแกรม")}</small>`}</div>`}
+  else{const list=all.filter(k=>!isCardio(PROGS[k])&&locOf(PROGS[k])===paLoc),cnt=id=>[...sel].filter(k=>PROGS[k]&&!isCardio(PROGS[k])&&locOf(PROGS[k])===id).length;
+    body=`<div class="pa-step">1 · ${t("ไปที่ไหน?")}</div><div class="chips">${gymLocs.map(l=>`<button class="chip${l.id===paLoc?" on":""}" data-pl0="${esc(l.id)}">${esc(l.icon||"📍")} ${esc(t(l.name))}${cnt(l.id)?` · ${cnt(l.id)}`:""}</button>`).join("")}<button class="chip" data-pcnew>+ ${t("ที่ใหม่")}</button></div>
+      <div class="pa-step">2 · ${t("โปรแกรม")}</div><div class="pm-menu">${list.map(row).join("")||`<small class="note" style="padding:12px">${t("ที่นี่ยังไม่มีโปรแกรม")}</small>`}</div>`}
   openGen(t("เพิ่มเข้าวันนี้"),`<div class="segc pa-tabs"><button class="chip" data-pt="gym" aria-pressed="${paTab==="gym"}">${t("เวท")}</button><button class="chip" data-pt="cardio" aria-pressed="${paTab==="cardio"}">${t("คาร์ดิโอ")}</button></div>
-    <small class="note" style="margin:-4px 0 2px">${t("เลือกได้หลายโปรแกรม")}</small><div class="pm-menu">${list.map(row).join("")||`<small class="note" style="padding:12px">${t("ยังไม่มีโปรแกรม")}</small>`}</div>
-    <button class="btn ghost" data-pnew>+ ${t("สร้างโปรแกรมใหม่")}</button><button class="btn primary sticky-b" data-pgo disabled>${t("เลือกโปรแกรม")}</button>`,
-    b=>{const go=b.querySelector("[data-pgo]");const upd=()=>{const add=[...sel].filter(k=>!ks.has(k)).length,del=[...ks].filter(k=>!sel.has(k)).length;go.disabled=!add&&!del;go.textContent=add||del?(lang==="th"?`บันทึก · วันนี้ ${sel.size} โปรแกรม`:`Save · ${sel.size} today`):t("เลือกโปรแกรม")};upd();
+    ${body}<button class="btn ghost" data-pnew>+ ${t("สร้างโปรแกรมใหม่")}</button><button class="btn primary sticky-b" data-pgo disabled>${t("เลือกโปรแกรม")}</button>`,
+    b=>{const go=b.querySelector("[data-pgo]");const cxCh=()=>Object.entries(paCx).some(([k,l])=>sel.has(k)&&PROGS[k]&&PROGS[k].lastLoc!==l);
+      const upd=()=>{const add=[...sel].filter(k=>!ks.has(k)).length,del=[...ks].filter(k=>!sel.has(k)).length,ch=add||del||cxCh();go.disabled=!ch;go.textContent=ch?(lang==="th"?`บันทึก · วันนี้ ${sel.size} โปรแกรม`:`Save · ${sel.size} today`):t("เลือกโปรแกรม")};upd();
       b.querySelectorAll("[data-pt]").forEach(x=>x.addEventListener("click",()=>{paTab=x.dataset.pt;openPlanAdd(sel)}));
-      b.querySelectorAll("[data-padd]").forEach(x=>x.addEventListener("click",()=>{const k=x.dataset.padd;if(sel.has(k))sel.delete(k);else sel.add(k);x.classList.toggle("sel",sel.has(k));x.querySelector(".pa-box").textContent=sel.has(k)?"✓":"";upd()}));
-      go.addEventListener("click",()=>{sel.forEach(k=>{if(!ks.has(k))planAdd(k)});ks.forEach(k=>{if(!sel.has(k))planDel(k)});closeGen();renderGym()});
+      b.querySelectorAll("[data-pl0]").forEach(x=>x.addEventListener("click",()=>{paLoc=x.dataset.pl0;openPlanAdd(sel)}));
+      b.querySelectorAll("[data-pcx]").forEach(x=>x.addEventListener("click",()=>{paCx[x.dataset.pcx]=x.dataset.pcl;openPlanAdd(sel)}));
+      b.querySelectorAll("[data-pcnew]").forEach(x=>x.addEventListener("click",()=>openLocEdit(null)));
+      b.querySelectorAll("[data-padd]").forEach(x=>x.addEventListener("click",()=>{const k=x.dataset.padd;if(sel.has(k))sel.delete(k);else sel.add(k);if(isCardio(PROGS[k])){openPlanAdd(sel);return}x.classList.toggle("sel",sel.has(k));x.querySelector(".pa-box").textContent=sel.has(k)?"✓":"";upd()}));
+      go.addEventListener("click",()=>{let pc=false;Object.entries(paCx).forEach(([k,l])=>{if(sel.has(k)&&PROGS[k]&&PROGS[k].lastLoc!==l){PROGS[k].lastLoc=l;pc=true}});if(pc)saveProgs();
+        sel.forEach(k=>{if(!ks.has(k))planAdd(k)});ks.forEach(k=>{if(!sel.has(k))planDel(k)});closeGen();renderGym()});
       b.querySelector("[data-pnew]").addEventListener("click",()=>openCreateProg({type:paTab,today:true}))})}
+Object.assign(EN,{"กีฬาอะไร?":"Which sport?","ที่ไหน?":"Where?","ที่นี่ยังไม่มีโปรแกรม":"No programs here yet"});
 // one form, nothing is created until Create is tapped
 function openCreateProg(o){o=o||{};let ty=o.type||"gym",loc=hasType(hereLoc(),"gym")?curLoc:(LOCS.find(l=>hasType(l,"gym"))||{}).id;
   const draw=()=>{const gl=LOCS.filter(l=>hasType(l,"gym"));
