@@ -518,7 +518,7 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 .days .chip{min-width:40px;padding:6px 8px;text-align:center}
 .prog.cardio{position:relative}.prog.cardio .pc-more{position:absolute;top:8px;right:8px;margin:0}
 /* workout story */
-body.loc-picking:has(#v-gym:not([hidden])) #step1{display:none}
+body.loc-picking:has(#v-gym:not([hidden])) .wrap>#step1{display:none}
 .lochead{display:flex;align-items:center;justify-content:space-between;gap:12px}.lochead b{font-size:1.3rem;font-weight:600}
 #v-gym.picking>.lochead{display:none}
 .lp-h{font-family:var(--f-display);font-weight:400;font-size:2rem;margin:0}
@@ -987,3 +987,14 @@ input,select,textarea{border-width:1.5px!important}
 .hq-a{font-size:1.2rem;font-weight:800;line-height:1.3}.hq-s{color:var(--muted);font-size:.82rem}
 .tr-links{margin-top:14px}
 .tabbar{grid-template-columns:repeat(5,1fr)!important}.tabbar .tab small{font-size:.66rem;white-space:nowrap}
+/* Eat calendar */
+.eat-cal{display:grid;gap:8px;background:var(--card);border:1.5px solid var(--edge);border-radius:18px;padding:12px}
+.ec-h{display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center}.ec-h small{color:var(--green,#3dff8c);font-weight:700}
+.ec-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.ec-d{display:grid;justify-items:center;gap:1px;padding:6px 0;border-radius:12px;border:1.5px solid var(--line);background:transparent;color:var(--fg);font:inherit;cursor:pointer}
+.ec-d small{font-size:.62rem;color:var(--muted)}.ec-d b{font-size:.95rem}.ec-d span{font-size:.6rem;font-family:var(--f-num);color:var(--muted)}.ec-d i{font-style:normal;font-size:.75rem;height:1em}
+.ec-d.ok{border-color:#3dff8c88;background:#3dff8c14}.ec-d.ok i,.ec-d.ok span{color:var(--green,#3dff8c)}
+.ec-d.low{border-color:#ff5d7388;background:#ff5d7312}.ec-d.low i,.ec-d.low span{color:#ff8a9a}
+.ec-d.fut{opacity:.35}.ec-d.on{box-shadow:0 0 0 2px var(--cyan,#2ee6ff)}
+.ec-goal{text-align:center;margin:0}
+.cal-slot #step1{margin:4px 0 6px}
