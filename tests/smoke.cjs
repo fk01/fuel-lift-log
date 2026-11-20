@@ -123,6 +123,9 @@ const steps = [
   ["create-from-today", () => { location.hash = "gym"; cancelProg(); setDayMode(null); dayPlan = {}; renderGym(); openPlanAdd(); const n = document.querySelector("#gen-body [data-pnew]"); if (!n) throw new Error("create button");
     const before = Object.keys(PROGS).length; addToToday = true; newWeights(); document.getElementById("pm-modal").hidden = true; const k = Object.keys(PROGS).find(q => !(q in {}) && dp().add.includes(q));
     if (Object.keys(PROGS).length !== before + 1 || !k) throw new Error("new program added to today"); delete PROGS[k]; dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
+  ["untick-in-sheet", () => { location.hash = "gym"; cancelProg(); dayPlan = {}; planAdd("pull"); setDayMode(null); renderGym(); openPlanAdd(); const r = document.querySelector('#gen-body [data-padd="pull"]');
+    if (r.disabled || !r.classList.contains("sel")) throw new Error("added row should be ticked and tappable"); r.click(); document.querySelector("#gen-body [data-pgo]").click();
+    if (planList().includes("pull")) throw new Error("untick removes from today"); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
