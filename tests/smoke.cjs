@@ -105,7 +105,8 @@ const steps = [
   ["pick-after-cardio", () => { location.hash = "gym"; dayKind = { date: TODAY, k: "cardio" }; setDayMode("train"); pickLoc("gym"); renderGym();
     document.querySelector('#lochead [data-cr="prog"]').click(); const b = document.querySelector('#gen-body [data-pp="push"]'); if (!b) throw new Error("weights must be pickable after cardio"); b.click(); renderToday();
     if (!document.querySelector('#today [data-today="start:push"]')) throw new Error("start button"); dayKind = {}; }],
-  ["card-start", () => { location.hash = "gym"; cancelProg(); setDayMode("train"); pickLoc("gym"); renderGym(); const g = document.querySelector("#p-push [data-go]"); if (!g) throw new Error("start button on card"); g.click();
+  ["card-start", () => { document.querySelectorAll(".modal").forEach(m => m.hidden = true); location.hash = "gym"; cancelProg(); setDayMode("train"); pickLoc("gym"); renderGym(); const g = document.querySelector("#p-push [data-go]"); if (!g) throw new Error("start button on card");
+    const r = g.getBoundingClientRect(), hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); if (!hit || !hit.closest("[data-go]")) throw new Error("start button is covered by " + (hit && hit.className)); hit.click();
     if (!picked || cur !== "push") throw new Error("card start"); cancelProg(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
