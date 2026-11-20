@@ -882,3 +882,5 @@ body.tx-open #app,body.tx-open main{padding-bottom:110px}
 .tx-ask[hidden]{display:none}
 .tx-ask-in{background:var(--card,#1a2230);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:8px;max-width:360px;width:100%}
 .tx-ask-in small{color:var(--muted)}.tx-ask .btn.warn{color:#ff5d73;border-color:#ff5d7366}
+/* modal title + Close stay visible while the list scrolls (was scrolling away under the iOS status bar) */
+.modal:not(.sheet)>.modal-in>.row-head:first-child{position:sticky;top:calc(-16px - env(safe-area-inset-top,0px));z-index:4;background:#000;margin:calc(-16px - env(safe-area-inset-top,0px)) -4px 0;padding:calc(12px + env(safe-area-inset-top,0px)) 4px 10px}
