@@ -146,8 +146,9 @@ const steps = [
     PROGS["c-test"] = { ...JSON.parse(JSON.stringify(PROGS.push)), loc: "condo" }; planAdd("push"); renderGym(); const c = document.querySelector('#locpick [data-pl="push"] [data-plloc]'); if (!c) throw new Error("place chip"); c.click();
     document.querySelector('#gen-body [data-pp="condo"]').click(); document.querySelector("#gen-body [data-ppok]").click(); if (!planList().some(k => locOf(PROGS[k]) === "condo") || planList().includes("push")) throw new Error("swap to condo copy");
     delete PROGS["c-test"]; if (!had) LOCS = LOCS.filter(l => l.id !== "condo"); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
-  ["meal-undo", () => { location.hash = "gym"; cancelProg(); setDayMode(null); dayPlan = {}; planAdd("push"); renderGym(); const e = document.querySelector("#locpick .tm-card [data-eat]"); if (!e) throw new Error("eat button"); const id = e.dataset.eat; e.click();
-    const u = document.querySelector(`#locpick .tm-card [data-uneat="${id}"]`); if (!u || !fs().done[id]) throw new Error("undo chip"); u.click(); if (fs().done[id]) throw new Error("undo eaten"); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
+  ["eat-in-today", () => { location.hash = "gym"; cancelProg(); setDayMode(null); dayPlan = {}; planAdd("push"); renderGym(); const c = document.querySelector("#locpick .eat-slot #meals input[type=checkbox]"); if (!c) throw new Error("food inside today");
+    const id = c.id.slice(2); c.click(); if (!fs().done[id]) throw new Error("tick meal"); document.querySelector(`#locpick #c-${id}`).click(); if (fs().done[id]) throw new Error("untick meal"); renderGym(); if (!document.querySelector("#locpick #v-food")) throw new Error("food survives re-render");
+    dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

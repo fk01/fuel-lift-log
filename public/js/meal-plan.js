@@ -25,17 +25,9 @@ function openMealPlan(){MP=MP||mpClone();if(!MP.meals)MP=mpClone();
   openGen("✎ "+t("แผนกิน"),`<div class="mp-body stack" style="gap:10px"></div>`,b=>{txBegin("gen",{onEnd:()=>{document.getElementById("gen-sheet").hidden=true;try{renderFood();renderGym()}catch(e){}}});draw(b)})}
 Object.assign(EN,{"แผนกิน":"Meal plan","เป้าต่อวัน":"Daily targets","มื้อประจำวัน":"Daily meals","มื้อเสริมตามกิจกรรม":"Activity extras","เพิ่มมื้อ":"Add meal","ชื่อมื้อ":"Meal name","ลบมื้อ":"Delete meal","รายการอาหาร (บรรทัดละ 1 อย่าง)":"Items (one per line)","วิตามิน":"Vitamins","จัดการแผน":"Manage plan","แผนกินวันนี้":"Today's meals","กินแล้ว":"Eaten"});
 document.getElementById("mp-open")?.addEventListener("click",openMealPlan);
-// today's meals summary card at the bottom of the Today screen
-function todayMeals(box){if(!box||DAY!==TODAY||box.querySelector(".tm-card"))return;const meals=mealList(),d=fs();
-  const x=logSum(DAY);let k=x.k,p=x.p;meals.forEach(m=>{if(d.done[m.id]){k+=m.k;p+=m.p}});
-  const next=meals.filter(m=>!d.done[m.id]).slice(0,2),c=document.createElement("div");c.className="card tm-card";
-  c.innerHTML=`<div class="rc-h"><b>${licon("bowl")} ${t("แผนกินวันนี้")}</b><button class="rc-map" data-mpo>${t("จัดการแผน")} ›</button></div>
-    <small class="note">${k.toLocaleString()} / ${K_GOAL.toLocaleString()} kcal · ${t("โปรตีน")} ${p} / ${P_TARGET} g</small><i class="tm-bar"><i style="width:${Math.min(100,p/P_TARGET*100)}%"></i></i>
-    ${next.map(m=>`<div class="tm-row"><span class="time">${esc(t(m.time))}</span><span class="tm-tx"><b>${esc(t(m.name))}</b><small>${esc((m.items||[]).map(s=>t(s)).join(" · "))}</small></span><button class="pc-go" data-eat="${esc(m.id)}">✓ ${t("กินแล้ว")}</button></div>`).join("")||`<small class="note">${t("ครบทุกมื้อแล้ว ✅")}</small>`}`;
-  const eaten=meals.filter(m=>d.done[m.id]);if(eaten.length){const e=document.createElement("div");e.className="tm-eaten";
-    e.innerHTML=`<small>${t("กินแล้ว")}:</small>`+eaten.map(m=>`<button class="tm-undo" data-uneat="${esc(m.id)}" aria-label="${t("ยกเลิก")} ${esc(t(m.name))}">✓ ${esc(t(m.name))} <span>↺</span></button>`).join("");c.appendChild(e)}
-  c.querySelectorAll("[data-uneat]").forEach(b=>b.addEventListener("click",()=>{fs().done[b.dataset.uneat]=false;save("mealcheck",food);try{renderFood()}catch(e){}renderGym()}));
-  c.querySelector("[data-mpo]").addEventListener("click",openMealPlan);
-  c.querySelector(".rc-h b").addEventListener("click",()=>{location.hash="food"});
-  c.querySelectorAll("[data-eat]").forEach(b=>b.addEventListener("click",()=>{fs().done[b.dataset.eat]=true;save("mealcheck",food);try{renderFood()}catch(e){}renderGym()}));
-  box.appendChild(c)}
+// "What to eat?" on the Today screen: the whole food view is moved under the plan (and back before each re-render)
+const FOOD_HOME=document.createComment("food-home");document.getElementById("v-food").before(FOOD_HOME);
+function foodHomeBack(){const fv=document.getElementById("v-food");if(fv&&fv.parentNode!==FOOD_HOME.parentNode)FOOD_HOME.after(fv);if(fv)fv.hidden=true}
+function todayMeals(box){if(!box||box.querySelector(".eat-h"))return;const h=document.createElement("h2");h.className="dp-sub eat-h";h.textContent=t("วันนี้กินอะไร?");
+  const slot=document.createElement("div");slot.className="eat-slot";const fv=document.getElementById("v-food");fv.hidden=curView!=="gym";slot.appendChild(fv);box.append(h,slot);try{renderFood()}catch(e){}}
+Object.assign(EN,{"วันนี้กินอะไร?":"What to eat?"});
