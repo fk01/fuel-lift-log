@@ -1001,3 +1001,5 @@ input,select,textarea{border-width:1.5px!important}
 .tabbar .tab small{font-size:.6rem}
 .qg-row{cursor:default}.qg-sr{display:flex;gap:6px;align-items:center;font-family:var(--f-num);font-size:.85rem}.qg-sr .btn{min-width:34px;padding:4px 8px}
 #lib-modal{z-index:44}
+.pa-hb{display:flex;gap:14px}.pa-delrow .pa-x{color:#ff8a9a;display:grid;place-items:center;width:34px;height:34px;border:1.5px solid #ff5d7366;border-radius:10px}
+.pa-delrow.warn{border-color:#ff5d73!important;background:#ff5d7314!important}.pa-delrow.warn small{color:#ff8a9a}
