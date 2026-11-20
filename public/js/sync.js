@@ -18,7 +18,7 @@ async function flush(){
         for(const id in syncedLogs)if(!(id in now2)){await col.doc(id).delete();delete syncedLogs[id]}
       }
       if(k==="body")await col.doc("body").set({list:BODY});
-      if(k==="restcfg"||k==="gymdraft"||k==="progs"||k==="unit"||k==="exlib"||k==="mealplan")await col.doc("settings").set({restCfg,draft,progs:PROGS,locs:LOCS,lib:EXLIB,progsRev,unit,scheme:SCHEME,...(MP?{mealplan:MP}:{})});
+      if(k==="restcfg"||k==="gymdraft"||k==="progs"||k==="unit"||k==="exlib"||k==="mealplan"||k==="rech")await col.doc("settings").set({restCfg,draft,progs:PROGS,locs:LOCS,lib:EXLIB,progsRev,unit,scheme:SCHEME,...(MP?{mealplan:MP}:{}),rech:REC_USER});
     }
     syncMsg(t("ซิงก์แล้ว ✓"));
   }catch(e){keys.forEach(k=>dirty.add(k));syncMsg(t("ซิงก์ไม่สำเร็จ"))}
@@ -37,7 +37,7 @@ async function cloudLoad(){
       if(d.id.startsWith("f-")){const {date,...rest}=v;food[date]=rest;seenF.add(date)}
       else if(d.id.startsWith("g-")){const i=logs.findIndex(l=>logId(l)===d.id);if(i>=0)logs[i]=v;else logs.push(v);syncedLogs[d.id]=JSON.stringify(v)}
       else if(d.id==="body"){if(Array.isArray(v.list))BODY=v.list;try{localStorage.setItem("body",JSON.stringify(BODY))}catch(e){}}
-      else if(d.id==="settings"){Object.assign(restCfg,v.restCfg||{});if(v.progs){PROGS=v.progs;if((v.scheme||1)<SCHEME){to5x5();toUpload.add("progs")}}if(Array.isArray(v.lib))EXLIB=v.lib;if(Array.isArray(v.locs)&&v.locs.length){LOCS=v.locs;try{localStorage.setItem("locs",JSON.stringify(LOCS))}catch(e){}}else if(v.progs)LOCS=null;setProgsRev(+v.progsRev||0);if(v.unit)unit=v.unit;if(v.mealplan&&typeof v.mealplan==="object"){MP=v.mealplan;try{localStorage.setItem("mealplan",JSON.stringify(MP))}catch(e){}mpApply()}if(v.draft&&v.draft.prog&&!draft.prog)draft=v.draft}
+      else if(d.id==="settings"){Object.assign(restCfg,v.restCfg||{});if(v.progs){PROGS=v.progs;if((v.scheme||1)<SCHEME){to5x5();toUpload.add("progs")}}if(Array.isArray(v.lib))EXLIB=v.lib;if(Array.isArray(v.locs)&&v.locs.length){LOCS=v.locs;try{localStorage.setItem("locs",JSON.stringify(LOCS))}catch(e){}}else if(v.progs)LOCS=null;setProgsRev(+v.progsRev||0);if(v.unit)unit=v.unit;if(v.rech&&typeof v.rech==="object"){REC_USER=v.rech;try{localStorage.setItem("rech",JSON.stringify(REC_USER))}catch(e){}}if(v.mealplan&&typeof v.mealplan==="object"){MP=v.mealplan;try{localStorage.setItem("mealplan",JSON.stringify(MP))}catch(e){}mpApply()}if(v.draft&&v.draft.prog&&!draft.prog)draft=v.draft}
     });
     logs.sort((a,b)=>a.date.localeCompare(b.date));
     food[TODAY]=food[TODAY]||{done:{},tags:{}};

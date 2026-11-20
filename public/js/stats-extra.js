@@ -65,10 +65,22 @@ function updPalSum(){const e=document.getElementById("pal-sum");if(e)e.textConte
 Object.assign(EN,{"แท็บวันนี้":"Today","เพิ่ม · แก้อุปกรณ์ · ลบ":"Add · equipment · delete","คาร์ดิโอทำได้ทุกที่":"Cardio works anywhere","เวท: แต่ละที่มีชุดโปรแกรมของตัวเอง":"Weights: each place has its own copy","กล้ามพร้อมแล้ว":"Muscles ready","ดูแผนที่กล้าม":"Muscle map","เพิ่งเล่น":"just trained","แนะนำวันนี้":"Suggested today","เล่นที่ไหน?":"Where?","ใช้ที่นี่":"Use this place","ก๊อปไปที่…":"Copy to…","จัดการสถานที่":"Manage places","ที่อื่นยังไม่มีโปรแกรมนี้":"Other places don't have this program yet","ที่ใหม่":"New place","ฟื้น":"Recovered","พร้อมเต็มที่":"fully ready","พร้อมแล้ว":"Ready","พรุ่งนี้":"Tomorrow","เล่นล่าสุด":"last trained","ยังไม่ฟื้นเต็ม":"not fully recovered","กำลังฟื้น":"Recovering","พร้อม":"Ready","ยังไม่เคยเล่น":"Never","ยังไม่เคย":"Never","ละเลย":"Neglected","ควรเล่น":"Due","ท่าที่เล่นล่าสุด":"Last exercises"});
 // recovery %: hours since the last session that hit the muscle ÷ full recovery time (by muscle size, scaled by that session's sets)
 const REC_H={chest:72,lats:72,quad:72,ham:72,glute:72,delt:48,rear:48,traps:48,bi:48,tri:48,add:48,abd:48,calf:36,abs:36,obl:36,fore:36};
+// per-muscle full-recovery hours: user overrides on top of REC_H (people recover at different speeds); synced in settings
+let REC_USER=load("rech",{});const recH=m=>+REC_USER[m]||REC_H[m]||48;
+function openRecCfg(){const d={...REC_USER};const H=m=>+d[m]||REC_H[m]||48;
+  const draw=b=>{b.querySelector(".rc-cfg").innerHTML=`<small class="note">${t("ชั่วโมงที่กล้ามแต่ละมัดใช้ฟื้นเต็มที่ (หลังเล่นเซ็ตปกติ)")}</small>
+    <div class="pm-menu">${REC_ORDER.map(m=>`<div class="menu-row rcf-row"><span class="mt"><b>${t(MUS_NAME[m])}</b><small>${H(m)===REC_H[m]?t("ค่าเริ่มต้น"):t("ค่าเริ่มต้น")+" "+REC_H[m]+" h"}</small></span><span class="qg-sr"><button class="btn sm" data-rh="${m}" data-d="-12">−</button><span class="rcf-v${H(m)!==REC_H[m]?" ch":""}">${H(m)} h</span><button class="btn sm" data-rh="${m}" data-d="12">+</button></span></div>`).join("")}</div>
+    <button class="btn ghost" data-rreset>${t("คืนค่าเริ่มต้นทั้งหมด")}</button>
+    <div class="actions sheet-act"><button class="btn" data-gen-close>${t("ยกเลิก")}</button><button class="btn primary" data-rsave style="flex:1">✓ ${t("บันทึก")}</button></div>`;
+    b.querySelectorAll("[data-rh]").forEach(x=>x.addEventListener("click",()=>{const m=x.dataset.rh,v=Math.max(12,Math.min(168,H(m)+ +x.dataset.d));if(v===REC_H[m])delete d[m];else d[m]=v;draw(b)}));
+    b.querySelector("[data-rreset]").addEventListener("click",()=>{Object.keys(d).forEach(k=>delete d[k]);draw(b)});
+    b.querySelector("[data-rsave]").addEventListener("click",()=>{REC_USER=d;save("rech",REC_USER);if(typeof markDirty==="function")markDirty("progs");closeGen();try{renderRecovery(document.getElementById("rec-body"));renderGym()}catch(e){}toast("✓ "+t("บันทึกแล้ว"))})};
+  openGen(t("เวลาฟื้นตัวของกล้าม"),`<div class="rc-cfg stack" style="gap:10px"></div>`,draw)}
+Object.assign(EN,{"เวลาฟื้นตัวของกล้าม":"Recovery time per muscle","ชั่วโมงที่กล้ามแต่ละมัดใช้ฟื้นเต็มที่ (หลังเล่นเซ็ตปกติ)":"Hours each muscle needs to fully recover (after a normal session)","ค่าเริ่มต้น":"Default","คืนค่าเริ่มต้นทั้งหมด":"Reset all to default","ตั้งเวลาฟื้นตัว":"Recovery times"});
 function recPct(){const out={};logs.forEach(l=>{if(l.date>TODAY)return;const t0=l.at||new Date(l.date+"T20:00:00").getTime(),sets={};
     Object.entries(l.ex).forEach(([id,s])=>{const [p,sc]=musOf(exOf(id,l));p.forEach(m=>sets[m]=(sets[m]||0)+s.length);sc.forEach(m=>sets[m]=(sets[m]||0)+s.length*.5)});
     Object.entries(sets).forEach(([m,n])=>{if(!out[m]||out[m].t0<t0)out[m]={t0,n}})});
-  const now=Date.now();Object.entries(out).forEach(([m,o])=>{const H=(REC_H[m]||48)*(o.n<=4?.75:o.n>10?1.25:1)*36e5;o.ready=o.t0+H;o.pct=Math.max(0,Math.min(100,Math.round((now-o.t0)/H*100)));o.days=Math.floor((now-o.t0)/864e5)});return out}
+  const now=Date.now();Object.entries(out).forEach(([m,o])=>{const H=recH(m)*(o.n<=4?.75:o.n>10?1.25:1)*36e5;o.ready=o.t0+H;o.pct=Math.max(0,Math.min(100,Math.round((now-o.t0)/H*100)));o.days=Math.floor((now-o.t0)/864e5)});return out}
 const recState=o=>!o?0:o.days>NEGLECT?4:o.pct>=100?3:o.pct<40?1:2;
 // best weights program here for today: highest mean readiness of its primary muscles (never trained = ready)
 function recSuggest(){const R=recPct(),sc=k=>{const ms=[...new Set(PROGS[k].ex.flatMap(e=>musOf(exOf(e.id))[0]))];if(!ms.length)return -1;return ms.reduce((a,m)=>a+(R[m]?Math.min(100,R[m].pct):100),0)/ms.length};

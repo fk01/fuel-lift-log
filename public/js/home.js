@@ -19,6 +19,7 @@ function renderHome(){const box=document.getElementById("v-home");if(!box)return
   box.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{location.hash=b.dataset.go}))}
 Object.assign(EN,{"วัน":"days","ร่างกายฉันเป็นยังไง":"How's my body?","วันนี้กินอะไร":"What do I eat today?","วันนี้ออกกำลังยังไง":"How do I train today?","ส่วน":"areas","กล้ามพร้อมทุกส่วน":"All muscles ready","น้ำหนัก":"Weight","มื้อถัดไป":"Next","ดูแผน":"Plan","ดู":"View","เริ่ม":"Start","วางแผน":"Plan","ยังไม่ได้วางแผน":"Nothing planned yet","เสร็จแล้ว":"done","ให้ร่างกายฟื้นตัว":"Let your body recover","กิน":"Eat","ออกกำลัง":"Train","ร่างกาย":"Body","สถิติการฝึก":"Training stats","สถิติสัปดาห์นี้":"This week's stats","โปรแกรม · คลังท่า · สถานที่":"Programs · library · places"});
 // bottom of the training tab: weekly stats + setup shortcuts
+document.getElementById("rec-cfg")?.addEventListener("click",openRecCfg);
 function trainLinks(box){return;if(!box||box.querySelector(".tr-links"))return;const wk=logs.filter(l=>(ds2d(TODAY)-ds2d(l.date))/864e5<7),v=Math.round(wk.reduce((a,l)=>a+volOf(l),0));
   const c=document.createElement("section");c.className="menu tr-links";
   c.innerHTML=`<!--stats--><button class="menu-row" data-tl="stats" hidden><span class="mi">${licon("chart")||"📊"}</span><span class="mt"><b>${t("สถิติสัปดาห์นี้")}</b><small>${new Set(wk.map(l=>l.date)).size} ${t("วัน")} · ${v.toLocaleString()} kg</small></span><span class="mc">›</span></button>
