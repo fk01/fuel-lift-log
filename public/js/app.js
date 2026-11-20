@@ -51,8 +51,8 @@ let modalY=null;(()=>{const sync=()=>{const on=[...document.querySelectorAll(".m
     if(y<=10)r.classList.remove("bar-hide");else if(Math.abs(d)>3)r.classList.add("bar-hide");
     clearTimeout(tm);tm=setTimeout(()=>r.classList.remove("bar-hide"),350)},{passive:true})})();
 /* ---------- More tab is the one menu: tools, language, sync ---------- */
-document.getElementById("v-more").addEventListener("click",ev=>{const r=ev.target.closest("[data-act]");if(!r)return;const x=r.dataset.act;
-  if(x==="rm")open1RM();else if(x==="badges")openBadges();else if(x==="lang"){document.getElementById("lang").click();updMoreLang()}else if(x==="refresh")doRefresh()});
+["v-more","v-stats"].forEach(v=>document.getElementById(v).addEventListener("click",ev=>{const r=ev.target.closest("button[data-act]");if(!r)return;const x=r.dataset.act;
+  if(x==="meal")openMealPlan();else if(x==="io"){const b=document.getElementById("io-blk");b.hidden=!b.hidden}else if(x==="pk"){if(ev.target.id!=="pk-add")document.getElementById("pk-add").click()}else if(x==="push"){if(ev.target.id!=="push-on")document.getElementById("push-on").click()}else if(x==="rm")open1RM();else if(x==="badges")openBadges();else if(x==="lang"){document.getElementById("lang").click();updMoreLang()}else if(x==="refresh")doRefresh()}));
 function updMoreLang(){const e=document.getElementById("more-lang");if(e)e.textContent=lang==="th"?"ไทย":"English"}
 /* ---------- Stats sub-tabs: Training | Body ---------- */
 let stTab=(()=>{try{return localStorage.getItem("sttab")||"train"}catch(e){return "train"}})();

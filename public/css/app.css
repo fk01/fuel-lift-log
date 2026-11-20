@@ -929,3 +929,55 @@ body.wo-focus #step1,body.wo-focus #lochead,body.wo-focus #today,body.wo-focus #
 .pi-ex{display:flex;justify-content:space-between;padding:7px 0;border-top:1px solid var(--line);font-size:.9rem}.pi-ex small{color:var(--muted)}
 .pa-step{font-size:.75rem;color:var(--muted);letter-spacing:.04em;margin:4px 0 -2px}
 .pa-where{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 12px 12px 48px}.pa-where small{color:var(--muted);margin-right:2px}
+/* ---- UX pass ---- */
+.pl-row .row-tx b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-sub{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.pl-sub .loc-chip{margin:0;padding:3px 8px}
+.pl-sug{justify-self:start;font-size:.65rem;padding:1px 8px;border-radius:999px;background:#3dff8c1f;color:var(--green,#3dff8c);margin-left:6px;display:inline-block}
+.pl-row .row-tx>.pl-st{display:inline-block}
+.pl-acts{display:grid;grid-template-columns:1fr auto;gap:8px}.pl-acts .pl-rest{white-space:nowrap;color:var(--muted)}
+.sticky-b:disabled{opacity:1;filter:grayscale(.7) brightness(.55)}
+body.wo-focus .wo-top{margin-bottom:12px}
+.ex .row-head{flex-wrap:wrap;row-gap:6px}
+/* food inside Today: compact ring, inline add button */
+.eat-slot .totals{display:grid;grid-template-columns:140px 1fr;align-items:center;gap:4px 16px}
+.eat-slot #food-ring{grid-row:1/span 4;width:140px}.eat-slot #food-ring svg{width:140px!important;height:140px!important}
+.eat-slot .totals .bar{display:block}.eat-slot .totals #status{grid-column:2;margin:0;font-size:.8rem}
+.eat-slot #food-add{position:static!important;width:100%!important;height:auto!important;min-height:48px;border-radius:14px!important;color:var(--on-accent)!important;padding:12px!important}
+.eat-slot #food-add::before{content:none!important}.eat-slot #food-add>*,.eat-slot #food-add span{display:inline!important}
+.fl-num{display:flex!important;flex-direction:column-reverse;gap:4px}.fl-num span{font-size:.75rem;color:var(--muted)}
+/* menus: inline action on a row */
+.mc-btn{font-size:.8rem;color:var(--cyan,#2ee6ff);border:1px solid color-mix(in srgb,var(--cyan,#2ee6ff) 40%,transparent);border-radius:999px;padding:4px 12px;white-space:nowrap}
+.mc-btn[hidden]{display:none}
+.stats-tools{margin-top:8px}
+/* stats muscle rings brighter */
+#v-stats .body-fig,#v-stats svg.body{filter:brightness(1.6) saturate(1.2)}
+.fl-num input{width:100%;min-width:0;box-sizing:border-box}.le-row{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+#gen-sheet .sheet-in{overflow-x:hidden}
+.sticky-b:disabled{opacity:1!important;background:#263142!important;color:var(--muted)!important;box-shadow:0 -14px 18px var(--surface)!important}
+.eat-slot .totals{padding-right:4px}.eat-slot .day-gear{top:auto!important;bottom:-4px;right:0}
+.pa-step{display:flex;justify-content:space-between;align-items:center}.pa-new{font:inherit;font-size:.8rem;background:none;border:0;color:var(--cyan,#2ee6ff);cursor:pointer;padding:4px 0;letter-spacing:0}
+body.wo-focus #step3{margin-top:0!important;padding-top:10px}
+body.wo-focus .wo-top{gap:8px;padding:8px 10px}body.wo-focus .wo-top .wo-stat{min-width:0}
+/* ===== "strong" neon cards (ref: bold outlined panels, high contrast) ===== */
+:root{--line:#33475f;--muted:#a9bccf;--edge:#2ee6ff47;--edge-hi:#2ee6ff8c;--card:linear-gradient(180deg,#1f2938,#19212d)}
+.card,.pl-row,.menu,.meal,.ex,.lp-card,.dp-card,.tm-card,.mp-card,.pm-li,#gen-sheet .sheet-in,.modal-in>.card{
+  background:var(--card)!important;border:1.5px solid var(--edge)!important;border-radius:18px!important;
+  box-shadow:inset 0 1px 0 #ffffff0d,0 0 0 1px #00000040,0 6px 18px #0006,0 0 16px #2ee6ff14!important}
+.pl-row.st-prog,.meal.next,.pa-row.sel,.lp-card.on{border-color:var(--edge-hi)!important;box-shadow:inset 0 1px 0 #ffffff12,0 0 0 1px #2ee6ff55,0 0 22px #2ee6ff33!important}
+.pl-row.st-done{border-color:#3dff8c66!important}
+.menu{padding:2px 0!important}.menu .menu-row{border-bottom:1px solid #2e3b4e}.menu .menu-row:last-child{border-bottom:0}
+/* type: heavier and larger */
+h1,.dp-h,.lp-h,#h1{font-weight:800!important;letter-spacing:-.01em}
+.dp-sub,.sec-t,h2{font-weight:800!important;font-size:1.12rem!important}
+.grp-h{font-weight:700!important;color:#cfe0ee!important}
+.pl-row b,.menu-row .mt b,.meal .row-head{font-weight:700!important}
+.btn.primary,.pc-go,.mc-btn{font-weight:800!important}
+.btn.primary,.pc-go{box-shadow:0 0 0 1px #3dff8c55,0 0 18px #2ee6ff40!important}
+.btn:not(.primary):not(.text){border:1.5px solid var(--edge)!important}
+/* icon tiles */
+.row-ic,.mi{border:1px solid var(--edge);border-radius:12px}
+/* inputs */
+input,select,textarea{border-width:1.5px!important}
+/* tab bar */
+.tabbar{border:1.5px solid var(--edge)!important;box-shadow:0 0 18px #2ee6ff22,0 8px 24px #0008!important}
+.tab[aria-selected=true]{color:var(--cyan,#2ee6ff)!important;text-shadow:0 0 10px #2ee6ff88}

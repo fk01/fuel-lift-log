@@ -77,7 +77,7 @@ function renderRecCompact(box){const R=recPct(),g={3:[],2:[],1:[],0:[]};REC_ORDE
   const chip=(m,s)=>`<button class="rc-chip s${s}" data-m="${m}" style="--c:${REC_C[s]}">${t(MUS_NAME[m])}${s===2?` · ${R[m].pct}%`:s===1?` · ${t("เพิ่งเล่น")}`:""}</button>`,sug=recSuggest();
   box.innerHTML=`<div class="rc-h"><b>${licon("dumbbell")} ${t("กล้ามพร้อมแล้ว")}</b><button class="rc-map" data-recmap>${t("ดูแผนที่กล้าม")} ›</button></div>
     <div class="rc-chips">${[...g[1].map(m=>chip(m,1)),...g[2].map(m=>chip(m,2)),...g[3].slice(0,6).map(m=>chip(m,3))].join("")}${g[3].length>6?`<span class="rc-more">+${g[3].length-6} ${t("พร้อม")}</span>`:""}</div>
-    ${sug?`<small class="rc-sug">${t("แนะนำวันนี้")}: <b data-sug="${esc(sug[0])}">${esc(PROGS[sug[0]].name)}</b> · ${t("พร้อม")} ${sug[1]}%</small>`:""}`;
+`;
   box.querySelector("[data-recmap]").addEventListener("click",ev=>{ev.stopPropagation();openGen(t("การฟื้นตัวของกล้ามเนื้อ"),`<div class="card" id="rec-full"></div>`,b=>{renderRecovery(b.querySelector("#rec-full"));b.querySelector("#rec-full").addEventListener("click",e=>{const x=e.target.closest(".rec-t");if(x)openMuscle(x.dataset.m)})})})}
 function renderRecovery(full){const box=full||document.getElementById("rec-card");if(!box)return;if(!full&&box.closest(".rec-slot"))return renderRecCompact(box);const R=recPct();
   const state=o=>recState(o),ago=m=>R[m];
