@@ -1005,3 +1005,4 @@ input,select,textarea{border-width:1.5px!important}
 .pa-delrow.warn{border-color:#ff5d73!important;background:#ff5d7314!important}.pa-delrow.warn small{color:#ff8a9a}
 .rcf-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .rcf-v{min-width:54px;text-align:center}.rcf-v.ch{color:var(--cyan,#2ee6ff);font-weight:700}.rcf-row{cursor:default}
+.sh-url{margin-top:10px;padding:10px;border:1px dashed var(--edge);border-radius:10px;font-family:var(--f-num);font-size:.7rem;color:var(--muted);word-break:break-all;max-height:5.5em;overflow:hidden}
