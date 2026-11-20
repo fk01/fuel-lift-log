@@ -78,16 +78,16 @@ function renderProgs(){
     b.classList.toggle("open",open);
     b.classList.add("row-card");b.innerHTML=`<span class="row-ic">${licon("dumbbell")}</span><span class="row-tx"><span class="pc-top"><b>${esc(p.name)}</b>${k===selProg()?`<span class="pill p-cyan">${t("วันนี้")}</span>`:""}</span>
       <small>${nU(p.ex.length,"ท่า")} · ${esc(groups)}</small>
-      <small class="pc-when">${last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small></span><span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span>
+      <small class="pc-when">${last?t("ล่าสุด")+" "+thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคยเล่น")}</small></span><span class="pc-act"><span class="pc-go" role="button" tabindex="0" data-go>▶ ${t("เริ่ม")}</span><span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span></span>
       <ul class="prog-ex"${open?"":" hidden"}>${p.ex.map((e,n)=>`<li><b class="no">${n+1}</b><em class="nm">${e.z} ${esc(e.n)}</em><span class="ss">${e.s}×${e.r}</span><i class="mg">${groupName(groupOf(e))}</i></li>`).join("")}</ul>`;
-    b.addEventListener("click",ev=>{if(ev.target.closest(".pc-more")){pmOnly=k;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false;return}
+    b.addEventListener("click",ev=>{if(ev.target.closest("[data-go]")){if(picked)return;try{chooseProg(k)}catch(e){}if(cur!==k)draft.ex={};cur=k;draft.prog=k;chosen=true;document.getElementById("start-w").click();return}if(ev.target.closest(".pc-more")){pmOnly=k;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false;return}
       if(!picked){openSheet(k);return}
       if(!picked){if(chosen&&cur===k){chosen=false;renderGym();return}if(cur!==k){draft.ex={}}cur=k;draft.prog=k;chosen=true;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("start-row").scrollIntoView({behavior:"smooth",block:"center"}),50);return}
       if(cur===k){cancelProg();return}draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:"smooth",block:"start"}),50)});box.appendChild(b)});
   if(hasType(L,"cardio")){if(hasType(L,"gym"))hd("คาร์ดิโอ");
     cardioHere().forEach(k=>{const p=PROGS[k],v=cxGet(k);const b=document.createElement("button");b.className="prog cardio";b.setAttribute("aria-pressed",!!v);
-      b.innerHTML=`<span class="ic">${esc(p.icon||"🏃")}</span><b>${esc(p.name)}</b><span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span><small>${v?esc(cxTxt(k,v)):k===pl?`<span class="next">${t("คิวถัดไป")}${p.goal?" · "+p.goal+" km":""}</span>`:t(p.track==="dist"?"ใส่ระยะ / เวลา":"แตะเพื่อบันทึก")}</small>`;
-      b.addEventListener("click",ev=>{if(ev.target.closest(".pc-more")){openCardioEdit(k);return}openCardio(k)});box.appendChild(b)})}
+      b.innerHTML=`<span class="ic">${esc(p.icon||"🏃")}</span><b>${esc(p.name)}</b><span class="pc-act">${v?"":`<span class="pc-go" role="button" tabindex="0" data-go>${t("บันทึก")}</span>`}<span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span></span><small>${v?esc(cxTxt(k,v)):k===pl?`<span class="next">${t("คิวถัดไป")}${p.goal?" · "+p.goal+" km":""}</span>`:t(p.track==="dist"?"ใส่ระยะ / เวลา":"แตะเพื่อบันทึก")}</small>`;
+      b.addEventListener("click",ev=>{if(ev.target.closest(".pc-more")&&!ev.target.closest("[data-go]")){openCardioEdit(k);return}openCardio(k)});box.appendChild(b)})}
   const ew=document.getElementById("empty-w");if(ew)ew.hidden=!hasType(L,"gym");
   const add=document.createElement("button");add.className="btn ghost sm prog-add";add.textContent="+ "+t("เพิ่มโปรแกรม");add.addEventListener("click",openAddProg);box.appendChild(add);
 }
