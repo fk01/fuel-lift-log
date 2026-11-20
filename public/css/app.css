@@ -1003,3 +1003,5 @@ input,select,textarea{border-width:1.5px!important}
 #lib-modal{z-index:44}
 .pa-hb{display:flex;gap:14px}.pa-delrow .pa-x{color:#ff8a9a;display:grid;place-items:center;width:34px;height:34px;border:1.5px solid #ff5d7366;border-radius:10px}
 .pa-delrow.warn{border-color:#ff5d73!important;background:#ff5d7314!important}.pa-delrow.warn small{color:#ff8a9a}
+.rcf-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.rcf-v{min-width:54px;text-align:center}.rcf-v.ch{color:var(--cyan,#2ee6ff);font-weight:700}.rcf-row{cursor:default}
