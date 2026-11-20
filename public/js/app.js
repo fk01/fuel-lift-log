@@ -10,7 +10,7 @@ function show(v){if(!VIEWS.includes(v))v="food";curView=v;if(v==="food"||v==="gy
   document.querySelectorAll(".tabbar .tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
   document.getElementById("h1").textContent=t(TITLES[v]);scrollAppTop();
   if(v==="stats")try{renderHistChart()}catch(e){}}
-const viewOf=()=>location.hash.slice(1)||"food";
+const viewOf=()=>location.hash.slice(1)||"gym";
 document.querySelectorAll(".tabbar .tab").forEach(b=>b.addEventListener("click",()=>{if(location.hash==="#"+b.dataset.v)show(b.dataset.v);else location.hash=b.dataset.v}));
 window.addEventListener("hashchange",()=>show(viewOf()));
 // week strip: the 7 days of the selected date's week; dot = workout / run / badminton logged

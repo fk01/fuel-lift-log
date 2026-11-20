@@ -138,6 +138,14 @@ const steps = [
     bar.querySelector("[data-tx-cancel]").click(); document.querySelector("#tx-ask [data-drop]").click(); if (PROGS.push.name !== nm0 || !bar.hidden) throw new Error("cancel restores");
     edit("Saved Y"); bar.querySelector("[data-tx-save]").click(); if (stored() !== "Saved Y" || TXS.length) throw new Error("save stores");
     PROGS.push.name = nm0; saveProgs(); }],
+  ["meal-plan-edit", () => { TXS.length = 0; txBar(); const p0 = P_TARGET, n0 = MEALS.length; openMealPlan(); const g = document.querySelector('#gen-body [data-g="p"]'); g.value = "175"; g.dispatchEvent(new Event("change"));
+    document.querySelector("#gen-body [data-addm]").click(); if (MEALS.length !== n0 + 1) throw new Error("add meal"); document.querySelector("#tx-bar [data-tx-cancel]").click(); document.querySelector("#tx-ask [data-drop]").click();
+    if (P_TARGET !== p0 || MEALS.length !== n0) throw new Error("cancel restores meal plan"); openMealPlan(); const g2 = document.querySelector('#gen-body [data-g="p"]'); g2.value = "175"; g2.dispatchEvent(new Event("change"));
+    document.querySelector("#tx-bar [data-tx-save]").click(); if (JSON.parse(localStorage.getItem("mealplan")).p !== 175 || P_TARGET !== 175) throw new Error("save meal plan"); MP = null; localStorage.removeItem("mealplan"); mpApply(); }],
+  ["plan-place-swap", () => { location.hash = "gym"; cancelProg(); setDayMode(null); dayPlan = {}; const had = LOCS.some(l => l.id === "condo"); if (!had) LOCS.push({ id: "condo", name: "Condo", icon: "🏠", eq: ["db"], types: ["gym"] });
+    PROGS["c-test"] = { ...JSON.parse(JSON.stringify(PROGS.push)), loc: "condo" }; planAdd("push"); renderGym(); const c = document.querySelector('#locpick [data-pl="push"] [data-plloc]'); if (!c) throw new Error("place chip"); c.click();
+    document.querySelector('#gen-body [data-pp="condo"]').click(); document.querySelector("#gen-body [data-ppok]").click(); if (!planList().some(k => locOf(PROGS[k]) === "condo") || planList().includes("push")) throw new Error("swap to condo copy");
+    delete PROGS["c-test"]; if (!had) LOCS = LOCS.filter(l => l.id !== "condo"); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

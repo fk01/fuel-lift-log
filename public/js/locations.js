@@ -134,7 +134,7 @@ function chooseDay(m){if(m==="cardio"||m==="train"){dayKind={date:TODAY,k:m==="c
 function weakest(n){try{const R=recPct();return REC_ORDER.filter(m=>R[m]&&R[m].pct<100&&R[m].days<=NEGLECT).sort((a,b)=>R[a].pct-R[b].pct).slice(0,n).map(m=>[m,R[m].pct])}catch(e){return []}}
 const ICO={cardio:'<circle cx="14" cy="4.5" r="1.8"/><path d="M8 21l3-6 3 2v5M6 12l3-4 4 1 3 4h3M11 15l-2-3"/>',train:'<path d="M3 10v4M6 7v10M18 7v10M21 10v4M6 12h12"/>',rest:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>'};
 const ico=(k,c)=>`<svg class="dp-svg" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[k]}</svg>`;
-function renderDayPick(box){const pk=planFor(DAY),p=pk&&PROGS[pk],sug=!p?"rest":isCardio(p)?"cardio":"train",w=weakest(2);
+function renderDayPick(box){setTimeout(()=>todayMeals(box),0);const pk=planFor(DAY),p=pk&&PROGS[pk],sug=!p?"rest":isCardio(p)?"cardio":"train",w=weakest(2);
   const last=logs.filter(l=>l.date<TODAY).slice(-1)[0],ago=last?Math.round((ds2d(TODAY)-ds2d(last.date))/864e5):null;
   const lastW=last?` · ${t("ล่าสุด")} ${ago===1?t("เมื่อวาน"):nU(ago,"วันก่อน")}`:"";
   const tl=(p&&!isCardio(p)?`${t("ตามตาราง")}: ${esc(p.name)}`:t("เลือกโปรแกรมเวท"))+lastW;
@@ -285,19 +285,36 @@ function startPlanItem(k,go){const p=PROGS[k];dayKind={date:TODAY,k:isCardio(p)?
 function renderPlan(box){const ks=planList(),[d,n]=planStat();
   const row=k=>{const p=PROGS[k],v=planItemDone(k),ip=inProg(k),L=locById(locOf(p)==="*"?p.lastLoc:locOf(p))||{},tod=(TOD.find(q=>q[0]===p.tod)||[])[1];
     const st=v?["done","Done"]:ip?["prog","In progress"]:["pend","Pending"];
-    const sets=ip?Object.values(draft.ex||{}).flat():[],sub=v?planSummary(k,v):ip?`${t(L.name||"")} · ${sets.filter(x=>x.ok).length}/${sets.length} ${t("เซ็ต")}`:`${t(L.name||"")}${tod?" · "+t(tod):""}`;
+    const sets=ip?Object.values(draft.ex||{}).flat():[],sub=v?planSummary(k,v):ip?`${t(L.name||"")} · ${sets.filter(x=>x.ok).length}/${sets.length} ${t("เซ็ต")}`:`${isCardio(p)?t("คาร์ดิโอ"):nU(p.ex.length,"ท่า")}${tod?" · "+t(tod):""}`;
     return `<div class="pl-row st-${st[0]}" data-pl="${esc(k)}"><span class="row-ic${isCardio(p)?" g":""}">${v?licon("checkc"):isCardio(p)?licon(LI[EMO[p.icon]]?EMO[p.icon]:"run"):licon("dumbbell")}</span>
       <span class="row-tx"><span class="pl-st st-${st[0]}">${t(st[1])}</span><b>${esc(p.name)}</b><small>${esc(sub)}</small></span>
-      <span class="pc-act">${v?"":ip?`<button class="pc-go" data-plgo="resume">${t("กลับไปเล่น")}</button>`:`<button class="pc-go" data-plgo="start">▶ ${t("เริ่ม")}</button><button class="pc-more" data-pldel aria-label="${t("เอาออก")}">✕</button>`}</span></div>`};
+      ${v||ip?"":`<button class="loc-chip" data-plloc aria-label="${t("เล่นที่ไหน?")}">${esc(L.icon||"📍")} ${esc(t(L.name||""))} ⌄</button>`}<span class="pc-act">${v?"":ip?`<button class="pc-go" data-plgo="resume">${t("กลับไปเล่น")}</button>`:`<button class="pc-go" data-plgo="start">▶ ${t("เริ่ม")}</button><button class="pc-more" data-pldel aria-label="${t("เอาออก")}">✕</button>`}</span></div>`};
   box.innerHTML=`<h1 class="dp-h">${t("วันนี้…")}</h1><div class="date">${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})}</div><div class="rec-slot"></div>
     <h2 class="dp-sub pl-h">${t(n&&d===n?"ครบแล้ววันนี้ ✓":"วันนี้จะทำอะไร?")} ${n?`<span class="pill">${d}/${n}</span>`:""}</h2>${ks.map(row).join("")||`<small class="note pl-empty">${t("ยังไม่มีอะไรในวันนี้ — เพิ่มโปรแกรมที่จะทำ")}</small>`}
     <button class="${n?"pl-add":"btn primary pl-add-main"}" data-pladd>+ ${t("เพิ่มเข้าวันนี้")}</button>${d||ks.some(inProg)?"":`<button class="btn text sm pl-rest" data-plrest>${t("พักวันนี้ดีกว่า")}</button>`}`;
   const rc=document.getElementById("rec-card");if(rc){box.querySelector(".rec-slot").appendChild(rc);try{renderRecovery()}catch(e){}}
-  box.querySelectorAll("[data-pl]").forEach(r=>{const k=r.dataset.pl;r.addEventListener("click",ev=>{if(ev.target.closest("[data-pldel]")){planDel(k);renderGym();return}
+  box.querySelectorAll("[data-pl]").forEach(r=>{const k=r.dataset.pl;r.addEventListener("click",ev=>{if(ev.target.closest("[data-pldel]")){planDel(k);renderGym();return}if(ev.target.closest("[data-plloc]")){openPlanPlace(k);return}
     const g=ev.target.closest("[data-plgo]");if(g&&g.dataset.plgo==="resume"){setDayMode("train");renderGym();setTimeout(()=>document.getElementById("step3")?.scrollIntoView({block:"start"}),50);return}
     if(planItemDone(k))return;startPlanItem(k,!!g)})});
   box.querySelector("[data-plrest]")?.addEventListener("click",()=>chooseDay("rest"));
-  box.querySelector("[data-pladd]").addEventListener("click",openPlanAdd)}
+  box.querySelector("[data-pladd]").addEventListener("click",openPlanAdd);todayMeals(box)}
+// "where?" sheet for one row of today's plan. Weights (option A): each place has its own copy of a program,
+// so picking a place swaps today's row to that place's copy. Cardio: any cardio place, remembered as lastLoc.
+function openPlanPlace(k){const p=PROGS[k],cx=isCardio(p);
+  const sib=cx?[]:Object.keys(PROGS).filter(q=>q!=="free"&&!isCardio(PROGS[q])&&PROGS[q].name.trim().toLowerCase()===p.name.trim().toLowerCase());
+  const opts=cx?LOCS.filter(l=>hasType(l,"cardio")).map(l=>[l.id,l.id]):sib.map(q=>[locOf(PROGS[q]),q]).filter(([id])=>locById(id));
+  let sel=cx?(locById(p.lastLoc)?p.lastLoc:curLoc):locOf(p);const missing=cx?[]:LOCS.filter(l=>hasType(l,"gym")&&!opts.some(([id])=>id===l.id));
+  const draw=b=>{b.querySelector(".pp-body").innerHTML=`<small class="note">${cx?t("คาร์ดิโอทำได้ทุกที่"):t("เวท: แต่ละที่มีชุดโปรแกรมของตัวเอง")}</small>
+    <div class="chips">${opts.map(([id])=>{const l=locById(id);return `<button class="chip${id===sel?" on":""}" data-pp="${esc(id)}" aria-pressed="${id===sel}">${esc(l.icon||"📍")} ${esc(t(l.name))}</button>`}).join("")}${cx?`<button class="chip" data-ppnew>+ ${t("ที่ใหม่")}</button>`:""}</div>
+    ${missing.length?`<small class="note">${t("ที่อื่นยังไม่มีโปรแกรมนี้")}: ${missing.map(l=>esc(t(l.name))).join(", ")}</small><button class="btn sm" data-ppcopy style="justify-self:start">⧉ ${t("ก๊อปไปที่…")}</button>`:""}
+    <button class="menu-row" data-ppman><span class="mi">⚙</span><span class="mt"><b>${t("จัดการสถานที่")}</b><small>${t("เพิ่ม · แก้อุปกรณ์ · ลบ")}</small></span><span class="mc">›</span></button>
+    <div class="actions sheet-act"><button class="btn" data-gen-close>${t("ยกเลิก")}</button><button class="btn primary" data-ppok style="flex:1">✓ ${t("ใช้ที่นี่")}</button></div>`;
+    b.querySelectorAll("[data-pp]").forEach(c=>c.addEventListener("click",()=>{sel=c.dataset.pp;draw(b)}));
+    b.querySelector("[data-ppnew]")?.addEventListener("click",()=>openLocEdit(null));
+    b.querySelector("[data-ppcopy]")?.addEventListener("click",()=>openProgMove(k,"copy"));
+    b.querySelector("[data-ppman]").addEventListener("click",openPlaces);
+    b.querySelector("[data-ppok]").addEventListener("click",()=>{if(cx){p.lastLoc=sel;saveProgs()}else{const nk=(opts.find(([id])=>id===sel)||[])[1];if(nk&&nk!==k){planDel(k);planAdd(nk)}}closeGen();renderGym()})};
+  openGen(esc(p.name)+" — "+t("เล่นที่ไหน?"),`<div class="pp-body stack" style="gap:10px"></div>`,draw)}
 let paTab="gym";
 function openPlanAdd(keepSel){const ks=new Set(planList()),sel=keepSel instanceof Set?keepSel:new Set(ks),locked=k=>!!planItemDone(k)||inProg(k);
   const row=k=>{const p=PROGS[k],cx=isCardio(p),on=sel.has(k),lk=locked(k),L=locById(cx?p.lastLoc:locOf(p));

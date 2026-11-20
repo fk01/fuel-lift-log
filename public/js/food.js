@@ -1,7 +1,7 @@
 // food.js — meal checklist, calorie/protein totals, 7-day strip
 // Classic script: shares globals with the other files in /js (load order is set in index.html).
 /* ---------- FOOD ---------- */
-const MEALS=[
+const MEALS_DEF=[
  {id:"m1",time:"08:00",name:"เช้า",k:560,p:45,items:["Iso Soy 2 สกู๊ป + Mass 2 สกู๊ป ชงน้ำ","กล้วย 2 ลูก"]},
  {id:"v1",time:"08:15",name:"วิตามินหลังมื้อเช้า",k:0,p:0,vit:1,items:["วิตามินชุดเช้า"]},
  {id:"m2",time:"12:30",name:"กลางวัน",k:444,p:31,items:["ข้าวกล้อง 150 g","เนื้อวัว 90% 100 g","ไข่ต้ม 1 + ผัก 1-2 ถ้วย"]},
@@ -10,20 +10,23 @@ const MEALS=[
  {id:"v2",time:"19:15",name:"วิตามินหลังมื้อเย็น",k:0,p:0,vit:1,items:["วิตามินชุดเย็น"]},
  {id:"m5",time:"21:00",name:"หลังเวท / ก่อนนอน",k:140,p:30,items:["Iso Soy 2 สกู๊ป ชงน้ำ"]},
 ];
-const EXTRAS={
+const EXTRAS_DEF={
  run:{id:"x-run",time:"หลังวิ่ง",name:"เติมหลังวิ่ง",k:210,p:13,items:["Mass 2 สกู๊ป ชงน้ำ"]},
  bad:{id:"x-bad",time:"19:00",name:"เพิ่มวันแบด",k:105,p:1,items:["กล้วย 1 ลูก (กินพร้อมมื้อเย็น)"]},
 };
-const P_TARGET=160;
+// the live meal plan is editable (meal-plan.js) and synced in the settings doc; MEALS_DEF / EXTRAS_DEF are only defaults
+let MP=load("mealplan",null),MEALS,EXTRAS,P_TARGET,K_GOAL;
+function mpApply(){const m=MP||{};MEALS=Array.isArray(m.meals)&&m.meals.length?m.meals:MEALS_DEF;EXTRAS={run:m.run||EXTRAS_DEF.run,bad:m.bad||EXTRAS_DEF.bad};P_TARGET=+m.p||160;K_GOAL=+m.k||2032}
+mpApply();
 // custom food entries per day: food[ds].log=[{id,n,k,p,slot,q}] (k / p per serving, q servings)
 const logOf=ds=>((food[ds]||{}).log)||[];
 const logSum=ds=>logOf(ds).reduce((a,x)=>({k:a.k+Math.round((+x.k||0)*(+x.q||1)),p:a.p+Math.round((+x.p||0)*(+x.q||1))}),{k:0,p:0});
 let food=load("mealcheck",{}); food[TODAY]=food[TODAY]||{done:{},tags:{}};
 let DAY=TODAY;
 const fs=()=>(food[DAY]=food[DAY]||{done:{},tags:{}});
-function mealList(){const t=fs().tags;const l=MEALS.map(m=>({...m}));if(t.late){l.find(x=>x.id==="m4").time="18:00";l.find(x=>x.id==="v2").time="18:15"}if(t.run)l.push(EXTRAS.run);if(t.bad)l.push(EXTRAS.bad);return l}
+function mealList(){const t=fs().tags;const l=MEALS.map(m=>({...m}));if(t.late){const a=l.find(x=>x.id==="m4"),b=l.find(x=>x.id==="v2");if(a)a.time="18:00";if(b)b.time="18:15"}if(t.run)l.push(EXTRAS.run);if(t.bad)l.push(EXTRAS.bad);return l}
 function dayP(day){const d=food[day];if(!d)return null;let p=logSum(day).p;[...MEALS,EXTRAS.run,EXTRAS.bad].forEach(m=>{if((d.done||{})[m.id])p+=m.p});return p}
-let fhMetric="p",fhRange=7,fhAll=false;const K_GOAL=2032;
+let fhMetric="p",fhRange=7,fhAll=false;
 const addDays=(ds,n)=>{const d=new Date(ds+"T12:00:00");d.setDate(d.getDate()+n);return d};
 Object.assign(EN,{"มื้อถัดไป":"Next","เลยเวลา":"Overdue","ถึงเป้า":"Hit target","ยังไม่ถึง":"Below","เป้า":"Target","ดูทั้งหมด":"Show all","ย่อ":"Show less"});
 function renderFoodHist(){

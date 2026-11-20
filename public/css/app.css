@@ -884,3 +884,28 @@ body.tx-open #app,body.tx-open main{padding-bottom:110px}
 .tx-ask-in small{color:var(--muted)}.tx-ask .btn.warn{color:#ff5d73;border-color:#ff5d7366}
 /* modal title + Close stay visible while the list scrolls (was scrolling away under the iOS status bar) */
 .modal:not(.sheet)>.modal-in>.row-head:first-child{position:sticky;top:calc(-16px - env(safe-area-inset-top,0px));z-index:4;background:#000;margin:calc(-16px - env(safe-area-inset-top,0px)) -4px 0;padding:calc(12px + env(safe-area-inset-top,0px)) 4px 10px}
+/* meal plan editor */
+.mp-open-row{display:flex;justify-content:flex-end;margin-bottom:-4px}
+.mp-card{display:grid;gap:10px}
+.mp-row{display:grid;gap:6px;padding-top:10px;border-top:1px solid var(--line)}
+.mp-top{display:flex;gap:6px;align-items:center}.mp-ic{width:2em;display:grid;place-items:center;color:var(--cyan,#2ee6ff)}
+.mp-num{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end}.mp-num label{display:grid;gap:3px;font-size:.72rem;color:var(--muted)}
+.mp-num .mp-vit{display:flex;gap:6px;align-items:center;font-size:.8rem;padding-bottom:8px}
+/* Today: compact recovery, meals card, place chip */
+.rc-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}.rc-h b{display:flex;gap:6px;align-items:center}
+.rc-map{background:none;border:0;color:var(--cyan,#2ee6ff);font:inherit;font-size:.8rem;padding:4px 0;cursor:pointer}
+.rc-chips{display:flex;flex-wrap:wrap;gap:6px}
+.rc-chip{font:inherit;font-size:.78rem;padding:5px 10px;border-radius:999px;background:transparent;color:var(--c);border:1px solid color-mix(in srgb,var(--c) 45%,transparent);cursor:pointer}
+.rc-more{font-size:.75rem;color:var(--muted);align-self:center}
+.rc-sug{display:block;margin-top:8px;color:var(--muted)}.rc-sug b{color:var(--up,#3dff8c)}
+.tm-card{display:grid;gap:8px;margin-top:12px}
+.tm-bar{display:block;height:6px;border-radius:3px;background:var(--line);overflow:hidden}.tm-bar>i{display:block;height:100%;background:linear-gradient(90deg,#2ee6ff,#3dff8c)}
+.tm-row{display:flex;gap:10px;align-items:center;padding-top:8px;border-top:1px solid var(--line)}.tm-row .time{font-family:var(--f-num);color:var(--cyan,#2ee6ff);font-size:.85rem}
+.tm-tx{flex:1;min-width:0;display:grid}.tm-tx small{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.loc-chip{font:inherit;font-size:.75rem;padding:5px 9px;border-radius:999px;border:1px solid color-mix(in srgb,var(--cyan,#2ee6ff) 40%,transparent);background:transparent;color:var(--cyan,#2ee6ff);white-space:nowrap;cursor:pointer;margin-right:6px}
+.chip.on{border-color:var(--up,#3dff8c);color:var(--up,#3dff8c)}
+.mp-top{flex-wrap:wrap}.mp-top input[data-f="name"]{flex:1 1 9em}
+.mp-row input:not([type=checkbox]),.mp-card input:not([type=checkbox]){width:100%;min-width:0}
+.mp-top input[type=time]{width:6.6em!important;flex:none}
+.mp-num{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto}
+#gen-body{min-width:0}#gen-body .mp-body{min-width:0;overflow:hidden}

@@ -62,7 +62,7 @@ Object.assign(EN,{"สีการฟื้นตัว":"Recovery colours","ค
 function openRecPal(){openGen(t("สีการฟื้นตัว"),`<div class="pm-menu">${Object.entries(REC_PALS).map(([k,[n,c]])=>`<button class="menu-row" data-pal="${k}"><span class="pal-dots">${c.map(x=>`<i style="background:${x}"></i>`).join("")}</span><span class="mt"><b>${t(n)}</b><small>${[t("ยังไม่เคยเล่น"),"< 40%",t("กำลังฟื้น"),t("พร้อม")].join(" · ")}</small></span><span class="mc">${k===recPal?"✓":""}</span></button>`).join("")}</div>`,
   b=>b.querySelectorAll("[data-pal]").forEach(r=>r.addEventListener("click",()=>{recPal=r.dataset.pal;try{localStorage.setItem("recpal",recPal)}catch(e){}applyRecPal();openRecPal();try{renderGym();renderStatsExtra();updPalSum()}catch(e){}})))}
 function updPalSum(){const e=document.getElementById("pal-sum");if(e)e.textContent=t(REC_PALS[recPal][0])}
-Object.assign(EN,{"ฟื้น":"Recovered","พร้อมเต็มที่":"fully ready","พร้อมแล้ว":"Ready","พรุ่งนี้":"Tomorrow","เล่นล่าสุด":"last trained","ยังไม่ฟื้นเต็ม":"not fully recovered","กำลังฟื้น":"Recovering","พร้อม":"Ready","ยังไม่เคยเล่น":"Never","ยังไม่เคย":"Never","ละเลย":"Neglected","ควรเล่น":"Due","ท่าที่เล่นล่าสุด":"Last exercises"});
+Object.assign(EN,{"แท็บวันนี้":"Today","เพิ่ม · แก้อุปกรณ์ · ลบ":"Add · equipment · delete","คาร์ดิโอทำได้ทุกที่":"Cardio works anywhere","เวท: แต่ละที่มีชุดโปรแกรมของตัวเอง":"Weights: each place has its own copy","กล้ามพร้อมแล้ว":"Muscles ready","ดูแผนที่กล้าม":"Muscle map","เพิ่งเล่น":"just trained","แนะนำวันนี้":"Suggested today","เล่นที่ไหน?":"Where?","ใช้ที่นี่":"Use this place","ก๊อปไปที่…":"Copy to…","จัดการสถานที่":"Manage places","ที่อื่นยังไม่มีโปรแกรมนี้":"Other places don't have this program yet","ที่ใหม่":"New place","ฟื้น":"Recovered","พร้อมเต็มที่":"fully ready","พร้อมแล้ว":"Ready","พรุ่งนี้":"Tomorrow","เล่นล่าสุด":"last trained","ยังไม่ฟื้นเต็ม":"not fully recovered","กำลังฟื้น":"Recovering","พร้อม":"Ready","ยังไม่เคยเล่น":"Never","ยังไม่เคย":"Never","ละเลย":"Neglected","ควรเล่น":"Due","ท่าที่เล่นล่าสุด":"Last exercises"});
 // recovery %: hours since the last session that hit the muscle ÷ full recovery time (by muscle size, scaled by that session's sets)
 const REC_H={chest:72,lats:72,quad:72,ham:72,glute:72,delt:48,rear:48,traps:48,bi:48,tri:48,add:48,abd:48,calf:36,abs:36,obl:36,fore:36};
 function recPct(){const out={};logs.forEach(l=>{if(l.date>TODAY)return;const t0=l.at||new Date(l.date+"T20:00:00").getTime(),sets={};
@@ -70,9 +70,18 @@ function recPct(){const out={};logs.forEach(l=>{if(l.date>TODAY)return;const t0=
     Object.entries(sets).forEach(([m,n])=>{if(!out[m]||out[m].t0<t0)out[m]={t0,n}})});
   const now=Date.now();Object.entries(out).forEach(([m,o])=>{const H=(REC_H[m]||48)*(o.n<=4?.75:o.n>10?1.25:1)*36e5;o.ready=o.t0+H;o.pct=Math.max(0,Math.min(100,Math.round((now-o.t0)/H*100)));o.days=Math.floor((now-o.t0)/864e5)});return out}
 const recState=o=>!o?0:o.days>NEGLECT?4:o.pct>=100?3:o.pct<40?1:2;
-function renderRecovery(){const box=document.getElementById("rec-card");if(!box)return;const R=recPct();
+// best weights program here for today: highest mean readiness of its primary muscles (never trained = ready)
+function recSuggest(){const R=recPct(),sc=k=>{const ms=[...new Set(PROGS[k].ex.flatMap(e=>musOf(exOf(e.id))[0]))];if(!ms.length)return -1;return ms.reduce((a,m)=>a+(R[m]?Math.min(100,R[m].pct):100),0)/ms.length};
+  let best=null,bs=-1;weightsHere().forEach(k=>{const s=sc(k);if(s>bs){bs=s;best=k}});return best?[best,Math.round(bs)]:null}
+function renderRecCompact(box){const R=recPct(),g={3:[],2:[],1:[],0:[]};REC_ORDER.forEach(m=>{const s=recState(R[m]);g[s===4||s===0?3:s].push(m)});
+  const chip=(m,s)=>`<button class="rc-chip s${s}" data-m="${m}" style="--c:${REC_C[s]}">${t(MUS_NAME[m])}${s===2?` · ${R[m].pct}%`:s===1?` · ${t("เพิ่งเล่น")}`:""}</button>`,sug=recSuggest();
+  box.innerHTML=`<div class="rc-h"><b>${licon("dumbbell")} ${t("กล้ามพร้อมแล้ว")}</b><button class="rc-map" data-recmap>${t("ดูแผนที่กล้าม")} ›</button></div>
+    <div class="rc-chips">${[...g[1].map(m=>chip(m,1)),...g[2].map(m=>chip(m,2)),...g[3].slice(0,6).map(m=>chip(m,3))].join("")}${g[3].length>6?`<span class="rc-more">+${g[3].length-6} ${t("พร้อม")}</span>`:""}</div>
+    ${sug?`<small class="rc-sug">${t("แนะนำวันนี้")}: <b data-sug="${esc(sug[0])}">${esc(PROGS[sug[0]].name)}</b> · ${t("พร้อม")} ${sug[1]}%</small>`:""}`;
+  box.querySelector("[data-recmap]").addEventListener("click",ev=>{ev.stopPropagation();openGen(t("การฟื้นตัวของกล้ามเนื้อ"),`<div class="card" id="rec-full"></div>`,b=>{renderRecovery(b.querySelector("#rec-full"));b.querySelector("#rec-full").addEventListener("click",e=>{const x=e.target.closest(".rec-t");if(x)openMuscle(x.dataset.m)})})})}
+function renderRecovery(full){const box=full||document.getElementById("rec-card");if(!box)return;if(!full&&box.closest(".rec-slot"))return renderRecCompact(box);const R=recPct();
   const state=o=>recState(o),ago=m=>R[m];
-  const lab=m=>{const o=R[m];return !o?"–":o.pct+"%"},sub=m=>{const o=R[m];return !o?t("ยังไม่เคย"):o.days>NEGLECT?nU(o.days,"วันก่อน"):""};
+  const lab=m=>{const o=R[m];return !o?"–":o.pct<40?t("เพิ่งเล่น"):o.pct+"%"},sub=m=>{const o=R[m];return !o?t("ยังไม่เคย"):o.days>NEGLECT?nU(o.days,"วันก่อน"):""};
   const due=REC_ORDER.filter(m=>{const s=state(ago(m));return s===0||s===4});
   const tiles=REC_ORDER.map(m=>{const o=R[m],s=state(o),w=!o?0:s===4?100:o.pct;return `<button class="rec-t s${s}" data-m="${m}"><b>${t(MUS_NAME[m])}</b><span class="rec-p">${lab(m)}</span><small class="rec-sub">${sub(m)||"&nbsp;"}</small><i class="rec-bar"><i style="width:${w}%;background:${REC_C[s]}"></i></i></button>`}).join("");
   box.innerHTML=`<div class="rec-fig">${bodySVG([],[],320,m=>REC_C[state(ago(m))])}</div>
@@ -155,7 +164,7 @@ renderBody=function(){const box=document.getElementById("body-card");if(!box)ret
   box.querySelector("#bw-add").addEventListener("click",()=>openLog(TODAY));
   box.querySelectorAll("[data-bed]").forEach(b=>b.addEventListener("click",()=>openLog(b.dataset.bed)))};
 
-document.getElementById("rec-card").addEventListener("click",ev=>{const b=ev.target.closest(".rec-t");if(b)openMuscle(b.dataset.m)});
+document.getElementById("rec-card").addEventListener("click",ev=>{const b=ev.target.closest(".rec-t,.rc-chip");if(b)openMuscle(b.dataset.m)});
 /* ---------- muscle sheet: big figure, status, recent exercises that hit it, program exercises that train it ---------- */
 Object.assign(EN,{"ท่าที่เล่นล่าสุด":"Recent exercises","ท่าที่ช่วยมัดนี้ในโปรแกรม":"In your programs","หลัก":"primary","รอง":"secondary","ยังไม่มีท่าในโปรแกรมที่โดนมัดนี้":"No program exercise works this muscle yet","เพิ่มท่าได้ที่ จัดการโปรแกรม":"Add one in Manage programs"});
 function openMuscle(m){const lt=lastTrained(),d=lt[m]?Math.round((ds2d(TODAY)-ds2d(lt[m]))/864e5):null,ro=recPct()[m],st=recState(ro);
