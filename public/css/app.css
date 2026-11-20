@@ -820,3 +820,4 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 .how-btn{width:40px;height:40px;border-radius:12px!important;background:#ffffff0d!important;border:1px solid transparent!important;display:inline-grid;place-items:center;color:var(--green)}
 /* value / pill at the end of a row always sits in the last column (1RM highlights etc.) */
 .sx-row>:last-child:not(.how-btn):not(:nth-child(2)){grid-column:4!important;justify-self:end;text-align:right}
+.body-fig .bf-lines{mix-blend-mode:overlay;opacity:.9;pointer-events:none}

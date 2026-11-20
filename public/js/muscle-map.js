@@ -24,6 +24,6 @@ const MUS_KEYS=["chest","delt","rear","traps","lats","bi","tri","fore","abs","ob
 function bodySVG(prim,sec,h=44,colFn){
   const P=new Set(prim),S=new Set(sec),col=colFn||(m=>P.has(m)?"#e8a46a":S.has(m)?"#8a6040":null);
   const w=Math.round(h*420/647);
-  return `<span class="body-fig" style="width:${w}px;height:${h}px" aria-hidden="true"><img src="/img/mus-base.png" alt="">${MUS_KEYS.map(m=>{const c=col(m);return c&&c!=="#2f2e2b"?`<i style="background:${c};-webkit-mask-image:url(/img/mus/${m}.png);mask-image:url(/img/mus/${m}.png)"></i>`:""}).join("")}</span>`;
+  return `<span class="body-fig" style="width:${w}px;height:${h}px" aria-hidden="true"><img src="/img/mus-base.png" alt="">${MUS_KEYS.map(m=>{const c=col(m);return c&&c!=="#2f2e2b"?`<i style="background:${c};-webkit-mask-image:url(/img/mus/${m}.png);mask-image:url(/img/mus/${m}.png)"></i>`:""}).join("")}<img class="bf-lines" src="/img/mus-base.png" alt=""></span>`;
 }
 function musUnion(list){const p=new Set(),s=new Set();list.forEach(e=>{const [a,b]=musOf(e);a.forEach(x=>p.add(x));b.forEach(x=>s.add(x))});p.forEach(x=>s.delete(x));return [[...p],[...s]]}
