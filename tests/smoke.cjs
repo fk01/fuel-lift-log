@@ -11,7 +11,10 @@ const srv = http.createServer((q, r) => {
 }).listen(8799);
 const b = await chromium.launch(), p = await (await b.newContext({ viewport: { width: 430, height: 932 } })).newPage(), errs = [];
 p.on("pageerror", e => errs.push(e.message));
-await p.addInitScript(() => localStorage.setItem("scheme", "4"));
+// pin the clock to a Thursday (badminton day in the default schedule) so date-based steps are stable
+await p.addInitScript(() => { const T0 = new Date("2026-11-19T10:00:00").getTime(), real = Date.now(), R = Date;
+  class D extends R { constructor(...a) { if (a.length) super(...a); else super(T0 + (R.now() - real)); } static now() { return T0 + (R.now() - real); } }
+  window.Date = D; localStorage.setItem("scheme", "4"); });
 await p.goto("http://localhost:8799/"); await p.waitForTimeout(800);
 await p.evaluate(() => (document.getElementById("login").hidden = true));
 const steps = [
@@ -102,6 +105,8 @@ const steps = [
   ["pick-after-cardio", () => { location.hash = "gym"; dayKind = { date: TODAY, k: "cardio" }; setDayMode("train"); pickLoc("gym"); renderGym();
     document.querySelector('#lochead [data-cr="prog"]').click(); const b = document.querySelector('#gen-body [data-pp="push"]'); if (!b) throw new Error("weights must be pickable after cardio"); b.click(); renderToday();
     if (!document.querySelector('#today [data-today="start:push"]')) throw new Error("start button"); dayKind = {}; }],
+  ["card-start", () => { location.hash = "gym"; cancelProg(); setDayMode("train"); pickLoc("gym"); renderGym(); const g = document.querySelector("#p-push [data-go]"); if (!g) throw new Error("start button on card"); g.click();
+    if (!picked || cur !== "push") throw new Error("card start"); cancelProg(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

@@ -770,3 +770,6 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 .row-ic.g{color:var(--green);background:#3dff8c14}
 .pl-add{border:1px dashed var(--line);border-radius:14px;padding:14px;background:none;color:var(--muted);font:inherit;cursor:pointer}
 .pl-rest{justify-self:center}
+/* clear start button on every program card */
+.pc-act{display:flex;align-items:center;gap:6px;margin-left:auto;flex:none}
+.pc-go{background:var(--grad);color:var(--on-accent);font-weight:700;font-size:.85rem;border-radius:999px;padding:8px 14px;min-height:36px;display:inline-flex;align-items:center;box-shadow:0 0 12px #2ee6ff55;cursor:pointer;white-space:nowrap}
