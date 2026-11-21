@@ -214,6 +214,8 @@ const steps = [
     logs.push({ date: TODAY, at: Date.now(), prog: other, ex: {} }); renderHome();
     const go = document.querySelector(".hq-main .hq-go"); if (go && go.dataset.start && !isCardio(PROGS[go.dataset.start])) throw new Error("swap-done: "+JSON.stringify({ks:planList(),k,other,txt:document.querySelector(".hq-main").innerText,DAY,TODAY}));
     logs = logs.filter(l => !(l.date === TODAY && !Object.keys(l.ex).length)); dayPlan = JSON.parse(keep); renderHome(); }],
+  ["home-all-meal-chips", () => { location.hash = ""; renderHome(); const n = document.querySelectorAll("#v-home [data-meal]").length;
+    if (n !== mealList().length) throw new Error("Today must show a chip for every meal in the plan: " + n + " vs " + mealList().length); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
