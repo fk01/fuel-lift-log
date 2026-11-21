@@ -21,3 +21,9 @@
 - body card: latest kg (mono) + change vs ~7 days ago (neutral colour, no goal assumed) + "ชั่งวันนี้" when today not logged → number pad → BODY
 - show all three body values (kg, muscle mass, fat %) each with 7-day change; "ชั่งวันนี้" in the card header
 - "ชั่งวันนี้" opens the Stats body-log sheet (kg / muscle / fat) via exposed `openBodyLog`; saving refreshes Today
+
+## Round 4 (critique v4 26/40)
+- headline follows the primary action when a rested swap is suggested ("Pull A · แนะนำวันนี้")
+- meal cancel sits in the header link slot (no extra row) → returning state + tick fits above tab bar
+- weigh-in sheet opens blank from Today (no stale prefill), steppers start at last value
+- warning bigger/bolder; Weigh in target 44px; Start 48px

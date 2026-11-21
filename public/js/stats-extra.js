@@ -159,12 +159,12 @@ renderBody=function(){const box=document.getElementById("body-card");if(!box)ret
   box.querySelectorAll("[data-br]").forEach(b=>b.addEventListener("click",()=>{bodyRange=+b.dataset.br;renderBody()}));
   box.querySelector("#b-goal")?.addEventListener("click",()=>{PAD.bg={steps:[.1,.5,1,5],def:last?Math.round(last.kg):70,fix:1};const i=document.createElement("input");i.dataset.pad="bg";i.value=bodyGoal||"";i.setAttribute("aria-label",t("เป้าหมาย"));
     i.addEventListener("change",()=>{bodyGoal=Math.round(+i.value*10)/10||0;try{localStorage.setItem("bodygoal",bodyGoal)}catch(e){}renderBody()});openPad(i)});
-  const openLog=ds=>{PAD.bw={steps:[.1,.5,1,5],def:70,fix:1};PAD.bf={steps:[.1,.5,1],def:15,fix:1};const t0=L.find(x=>x.d===ds)||{},l=lastOf("kg")||{},lm=lastOf("mm")||{},lf=lastOf("fat")||{};
+  const openLog=(ds,blank)=>{PAD.bw={steps:[.1,.5,1,5],def:70,fix:1};PAD.bf={steps:[.1,.5,1],def:15,fix:1};const t0=L.find(x=>x.d===ds)||{},l=lastOf("kg")||{},lm=lastOf("mm")||{},lf=lastOf("fat")||{};
     const prev=(k)=>{const a=L.filter(x=>x[k]!=null&&x.d<ds);return a.length?a[a.length-1][k]:null};
     const row=(k,id,lab,u,pad,v,def)=>`<div class="bstep-row"><div class="row-head"><span>${t(lab)} (${u})</span><small class="bdiff" data-diff="${k}"></small></div>
       <div class="bstep"><button class="bst" data-st="-" data-for="${id}" aria-label="−0.1">−</button><input id="${id}" readonly inputmode="none" data-pad="${pad}" data-k="${k}" data-def="${def}" value="${v??""}" placeholder="${t("ใส่ค่า")}" aria-label="${t(lab)}"><button class="bst" data-st="+" data-for="${id}" aria-label="+0.1">+</button></div></div>`;
     openGen(t("บันทึกร่างกาย"),`<label class="rm-in" style="grid-template-columns:1fr"><label>${t("วันที่")}<input id="b-d" type="date" value="${ds}" max="${TODAY}"></label></label>
-      ${row("kg","b-kg","น้ำหนักตัว","kg","bw",t0.kg??l.kg,70)}${row("mm","b-mm","มวลกล้ามเนื้อ","kg","bw",t0.mm??lm.mm,30)}${row("fat","b-fat","ไขมัน","%","bf",t0.fat??lf.fat,15)}
+      ${row("kg","b-kg","น้ำหนักตัว","kg","bw",blank?t0.kg:t0.kg??l.kg,l.kg||70)}${row("mm","b-mm","มวลกล้ามเนื้อ","kg","bw",blank?t0.mm:t0.mm??lm.mm,lm.mm||30)}${row("fat","b-fat","ไขมัน","%","bf",blank?t0.fat:t0.fat??lf.fat,lf.fat||15)}
       <div class="actions sheet-act">${L.some(x=>x.d===ds)?`<button class="btn ghost" id="b-del">${t("ลบ")}</button>`:""}<button class="btn primary" id="b-save" style="flex:1">✓ ${t("บันทึก")}</button></div>`,b=>{
       const touched=new Set(Object.keys(t0).filter(k=>k!=="d"));
       const diff=()=>b.querySelectorAll("[data-diff]").forEach(el=>{const k=el.dataset.diff,inp=b.querySelector(`[data-k="${k}"]`),v=+inp.value,p=prev(k);
