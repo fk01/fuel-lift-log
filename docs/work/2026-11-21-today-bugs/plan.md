@@ -53,3 +53,10 @@
 2. streak under the calendar: trained days this week · ate to goal X/Y · Lv + tier (hero XP)
 3. tap the "N ท่า · muscles ›" line → sheet listing exercises (sets × reps · muscles) with Start; empty plan → one-tap Start of the suggestion; EN muscle names in plain words (Front shoulders, Upper back, Front/Back thighs…)
 4. meal chips: next + ticked shown, rest behind "+N มื้ออื่น"; "+ กินอย่างอื่น" opens the food log
+
+## Today calm layout (try-out, Today only — from reference shots)
+- greeting header (avatar initial, date, "สวัสดี, <name>") replaces the "Today" title on Today
+- round week strip: ✓ trained / × missed / ring = meals ticked; tap = same DAY link; ‹ › week
+- segment "แผนวันนี้ | สัปดาห์นี้": week = 4 stat tiles + kcal-per-day bars
+- flat cards (no border/glow), every plan item as a card row with a muscle thumbnail + "เวท · ~N นาที" chip
+- other tabs untouched (header/grid restored when leaving Today)
