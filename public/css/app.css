@@ -1116,3 +1116,5 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .loc-tag{cursor:default;border-style:dashed}.loc-tag::after{content:none}
 /* selected chip on the action gradient: dark text, never green-on-green */
 .chip.on[aria-pressed="true"],.chip.on[aria-pressed="true"] *{color:var(--on-accent)}
+.hq-card:disabled{opacity:1;cursor:default;color:inherit}
+#rec-wrap .rcf-head{margin-top:6px}
