@@ -35,14 +35,11 @@ Object.assign(EN,{"วันนี้กินอะไร?":"What to eat?","ส
 // Eat calendar: one week, each day = kcal eaten and whether it reached the kcal goal; tap a day to view it
 let eatWk=0;
 function dayKcal(ds){const d=food[ds];if(!d)return 0;const tg=d.tags||{},x=logSum(ds);return x.k+[...MEALS,EXTRAS.run,EXTRAS.bad].filter(m=>(d.done||{})[m.id]).reduce((a,m)=>a+m.k,0)}
-function renderEatCal(){const box=document.getElementById("eat-cal");if(!box)return;const base=new Date(TODAY+"T12:00:00");base.setDate(base.getDate()+eatWk*7);const off=(base.getDay()+6)%7;
-  const days=[...Array(7)].map((_,i)=>{const d=new Date(base);d.setDate(base.getDate()-off+i);return dkey(d)});
-  const hit=days.filter(ds=>ds<=TODAY&&dayKcal(ds)>=K_GOAL).length,past=days.filter(ds=>ds<TODAY||ds===TODAY&&dayKcal(ds)>0).length;
-  box.innerHTML=`<div class="ec-h"><button class="btn sm" data-ew="-1" aria-label="prev">‹</button><b>${thDate(days[0],{day:"numeric",month:"short"})} – ${thDate(days[6],{day:"numeric",month:"short"})}</b><small>${t("ถึงเป้า")} ${hit}/${past||0}</small><button class="btn sm" data-ew="1" ${eatWk>=0?"disabled":""} aria-label="next">›</button></div>
-    <div class="ec-days">${days.map(ds=>{const k=dayKcal(ds),fut=ds>TODAY,ok=k>=K_GOAL,cls=fut?"fut":!k?"none":ok?"ok":"low";
-      return `<button class="ec-d ${cls}${ds===DAY?" on":""}" data-ed="${ds}" ${fut?"disabled":""}><small>${thDate(ds,{weekday:"narrow"})}</small><b>${new Date(ds+"T12:00:00").getDate()}</b><span>${fut?"":k?k.toLocaleString():"–"}</span><i>${fut||!k?"":ok?"✓":"✕"}</i></button>`}).join("")}</div>
-    <small class="note ec-goal">${t("เป้า")} ${K_GOAL.toLocaleString()} kcal ${t("ต่อวัน")}</small>`;
-  box.querySelectorAll("[data-ew]").forEach(b=>b.addEventListener("click",()=>{eatWk=Math.min(0,eatWk+ +b.dataset.ew);renderEatCal()}));
-  box.querySelectorAll("[data-ed]").forEach(b=>b.addEventListener("click",()=>{DAY=b.dataset.ed;food[DAY]=food[DAY]||{done:{},tags:{}};renderAll()}))}
+function renderEatCal(){const box=document.getElementById("eat-cal");if(!box)return;
+  calCard(box,{key:"eat",sel:DAY,redraw:renderEatCal,
+    cell:ds=>{const k=dayKcal(ds);return !k?{sub:"–",cls:"none"}:k>=K_GOAL?{sub:k.toLocaleString(),mark:"✓",cls:"ok"}:{sub:k.toLocaleString(),mark:"✕",cls:"low"}},
+    extra:days=>{const past=days.filter(ds=>ds<TODAY||ds===TODAY&&dayKcal(ds)>0),hit=past.filter(ds=>dayKcal(ds)>=K_GOAL).length;return `<small>${t("ถึงเป้า")} ${hit}/${past.length}</small>`},
+    foot:`<small class="note ec-goal">${t("เป้า")} ${K_GOAL.toLocaleString()} kcal ${t("ต่อวัน")}</small>`,
+    pick:ds=>{DAY=ds;food[DAY]=food[DAY]||{done:{},tags:{}};renderAll()}})}
 Object.assign(EN,{"ถึงเป้า":"Hit goal","ต่อวัน":"per day","เป้า":"Goal"});
 {const rf=renderFood;renderFood=function(){rf.apply(this,arguments);try{renderEatCal()}catch(e){console.error(e)}}}
