@@ -73,3 +73,6 @@
 - Thai meal link "ดูมื้ออาหาร ›" (no longer shares "ดูแผน")
 - long plan folds: lead + 2 rows, then "+N รายการ"
 - icon stays on the text line; today ring always shows %; week strip fits 390 with 44px arrows (day buttons ~41px wide, 94 tall)
+
+## Place beside the program name (device feedback)
+- plan cards: "Pull A 🏢 Gym" on the title line; preview line keeps "N ท่า · ~N นาที"
