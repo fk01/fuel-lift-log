@@ -68,7 +68,7 @@ function renderFood(){renderFoodHist();
   meals.forEach(m=>{
     const done=!!fs().done[m.id],late=!done&&DAY===TODAY&&/^\d\d:\d\d$/.test(m.time)&&m.time<nowHM,isNext=m.id===nextId;
     const el=document.createElement("label");el.className="meal"+(done?" done mini":"")+(m.id.startsWith("x")?" extra":"")+(isNext?" next":"");
-    el.dataset.flag=isNext?(late?t("เลยเวลา"):t("มื้อถัดไป")):late?t("เลยเวลา"):"";if(late)el.classList.add("late");
+    el.dataset.flag=isNext?t("มื้อถัดไป"):late?t("ยังไม่ติ๊ก"):"";if(late&&!isNext)el.classList.add("late");
     el.innerHTML=`<span class="row-ic">${licon(m.vit?"pill":m.id.startsWith("x")?"run":"bowl")}</span><input type="checkbox" id="c-${m.id}" ${done?"checked":""}><div><div class="row-head"><span><span class="time">${t(m.time)}</span> · ${t(m.name)}</span><span class="macro">${m.vit||!m.k?t("วิตามิน_m").replace(/_m$/,""):`${m.k} kcal · ${t("โปรตีน")} ${m.p} g`}</span></div><ul>${m.items.map(i=>`<li>${t(i)}</li>`).join("")}</ul></div>`;
     el.querySelector("input").addEventListener("change",e=>{fs().done[m.id]=e.target.checked;save("mealcheck",food);renderFood()});
     box.appendChild(el);
@@ -134,4 +134,4 @@ function drawFoodRing(k,kt,p){const el=document.getElementById("food-ring");if(!
     <text x="110" y="150" text-anchor="middle" class="fr-mid">${p} g</text><text x="110" y="166" text-anchor="middle" class="fr-sm">${t("โปรตีน")} / ${P_TARGET}</text></svg>`}
 document.getElementById("day-gear")?.addEventListener("click",ev=>{const s=document.getElementById("day-type");s.hidden=!s.hidden;ev.currentTarget.setAttribute("aria-expanded",!s.hidden)});
 
-Object.assign(EN,{"วิตามิน_m":"Vitamins","กินไป":"ate","มื้อที่เหลือกินเบาลงได้":"go lighter on the rest","พรุ่งนี้กลับมาตามแผน":"back on plan tomorrow"});
+Object.assign(EN,{"ยังไม่ติ๊ก":"Not ticked yet","วิตามิน_m":"Vitamins","กินไป":"ate","มื้อที่เหลือกินเบาลงได้":"go lighter on the rest","พรุ่งนี้กลับมาตามแผน":"back on plan tomorrow"});
