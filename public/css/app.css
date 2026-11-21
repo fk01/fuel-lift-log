@@ -1354,3 +1354,5 @@ body.on-gym{background-image:none}
 #v-gym .sets input[type=checkbox]{appearance:none;-webkit-appearance:none;border-radius:12px;background:#253245;border:2px solid #3a4658;display:grid;place-items:center;cursor:pointer}
 #v-gym .sets input[type=checkbox]:checked{background:var(--green);border-color:var(--green)}
 #v-gym .sets input[type=checkbox]:checked::after{content:"✓";color:#0b1a12;font-weight:800;font-size:22px}
+/* Train strip sits exactly where Today/Eat do (#step1 wrapper had 4px margin + 4px padding) */
+#v-gym .cal-slot #step1{margin:0!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important}
