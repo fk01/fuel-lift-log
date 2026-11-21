@@ -232,6 +232,9 @@ const steps = [
       throw new Error("a suggested program must show only its own place"); }],
   ["home-lead-row-first", () => { location.hash = ""; renderHome(); const rows = document.querySelectorAll(".hq-plist .hq-pi"); if (rows.length < 2) return;
     if (!rows[0].querySelector(".hq-ps.primary")) throw new Error("the suggested item (primary Start) must be the first row"); }],
+  ["home-calendar-links-tabs", () => { location.hash = ""; show("home"); const c = document.querySelectorAll("#home-cal [data-cd]:not([disabled])"); if (c.length < 2) throw new Error("Today needs the week calendar");
+    const keep = DAY, d = [...c].find(b => b.dataset.cd !== DAY); d.click(); if (DAY !== d.dataset.cd) throw new Error("picking a day on Today must move DAY");
+    DAY = keep; renderAll(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
