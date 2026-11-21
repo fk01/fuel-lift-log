@@ -120,7 +120,7 @@ function open1RM(){PAD.kg1={steps:[1,2.5,5,10],def:40};PAD.rp1={chips:Array.from
 function openBadges(){openGen("🏆 "+t("เหรียญรางวัล"),`<div class="badges" id="badges"></div><button class="btn" data-gen-close>${t("ปิด")}</button>`,()=>{try{renderProgress()}catch(e){}})}
 /* ---------- body composition: weight + muscle mass + body fat ---------- */
 Object.assign(EN,{"มวลกล้ามเนื้อ":"Muscle mass","ไขมัน":"Body fat","บันทึกร่างกาย":"Log body","บันทึก":"Save"});
-let bodyMetric="kg";
+let bodyMetric="kg",openBodyLog=null;   // body log sheet, exposed so Today can open it
 let bodyRange=90,bodyGoal=(()=>{try{return +localStorage.getItem("bodygoal")||0}catch(e){return 0}})();
 Object.assign(EN,{"เป้าหมาย":"Goal","ตั้งเป้า":"Set goal","อีก":"to go","ถึงเป้าแล้ว 🎉":"Goal reached 🎉","7 วัน":"7 days","30 วัน":"30 days","ต่อสัปดาห์":"per week","ประวัติ":"History","วันที่":"Date","ลบ":"Delete","แก้":"Edit","ใส่ค่า":"Enter value","สูงสุด":"High","ต่ำสุด":"Low","เพิ่มบันทึก":"Add entry"});
 renderBody=function(){const box=document.getElementById("body-card");if(!box)return;const L=BODY.slice().sort((a,b)=>a.d.localeCompare(b.d));
@@ -176,11 +176,12 @@ renderBody=function(){const box=document.getElementById("body-card");if(!box)ret
         ["pointerup","pointerleave","pointercancel"].forEach(e=>btn.addEventListener(e,stop));
         btn.addEventListener("keydown",ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();step(inp,dir)}})});
       b.querySelectorAll("[data-k]").forEach(i=>i.addEventListener("change",()=>{touched.add(i.dataset.k);diff()}));diff();
-      b.querySelector("#b-del")?.addEventListener("click",()=>{BODY=BODY.filter(x=>x.d!==ds);save("body",BODY);document.getElementById("gen-sheet").hidden=true;renderBody()});
+      b.querySelector("#b-del")?.addEventListener("click",()=>{BODY=BODY.filter(x=>x.d!==ds);save("body",BODY);document.getElementById("gen-sheet").hidden=true;renderBody();if(typeof renderHome==="function")renderHome()});
       b.querySelector("#b-save").addEventListener("click",()=>{const d=b.querySelector("#b-d").value||TODAY;if(d>TODAY)return;const r={d};
         if(!touched.size)touched.add("kg");
         [["kg","#b-kg"],["mm","#b-mm"],["fat","#b-fat"]].forEach(([k,sel])=>{if(!touched.has(k))return;const v=Math.round(+b.querySelector(sel).value*10)/10;if(v>0)r[k]=v});
-        if(Object.keys(r).length<2)return;BODY=BODY.filter(x=>x.d!==ds&&x.d!==d);BODY.push(r);save("body",BODY);document.getElementById("gen-sheet").hidden=true;renderBody();toast("✓")})})};
+        if(Object.keys(r).length<2)return;BODY=BODY.filter(x=>x.d!==ds&&x.d!==d);BODY.push(r);save("body",BODY);document.getElementById("gen-sheet").hidden=true;renderBody();if(typeof renderHome==="function")renderHome();toast("✓")})})};
+  openBodyLog=openLog;
   box.querySelector("#bw-add").addEventListener("click",()=>openLog(TODAY));
   box.querySelectorAll("[data-bed]").forEach(b=>b.addEventListener("click",()=>openLog(b.dataset.bed)))};
 

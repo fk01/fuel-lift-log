@@ -24,7 +24,7 @@ function renderHome(){const box=document.getElementById("v-home");if(!box)return
   const stat=(k,lbl,u)=>{const L=BL.filter(x=>x[k]>0),z=L.slice(-1)[0];if(!z)return `<span class="hq-st"><small>${t(lbl)}</small><b>–</b></span>`;
     const w=L.filter(x=>(ds2d(z.d)-ds2d(x.d))/864e5>=6).slice(-1)[0],dl=w?Math.round((z[k]-w[k])*10)/10:null;
     return `<span class="hq-st"><small>${t(lbl)}</small><b><span class="hq-num">${z[k]}</span> ${u}</b>${dl!==null?`<i>${dl>0?"+":""}${dl} · 7 ${t("วัน")}</i>`:""}</span>`};
-  const bwRow=`<span class="hq-bw">${stat("kg","น้ำหนักตัว","kg")}${stat("mm","มวลกล้ามเนื้อ","kg")}${stat("fat","ไขมัน","%")}</span><input type="number" readonly inputmode="none" data-pad="bw" value="${bwL?bwL.kg:""}" aria-label="${t("น้ำหนักตัว")}" hidden>`;
+  const bwRow=`<span class="hq-bw">${stat("kg","น้ำหนักตัว","kg")}${stat("mm","มวลกล้ามเนื้อ","kg")}${stat("fat","ไขมัน","%")}</span>`;
   const recSum=!hasHist?t("ยังไม่มีประวัติ — เล่นครั้งแรกแล้วจะเห็นว่ากล้ามส่วนไหนพร้อม")
     :`${t("พร้อม")} ${ready.length}/${REC_ORDER.length} ${t("ส่วน")}`+(fresh.length?` · ${fresh.slice(0,2).map(m=>t(MUS_NAME[m])).join(", ")} ${t("กำลังฟื้น")}`:"");
   {const rw=document.getElementById("rec-wrap");if(rw&&box.contains(rw))document.body.appendChild(rw)}   // park it: innerHTML below would destroy it
@@ -40,8 +40,7 @@ function renderHome(){const box=document.getElementById("v-home");if(!box)return
       ${lastTick&&(d.done||{})[lastTick.id]?`<span class="hq-undo">${licon("checkc")} ${esc(t(lastTick.name))} <button class="hq-l" data-untick="${esc(lastTick.id)}">${t("ยกเลิก")}</button></span>`:""}
       ${nx?`<button class="btn hq-tick" data-tick="${esc(nx.id)}">${licon("checkc")} ${t("กินมื้อนี้แล้ว")}</button>`:""}</section>
     <details class="hq-card hq-body"${hasHist?"":" data-empty"}><summary><span class="hq-h"><span class="hq-q">${licon("body")} ${t("ร่างกายฉันเป็นยังไง")}</span>${!bwL||bwL.d!==TODAY?`<button class="hq-l hq-weigh" data-weigh>${t("ชั่งวันนี้")}</button>`:""}</span><small class="hq-s">${recSum}</small>${bwRow}</summary><div class="hq-rec"></div></details>`;
-  box.querySelector("[data-weigh]")?.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();PAD.bw=PAD.bw||{steps:[.1,.5,1,5],def:70,fix:1};openPad(box.querySelector('[data-pad="bw"]'))});
-  box.querySelector('[data-pad="bw"]')?.addEventListener("change",e=>{const kg=Math.round(+e.target.value*10)/10;if(!(kg>0))return;BODY=BODY.filter(x=>x.d!==TODAY);BODY.push({d:TODAY,kg});save("body",BODY);renderHome()});
+  box.querySelector("[data-weigh]")?.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();try{renderBody();openBodyLog&&openBodyLog(TODAY)}catch(err){console.error(err)}});
   box.querySelector(".hq-body[data-empty] summary")?.addEventListener("click",e=>e.preventDefault());
   box.querySelector("[data-untick]")?.addEventListener("click",e=>{delete food[TODAY].done[e.currentTarget.dataset.untick];lastTick=null;save("mealcheck",food);renderHome()});
   box.querySelectorAll("[data-start]").forEach(b=>b.addEventListener("click",()=>{location.hash="gym";try{startPlanItem(b.dataset.start,true)}catch(e){console.error(e)}}));
