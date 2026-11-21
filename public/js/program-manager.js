@@ -6,7 +6,7 @@ Object.assign(EN,{"จัดการโปรแกรม":"Manage programs","�
   "บันทึกโปรแกรมแล้ว":"Programs saved","ต้องมีอย่างน้อย 1 โปรแกรม":"Keep at least one program","คัดลอก":"Copy","ทุกโปรแกรม":"All programs","ย้ายโปรแกรม":"Program order","ท่าหลักห้ามลบหรือเปลี่ยน":"main lift can't be removed or changed",
   "แก้ JSON แล้วกดบันทึก · ท่าที่ไม่มีในคลังจะถูกสร้างให้":"Edit and save · exercises not in the library are created"});
 let pmTab="ui",pmOnly=null,pmFromList=false;   // pmOnly: program key when opened from "Edit workout" — show just that program
-const pmFld="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px;font:inherit";
+const pmFld="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--r-xs);padding:8px;font:inherit";
 function progsToJson(){const out={};weightsHere().map(k=>[k,PROGS[k]]).forEach(([k,p])=>{out[k]={name:p.name,sub:p.sub||"",ex:p.ex.map(e=>{const o={id:e.id,n:e.n,s:e.s,r:e.r};if(e.main)o.main=true;if(e.alt)o.alt=e.alt;return o})}});return JSON.stringify(out,null,2)}
 // parse + validate JSON text into PROGS; exercises are matched by id, then by name, else created in the library
 function jsonToProgs(txt){
