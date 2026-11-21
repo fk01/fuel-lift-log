@@ -39,3 +39,9 @@
 - meal chips wrap (no hidden meals), short labels + full aria-label
 - body: explicit "ดูแผนที่กล้าม ▾" row instead of chevron; deltas carry units; "เกินเป้า" text label
 - weigh sheet placeholder = last value
+
+## Round 7 (critique v7 32/40; B rate-limited, detector run in parent)
+- same program at two places = one plan item; counts by distinct program
+- protein over target is not a warning (kcal only); "เกินเป้า" nowrap
+- body summary: "พร้อมเล่น X · กำลังฟื้น Y กลุ่มกล้าม"
+- "เล่นตามแผน" is a text link; meal chips 3-col grid; food/body cards flatter than the main card
