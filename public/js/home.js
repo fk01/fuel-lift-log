@@ -13,28 +13,33 @@ function renderHome(){const box=document.getElementById("v-home");if(!box)return
   let sug=null;try{sug=recSuggest()}catch(e){}
   const hasHist=REC_ORDER.some(m=>R[m]);
   const restDay=dayMode()==="rest";
-  const uks=ks.filter((q,i)=>ks.findIndex(z=>PROGS[z].name===PROGS[q].name)===i);   // same program at two places = one item
+  const uks=ks.slice();   // one row per plan item, same as the Train tab (Push B @Gym and Push B @Condo are two rows)
   // one weights session a day: once any lift is logged, other planned lifts are skipped (a taken swap counts); cardio counts on its own
   const wDone=ks.some(q=>!isCardio(PROGS[q])&&planItemDone(q)),doneQ=q=>!!planItemDone(q)||(wDone&&!isCardio(PROGS[q]));
-  const udn=uks.filter(q=>ks.some(z=>PROGS[z].name===PROGS[q].name&&doneQ(z))).length,un=uks.length;
-  const sib=q=>q&&PROGS[q]?ks.filter(z=>PROGS[z].name===PROGS[q].name):[],pick=q=>{if(!q||!PROGS[q])return q;const c=sib(q),w=homePick[PROGS[q].name];return c.includes(w)?w:q};   // q may be undefined: empty plan / rest day
-  const allDone=un>0&&udn===un,pk=pick(ks.find(q=>!doneQ(q)&&!isCardio(PROGS[q]))||ks.find(q=>!doneQ(q))||ks[0]),more=uks.length-1;
+  const udn=uks.filter(q=>doneQ(q)).length,un=uks.length;
+  const sib=q=>q&&PROGS[q]?[q]:[],pick=q=>{if(!q||!PROGS[q])return q;const c=sib(q),w=homePick[PROGS[q].name];return c.includes(w)?w:q};   // q may be undefined: empty plan / rest day
+  const tiredOf=q=>{try{return [...new Set(PROGS[q].ex.flatMap(e=>musOf(exOf(e.id))[0]))].filter(m=>st(m)===1)}catch(e){return []}};   /* a planned lift whose muscles are rested leads */
+  const allDone=un>0&&udn===un,pk=pick(ks.find(q=>!doneQ(q)&&!isCardio(PROGS[q])&&!tiredOf(q).length)||ks.find(q=>!doneQ(q)&&!isCardio(PROGS[q]))||ks.find(q=>!doneQ(q))||ks[0]),more=uks.length-1;
   const locOfK=q=>{const P=PROGS[q];return locById(locOf(P)==="*"?P.lastLoc:locOf(P))};
   const fitMs=q=>{try{return [...new Set(PROGS[q].ex.flatMap(e=>musOf(exOf(e.id))[0]))].filter(m=>[0,3,4].includes(st(m))).slice(0,2)}catch(e){return []}};
-  const where=q=>{if(!q||!PROGS[q]||isCardio(PROGS[q]))return "";const c=ks.includes(q)?sib(q):[q];   // a suggested program shows only its own place (a picker is only for one program planned at several places)if(c.length>1)return `<span class="hq-locs" role="group" aria-label="${t("ที่ไหน")}">${c.map(z=>{const L=locOfK(z),on=z===pick(q);return `<button class="hq-loc${on?" on":""}" data-pick="${esc(z)}" aria-pressed="${on}">${esc((L&&L.icon)||"📍")} ${esc(L?t(L.name):t("ที่ไหนก็ได้"))}</button>`}).join("")}</span>`;
-    const L=locOfK(q);return L?` <span class="loc-chip loc-tag">${esc(L.icon||"📍")} ${esc(t(L.name||""))}</span>`:""};
+  // where: one inline place tag per item; a picker only when the same program is planned at places that really differ
+  const placeKeys=q=>{if(!q||!PROGS[q]||isCardio(PROGS[q]))return [];const c=ks.includes(q)?sib(q):[q],seen=new Set();return c.filter(z=>{const L=locOfK(z),id=L?L.id:"";if(seen.has(id))return false;seen.add(id);return true})};
+  const multiLoc=q=>placeKeys(q).length>1;
+  const where=q=>{const c=placeKeys(q);if(!c.length)return "";
+    if(c.length>1){const cur=pick(q);return `<span class="hq-locs" role="group" aria-label="${t("ที่ไหน")}">${c.map(z=>{const L=locOfK(z),on=z===cur||(!c.includes(cur)&&z===c[0]);return `<button class="hq-loc${on?" on":""}" data-pick="${esc(z)}" aria-pressed="${on}">${esc((L&&L.icon)||"📍")} ${esc(L?t(L.name):t("ที่ไหนก็ได้"))}</button>`}).join("")}</span>`}
+    const L=locOfK(c[0]);return L?` <span class="loc-chip loc-tag">${esc(L.icon||"📍")} ${esc(t(L.name||""))}</span>`:""};
   // planned program hits muscles still recovering? say so, and offer the rested pick
   let tired=[];try{if(pk&&!restDay&&!udn&&!isCardio(PROGS[pk]))tired=[...new Set(PROGS[pk].ex.flatMap(e=>musOf(exOf(e.id))[0]))].filter(m=>st(m)===1)}catch(e){}
-  const swap=tired.length&&sug&&sug[0]!==pk&&!ks.slice(0,1).includes(sug[0])?sug[0]:null;
+  const swap=tired.length&&sug&&sug[0]!==pk&&PROGS[sug[0]]&&!ks.some(z=>PROGS[z].name===PROGS[sug[0]].name)?sug[0]:null;   /* never suggest something already in today's plan */
   const bar=(v,g,ok)=>(!ok&&g&&v>g*1.1?` <b class="hq-over">${t("เกินเป้า")}</b>`:"")+`<span class="hq-bar"><i${!ok&&g&&v>g*1.1?' class="over"':""} style="width:${g?Math.min(100,Math.round(v/g*100)):0}%"></i></span>`;
   const nm=q=>esc(PROGS[q].name);
   // beginner preview: how many exercises + main muscles
   const pv=q=>{try{const P=PROGS[q];if(isCardio(P))return "";const ms=[...new Set(P.ex.flatMap(e=>musOf(exOf(e.id))[0]))].slice(0,3).map(m=>t(MUS_NAME[m]));return `${P.ex.length} ${t("ท่า")}${ms.length?" · "+ms.join(", "):""}`}catch(e){return ""}};
-  const gymAns=restDay?t("พักวันนี้"):(!allDone&&uks.length>1)?`${uks.length} ${t("รายการวันนี้_")}`.replace("_",""):allDone?`✓ ${t("เสร็จแล้ววันนี้")} <small class="hq-more">${uks.filter(q=>ks.some(z=>PROGS[z].name===PROGS[q].name&&planItemDone(z))).map(nm).join(", ")}</small>`:swap?`${nm(swap)} <small class="hq-more">${t("แนะนำแทน")} ${nm(pk)}</small>`:pk?nm(pk)+(uks.some(q=>PROGS[q].name!==PROGS[pk].name&&!doneQ(q))?` <small class="hq-more">+ ${uks.filter(q=>q!==pk&&PROGS[q].name!==PROGS[pk].name&&!doneQ(q)).map(nm).join(", ")}</small>`:""):sug?`${t("แนะนำ")}: ${esc(PROGS[sug[0]].name)}`:t("ยังไม่ได้วางแผน");
-  const gymSub=restDay?t("ให้ร่างกายฟื้นตัว"):allDone?(p<P_TARGET?`${t("ต่อไป")}: ${t("โปรตีนเหลือ")} <span class="hq-num">${P_TARGET-p}</span> g`:""):udn?`${t("ทำเสร็จ")} <span class="hq-num">${udn-uks.filter(q=>!ks.some(z=>PROGS[z].name===PROGS[q].name&&planItemDone(z))&&doneQ(q)).length}</span> ${t("จาก")} <span class="hq-num">${un}</span> ${t("รายการวันนี้")}${uks.filter(q=>!ks.some(z=>PROGS[z].name===PROGS[q].name&&planItemDone(z))&&doneQ(q)).length?` · ${t("ข้าม_").replace(/_$/,"")} ${uks.filter(q=>!ks.some(z=>PROGS[z].name===PROGS[q].name&&planItemDone(z))&&doneQ(q)).length}`:""}${bar(udn,un)}`:pk?"":hasHist?t("เลือกโปรแกรมที่กล้ามพร้อม"):t("ยังไม่ได้เล่น — เริ่มโปรแกรมแรก");
+  const gymAns=restDay?t("พักวันนี้"):(!allDone&&uks.length>1)?`${uks.length} ${t("รายการวันนี้_")}`.replace("_",""):allDone?`✓ ${t("เสร็จแล้ววันนี้")} <small class="hq-more">${uks.filter(q=>planItemDone(q)).map(nm).join(", ")}</small>`:swap?`${nm(swap)} <small class="hq-more">${t("แนะนำแทน")} ${nm(pk)}</small>`:pk?nm(pk)+(uks.some(q=>PROGS[q].name!==PROGS[pk].name&&!doneQ(q))?` <small class="hq-more">+ ${uks.filter(q=>q!==pk&&!doneQ(q)).map(nm).join(", ")}</small>`:""):sug?`${t("แนะนำ")}: ${esc(PROGS[sug[0]].name)}`:t("ยังไม่ได้วางแผน");
+  const gymSub=restDay?t("ให้ร่างกายฟื้นตัว"):allDone?(p<P_TARGET?`${t("ต่อไป")}: ${t("โปรตีนเหลือ")} <span class="hq-num">${P_TARGET-p}</span> g`:""):udn?`${t("ทำเสร็จ")} <span class="hq-num">${udn-uks.filter(q=>!planItemDone(q)&&doneQ(q)).length}</span> ${t("จาก")} <span class="hq-num">${un}</span> ${t("รายการวันนี้")}${uks.filter(q=>!planItemDone(q)&&doneQ(q)).length?` · ${t("ข้าม_").replace(/_$/,"")} ${uks.filter(q=>!planItemDone(q)&&doneQ(q)).length}`:""}${bar(udn,un)}`:pk?"":hasHist?t("เลือกโปรแกรมที่กล้ามพร้อม"):t("ยังไม่ได้เล่น — เริ่มโปรแกรมแรก");
   const multi=!restDay&&!allDone&&uks.length>1;
-  const rowOf=q=>{const done=doneQ(q),isPk=q===pk||PROGS[q].name===PROGS[pk].name,sw=isPk&&swap;
-    return `<div class="hq-pi${done?" done":""}"><span class="hq-pt"><b>${done?"✓ ":""}${sw?nm(swap):nm(q)}${sw?` <small class="hq-more">${t("แนะนำแทน")} ${nm(q)}</small>`:""}</b><small class="hq-s">${pv(sw?swap:q)||(isCardio(PROGS[q])?t("คาร์ดิโอ"):"")}${sib(q).length>1&&!sw?"":where(sw?swap:q)}</small>${sib(q).length>1&&!sw&&!done?where(q):""}</span>`+
+  const rowOf=q=>{const done=doneQ(q),isPk=q===pk,sw=isPk&&swap;
+    return `<div class="hq-pi${done?" done":""}"><span class="hq-pt"><b>${done?"✓ ":""}${sw?nm(swap):nm(q)}${sw?` <small class="hq-more">${t("แนะนำแทน")} ${nm(q)}</small>`:""}</b><small class="hq-s">${pv(sw?swap:q)||(isCardio(PROGS[q])?t("คาร์ดิโอ"):"")}${multiLoc(sw?swap:q)?"":where(sw?swap:q)}</small>${multiLoc(sw?swap:q)&&!done?where(sw?swap:q):""}</span>`+
       (done?"":`<button class="btn ${isPk?"primary ":""}sm hq-ps" data-start="${esc(sw?swap:pick(q))}">${t("เริ่ม")}</button>`)+`</div>`};
   const gymBtn=restDay?"":pk?`${t("เริ่ม")} ${esc(PROGS[pk].name)}`:t("วางแผนวันนี้");
   const late=nx&&DAY===TODAY&&(()=>{const [h,mi]=String(nx.time).split(":").map(Number);const n0=new Date();return n0.getHours()*60+n0.getMinutes()-(h*60+(mi||0))>120})();
@@ -50,7 +55,7 @@ function renderHome(){const box=document.getElementById("v-home");if(!box)return
   {const rw=document.getElementById("rec-wrap");if(rw&&box.contains(rw))document.body.appendChild(rw);const rc=document.getElementById("rec-cfg");if(rc&&box.contains(rc)&&rw)rw.appendChild(rc)}   // park it: innerHTML below would destroy it
   box.innerHTML=`<div class="date">${thDate(TODAY,{weekday:"long",day:"numeric",month:"short"})}</div>
     <section class="hq-card hq-main"><span class="hq-h"><span class="hq-q">${licon("dumbbell")} ${t("วันนี้ออกกำลังยังไง")}</span><button class="hq-l" data-go="gym">${t("ดูแผน_ฝึก").replace(/_ฝึก$/,"")} ›</button></span>
-      <b class="hq-a">${gymAns}</b>${!restDay&&!allDone&&!(uks.length>1)&&(swap||pk)&&pv(swap||pk)?`<small class="hq-s hq-pv">${pv(swap||pk)}${sib(swap||pk).length>1?"":where(swap||pk)}</small>${sib(swap||pk).length>1?where(swap||pk):""}`:""}${gymSub&&!tired.length?`<small class="hq-s">${gymSub}</small>`:""}
+      <b class="hq-a">${gymAns}</b>${!restDay&&!allDone&&!(uks.length>1)&&(swap||pk)&&pv(swap||pk)?`<small class="hq-s hq-pv">${pv(swap||pk)}${multiLoc(swap||pk)?"":where(swap||pk)}</small>${multiLoc(swap||pk)?where(swap||pk):""}`:""}${gymSub&&!tired.length?`<small class="hq-s">${gymSub}</small>`:""}
       ${hasHist&&!restDay&&!allDone&&(swap||pk)&&!isCardio(PROGS[swap||pk])&&fitMs(swap||pk).length?`<small class="hq-fit">${licon("checkc")} ${fitMs(swap||pk).map(m=>t(MUS_NAME[m])).join(", ")} ${t("พักพอแล้ว")}${swap?` → ${t("เหมาะกับวันนี้")}`:""}</small>`:""}
       ${tired.length?`<small class="hq-warn">${licon("moon")} ${tired.slice(0,2).map(m=>t(MUS_NAME[m])).join(", ")} ${t("ยังฟื้นไม่เต็มที่")}</small>`:""}
       ${multi?`<div class="hq-plist">${uks.map(rowOf).join("")}</div>${swap?`<button class="hq-l hq-alt" data-start="${esc(pk)}">${t("เล่นตามแผน")}: ${nm(pk)}</button>`:""}`:allDone?`<button class="hq-l hq-alt" data-go="gym">${t("ดูบันทึกวันนี้")} ›</button>`:swap?`<button class="btn primary hq-go" data-start="${esc(swap)}">${t("เริ่ม")} ${esc(PROGS[swap].name)} ›</button><button class="hq-l hq-alt" data-start="${esc(pk)}">${t("เล่นตามแผน")}: ${nm(pk)}</button>`
