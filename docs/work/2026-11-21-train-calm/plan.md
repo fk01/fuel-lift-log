@@ -9,3 +9,8 @@
 
 ## Remove the "LEVEL UP!" toast (user request)
 - hero.js no longer toasts on level up; level stays visible on Today → This week
+
+## Device bugs (workout)
+- +Set / −Set / Tick all re-rendered the cards without re-applying the pager → the shown exercise vanished. renderEx now re-applies the pager; smoke test workout-set-buttons-keep-card
+- paging ‹ › scrolled the page to the pager every time → only scroll back if the pager is off-screen above (measured: scroll position unchanged)
+- Cancel / Finish & save drifted (sticky + bar-hide) → fixed above the tab bar; tab bar stays put on Train (measured: same y while scrolling)

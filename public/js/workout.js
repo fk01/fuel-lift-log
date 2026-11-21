@@ -179,8 +179,11 @@ function applyPager(){const box=document.getElementById("exs");if(!box)return;co
   const nav=document.createElement("div");nav.className="wo-pager";
   nav.innerHTML=`<button class="btn sm" data-pg="-1" ${woIdx?"":"disabled"} aria-label="prev">‹</button><span class="pg-mid"><small>${woIdx+1}/${cards.length}</small><span class="pg-dots">${ex.map((x,i)=>`<i class="${i===woIdx?"cur":done(x)?"ok":""}"></i>`).join("")}</span></span><button class="btn sm" data-pg="1" ${woIdx<cards.length-1?"":"disabled"} aria-label="next">›</button>`;
   cards[0].before(nav);nav.querySelectorAll("[data-pg]").forEach(b=>b.addEventListener("click",()=>goEx(woIdx+ +b.dataset.pg)))}
-function goEx(i){woIdx=i;applyPager();const n=document.querySelector("#exs .wo-pager");if(n)n.scrollIntoView({block:"start",behavior:smoothB()})}
+function goEx(i){woIdx=i;applyPager();const n=document.querySelector("#exs .wo-pager");if(n&&n.getBoundingClientRect().top<0)n.scrollIntoView({block:"start",behavior:smoothB()})}   // only pull back if the pager scrolled out above
 (()=>{const box=document.getElementById("exs");let x0=null,y0=0;box.addEventListener("touchstart",e=>{if(!box.classList.contains("paged")||e.target.closest("input,textarea"))return;x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
   box.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)goEx(woIdx+(dx<0?1:-1))},{passive:true})})();
 
 Object.assign(EN,{"ใส่น้ำหนักก่อนติ๊ก":"Enter the weight first"});
+
+// renderEx() rebuilds every card; re-apply the pager so the current exercise stays shown (+Set / −Set / Tick all)
+{const _renderEx=renderEx;renderEx=function(){const r=_renderEx.apply(this,arguments);try{applyPager()}catch(e){}return r}}

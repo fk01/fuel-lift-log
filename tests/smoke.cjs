@@ -236,6 +236,11 @@ const steps = [
   ["home-calendar-links-tabs", () => { location.hash = ""; show("home"); const c = document.querySelectorAll("#home-cal [data-cd]:not([disabled])"); if (c.length < 2) throw new Error("Today needs the week calendar");
     const keep = DAY, d = [...c].find(b => b.dataset.cd !== DAY); d.click(); if (DAY !== d.dataset.cd) throw new Error("picking a day on Today must move DAY");
     DAY = keep; renderAll(); }],
+  ["workout-set-buttons-keep-card", () => { location.hash = "gym"; cancelProg(); setDayMode("train"); pickLoc("gym"); renderGym(); const k = planList().find(q => !isCardio(PROGS[q])); startPlanItem(k, true);
+    const vis = () => document.querySelector("#exs .ex.pg-on"); if (!vis()) return; const n0 = vis().querySelectorAll(".sets input[type=checkbox]").length;
+    vis().querySelector("[data-add]").click(); if (!vis()) throw new Error("+Set must keep the exercise on screen"); if (vis().querySelectorAll(".sets input[type=checkbox]").length !== n0 + 1) throw new Error("+Set adds a row");
+    vis().querySelector("[data-del]").click(); if (!vis() || vis().querySelectorAll(".sets input[type=checkbox]").length !== n0) throw new Error("−Set removes a row and keeps the card");
+    vis().querySelector("[data-all]").click(); if (!vis()) throw new Error("Tick all keeps the card"); cancelProg(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
