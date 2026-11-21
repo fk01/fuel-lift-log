@@ -6,3 +6,6 @@
 - copy: no "Pending" chip, "5 เซ็ต × 5 ครั้ง"; 44px targets in the workout; Add sheet takes focus
 - tests: day-queue follows the new rules (one Start, remove via sheet); hit-areas hides a transient level-up toast
 - Train strip was 8px lower (#step1 wrapper margin+padding) → zeroed; measured header/strip/day/dot/arrows identical on Today, Eat, Train
+
+## Remove the "LEVEL UP!" toast (user request)
+- hero.js no longer toasts on level up; level stays visible on Today → This week
