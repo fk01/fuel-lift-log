@@ -1281,3 +1281,9 @@ body.on-home{background-image:none}
 #v-home .hq-card.hq-weekc{background:none!important;padding:0}
 #v-home .hq-weekc .hq-tile{background:#1c2431}
 #v-home .hq-pi .loc-tag{display:inline-flex;margin:0 0 0 8px}
+/* v17 fixes */
+.hq-ready{flex-wrap:nowrap!important;align-items:flex-start}.hq-ready svg{flex:none;margin-top:2px}.hq-ready span{min-width:0}
+.hq-week{margin-inline:-8px}.hq-day{min-width:0}
+.hq-morep{width:100%;min-height:44px;margin-top:2px}
+.hq-day.now .hq-pc{color:var(--muted)}
+#v-home .hq-weekc{min-height:0}

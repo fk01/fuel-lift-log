@@ -67,3 +67,9 @@
 - single layer: training section is a label + item cards; week tab tiles flat
 - one Start (lead card); other cards tap → program sheet
 - week tab: weight tile "−0.8 kg · ใน 7 วัน"; empty kcal chart → hint text; week arrows + Thai preview button 44px
+
+## Critique v17 (30/40) — user picked 3 groups
+- plain sentence: "<muscles> ยังฟื้น — วันนี้ลอง <program> แทน" / "<muscles> พักพอแล้ว เล่นได้เลย"; secondary "เล่น <planned> อยู่ดี"
+- Thai meal link "ดูมื้ออาหาร ›" (no longer shares "ดูแผน")
+- long plan folds: lead + 2 rows, then "+N รายการ"
+- icon stays on the text line; today ring always shows %; week strip fits 390 with 44px arrows (day buttons ~41px wide, 94 tall)
