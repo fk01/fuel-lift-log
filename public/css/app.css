@@ -1378,3 +1378,6 @@ body:has(#tx-bar:not([hidden])) #v-gym .wo-bar,body:has(.tx-bar:not([hidden])) #
 body.on-gym.wo-focus .tx-bar{bottom:var(--tabh)!important}
 /* while the rest timer is up, Cancel / Finish & save are hidden — close the timer (Ready) first (user request) */
 .wrap.has-rest #v-gym .wo-bar{display:none!important}
+/* Train: one typeface everywhere (no mono mixed in) — numbers keep equal widths */
+#v-gym,#v-gym *:not(svg):not(svg *),#rest,#rest *:not(svg):not(svg *),#pad,#pad *{font-family:var(--f-body)!important;letter-spacing:0!important;text-transform:none!important;font-variant-numeric:tabular-nums}
+#v-gym .wo-top b,#v-gym #wo-clock,#rest b{font-weight:700}
