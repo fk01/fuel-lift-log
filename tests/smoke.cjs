@@ -142,10 +142,9 @@ const steps = [
     document.querySelector("#gen-body [data-addm]").click(); if (MEALS.length !== n0 + 1) throw new Error("add meal"); document.querySelector("#tx-bar [data-tx-cancel]").click(); document.querySelector("#tx-ask [data-drop]").click();
     if (P_TARGET !== p0 || MEALS.length !== n0) throw new Error("cancel restores meal plan"); openMealPlan(); const g2 = document.querySelector('#gen-body [data-g="p"]'); g2.value = "175"; g2.dispatchEvent(new Event("change"));
     document.querySelector("#tx-bar [data-tx-save]").click(); if (JSON.parse(localStorage.getItem("mealplan")).p !== 175 || P_TARGET !== 175) throw new Error("save meal plan"); MP = null; localStorage.removeItem("mealplan"); mpApply(); }],
-  ["plan-place-swap", () => { location.hash = "gym"; cancelProg(); setDayMode(null); dayPlan = {}; const had = LOCS.some(l => l.id === "condo"); if (!had) LOCS.push({ id: "condo", name: "Condo", icon: "🏠", eq: ["db"], types: ["gym"] });
-    PROGS["c-test"] = { ...JSON.parse(JSON.stringify(PROGS.push)), loc: "condo" }; planAdd("push"); renderGym(); const c = document.querySelector('#locpick [data-pl="push"] [data-plloc]'); if (!c) throw new Error("place chip"); c.click();
-    document.querySelector('#gen-body [data-pp="condo"]').click(); document.querySelector("#gen-body [data-ppok]").click(); if (!planList().some(k => locOf(PROGS[k]) === "condo") || planList().includes("push")) throw new Error("swap to condo copy");
-    delete PROGS["c-test"]; if (!had) LOCS = LOCS.filter(l => l.id !== "condo"); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
+  ["plan-place-fixed", () => { location.hash = "gym"; cancelProg(); setDayMode(null); dayPlan = {}; planAdd("push"); renderGym();
+    const r = document.querySelector('#locpick [data-pl="push"]'); if (!r || r.querySelector("[data-plloc]") || !r.querySelector(".loc-tag")) throw new Error("place in today's plan is a fixed label");
+    dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
   ["home-3-questions", () => { location.hash = "home"; show("home"); const c = document.querySelectorAll("#v-home .hq-card"); if (c.length !== 3) throw new Error("three question cards");
     if (document.querySelectorAll(".tabbar .tab").length !== 6) throw new Error("six tabs"); show("body"); if (document.getElementById("v-stats").hidden || stTab !== "body") throw new Error("body tab"); show("gym"); }],
   ["undo-setup", () => { location.hash = "gym"; dayPlan = {}; save("dayplan", dayPlan); userAt = Date.now(); planAdd("pull"); }],
