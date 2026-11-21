@@ -160,6 +160,9 @@ A near-black navy console lit by two signal colors that always travel together a
 - **Label** (600, 12px): tab labels, chips, captions. 12 px is the floor for any functional text.
 - **Numeric** (mono, tabular): kcal, kg, sets, timers, counts.
 
+### Size ramp (CSS tokens `--t-*`)
+label 12 · meta 13 · sm 14 · body 15 · md 16 · title 17 · head 18 · lg 20 · xl 24 · display 32 · hero 40 (px). Every font-size uses one of these; inputs keep `max(16px,1em)`.
+
 ### Named Rules
 **The 12 px Floor Rule.** No functional text below 12 px; inputs never below 16 px (iOS zoom).
 
