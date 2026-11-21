@@ -10,3 +10,9 @@
 - P0 warn when planned program hits recovering muscles + "เริ่ม <rested> แทน" button
 - P1 meal tick → undoLoud (Undo bar); kcal/protein/sets progress bars + mono numerals
 - P2 Start button calls startPlanItem directly; skip 0-kcal items as "next meal"; flat empty body card
+
+## Round 3 (critique v3 25/40)
+- recovering: rested program becomes primary, planned one secondary ("เล่นตามแผน")
+- rest day: secondary "ออกกำลังอยู่ดี"
+- meal tick: inline "✓ <meal> · ยกเลิก" chip (global Undo button stays off per #88)
+- bar turns amber when >110% of target

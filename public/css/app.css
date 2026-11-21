@@ -1164,3 +1164,6 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .hq-warn svg{flex:none;width:16px;height:16px;margin-top:2px}
 .hq-swap{margin-top:8px;min-height:44px;width:100%;justify-content:center}
 .hq-body[data-empty]{background:none;border-color:transparent;box-shadow:none;padding-block:8px}
+.hq-bar i.over{background:var(--warn)}
+.hq-undo{display:flex;align-items:center;gap:6px;margin-top:8px;color:var(--up);font-size:var(--t-meta)}
+.hq-undo svg{width:16px;height:16px}.hq-undo .hq-l{margin-left:auto;color:var(--muted)}
