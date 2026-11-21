@@ -51,3 +51,8 @@
 - zero-state: no "Done 0 of N", no "–" stats (one hint line), no rest-day duplicate
 - weigh placeholders read "ล่าสุด 70.4"; ticked chip = colour only (no truncation)
 - Start errors toast; muscle-map hint "100% = rested"; Escape/backdrop close sheets; dead CSS removed
+
+## Round 9 (critique v9 32/40)
+- body summary count-first ("0 ready · 8 recovering · 8 not trained yet")
+- ticked chip shows ✓; warning replaces the preview line; "Stick to plan" more legible
+- train card gets a "Plan ›" header link; "+ Log body" reads as an action; weigh failure toasts

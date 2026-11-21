@@ -1186,3 +1186,7 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .hq-alt{justify-self:center;margin-top:4px;color:var(--muted)}
 #v-home .hq-card:not(.hq-main){box-shadow:inset 0 1px 0 var(--w05)}
 .hq-hint{display:block;margin:10px 0 -4px}
+.hq-mc.on::before{content:"✓";font-weight:700}
+.hq-of{color:var(--muted)}
+#v-home .hq-alt{color:color-mix(in srgb,var(--fg) 80%,transparent);min-height:44px}
+#v-home .hq-h .hq-l{margin-block:-10px}
