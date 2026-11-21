@@ -881,7 +881,7 @@ body.tx-open #app,body.tx-open main{padding-bottom:110px}
 /* modal title + Close stay visible while the list scrolls (was scrolling away under the iOS status bar) */
 .modal:not(.sheet)>.modal-in>.row-head:first-child{position:sticky;top:calc(-16px - env(safe-area-inset-top,0px));z-index:4;background:var(--k100);margin:calc(-16px - env(safe-area-inset-top,0px)) -4px 0;padding:calc(12px + env(safe-area-inset-top,0px)) 4px 10px}
 /* meal plan editor */
-.mp-open-row{display:flex;justify-content:flex-end;margin-bottom:-4px}
+.mp-open-row{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-bottom:-4px}
 .mp-card{display:grid;gap:10px}
 .mp-row{display:grid;gap:6px;padding-top:10px;border-top:1px solid var(--line)}
 .mp-top{display:flex;gap:6px;align-items:center}.mp-ic{width:2em;display:grid;place-items:center;color:var(--cyan,var(--cyan))}
