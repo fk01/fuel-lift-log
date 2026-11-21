@@ -1112,3 +1112,7 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 #locpick .rest-card~*,#v-gym.resting #lochead{display:none}
 /* "Saved" confirmation only — no Undo button (user request) */
 .undo-bar [data-undo]{display:none}
+/* cardio in today's plan: place is fixed once added — a label, not a picker */
+.loc-tag{cursor:default;border-style:dashed}.loc-tag::after{content:none}
+/* selected chip on the action gradient: dark text, never green-on-green */
+.chip.on[aria-pressed="true"],.chip.on[aria-pressed="true"] *{color:var(--on-accent)}
