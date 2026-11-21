@@ -20,3 +20,6 @@
 
 ## Hotfix: Today crashed with an empty plan / rest day
 - #125 pick()/sib() read PROGS[undefined].name when nothing is planned → guard; smoke test home-empty-plan-and-rest
+
+## Train: remove Share button (user request)
+- app.js keeps #share-last hidden on every tab (listener/share-card code untouched)
