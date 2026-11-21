@@ -17,8 +17,8 @@ function editCard(box,e,i){
       <div class="sets" style="grid-template-columns:1fr 1fr"><span class="h">${t("เซ็ต")}</span><span class="h">${t("ช่วงครั้ง")}</span>
       <input type="number" readonly inputmode="none" data-pad="sets" id="es-${e.id}" value="${e.s}" aria-label="${t("เซ็ต")}">
       <input id="er-${e.id}" readonly inputmode="none" data-pad="rng" value="${esc(e.r)}" aria-label="${t("ช่วงครั้ง")}" style="min-width:0;box-sizing:border-box;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:var(--r-sm);padding:7px 6px;font-family:var(--f-num);text-align:center"></div>
-      <label class="zone" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="em-${e.id}" ${e.main?"checked":""} ${lock?"disabled":""} style="accent-color:var(--accent)"> ${t("ท่าหลัก")}</label>
-      <div class="actions"><button class="btn sm" data-up ${i===0?"disabled":""}>↑</button><button class="btn sm" data-down ${i===list.length-1?"disabled":""}>↓</button><button class="btn sm ghost" data-del ${lock?"hidden":""}>${t("ลบท่า")}</button><button class="btn sm primary" data-done>✓ ${t("เสร็จแก้ท่า").replace(/แก้ท่า$/,"")}</button></div>`;
+      ${editing?`<label class="zone" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="em-${e.id}" ${e.main?"checked":""} ${lock?"disabled":""} style="accent-color:var(--accent)"> ${t("ท่าหลัก")}</label>`:""}
+      <div class="actions">${editing?`<button class="btn sm" data-up ${i===0?"disabled":""} aria-label="${t("เล่นก่อน")}">↑</button><button class="btn sm" data-down ${i===list.length-1?"disabled":""} aria-label="${t("เล่นทีหลัง")}">↓</button>`:""}<button class="btn sm ghost" data-del ${lock?"hidden":""}>${t("ลบท่า")}</button><button class="btn sm primary" data-done>✓ ${t("เสร็จแก้ท่า").replace(/แก้ท่า$/,"")}</button></div>`;
     const on=(sel,ev,fn)=>c.querySelector(sel).addEventListener(ev,fn);
     on(`#es-${e.id}`,"change",ev=>{e.s=Math.max(1,Math.min(10,+ev.target.value||1));if(draft.ex)delete draft.ex[e.id];saveProgs()});
     on(`#er-${e.id}`,"change",ev=>{e.r=ev.target.value.trim()||e.r;saveProgs()});
@@ -26,10 +26,10 @@ function editCard(box,e,i){
     on("[data-swap]","click",()=>!lock&&openLib({skip:new Set(list.map(q=>q.id)),onPick:x=>{
       if(draft.ex)delete draft.ex[e.id];const n={...libPick(x),s:e.s,r:e.r};if(e.main)n.main=1;list[i]=n;if(editId===e.id)editId=x.id;
       saveProgs();save("gymdraft",draft);renderEx()}}));
-    on(`#em-${e.id}`,"change",ev=>{if(lock){ev.target.checked=true;return}e.main=ev.target.checked?1:0;saveProgs()});
+    c.querySelector(`#em-${e.id}`)?.addEventListener("change",ev=>{if(lock){ev.target.checked=true;return}e.main=ev.target.checked?1:0;saveProgs()});
     on("[data-done]","click",()=>{if(editing){editId=null;renderGym()}else txSave()});
-    on("[data-up]","click",()=>{list.splice(i-1,0,list.splice(i,1)[0]);saveProgs();renderEx()});
-    on("[data-down]","click",()=>{list.splice(i+1,0,list.splice(i,1)[0]);saveProgs();renderEx()});
+    c.querySelector("[data-up]")?.addEventListener("click",()=>{list.splice(i-1,0,list.splice(i,1)[0]);saveProgs();renderEx()});
+    c.querySelector("[data-down]")?.addEventListener("click",()=>{list.splice(i+1,0,list.splice(i,1)[0]);saveProgs();renderEx()});
     on("[data-del]","click",ev=>{if(lock)return;const b=ev.target;if(!b.dataset.sure){b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน");return}
       list.splice(i,1);if(draft.ex)delete draft.ex[e.id];saveProgs();save("gymdraft",draft);renderEx();toast(t("ลบท่าแล้ว"))});
     box.appendChild(c);
@@ -46,3 +46,5 @@ function renderEdit(box){
 }
 
 Object.assign(EN,{"เสร็จแก้ท่า":"Done"});
+
+Object.assign(EN,{"เล่นก่อน":"Move earlier","เล่นทีหลัง":"Move later"});
