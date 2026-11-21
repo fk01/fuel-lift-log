@@ -134,7 +134,7 @@ document.getElementById("gen-sheet")?.addEventListener("click",e=>{if(e.target.i
 // "Back to today" lives in the calendar header, drawn after the cards — delegate
 document.addEventListener("click",e=>{if(!(e.target.closest&&e.target.closest("[data-backtoday]")))return;DAY=TODAY;try{draft.ex={};picked=false}catch(x){}renderAll()});
 // app.js (loaded after this file) defines show(): wrap it once everything is loaded
-window.addEventListener("DOMContentLoaded",()=>{if(typeof show!=="function")return;const _show=show;show=function(v){document.body.classList.toggle("on-home",v==="home"||!v);document.body.classList.toggle("on-food",v==="food");return _show.apply(this,arguments)}});
+window.addEventListener("DOMContentLoaded",()=>{if(typeof show!=="function")return;const _show=show;show=function(v){document.body.classList.toggle("on-home",v==="home"||!v);document.body.classList.toggle("on-food",v==="food");document.body.classList.toggle("on-gym",v==="gym");return _show.apply(this,arguments)}});
 
 // Eat uses the same round week strip as Today (same DAY link)
 renderEatCal=function(){const box=document.getElementById("eat-cal");if(!box)return;
@@ -150,3 +150,20 @@ renderEatCal=function(){const box=document.getElementById("eat-cal");if(!box)ret
     <small class="hq-streak">${t("ถึงเป้า")} <b class="hq-num">${hit}/${past.length}</b> ${t("วัน_s").replace(/_s$/,"")} · ${t("เป้า")} ${K_GOAL.toLocaleString()} kcal ${t("ต่อวัน")}</small>`;
   box.querySelectorAll("[data-cd]").forEach(b=>b.addEventListener("click",()=>{const ds=b.dataset.cd;if(ds===DAY)return;DAY=ds;food[DAY]=food[DAY]||{done:{},tags:{}};try{draft.ex={};picked=false}catch(e){}renderAll()}));
   box.querySelectorAll("[data-wk]").forEach(b=>b.addEventListener("click",()=>{const d=new Date(DAY+"T12:00:00");d.setDate(d.getDate()+ +b.dataset.wk);let k=dkey(d);if(k>TODAY)k=TODAY;DAY=k;food[DAY]=food[DAY]||{done:{},tags:{}};renderAll()}))};
+
+// Train uses the same greeting + round week strip as Today/Eat (same DAY link)
+// app.js (loaded later) declares renderWeek — swap it in once everything has loaded
+const trainWeek=function(){const box=document.getElementById("week");if(!box)return;box.classList.add("eat-cal");box.hidden=false;const hc=document.getElementById("hdr-cal");if(hc)hc.hidden=true;
+  const a=new Date(DAY+"T12:00:00"),off=(a.getDay()+6)%7,full=[...Array(7)].map((_,i)=>{const d=new Date(a);d.setDate(a.getDate()-off+i);return dkey(d)});
+  const did=ds=>logs.some(l=>l.date===ds)||(typeof cxAny==="function"&&cxAny(ds));
+  const st=ds=>ds>TODAY?"fut":did(ds)?"ok":ds<TODAY?"miss":"now";
+  const ring=ds=>did(ds)?licon("checkc"):ds<TODAY?`<span class="hq-rest" aria-hidden="true"></span>`:"";
+  const nar=ds=>new Date(ds+"T12:00:00").toLocaleDateString(LOC(),{weekday:"narrow"});
+  const nameOf=(typeof PROFILE!=="undefined"&&PROFILE&&PROFILE.name)||(typeof ME!=="undefined"&&ME&&ME.name)||"";
+  const n=full.filter(ds=>ds<=TODAY&&did(ds)).length;
+  box.innerHTML=`<div class="hq-hello"><span class="hq-av" aria-hidden="true">${esc((nameOf||"W").trim().charAt(0).toUpperCase())}</span><span class="hq-hi"><small>${thDate(DAY,{weekday:"long",day:"numeric",month:"long"})}</small><b>${DAY!==TODAY?t("ย้อนดูวันนั้น"):t("วันนี้ออกกำลังอะไร")}</b></span>${DAY!==TODAY?`<button class="btn sm hq-back" data-backtoday>${t("กลับวันนี้")}</button>`:""}</div><div class="hq-week"><button class="hq-wnav" data-wk="-7" aria-label="${t("สัปดาห์ก่อน")}">‹</button>${full.map(ds=>`<button class="hq-day ${st(ds)}${ds===DAY?" sel":""}${ds===TODAY?" today":""}" data-cd="${ds}" ${ds>TODAY?"disabled":""} aria-label="${thDate(ds,{weekday:"long",day:"numeric",month:"short"})}"><small>${new Date(ds+"T12:00:00").getDate()}</small><span class="hq-dot">${ds>TODAY?"":ring(ds)}</span><small>${nar(ds)}</small></button>`).join("")}<button class="hq-wnav" data-wk="7" aria-label="${t("สัปดาห์ถัดไป")}" ${full[6]>=TODAY?"disabled":""}>›</button></div>
+    <small class="hq-streak">${t("สัปดาห์นี้เล่น")} <b class="hq-num">${n}</b> ${t("วัน_s").replace(/_s$/,"")}</small>`;
+  box.querySelectorAll("[data-cd]").forEach(b=>b.addEventListener("click",()=>{const ds=b.dataset.cd;if(ds===DAY){return}DAY=ds;try{draft.ex={};picked=false}catch(e){}renderAll()}));
+  box.querySelectorAll("[data-wk]").forEach(b=>b.addEventListener("click",()=>{const d=new Date(DAY+"T12:00:00");d.setDate(d.getDate()+ +b.dataset.wk);let k=dkey(d);if(k>TODAY)k=TODAY;DAY=k;try{draft.ex={};picked=false}catch(e){}renderAll()}))};
+window.addEventListener("DOMContentLoaded",()=>{renderWeek=trainWeek;try{renderWeek()}catch(e){}});
+Object.assign(EN,{"วันนี้ออกกำลังอะไร":"What do I train today?"});
