@@ -64,7 +64,7 @@ function libForm(x){
     <div class="mus-pick"><small>${t("กล้ามที่โดน")} · ${t("แตะ 1 ครั้ง = หลัก, 2 = รอง, 3 = ไม่โดน")}</small>
       <div class="mus-fig">${bodySVG(...musOf(x),150)}</div>
       <div class="chips">${MUS_KEYS.map(m=>{const [p,s]=musOf(x),st=p.includes(m)?"p":s.includes(m)?"s":"";return `<button class="chip mchip ${st}" data-mus="${m}">${t(MUS_NAME[m])}</button>`}).join("")}</div></div>
-    <input data-f="link" ${gifOf(x)&&!x.link?"hidden":""} type="url" inputmode="url" value="${esc(x.link||"")}" placeholder="${t("ลิงก์วิธีเล่น (YouTube / TikTok)")}" aria-label="link" style="${fld};font-size:.85rem">
+    <input data-f="link" ${gifOf(x)&&!x.link?"hidden":""} type="url" inputmode="url" value="${esc(x.link||"")}" placeholder="${t("ลิงก์วิธีเล่น (YouTube / TikTok)")}" aria-label="link" style="${fld};font-size:var(--t-sm)">
     <div class="zone">${used.length?t("ใช้ใน")+": "+used.map(esc).join(", "):t("ยังไม่ได้ใช้ในโปรแกรม")}</div>
     <div class="actions"><button class="btn sm ghost" data-del>${t("ลบท่า")}</button></div>`;
   const on=(s,ev,fn)=>c.querySelector(s).addEventListener(ev,fn);

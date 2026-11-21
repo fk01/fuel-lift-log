@@ -8,11 +8,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="WeightGram">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=138505">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=138506">
 <title>WeightGram</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Share+Tech+Mono&display=swap">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*{-webkit-tap-highlight-color:transparent}body{margin:0;font-size:14px;font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
-<link rel="stylesheet" href="/css/app.css?v=138505">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*{-webkit-tap-highlight-color:transparent}body{margin:0;font-size:var(--t-sm);font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<link rel="stylesheet" href="/css/app.css?v=138506">
 </head><body>
 
 <div class="wrap">
@@ -70,7 +70,7 @@
       <div class="step"><span class="num" id="sn-2">2</span><span class="step-t" data-i="โปรแกรม">โปรแกรม</span></div>
       <div class="prog-pick" id="progs"></div>
       <button class="btn empty-w" id="empty-w">＋ <span data-i="ออกแบบอิสระ">ออกแบบอิสระ</span> <small data-i="เพิ่มท่าเองระหว่างเล่น">เพิ่มท่าเองระหว่างเล่น</small></button>
-      <div class="actions" id="start-row" hidden><button class="btn primary" id="start-w" style="padding:14px;font-size:.9rem;flex:1">▶ เริ่มออก</button><button class="btn" id="edit-w" style="padding:14px;font-size:.9rem" data-i="แก้โปรแกรม" data-pre="✎ ">✎ แก้โปรแกรม</button></div>
+      <div class="actions" id="start-row" hidden><button class="btn primary" id="start-w" style="padding:14px;font-size:var(--t-body);flex:1">▶ เริ่มออก</button><button class="btn" id="edit-w" style="padding:14px;font-size:var(--t-body)" data-i="แก้โปรแกรม" data-pre="✎ ">✎ แก้โปรแกรม</button></div>
     </section>
     <div class="wo-top" id="wo-top" hidden>
       <button class="wo-back" id="wo-back" aria-label="กลับหน้าวันนี้">‹ <span data-i="วันนี้">วันนี้</span></button>
@@ -147,7 +147,7 @@
       <button class="menu-row" data-act="refresh"><span class="mi"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v5h-5"/></svg></span><span class="mt"><b data-i="ซิงก์ข้อมูล">ซิงก์ข้อมูล</b><small id="sync">&nbsp;</small></span><span class="mc"></span></button>
       <button class="menu-row" data-act="io"><span class="mi"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg></span><span class="mt"><b data-i="สำรอง / นำเข้า">สำรอง / นำเข้า</b><small>JSON</small></span><span class="mc">›</span></button>
       <div class="menu-blk" id="io-blk" hidden><div class="actions"><button class="btn sm" id="export">Export JSON</button><button class="btn sm" id="import" data-i="นำเข้า JSON">นำเข้า JSON</button><input type="file" id="import-file" accept="application/json,.json" hidden></div>
-      <textarea id="export-box" hidden readonly rows="6" style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--r-xs);font-family:var(--f-num);font-size:.75rem"></textarea></div>
+      <textarea id="export-box" hidden readonly rows="6" style="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--r-xs);font-family:var(--f-num);font-size:var(--t-label)"></textarea></div>
     </section>
     <div class="grp-h" data-i="ตั้งค่า">ตั้งค่า</div>
     <section class="menu">
@@ -277,36 +277,36 @@
   </div>
 </div>
 
-<script src="/js/core.js?v=138505"></script>
-<script src="/js/food.js?v=138505"></script>
-<script src="/js/locations.js?v=138505"></script>
-<script src="/js/programs.js?v=138505"></script>
-<script src="/js/run.js?v=138505"></script>
-<script src="/js/workout.js?v=138505"></script>
-<script src="/js/exercise-edit.js?v=138505"></script>
-<script src="/js/edit-tx.js?v=138505"></script>
-<script src="/js/exercise-library.js?v=138505"></script>
-<script src="/js/program-manager.js?v=138505"></script>
-<script src="/js/hero.js?v=138505"></script>
-<script src="/js/rest-timer.js?v=138505"></script>
-<script src="/js/auth.js?v=138505"></script>
-<script src="/js/push.js?v=138505"></script>
-<script src="/js/data-io.js?v=138505"></script>
-<script src="/js/sync.js?v=138505"></script>
-<script src="/js/muscle-map.js?v=138505"></script>
-<script src="/js/progress.js?v=138505"></script>
-<script src="/js/history-chart.js?v=138505"></script>
-<script src="/js/stats-extra.js?v=138505"></script>
-<script src="/js/meal-plan.js?v=138505"></script>
-<script src="/js/undo.js?v=138505"></script>
-<script src="/js/home.js?v=138505"></script>
-<script src="/js/share.js?v=138505"></script>
-<script src="/js/explore.js?v=138505"></script>
-<script src="/js/onboarding.js?v=138505"></script>
-<script src="/js/account.js?v=138505"></script>
-<script src="/js/share-card.js?v=138505"></script>
-<script src="/js/number-pad.js?v=138505"></script>
-<script src="/js/refresh.js?v=138505"></script>
-<script src="/js/app.js?v=138505"></script>
+<script src="/js/core.js?v=138506"></script>
+<script src="/js/food.js?v=138506"></script>
+<script src="/js/locations.js?v=138506"></script>
+<script src="/js/programs.js?v=138506"></script>
+<script src="/js/run.js?v=138506"></script>
+<script src="/js/workout.js?v=138506"></script>
+<script src="/js/exercise-edit.js?v=138506"></script>
+<script src="/js/edit-tx.js?v=138506"></script>
+<script src="/js/exercise-library.js?v=138506"></script>
+<script src="/js/program-manager.js?v=138506"></script>
+<script src="/js/hero.js?v=138506"></script>
+<script src="/js/rest-timer.js?v=138506"></script>
+<script src="/js/auth.js?v=138506"></script>
+<script src="/js/push.js?v=138506"></script>
+<script src="/js/data-io.js?v=138506"></script>
+<script src="/js/sync.js?v=138506"></script>
+<script src="/js/muscle-map.js?v=138506"></script>
+<script src="/js/progress.js?v=138506"></script>
+<script src="/js/history-chart.js?v=138506"></script>
+<script src="/js/stats-extra.js?v=138506"></script>
+<script src="/js/meal-plan.js?v=138506"></script>
+<script src="/js/undo.js?v=138506"></script>
+<script src="/js/home.js?v=138506"></script>
+<script src="/js/share.js?v=138506"></script>
+<script src="/js/explore.js?v=138506"></script>
+<script src="/js/onboarding.js?v=138506"></script>
+<script src="/js/account.js?v=138506"></script>
+<script src="/js/share-card.js?v=138506"></script>
+<script src="/js/number-pad.js?v=138506"></script>
+<script src="/js/refresh.js?v=138506"></script>
+<script src="/js/app.js?v=138506"></script>
 
 </body></html>

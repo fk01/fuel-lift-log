@@ -62,7 +62,7 @@ function renderPM(){
   const box=document.getElementById("pm-body");box.innerHTML="";
   if(pmTab==="json"){
     box.innerHTML=`<p class="note">${t("แก้ JSON แล้วกดบันทึก · ท่าที่ไม่มีในคลังจะถูกสร้างให้")}</p>
-      <textarea id="pm-json" spellcheck="false" autocapitalize="off" autocomplete="off" style="${pmFld};min-height:55vh;font-family:var(--f-num);font-size:.75rem;line-height:1.4;white-space:pre"></textarea>
+      <textarea id="pm-json" spellcheck="false" autocapitalize="off" autocomplete="off" style="${pmFld};min-height:55vh;font-family:var(--f-num);font-size:var(--t-label);line-height:1.4;white-space:pre"></textarea>
       <p class="note" id="pm-err" hidden style="color:var(--warn)"></p>
       <div class="actions"><button class="btn primary" id="pm-save">${t("บันทึก JSON")}</button><button class="btn" id="pm-copy">${t("คัดลอก")}</button></div>`;
     box.querySelector("#pm-json").value=progsToJson();
@@ -99,8 +99,8 @@ function pmEditOne(box,k){const p=PROGS[k];txBegin("pm",{onEnd:()=>{if(pmFromLis
   if(pmFromList){const back=document.createElement("button");back.className="btn sm";back.style.justifySelf="start";back.textContent="‹ "+t("ทุกโปรแกรม");
     back.addEventListener("click",()=>txLeave());box.appendChild(back)}
   const c=document.createElement("div");c.className="ex";
-  c.innerHTML=`<input data-f="name" value="${esc(p.name)}" aria-label="${t("ชื่อโปรแกรม")}" style="${pmFld};font-family:var(--f-display);font-size:1.05rem">
-    <input data-f="sub" value="${esc(p.sub||"")}" placeholder="${t("คำอธิบาย")}" aria-label="${t("คำอธิบาย")}" style="${pmFld};font-size:.85rem">
+  c.innerHTML=`<input data-f="name" value="${esc(p.name)}" aria-label="${t("ชื่อโปรแกรม")}" style="${pmFld};font-family:var(--f-display);font-size:var(--t-title)">
+    <input data-f="sub" value="${esc(p.sub||"")}" placeholder="${t("คำอธิบาย")}" aria-label="${t("คำอธิบาย")}" style="${pmFld};font-size:var(--t-sm)">
     <div class="label" style="margin:2px 0 0">${t("วันในตาราง")}</div>${dayChips(daysOf(k))}${todChips(p.tod)}
     <div class="stack pm-ex" style="gap:6px"></div>
     <button class="btn sm" data-add style="justify-self:start">+ ${t("เพิ่มท่า")}</button>`;
