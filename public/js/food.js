@@ -58,7 +58,7 @@ function renderFoodHist(){
   if(all30.length>7){const more=document.createElement("button");more.className="btn ghost";more.textContent=fhAll?t("ย่อ"):`${t("ดูทั้งหมด")} (${all30.length})`;more.addEventListener("click",()=>{fhAll=!fhAll;renderFoodHist()});box.appendChild(more)}
 }
 function renderFood(){renderFoodHist();
-  {const v=document.getElementById("v-food"),b0=document.getElementById("eat-back");if(v){if(DAY!==TODAY&&!b0){const b=document.createElement("button");b.id="eat-back";b.className="btn sm hq-back";b.textContent=t("กลับวันนี้");b.addEventListener("click",()=>{DAY=TODAY;renderAll()});v.prepend(b)}else if(DAY===TODAY&&b0)b0.remove();else if(b0)b0.textContent=t("กลับวันนี้")}}
+  {const b0=document.getElementById("eat-back");if(b0)b0.remove()}
   document.querySelectorAll(".chip[data-k]").forEach(c=>c.setAttribute("aria-pressed",!!fs().tags[c.dataset.k]));
   const box=document.getElementById("meals");box.innerHTML="";
   const meals=mealList();
