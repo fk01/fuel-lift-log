@@ -48,6 +48,7 @@ typography:
     fontWeight: 400
     fontFeature: "tnum"
 rounded:
+  xs: "4px"
   sm: "10px"
   md: "12px"
   lg: "18px"

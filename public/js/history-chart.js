@@ -62,7 +62,7 @@ function renderHistInto(sec){
   if(histEx!=="all"&&!ids.includes(histEx)){const l=logs[logs.length-1];histEx=Object.keys(l.ex).find(id=>l.ex[id].length)||ids[0]}
   const byG={};ids.forEach(id=>{const x={id,n:exName(id)};(byG[groupOf(x)]=byG[groupOf(x)]||[]).push(x)});
   const chips=(arr,cur,attr)=>arr.map(([v,l])=>`<button class="chip" data-${attr}="${v}" aria-pressed="${cur===v}">${t(l)}</button>`).join("");
-  sec.innerHTML=`<select id="hist-ex" aria-label="${t("เลือกท่า")}" style="background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit;width:100%">
+  sec.innerHTML=`<select id="hist-ex" aria-label="${t("เลือกท่า")}" style="background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px;font:inherit;width:100%">
       <option value="all" ${histEx==="all"?"selected":""}>${t("รวมทุกท่า")} · ${t("วอลุ่มต่อวัน")}</option>
       ${GROUPS.filter(([g])=>byG[g]).map(([g,l])=>`<optgroup label="${t(l)}">${byG[g].sort((a,b)=>a.n.localeCompare(b.n)).map(x=>`<option value="${x.id}" ${histEx===x.id?"selected":""}>${esc(x.n)}</option>`).join("")}</optgroup>`).join("")}</select>
     ${histEx==="all"?"":`<div class="chips">${chips(HIST_METRICS,histMetric,"hm")}</div>`}

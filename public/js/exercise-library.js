@@ -54,8 +54,8 @@ function libDone(x){
   txSave();if(libMode){const m=libMode;closeLib();m.onPick(x)}}
 function libForm(x){
   const c=document.createElement("div");c.className="ex";const used=libUsed(x.id);txBegin("lib",{onEnd:()=>{libEdit=null;renderLib()}});if(txTop().id==="lib")txTop().save=()=>libDone(x);
-  const fld="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px;font:inherit";
-  const sel="background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:7px;font:inherit;min-width:0";
+  const fld="width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--r-xs);padding:8px;font:inherit";
+  const sel="background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--r-sm);padding:7px;font:inherit;min-width:0";
   c.innerHTML=howTo(x)+`<input data-f="n" value="${esc(x.n)}" placeholder="${t("ชื่อท่า")}" aria-label="${t("ชื่อท่า")}" style="${fld}">
     <div class="sets" style="grid-template-columns:1fr 1fr 4.5em"><span class="h">${t("กล้ามเนื้อ")}</span><span class="h">${t("อุปกรณ์")}</span><span class="h">${t("หน่วย")}</span>
       <select data-f="g" aria-label="${t("กล้ามเนื้อ")}" style="${sel}">${GROUPS.map(([v,l])=>`<option value="${v}" ${groupOf(x)===v?"selected":""}>${t(l)}</option>`).join("")}</select>

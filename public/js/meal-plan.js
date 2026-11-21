@@ -1,7 +1,7 @@
 // meal-plan.js — edit the daily meal plan (targets, meals, run/badminton extras). Works on a draft via edit-tx.js.
 // Classic script: shares globals with the other files in /js (load order is set in index.html).
 const mpClone=()=>JSON.parse(JSON.stringify({meals:MEALS,run:EXTRAS.run,bad:EXTRAS.bad,p:P_TARGET,k:K_GOAL}));
-const mpFld="min-width:0;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit";
+const mpFld="min-width:0;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--r-sm);padding:8px;font:inherit";
 function mpTouch(){mpApply();save("mealplan",MP)}
 function mpMealRow(m,i,kind){const list=MP.meals,fixed=kind!=="meal";
   return `<div class="mp-row" data-i="${i}" data-kind="${kind}">
