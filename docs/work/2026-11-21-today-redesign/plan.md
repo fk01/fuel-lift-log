@@ -19,3 +19,4 @@
 
 ## Body weight on Today
 - body card: latest kg (mono) + change vs ~7 days ago (neutral colour, no goal assumed) + "ชั่งวันนี้" when today not logged → number pad → BODY
+- show all three body values (kg, muscle mass, fat %) each with 7-day change; "ชั่งวันนี้" in the card header
