@@ -23,3 +23,6 @@
 
 ## Train: remove Share button (user request)
 - app.js keeps #share-last hidden on every tab (listener/share-card code untouched)
+
+## Eat: Share meal plan / Manage plan buttons touched
+- .mp-open-row gap 8px (+ wrap)
