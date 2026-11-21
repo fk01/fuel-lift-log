@@ -1365,20 +1365,16 @@ html.bar-hide body.on-gym .tabbar{transform:none!important}
 html.bar-hide body.on-gym .rest{transform:none!important}
 /* Start button: identical on Today and Train (flat, no glow) */
 .hq-ps.primary{box-shadow:none!important}
-/* rest timer never hides Cancel / Finish & save: bar stays, rest sheet sits above it */
-.wrap.has-rest #step4.wo-bar:not([hidden]){display:flex!important}
-body.on-gym .rest{top:calc(var(--app-h) - var(--tabh) - 66px)!important;transform:translateY(-100%)!important}
 /* bar is solid so nothing shows through it */
 #v-gym .wo-bar{background:var(--bg)!important;padding:8px 0!important;margin-inline:-16px!important;padding-inline:16px!important;left:16px;right:16px}
 #v-gym #cancel-w{background:#1c2431!important}
 #v-gym .wo-bar{bottom:var(--tabh)!important;padding:8px 16px 14px!important}
 html.bar-hide #v-gym .wo-bar{bottom:var(--tabh)!important}
-body.on-gym .rest{top:calc(var(--app-h) - var(--tabh) - 82px)!important}
 /* close the slivers: rest sheet meets the bar, bar meets the tab bar */
 #v-gym .wo-bar{bottom:calc(var(--tabh) - 4px)!important;padding-bottom:18px!important}
 html.bar-hide #v-gym .wo-bar{bottom:calc(var(--tabh) - 4px)!important}
-body.on-gym .rest{top:calc(var(--app-h) - var(--tabh) - 78px)!important}
-body.on-gym .rest{top:calc(var(--app-h) - var(--tabh) - 73px)!important}
 /* while editing a workout exercise, its own Cancel/Save bar replaces the workout bar (no stacked bars) */
 body:has(#tx-bar:not([hidden])) #v-gym .wo-bar,body:has(.tx-bar:not([hidden])) #v-gym .wo-bar{display:none!important}
 body.on-gym.wo-focus .tx-bar{bottom:var(--tabh)!important}
+/* while the rest timer is up, Cancel / Finish & save are hidden — close the timer (Ready) first (user request) */
+.wrap.has-rest #v-gym .wo-bar{display:none!important}

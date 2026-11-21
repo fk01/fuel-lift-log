@@ -241,10 +241,11 @@ const steps = [
     vis().querySelector("[data-add]").click(); if (!vis()) throw new Error("+Set must keep the exercise on screen"); if (vis().querySelectorAll(".sets input[type=checkbox]").length !== n0 + 1) throw new Error("+Set adds a row");
     vis().querySelector("[data-del]").click(); if (!vis() || vis().querySelectorAll(".sets input[type=checkbox]").length !== n0) throw new Error("−Set removes a row and keeps the card");
     vis().querySelector("[data-all]").click(); if (!vis()) throw new Error("Tick all keeps the card"); cancelProg(); }],
-  ["workout-cancel-during-rest", () => { location.hash = "gym"; cancelProg(); setDayMode("train"); pickLoc("gym"); renderGym(); const k = planList().find(q => !isCardio(PROGS[q])); startPlanItem(k, true);
+  ["workout-rest-then-cancel", () => { location.hash = "gym"; cancelProg(); setDayMode("train"); pickLoc("gym"); renderGym(); const k = planList().find(q => !isCardio(PROGS[q])); startPlanItem(k, true);
     const c = document.querySelector("#exs .ex.pg-on"); if (!c) return; const e = sessEx()[woIdx]; startRest(e, 0, draft.ex[e.id] || []);
-    const bar = document.getElementById("step4"); if (getComputedStyle(bar).display === "none") throw new Error("Cancel/Finish must stay reachable while resting");
-    document.getElementById("cancel-w").click(); if (picked) throw new Error("cancel during rest returns to the plan"); if (!document.getElementById("rest").hidden) throw new Error("rest timer closes on cancel"); }],
+    const bar = document.getElementById("step4"); if (getComputedStyle(bar).display !== "none") throw new Error("Cancel/Finish are hidden while the rest timer is up");
+    document.getElementById("rest-skip").click(); if (!document.getElementById("rest").hidden) throw new Error("Ready closes the rest timer"); if (getComputedStyle(bar).display === "none") throw new Error("Cancel/Finish come back after Ready");
+    document.getElementById("cancel-w").click(); if (picked) throw new Error("cancel returns to the plan"); }],
   ["workout-edit-one-bar", () => { location.hash = "gym"; cancelProg(); setDayMode("train"); pickLoc("gym"); renderGym(); const k = planList().find(q => !isCardio(PROGS[q])); startPlanItem(k, true);
     const c = () => document.querySelector("#exs .ex.pg-on"); if (!c()) return; c().querySelector("[data-all]").click(); goEx(1); goEx(0); c().querySelector("[data-edit]").click();
     const d = c().querySelector("[data-done]"); if (!d || !d.textContent.trim()) throw new Error("edit card Done button needs a label");
