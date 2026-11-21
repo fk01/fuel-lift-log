@@ -1140,3 +1140,6 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 /* every tab header = title only (Today's date line repeated what the calendars show) */
 #v-home>.date{display:none}
 #v-stats .st-pane:first-of-type>.stack:first-child>.sec-t:first-child{margin-top:0}
+/* Stats body section (now always visible): same 44px floor */
+.segc .chip{min-height:44px}
+.bgoal{min-height:44px;display:inline-flex;align-items:center}
