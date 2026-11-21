@@ -81,3 +81,9 @@
 - "<muscle> พร้อมใน ~N ชม." instead of "กลุ่มแรกพร้อมใน"
 - meal chips: fixed 3 cols, last row stretches (no orphan)
 - body-fat delta in "จุด"/pts; legend "เพิ่งเล่น (<40%)"
+
+## Critique v15 (32/40) — user picked all 4 groups
+- Why: green "<muscles> พักพอแล้ว → เหมาะกับวันนี้" leads; recovering warning is secondary
+- Where: suggested program shows its own place picker; cardio shows no place tag
+- multi-item: first undone lift is the primary Start; Start buttons same pill shape
+- polish: muscle names hyphenate instead of mid-word breaks; next-meal chip glows (DESIGN: glow = next); 0-kcal chips smaller; done state shows "ต่อไป: โปรตีนเหลือ N g"
