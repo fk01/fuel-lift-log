@@ -450,7 +450,7 @@ i.up{color:var(--up);font-style:normal}i.dn{color:var(--warn);font-style:normal}
 .wrap.has-rest~.toast{top:calc(var(--app-h,100vh) - var(--tabh,80px) - 190px)}
 /* 3.2 bigger hit areas */
 .pc-more{min-width:44px;min-height:32px;display:grid;place-items:center;position:relative}.pc-more::before{content:"";position:absolute;inset:-8px}
-.btn.sm{min-height:36px}.chip{min-height:34px}.restset button{width:36px;height:36px}
+.chip{min-height:34px}.restset button{width:36px;height:36px}
 .wd:disabled{opacity:.5}.tabbar .tab span{opacity:.7!important}.meal.mini{opacity:.75}.cal-grid .d small.plan{opacity:.75}
 /* 3.7 empty states */
 .empty{display:grid;justify-items:center;gap:6px;padding:22px 12px;text-align:center;color:var(--muted)}
@@ -787,7 +787,7 @@ h1,.lp-h{font-family:var(--f-display);font-weight:700;letter-spacing:-.01em}
 .btn{border-radius:12px!important;border:1px solid transparent!important;background:#ffffff0d;color:var(--fg)!important;min-height:40px;padding:0 14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px;box-shadow:none}
 .btn:active{background:#ffffff1a}
 .btn.primary{border-radius:999px!important;background:var(--grad)!important;color:var(--on-accent)!important;box-shadow:0 0 12px color-mix(in srgb,var(--cyan) 33%,transparent)!important;font-weight:700}
-.btn.sm{min-height:36px;padding:0 12px;font-size:.85rem}
+.btn.sm{padding:0 12px;font-size:.85rem}
 .btn.ghost{background:#ffffff0d}
 .btn.warn,.btn.ghost.warn{color:#ff8a7a;background:#ff8a7a14}
 .btn.text{background:none;color:var(--muted);min-height:36px}
@@ -1089,3 +1089,13 @@ input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:max(16px,
 .tab[aria-selected=true]{text-shadow:none}
 .lp-h{box-shadow:none}
 ::selection{background:color-mix(in srgb,var(--cyan) 35%,transparent);color:var(--fg)}
+/* Touch floor: every tap target ≥ 44px (docs/work/2026-11-21-touch-targets) */
+/* .meal checkbox sits inside a full-row <label>: the whole row is the target */
+.btn.sm,.pc-go,.chip,.chips .chip,.lib-view .chip,.ec-d,.prog.row-card .pc-go{min-height:44px}
+.pc-more,.prog.row-card .pc-more,.pl-row .pc-more,.day-gear,.sh-x{min-width:44px;min-height:44px}
+.pl-row .pc-more,.sh-x,.day-gear{height:44px}
+.rc-chip,.loc-chip{position:relative}
+.rc-chip::after,.loc-chip::after{content:"";position:absolute;inset:-4px}
+input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
+.sets input[type=checkbox]{width:28px;height:28px}
+.btn.sm{min-width:44px}
