@@ -1120,3 +1120,5 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 #rec-wrap .rcf-head{margin-top:6px}
 /* Train: no "Muscles ready" card — recovery lives on Today */
 .locpick .rec-slot{display:none}
+/* Today: the recovery map answers "How's my body?" — no summary card above it */
+#v-home .hq-card[data-go="body"]{display:none}
