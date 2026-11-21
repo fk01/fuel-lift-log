@@ -1116,12 +1116,9 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .pl-sub .loc-tag,.loc-tag{cursor:default;border:0;min-height:0;padding:0;background:none;display:inline-flex;align-items:center;gap:4px;color:var(--muted);font-size:var(--t-sm)}.loc-tag::after{content:none}
 /* selected chip on the action gradient: dark text, never green-on-green */
 .chip.on[aria-pressed="true"],.chip.on[aria-pressed="true"] *{color:var(--on-accent)}
-.hq-card:disabled{opacity:1;cursor:default;color:inherit}
 #rec-wrap .rcf-head{margin-top:6px}
 /* Train: no "Muscles ready" card — recovery lives on Today */
 .locpick .rec-slot{display:none}
-/* Today: the recovery map answers "How's my body?" — no summary card above it */
-#v-home .hq-card[data-go="body"]{display:none}
 /* shared calendar card (Eat + Train): title toggles week ⇄ month */
 .ec-h{grid-template-columns:auto minmax(0,1fr) auto auto}
 .ec-t{background:none;border:0;color:var(--fg);font:inherit;font-weight:700;text-align:left;padding:0;min-height:44px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1143,3 +1140,18 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 /* Stats body section (now always visible): same 44px floor */
 .segc .chip{min-height:44px}
 .bgoal{min-height:44px;display:inline-flex;align-items:center}
+
+/* Today: plan first — workout (one primary action), next meal (tick inline), body summary folds open */
+#v-home .hq-card{cursor:default;box-sizing:border-box;min-width:0}
+#v-home .hq-card .btn{box-sizing:border-box;max-width:100%}
+.hq-l{background:none;border:0;font:inherit;padding:0 4px;min-height:44px;cursor:pointer}
+.hq-more{font-size:var(--t-meta);font-weight:600;color:var(--muted)}
+.hq-go{margin-top:10px;min-height:52px;width:100%;justify-content:center;font-size:var(--t-body)}
+.hq-tick{margin-top:10px;min-height:44px;width:100%;justify-content:center;gap:6px}
+.hq-body summary{list-style:none;display:grid;gap:4px;cursor:pointer;min-height:44px;position:relative;padding-right:24px}
+.hq-body summary::-webkit-details-marker{display:none}
+.hq-body summary::after{content:"›";position:absolute;right:0;top:0;color:var(--muted);font-size:var(--t-lg);transition:transform .2s cubic-bezier(.16,1,.3,1)}
+.hq-body[open] summary::after{transform:rotate(90deg)}
+.hq-body[data-empty] summary{cursor:default}.hq-body[data-empty] summary::after{content:none}
+.hq-rec #rec-wrap{margin-top:12px}
+.hq-rec .rcf-head .sec-t{display:none}

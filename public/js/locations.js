@@ -320,7 +320,7 @@ function renderPlan(box){const ks=planList(),[d,n]=planStat();let sugK=null;try{
     const g=ev.target.closest("[data-plgo]");if(g&&g.dataset.plgo==="resume"){setDayMode("train");renderGym();setTimeout(()=>document.getElementById("step3")?.scrollIntoView({block:"start"}),50);return}
     if(planItemDone(k)){openDoneItem(k);return}if(g)startPlanItem(k,true);else openPlanItem(k)})});
   box.querySelector("[data-plrest]")?.addEventListener("click",()=>{setDayMode("rest");renderGym()});box.querySelector("[data-unrest]")?.addEventListener("click",()=>{setDayMode(null);renderGym()});
-  box.querySelector("[data-pladd]").addEventListener("click",openPlanAdd);trainLinks(box)}
+  box.querySelector("[data-pladd]").addEventListener("click",openPlanAdd)}
 // "where?" sheet for one row of today's plan. Weights (option A): each place has its own copy of a program,
 // so picking a place swaps today's row to that place's copy. Cardio: any cardio place, remembered as lastLoc.
 // a done row can always be reopened: edit (cardio) or remove what was saved
