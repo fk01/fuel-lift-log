@@ -1197,7 +1197,7 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 /* last row of meal chips stretches — no orphan */
 .hq-mc:last-child:nth-child(3n+1){grid-column:1/-1}.hq-mc:last-child:nth-child(3n+2){grid-column:span 2}
 /* muscle tiles: full names, wrap instead of "Front d…" */
-.rec-t b,#rec-card .rec-grid .rec-t b,.rec-wrap .rec-t b{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.2;overflow-wrap:anywhere}
+.rec-t b,#rec-card .rec-grid .rec-t b,.rec-wrap .rec-t b{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.2;overflow-wrap:normal;hyphens:auto;word-break:normal}
 .hq-first{display:block;text-align:left;padding:0;margin-top:6px;white-space:normal;line-height:1.4}
 .hq-mc.on{padding-inline:8px}
 .hq-plist{display:grid;gap:8px;margin-top:6px}
@@ -1210,3 +1210,8 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .hq-locs{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .hq-loc{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--w05);color:var(--fg);font:inherit;font-size:var(--t-meta);cursor:pointer}
 .hq-loc.on{border-color:color-mix(in srgb,var(--cyan) 55%,transparent);background:color-mix(in srgb,var(--cyan) 12%,transparent);color:var(--cyan)}
+.hq-fit{display:flex;gap:6px;align-items:flex-start;color:var(--green);font-size:var(--t-sm);font-weight:600;margin-top:4px}.hq-fit svg{flex:none;width:16px;height:16px;margin-top:2px}
+#v-home .hq-fit+.hq-warn{font-size:var(--t-meta);font-weight:400;color:color-mix(in srgb,var(--warn) 85%,var(--fg))}
+.hq-ps{border-radius:999px}
+.hq-mc.next:not(.on){border-color:color-mix(in srgb,var(--cyan) 55%,transparent);box-shadow:0 0 0 1px #2ee6ff55,0 0 22px #2ee6ff33}
+.hq-mc.mini{min-height:44px;font-size:var(--t-label)}.hq-mc.mini .hq-mt{opacity:.85}
