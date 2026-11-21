@@ -9,3 +9,6 @@
 - Eat calendar = Today round strip (✓ goal hit, faint dot = nothing logged, ring = % of kcal goal), summary "ถึงเป้า X/Y วัน · เป้า N kcal ต่อวัน"; smoke test reads .hq-day
 - ring numbers in the text colour (no neon cyan/green)
 - past-time meals: neutral grey "ยังไม่ติ๊ก" instead of orange "เลยเวลา"
+
+## Eat header like Today (device feedback)
+- avatar + date + "วันนี้กินอะไร" (past day: "ย้อนดูวันนั้น" + "กลับวันนี้"); no big "Eat" title, strip not in a card

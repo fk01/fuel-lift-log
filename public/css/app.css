@@ -1323,3 +1323,6 @@ body.on-food{background-image:none}
 #v-food #eat-cal{padding:10px 4px 12px!important}
 #v-food #eat-cal .hq-streak{display:block;text-align:center}
 #v-food .meal.late[data-flag]::after{background:#253245!important;color:var(--muted)!important;border-color:transparent!important}
+/* Eat header like Today: greeting row + strip, no card, no big title */
+body.on-food .wrap>header{display:none}
+#v-food #eat-cal{background:none!important;padding:0!important;border-radius:0}
