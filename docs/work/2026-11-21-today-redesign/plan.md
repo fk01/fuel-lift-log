@@ -75,3 +75,9 @@
 - next meal more than 2 h overdue reads "ยังไม่ติ๊ก <time> <meal>"
 - body: drops "never trained" once there is history; adds "กลุ่มแรกพร้อมใน ~N ชม."
 - "+ บันทึกร่างกาย" is an outlined pill (action, not nav); sheet focuses the first input and returns focus to the trigger
+
+## Critique v13 (32/40) — user picked 4 fixes
+- muscle tile names wrap (no "Front d…"), app-wide
+- "<muscle> พร้อมใน ~N ชม." instead of "กลุ่มแรกพร้อมใน"
+- meal chips: fixed 3 cols, last row stretches (no orphan)
+- body-fat delta in "จุด"/pts; legend "เพิ่งเล่น (<40%)"

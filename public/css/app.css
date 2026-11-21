@@ -1166,7 +1166,7 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .hq-weigh{min-height:44px;margin:-12px 0}
 #v-home .hq-warn{font-size:var(--t-sm);font-weight:600}
 #v-home .hq-go{min-height:48px}
-.hq-meals{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px;margin-top:8px}
+.hq-meals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}
 .hq-meals::-webkit-scrollbar{display:none}
 .hq-mc{min-width:0;display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:44px;padding:0 8px;border-radius:999px;border:1px solid var(--line);background:var(--w05);color:var(--fg);font:inherit;font-size:var(--t-meta);cursor:pointer;white-space:nowrap}
 .hq-mc span{overflow:hidden;text-overflow:ellipsis}
@@ -1194,3 +1194,7 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .hq-rec #rec-wrap{margin-top:12px}
 .hq-chev{display:inline-block;transition:transform .2s cubic-bezier(.16,1,.3,1)}
 .hq-det[aria-expanded="true"] .hq-chev{transform:rotate(90deg)}
+/* last row of meal chips stretches — no orphan */
+.hq-mc:last-child:nth-child(3n+1){grid-column:1/-1}.hq-mc:last-child:nth-child(3n+2){grid-column:span 2}
+/* muscle tiles: full names, wrap instead of "Front d…" */
+.rec-t b,#rec-card .rec-grid .rec-t b,.rec-wrap .rec-t b{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.2;overflow-wrap:anywhere}

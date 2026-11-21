@@ -98,7 +98,7 @@ function renderRecovery(full){const box=full||document.getElementById("rec-card"
   const tiles=REC_ORDER.map(m=>{const o=R[m],s=o?state(o):3,w=!o||s===4?100:o.pct;/* never trained = fully rested */return `<button class="rec-t s${s}" data-m="${m}"><b>${t(MUS_NAME[m])}</b><span class="rec-p">${lab(m)}</span><small class="rec-sub">${sub(m)||"&nbsp;"}</small><i class="rec-bar"><i style="width:${w}%;background:${REC_C[s]}"></i></i></button>`}).join("");
   box.innerHTML=`<div class="rec-fig">${bodySVG([],[],320,m=>REC_C[ago(m)?state(ago(m)):3])}</div>
     <div class="rec-grid">${tiles}</div>
-    <div class="rec-leg">${[[1,"< 40%"],[2,"กำลังฟื้น"],[3,"พร้อม"]].concat([]).map(([k,l])=>`<span><i style="background:${REC_C[k]}"></i>${t(l)}</span>`).join("")}</div>`}
+    <div class="rec-leg">${[[1,"เพิ่งเล่น (<40%)"],[2,"กำลังฟื้น"],[3,"พร้อม"]].concat([]).map(([k,l])=>`<span><i style="background:${REC_C[k]}"></i>${t(l)}</span>`).join("")}</div>`}
 /* ---------- generic bottom sheet ---------- */
 // sheet stack: a sheet opened from another sheet remembers it; ✕ / backdrop / Cancel go back ONE level (not to the page).
 // Same title = re-render (replace). Re-opening a title that is lower in the stack returns to it. closeGen() closes everything.
@@ -119,7 +119,7 @@ function open1RM(){PAD.kg1={steps:[1,2.5,5,10],def:40};PAD.rp1={chips:Array.from
     b.querySelectorAll("input").forEach(i=>i.addEventListener("change",calc));calc()})}
 function openBadges(){openGen("🏆 "+t("เหรียญรางวัล"),`<div class="badges" id="badges"></div><button class="btn" data-gen-close>${t("ปิด")}</button>`,()=>{try{renderProgress()}catch(e){}})}
 /* ---------- body composition: weight + muscle mass + body fat ---------- */
-Object.assign(EN,{"มวลกล้ามเนื้อ":"Muscle mass","ไขมัน":"Body fat","บันทึกร่างกาย":"Log body","บันทึก":"Save"});
+Object.assign(EN,{"เพิ่งเล่น (<40%)":"Just trained (<40%)","มวลกล้ามเนื้อ":"Muscle mass","ไขมัน":"Body fat","บันทึกร่างกาย":"Log body","บันทึก":"Save"});
 let bodyMetric="kg",openBodyLog=null;   // body log sheet, exposed so Today can open it
 let bodyRange=90,bodyGoal=(()=>{try{return +localStorage.getItem("bodygoal")||0}catch(e){return 0}})();
 Object.assign(EN,{"เป้าหมาย":"Goal","ตั้งเป้า":"Set goal","อีก":"to go","ถึงเป้าแล้ว 🎉":"Goal reached 🎉","7 วัน":"7 days","30 วัน":"30 days","ต่อสัปดาห์":"per week","ประวัติ":"History","วันที่":"Date","ลบ":"Delete","แก้":"Edit","ใส่ค่า":"Enter value","สูงสุด":"High","ต่ำสุด":"Low","เพิ่มบันทึก":"Add entry"});
