@@ -27,3 +27,8 @@
 - meal cancel sits in the header link slot (no extra row) → returning state + tick fits above tab bar
 - weigh-in sheet opens blank from Today (no stale prefill), steppers start at last value
 - warning bigger/bolder; Weigh in target 44px; Start 48px
+
+## Round 5
+- meal chips (tick/untick any meal, out of order; replaces next-meal button + cancel link)
+- clearer counters: "ทำเสร็จ X จาก N รายการวันนี้", "+ <program names>", "พร้อม X จาก 16 กลุ่มกล้าม"
+- body summary drops the recovering list when the workout card already warns
