@@ -1183,7 +1183,7 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 #v-home .hq-alt{text-decoration:underline;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,var(--fg) 35%,transparent)}
 .hq-mc.on{padding-inline:4px;gap:3px}
 #v-home .hq-weigh{border:1px solid color-mix(in srgb,var(--cyan) 45%,transparent);border-radius:999px;padding:0 12px;min-height:44px;margin-block:-10px}
-.hq-mc .hq-mt{display:grid;line-height:1.2;white-space:normal;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.hq-mc .hq-mt{display:block;line-height:1.2;white-space:normal;text-align:center;overflow:visible;overflow-wrap:break-word}
 .hq-mc .hq-mt small{display:block;font-family:var(--f-num);font-size:var(--t-label);color:var(--muted)}
 .hq-mc.on .hq-mt small{color:inherit}
 .hq-mc{min-height:52px;padding-block:6px;border-radius:12px}
@@ -1198,3 +1198,10 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .hq-mc:last-child:nth-child(3n+1){grid-column:1/-1}.hq-mc:last-child:nth-child(3n+2){grid-column:span 2}
 /* muscle tiles: full names, wrap instead of "Front d…" */
 .rec-t b,#rec-card .rec-grid .rec-t b,.rec-wrap .rec-t b{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;line-height:1.2;overflow-wrap:anywhere}
+.hq-first{display:block;text-align:left;padding:0;margin-top:6px;white-space:normal;line-height:1.4}
+.hq-mc.on{padding-inline:8px}
+.hq-plist{display:grid;gap:8px;margin-top:6px}
+.hq-pi{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--w05)}
+.hq-pi.done{opacity:.7}.hq-pi.done b{color:var(--green)}
+.hq-pt{flex:1;min-width:0;display:grid;gap:2px}.hq-pt b{font-size:var(--t-body)}
+.hq-ps{flex:none;min-height:44px;min-width:76px;justify-content:center}

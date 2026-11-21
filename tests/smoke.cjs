@@ -219,6 +219,8 @@ const steps = [
   ["home-details-toggle", () => { location.hash = ""; renderHome(); const r = () => document.getElementById("hq-rec"), was = r().hidden;
     document.querySelector("[data-det]").click(); if (r().hidden === was) throw new Error("Details must show/hide the muscle map");
     document.querySelector("[data-det]").click(); if (r().hidden !== was) throw new Error("Details must toggle back"); }],
+  ["home-lists-every-plan-item", () => { location.hash = ""; renderHome(); const n = new Set(planList().map(q => PROGS[q].name)).size;
+    if (n > 1 && document.querySelectorAll(".hq-plist .hq-pi").length !== n) throw new Error("Today must list every plan item: " + n); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
