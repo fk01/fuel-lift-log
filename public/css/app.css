@@ -1326,3 +1326,6 @@ body.on-food{background-image:none}
 /* Eat header like Today: greeting row + strip, no card, no big title */
 body.on-food .wrap>header{display:none}
 #v-food #eat-cal{background:none!important;padding:0!important;border-radius:0}
+/* Eat strip sits exactly where Today's does */
+#v-food #eat-cal{display:block!important;gap:0!important;border:0!important}
+#v-food #eat-cal .hq-streak{margin-top:8px}

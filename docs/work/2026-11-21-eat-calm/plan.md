@@ -12,3 +12,4 @@
 
 ## Eat header like Today (device feedback)
 - avatar + date + "วันนี้กินอะไร" (past day: "ย้อนดูวันนั้น" + "กลับวันนี้"); no big "Eat" title, strip not in a card
+- Eat strip was 8px lower than Today (old .eat-cal grid gap) → block layout; measured: header, strip, day, dot, arrows identical on both tabs
