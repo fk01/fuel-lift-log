@@ -221,6 +221,10 @@ const steps = [
     document.querySelector("[data-det]").click(); if (r().hidden !== was) throw new Error("Details must toggle back"); }],
   ["home-lists-every-plan-item", () => { location.hash = ""; renderHome(); const n = new Set(planList().map(q => PROGS[q].name)).size;
     if (n > 1 && document.querySelectorAll(".hq-plist .hq-pi").length !== n) throw new Error("Today must list every plan item: " + n); }],
+  ["home-where-pick", () => { location.hash = ""; renderHome(); const ch = [...document.querySelectorAll("#v-home [data-pick]")]; if (ch.length < 2) return;
+    const other = ch.find(b => b.getAttribute("aria-pressed") === "false"); other.click();
+    const want = other.dataset.pick, go = [...document.querySelectorAll("#v-home [data-start]")].map(b => b.dataset.start);
+    if (!go.includes(want)) throw new Error("picking a place must make Start open that place's program"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

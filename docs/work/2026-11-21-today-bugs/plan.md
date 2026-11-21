@@ -14,3 +14,6 @@
 - single-item done state: no repeated "1 of 1" line/bar
 - ticked chips wrap full names; header links "ดูแผน ›" / "ดูแผน ›" / "ดูรายละเอียด ›" (EN: View plan / View meals / View details)
 - request: plan with several items → Today lists every item with its own Start (first undone = primary); smoke test home-lists-every-plan-item
+
+## Where on Today (user picked option 1)
+- every item shows its place (same chip as Train); a program planned at several places shows place chips, the chosen one decides what Start opens; smoke test home-where-pick
