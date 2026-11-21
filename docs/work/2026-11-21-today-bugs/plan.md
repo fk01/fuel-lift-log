@@ -29,3 +29,8 @@
 
 ## Fix: suggested program showed two places
 - #129 listed every library program with the same name (Pull A @Gym + @Condo) → a suggested program now shows only its own place; picker stays only for one program planned at several places; smoke test home-swap-single-place
+
+## Fix: place shown twice / inconsistent rows
+- #130 left a // comment that swallowed the rest of where() on the same line
+- Today now mirrors Train: one row per plan item (Push B @Gym and Push B @Condo = two rows), one place each on its own line; place picker removed; never suggest a program already in the plan; a planned lift with rested muscles leads
+- smoke test home-one-row-per-plan-item (replaces home-where-pick)

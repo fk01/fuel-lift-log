@@ -1215,3 +1215,5 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .hq-ps{border-radius:999px}
 .hq-mc.next:not(.on){border-color:color-mix(in srgb,var(--cyan) 55%,transparent);box-shadow:0 0 0 1px #2ee6ff55,0 0 22px #2ee6ff33}
 .hq-mc.mini{min-height:44px;font-size:var(--t-label)}.hq-mc.mini .hq-mt{opacity:.85}
+/* place always on its own line under the preview — same layout on every row */
+.hq-pv .loc-tag,.hq-pi .loc-tag{display:flex;width:max-content;margin:4px 0 0}

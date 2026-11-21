@@ -219,12 +219,10 @@ const steps = [
   ["home-details-toggle", () => { location.hash = ""; renderHome(); const r = () => document.getElementById("hq-rec"), was = r().hidden;
     document.querySelector("[data-det]").click(); if (r().hidden === was) throw new Error("Details must show/hide the muscle map");
     document.querySelector("[data-det]").click(); if (r().hidden !== was) throw new Error("Details must toggle back"); }],
-  ["home-lists-every-plan-item", () => { location.hash = ""; renderHome(); const n = new Set(planList().map(q => PROGS[q].name)).size;
+  ["home-lists-every-plan-item", () => { location.hash = ""; renderHome(); const n = planList().length;
     if (n > 1 && document.querySelectorAll(".hq-plist .hq-pi").length !== n) throw new Error("Today must list every plan item: " + n); }],
-  ["home-where-pick", () => { location.hash = ""; renderHome(); const ch = [...document.querySelectorAll("#v-home [data-pick]")]; if (ch.length < 2) return;
-    const other = ch.find(b => b.getAttribute("aria-pressed") === "false"); other.click();
-    const want = other.dataset.pick, go = [...document.querySelectorAll("#v-home [data-start]")].map(b => b.dataset.start);
-    if (!go.includes(want)) throw new Error("picking a place must make Start open that place's program"); }],
+  ["home-one-row-per-plan-item", () => { location.hash = ""; renderHome(); if (document.querySelector("#v-home [data-pick]")) throw new Error("no place picker — one row per plan item like Train");
+    const n = planList().length; if (n > 1 && document.querySelectorAll(".hq-plist .hq-pi").length !== n) throw new Error("Today must show one row per plan item: " + n); }],
   ["home-empty-plan-and-rest", () => { location.hash = ""; const keep = JSON.stringify(dayPlan); planList().forEach(q => planDel(q)); renderHome();
     if (!document.querySelector("#v-home .hq-card")) throw new Error("Today must render with an empty plan");
     setDayMode("rest"); renderHome(); if (!document.querySelector("#v-home .hq-card")) throw new Error("Today must render on a rest day");
