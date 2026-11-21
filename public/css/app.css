@@ -1167,3 +1167,6 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .hq-bar i.over{background:var(--warn)}
 .hq-undo{display:flex;align-items:center;gap:6px;margin-top:8px;color:var(--up);font-size:var(--t-meta)}
 .hq-undo svg{width:16px;height:16px}.hq-undo .hq-l{margin-left:auto;color:var(--muted)}
+.hq-bw{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:var(--t-meta)}
+.hq-bw i{font-style:normal}.hq-bw i.dn,.hq-bw i.up{color:var(--fg)}
+.hq-bw .hq-l{margin-left:auto;margin-right:-4px}
