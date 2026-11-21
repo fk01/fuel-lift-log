@@ -32,3 +32,10 @@
 - meal chips (tick/untick any meal, out of order; replaces next-meal button + cancel link)
 - clearer counters: "ทำเสร็จ X จาก N รายการวันนี้", "+ <program names>", "พร้อม X จาก 16 กลุ่มกล้าม"
 - body summary drops the recovering list when the workout card already warns
+
+## Round 6 (critique v6 33/40)
+- disambiguate duplicate plan names with place; program preview (N ท่า · muscles)
+- warning replaces progress subline; bar hidden at 0
+- meal chips wrap (no hidden meals), short labels + full aria-label
+- body: explicit "ดูแผนที่กล้าม ▾" row instead of chevron; deltas carry units; "เกินเป้า" text label
+- weigh sheet placeholder = last value
