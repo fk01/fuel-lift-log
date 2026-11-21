@@ -1167,6 +1167,7 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .hq-bar i.over{background:var(--warn)}
 .hq-undo{display:flex;align-items:center;gap:6px;margin-top:8px;color:var(--up);font-size:var(--t-meta)}
 .hq-undo svg{width:16px;height:16px}.hq-undo .hq-l{margin-left:auto;color:var(--muted)}
-.hq-bw{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:var(--t-meta)}
-.hq-bw i{font-style:normal}.hq-bw i.dn,.hq-bw i.up{color:var(--fg)}
-.hq-bw .hq-l{margin-left:auto;margin-right:-4px}
+.hq-bw{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px;padding-top:10px;border-top:1px solid var(--line)}
+.hq-st{display:grid;gap:2px;min-width:0}.hq-st small{color:var(--muted);font-size:var(--t-label)}.hq-st b{font-weight:600;font-size:var(--t-meta);white-space:nowrap}
+.hq-st i{font-style:normal;color:var(--muted);font-size:var(--t-label)}
+.hq-weigh{min-height:32px;margin:-6px 0}
