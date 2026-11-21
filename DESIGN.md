@@ -19,13 +19,13 @@ typography:
   display:
     fontFamily: "IBM Plex Sans Thai, system-ui, sans-serif"
     fontSize: "2rem"
-    fontWeight: 800
+    fontWeight: 700
     lineHeight: 1.15
     letterSpacing: "-0.01em"
   headline:
     fontFamily: "IBM Plex Sans Thai, system-ui, sans-serif"
     fontSize: "1.12rem"
-    fontWeight: 800
+    fontWeight: 700
     lineHeight: 1.3
   title:
     fontFamily: "IBM Plex Sans Thai, system-ui, sans-serif"
@@ -152,8 +152,8 @@ A near-black navy console lit by two signal colors that always travel together a
 **Character:** One humanist sans carries Thai and English at every size; a narrow technical mono carries the numbers so weights, sets and times line up like a console readout.
 
 ### Hierarchy
-- **Display** (800, 2rem, 1.15): screen titles — วันนี้, กิน, ออกกำลัง.
-- **Headline** (800, 1.12rem): section heads — "วันนี้จะทำอะไร?", "คอมเมนต์".
+- **Display** (700, 2rem, 1.15): screen titles — วันนี้, กิน, ออกกำลัง.
+- **Headline** (700, 1.12rem): section heads — "วันนี้จะทำอะไร?", "คอมเมนต์".
 - **Title** (700, 1.05rem): card and row titles — program and plan names.
 - **Body** (400, 15px, 1.5): descriptions, comments, meal items.
 - **Label** (600, 12px): tab labels, chips, captions. 12 px is the floor for any functional text.
@@ -188,7 +188,7 @@ Generous, equipment-like rounding: cards 18 px, buttons and inputs 10–12 px, c
 
 ### Buttons
 - **Shape:** pill (999px) for primary, 12px for secondary.
-- **Primary:** cyan→green gradient, On Signal text, 800 weight, 48 px tall, Action glow. One per screen.
+- **Primary:** cyan→green gradient, On Signal text, 700 weight, 48 px tall, Action glow. One per screen.
 - **Secondary:** Console Panel fill, 1.5 px signal-tinted edge, Chalk text, 44 px.
 - **Text links:** Signal Cyan, 44 px tap height even when the text is small.
 - **Focus:** 2 px Signal Cyan outline, 2 px offset.
@@ -214,7 +214,7 @@ Generous, equipment-like rounding: cards 18 px, buttons and inputs 10–12 px, c
 Status pill (Pending / In progress / Done) + title + subtitle with a place chip + ▶ Start pill. In progress = Signal live; done = green edge and check.
 
 ### Signature: Three Questions Card
-Today's cards: question line with a line icon, a large 800-weight answer, a muted detail line, and a cyan link to its tab.
+Today's cards: question line with a line icon, a large 700-weight answer, a muted detail line, and a cyan link to its tab.
 
 ## Do's and Don'ts
 
