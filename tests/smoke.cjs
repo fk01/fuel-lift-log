@@ -216,6 +216,9 @@ const steps = [
     logs = logs.filter(l => !(l.date === TODAY && !Object.keys(l.ex).length)); dayPlan = JSON.parse(keep); renderHome(); }],
   ["home-all-meal-chips", () => { location.hash = ""; renderHome(); const n = document.querySelectorAll("#v-home [data-meal]").length;
     if (n !== mealList().length) throw new Error("Today must show a chip for every meal in the plan: " + n + " vs " + mealList().length); }],
+  ["home-details-toggle", () => { location.hash = ""; renderHome(); const r = () => document.getElementById("hq-rec"), was = r().hidden;
+    document.querySelector("[data-det]").click(); if (r().hidden === was) throw new Error("Details must show/hide the muscle map");
+    document.querySelector("[data-det]").click(); if (r().hidden !== was) throw new Error("Details must toggle back"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
