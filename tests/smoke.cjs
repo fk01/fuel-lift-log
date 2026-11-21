@@ -225,6 +225,10 @@ const steps = [
     const other = ch.find(b => b.getAttribute("aria-pressed") === "false"); other.click();
     const want = other.dataset.pick, go = [...document.querySelectorAll("#v-home [data-start]")].map(b => b.dataset.start);
     if (!go.includes(want)) throw new Error("picking a place must make Start open that place's program"); }],
+  ["home-empty-plan-and-rest", () => { location.hash = ""; const keep = JSON.stringify(dayPlan); planList().forEach(q => planDel(q)); renderHome();
+    if (!document.querySelector("#v-home .hq-card")) throw new Error("Today must render with an empty plan");
+    setDayMode("rest"); renderHome(); if (!document.querySelector("#v-home .hq-card")) throw new Error("Today must render on a rest day");
+    setDayMode(null); dayPlan = JSON.parse(keep); renderHome(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

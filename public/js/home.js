@@ -17,7 +17,7 @@ function renderHome(){const box=document.getElementById("v-home");if(!box)return
   // one weights session a day: once any lift is logged, other planned lifts are skipped (a taken swap counts); cardio counts on its own
   const wDone=ks.some(q=>!isCardio(PROGS[q])&&planItemDone(q)),doneQ=q=>!!planItemDone(q)||(wDone&&!isCardio(PROGS[q]));
   const udn=uks.filter(q=>ks.some(z=>PROGS[z].name===PROGS[q].name&&doneQ(z))).length,un=uks.length;
-  const sib=q=>ks.filter(z=>PROGS[z].name===PROGS[q].name),pick=q=>{const c=sib(q),w=homePick[PROGS[q].name];return c.includes(w)?w:q};
+  const sib=q=>q&&PROGS[q]?ks.filter(z=>PROGS[z].name===PROGS[q].name):[],pick=q=>{if(!q||!PROGS[q])return q;const c=sib(q),w=homePick[PROGS[q].name];return c.includes(w)?w:q};   // q may be undefined: empty plan / rest day
   const allDone=un>0&&udn===un,pk=pick(ks.find(q=>!doneQ(q))||ks[0]),more=uks.length-1;
   const locOfK=q=>{const P=PROGS[q];return locById(locOf(P)==="*"?P.lastLoc:locOf(P))};
   const where=q=>{const c=sib(q);if(c.length>1)return `<span class="hq-locs" role="group" aria-label="${t("ที่ไหน")}">${c.map(z=>{const L=locOfK(z),on=z===pick(q);return `<button class="hq-loc${on?" on":""}" data-pick="${esc(z)}" aria-pressed="${on}">${esc((L&&L.icon)||"📍")} ${esc(L?t(L.name):t("ที่ไหนก็ได้"))}</button>`}).join("")}</span>`;
