@@ -1118,3 +1118,5 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .chip.on[aria-pressed="true"],.chip.on[aria-pressed="true"] *{color:var(--on-accent)}
 .hq-card:disabled{opacity:1;cursor:default;color:inherit}
 #rec-wrap .rcf-head{margin-top:6px}
+/* Train: no "Muscles ready" card — recovery lives on Today */
+.locpick .rec-slot{display:none}
