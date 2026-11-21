@@ -1294,3 +1294,27 @@ body.on-home{background-image:none}
 #v-home .hq-pn{align-items:baseline!important;line-height:1.3}
 #v-home .hq-pn .loc-tag{display:inline-flex;align-items:baseline;gap:4px;line-height:1.3;font-size:var(--t-sm)}
 #v-home .hq-pn .loc-tag svg{align-self:center;width:15px;height:15px;transform:translateY(1px)}
+/* ===== Eat in the calm Today style ===== */
+#v-food .card,#v-food .meal,#v-food #eat-cal,#v-food .totals{background:#1c2431!important;border:0!important;box-shadow:none!important;border-radius:20px}
+#v-food .meal.next{box-shadow:0 0 0 1px #2ee6ff55 inset!important}
+#v-food .meal .row-ic{filter:none!important;box-shadow:none!important}
+#food-ring svg,#food-ring *{filter:none!important}
+#food-ring text,#food-ring b{text-shadow:none!important}
+#food-add{box-shadow:0 6px 18px #0006!important}
+/* FAB never covers a meal checkbox: room under the list, FAB lifts above the tab bar */
+#meals{padding-bottom:84px}
+#v-food .meal input[type=checkbox]{width:44px!important;height:44px!important;min-width:44px}
+#eat-back{align-self:flex-start}
+#v-food .meal.done .macro,#v-food .meal.mini .macro{color:var(--fg)}
+#v-food .meal.done,#v-food .meal.mini{opacity:.85!important}
+/* Eat: "+ log food" is a full-width button under the list (never floats over a checkbox) */
+#v-food #food-add{position:static!important;width:100%!important;height:auto!important;min-height:48px;border-radius:14px!important;padding:0 16px!important;font-size:var(--t-body)!important;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:none!important}
+#v-food #food-add::before{font-size:var(--t-lg)}
+#meals{padding-bottom:0}
+/* Eat calendar like Today's strip: no tile borders, round selected day, no grid behind */
+body.on-food{background-image:none}
+#v-food #eat-cal .ec-d{border:0!important;background:none!important;box-shadow:none!important;border-radius:999px}
+#v-food #eat-cal .ec-d.on{background:#253245!important;box-shadow:0 0 0 2px var(--cyan) inset!important}
+#v-food #eat-cal .ec-d.ok{background:color-mix(in srgb,var(--green) 12%,transparent)!important}
+#v-food #eat-cal .btn{border:0!important;background:none!important;box-shadow:none!important}
+#v-food #eat-cal .ec-dow small,#v-food #eat-cal .ec-d small{color:var(--muted)}
