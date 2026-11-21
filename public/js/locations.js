@@ -286,7 +286,7 @@ function planSummary(k,v){const p=PROGS[k];if(isCardio(p))return "✓ "+cxTxt(k,
 function startPlanItem(k,go){const p=PROGS[k];
   // another weights session is running: ask what to do with it first
   // cardio is logged in a modal; stay on the plan screen (switching day mode here left the old program list up, see docs/work/2026-11-21-cardio-cancel)
-  if(go&&isCardio(p)){openCardio(k);return}
+  if(go&&isCardio(p)){openCardio(k,true);return}
   if(go&&!isCardio(p)&&picked&&PROGS[cur]&&cur!==k){if(woProgress().any){openSwitchAsk(k);return}cancelProg()}dayKind={date:TODAY,k:isCardio(p)?"cardio":"gym"};save("daykind",dayKind);setDayMode("train");
   curLoc=locOf(p)==="*"?(locById(p.lastLoc)?p.lastLoc:curLoc):locOf(p);pickAnyway=false;locPrev=null;locDay={date:TODAY,id:curLoc,prog:k};save("locday",locDay);
   if(isCardio(p)){renderGym();if(go)openCardio(k);return}
@@ -348,7 +348,7 @@ Object.assign(EN,{"ย้อนหลัง":"Past day","วันนี้ไ�
 function openDoneItem(k){const p=PROGS[k],cx=isCardio(p),v=planItemDone(k);
   openGen(esc(p.name),`<small class="note">${esc(planSummary(k,v))}</small><div class="pm-menu">${cx?`<button class="menu-row" data-dm="edit"><span class="mi">✎</span><span class="mt"><b>${t("แก้ไข")}</b></span></button>`:""}
     <button class="menu-row warn" data-dm="del"><span class="mi">↺</span><span class="mt"><b>${t("ยกเลิกที่บันทึก")}</b><small>${t("กลับเป็นยังไม่ได้ทำ")}</small></span></button></div><button class="btn" data-gen-close>${t("ปิด")}</button>`,
-    b=>b.querySelectorAll("[data-dm]").forEach(x=>x.addEventListener("click",()=>{closeGen();if(x.dataset.dm==="edit"){openCardio(k);return}
+    b=>b.querySelectorAll("[data-dm]").forEach(x=>x.addEventListener("click",()=>{closeGen();if(x.dataset.dm==="edit"){openCardio(k,true);return}
       if(cx)cxSet(k,null);else{logs=logs.filter(l=>!(l.date===DAY&&l.prog===k));save("gymlog",logs)}renderAll()})))}
 Object.assign(EN,{"ยกเลิกที่บันทึก":"Undo this entry","กลับเป็นยังไม่ได้ทำ":"Back to not done"});
 function openPlanPlace(k){const p=PROGS[k],cx=isCardio(p);
