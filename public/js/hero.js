@@ -18,7 +18,7 @@ function renderHero(){const xp=heroXP(),L=lvOf(xp),lo=25*(L-1)*L,hi=25*L*(L+1),t
   document.getElementById("hero-fill").style.width=((xp-lo)/(hi-lo)*100)+"%";
   document.getElementById("hero-xp").textContent=xp+" XP";
   document.getElementById("hero-next").textContent=(lang==="th"?"อีก ":"")+(hi-xp)+(lang==="th"?" XP ถึงเลเวลถัดไป":" XP to next");
-  if(heroLv!==null&&L>heroLv){const el=document.getElementById("hero");el.classList.remove("lv");void el.offsetWidth;el.classList.add("lv");toast((lang==="th"?"เลเวลอัป! Lv ":"LEVEL UP! Lv ")+L+(tierOf(heroLv)<tr?" 💪":""))}
+  if(heroLv!==null&&L>heroLv){const el=document.getElementById("hero");el.classList.remove("lv");void el.offsetWidth;el.classList.add("lv");/* no level-up toast (user request) — level shows on Today's week tab */}
   heroLv=L;return tr}
 setInterval(()=>{heroF^=1;try{const tr=tierOf(lvOf(heroXP()));const hv=document.getElementById("hero-cv");if(hv&&!document.getElementById("v-gym").hidden)drawHero(hv,tr,"idle",heroF);
   if(!document.getElementById("rest").hidden){const p=(PROGS[cur]&&/pull|back/i.test(cur))?"pull":/leg|lower/i.test(cur)?"legs":"push";drawHero(document.getElementById("rest-cv"),tr,p,heroF)}}catch(e){}},450);
