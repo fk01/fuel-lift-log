@@ -285,6 +285,8 @@ function planStat(){const ks=planList();return [ks.filter(planItemDone).length,k
 function planSummary(k,v){const p=PROGS[k];if(isCardio(p))return "✓ "+cxTxt(k,v);const n=Object.values(v.ex).reduce((a,s)=>a+s.length,0);return `✓ ${nU(n,"เซ็ต")} · ${Math.round(volOf(v)).toLocaleString()} kg`}
 function startPlanItem(k,go){const p=PROGS[k];
   // another weights session is running: ask what to do with it first
+  // cardio is logged in a modal; stay on the plan screen (switching day mode here left the old program list up, see docs/work/2026-11-21-cardio-cancel)
+  if(go&&isCardio(p)){openCardio(k);return}
   if(go&&!isCardio(p)&&picked&&PROGS[cur]&&cur!==k){if(woProgress().any){openSwitchAsk(k);return}cancelProg()}dayKind={date:TODAY,k:isCardio(p)?"cardio":"gym"};save("daykind",dayKind);setDayMode("train");
   curLoc=locOf(p)==="*"?(locById(p.lastLoc)?p.lastLoc:curLoc):locOf(p);pickAnyway=false;locPrev=null;locDay={date:TODAY,id:curLoc,prog:k};save("locday",locDay);
   if(isCardio(p)){renderGym();if(go)openCardio(k);return}

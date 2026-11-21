@@ -194,6 +194,9 @@ const steps = [
   ["onboarding-ui", () => { openOnboarding(); const m = document.getElementById("onb"); if (m.hidden || !m.querySelector("[data-p='age']")) throw new Error("step 1"); for (let i = 0; i < 3; i++) m.querySelector('[data-onb="next"]').click(); if (!m.querySelector("[data-plan]")) throw new Error("step 4"); m.hidden = true; }],
   ["explore-ui", () => { location.hash = "explore"; show("explore"); if (document.querySelectorAll("#v-explore [data-xt]").length !== 6) throw new Error("explore tabs");
     publishMeals(); if (!document.querySelector("#gen-body #pub-t") || document.querySelectorAll("#gen-body [data-tag]").length < 10) throw new Error("share sheet"); closeGen(); location.hash = "gym"; }],
+  ["cardio-close-stays", () => { location.hash = "gym"; setDayMode(null); renderGym(); const k = Object.keys(PROGS).find(q => PROGS[q].track === "dist");
+    startPlanItem(k, true); if (document.getElementById("run-modal").hidden) throw new Error("cardio start should open the log");
+    document.getElementById("run-close").click(); if (document.getElementById("locpick").hidden) throw new Error("closing the cardio log must leave the plan screen up"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
