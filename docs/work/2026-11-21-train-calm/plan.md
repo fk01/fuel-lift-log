@@ -34,3 +34,6 @@
 ## Rest timer first (user request, replaces #150 behaviour)
 - while the rest timer is up, Cancel / Finish & save are hidden; close it with Ready (or let it finish) and the bar comes back
 - rest sheet back to sitting directly on the tab bar; smoke test renamed workout-rest-then-cancel (bar hidden during rest → Ready → bar back → Cancel)
+
+## One typeface on Train (user request)
+- #v-gym, rest sheet and number pad use the body font everywhere (no mono mixed in: "5 Set × 5 Reps", "No history", set numbers, clock, pad); tabular numbers keep digits aligned
