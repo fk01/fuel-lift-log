@@ -1287,3 +1287,6 @@ body.on-home{background-image:none}
 .hq-morep{width:100%;min-height:44px;margin-top:2px}
 .hq-day.now .hq-pc{color:var(--muted)}
 #v-home .hq-weekc{min-height:0}
+/* place sits beside the program name */
+#v-home .hq-pn{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px}
+#v-home .hq-pn .loc-tag{margin:0;font-size:var(--t-meta);font-weight:400;color:var(--muted)}
