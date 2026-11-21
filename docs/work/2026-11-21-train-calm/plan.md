@@ -5,3 +5,4 @@
 - set entry: ticking a weighted set with empty kg copies the row above, else asks for the weight (pad opens); 44px green tick; pad confirm "✓ เสร็จเซ็ตนี้"
 - copy: no "Pending" chip, "5 เซ็ต × 5 ครั้ง"; 44px targets in the workout; Add sheet takes focus
 - tests: day-queue follows the new rules (one Start, remove via sheet); hit-areas hides a transient level-up toast
+- Train strip was 8px lower (#step1 wrapper margin+padding) → zeroed; measured header/strip/day/dot/arrows identical on Today, Eat, Train
