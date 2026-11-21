@@ -20,21 +20,12 @@ window.addEventListener("hashchange",()=>show(viewOf()));
 // week strip: the 7 days of the selected date's week; dot = workout / run / badminton logged
 // week strip; tap the date title to expand it into the whole month (and back)
 let weekOpen=false,wkMonth=null;
-function renderWeek(){const box=document.getElementById("week");if(!box)return;const d0=new Date(DAY+"T12:00:00");const off=(d0.getDay()+6)%7;
-  const dt=document.getElementById("date");dt.classList.add("date-tog");dt.setAttribute("aria-expanded",weekOpen);
-  let days=[...Array(7)].map((_,i)=>{const d=new Date(d0);d.setDate(d0.getDate()-off+i);return dkey(d)});
-  // expanded: show the full calendar (program labels, plan, day summary on tap) in place of the week strip
-  box.hidden=weekOpen;const hc=document.getElementById("hdr-cal");if(hc){hc.hidden=!weekOpen;if(weekOpen){if(!wkMonth){calM=DAY;wkMonth=DAY.slice(0,7)}try{renderProgress()}catch(e){}}}
-  box.classList.toggle("month",false);let head="";
-  if(false){const m=wkMonth||DAY.slice(0,7),[Y,M]=m.split("-").map(Number),first=new Date(Y,M-1,1),lead=(first.getDay()+6)%7,n=new Date(Y,M,0).getDate();
-    days=[...Array(lead)].map(()=>null).concat([...Array(n)].map((_,i)=>`${m}-${String(i+1).padStart(2,"0")}`));
-    head=`<div class="wk-h"><button class="btn sm" data-mv="-1" aria-label="prev">‹</button><b>${first.toLocaleDateString(LOC(),{month:"long",year:"numeric"})}</b><button class="btn sm" data-mv="1" aria-label="next">›</button></div>`+
-      [0,1,2,3,4,5,6].map(i=>`<small class="wk-dow">${new Date(2024,0,1+i).toLocaleDateString(LOC(),{weekday:"narrow"})}</small>`).join("")}
-  box.innerHTML=head+days.map(ds=>{if(!ds)return "<span></span>";const d=new Date(ds+"T12:00:00"),tg=(food[ds]||{}).tags||{},did=logs.some(l=>l.date===ds)||cxAny(ds);
-    return `<button class="wd${ds===DAY?" sel":""}${ds===TODAY?" today":""}" data-ds="${ds}" ${ds>TODAY?"disabled":""}>${weekOpen?"":`<small>${d.toLocaleDateString(LOC(),{weekday:"narrow"})}</small>`}<b>${d.getDate()}</b><i class="${did?"on":""}"></i></button>`}).join("");
-  box.querySelectorAll("[data-ds]").forEach(b=>b.addEventListener("click",()=>{weekOpen=false;wkMonth=null;if(b.dataset.ds===DAY){renderWeek();return}DAY=b.dataset.ds;draft.ex={};picked=false;renderAll()}));
-  box.querySelectorAll("[data-mv]").forEach(b=>b.addEventListener("click",()=>{const [y,m]=(wkMonth||DAY.slice(0,7)).split("-").map(Number);wkMonth=dkey(new Date(y,m-1+(+b.dataset.mv),1)).slice(0,7);renderWeek()}))}
-document.getElementById("date").addEventListener("click",()=>{weekOpen=!weekOpen;wkMonth=null;renderWeek()});
+function renderWeek(){const box=document.getElementById("week");if(!box)return;box.classList.add("eat-cal");box.hidden=false;
+  const hc=document.getElementById("hdr-cal");if(hc)hc.hidden=true;
+  calCard(box,{key:"train",sel:DAY,redraw:renderWeek,
+    cell:ds=>{const L=logs.filter(l=>l.date===ds),cx=cxAny(ds);if(!L.length&&!cx)return{sub:"",cls:"none"};
+      return{sub:L.length?progName(L[0].prog):"",mark:"●",cls:"ok"}},
+    pick:ds=>{if(ds===DAY){renderWeek();return}DAY=ds;draft.ex={};picked=false;renderAll()}})}
 function renderAll(){applyStatic();try{updMoreLang()}catch(e){}try{renderWeek()}catch(e){}document.getElementById("today-btn").hidden=DAY===TODAY;document.getElementById("save-day").textContent="→ "+new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"numeric"});document.getElementById("date").textContent=new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{weekday:"short",day:"numeric",month:"long"})+(DAY===TODAY?"":" · "+(lang==="th"?"ย้อนหลัง":"Backfill"));updUnitBtn();renderFood();renderGym();show(viewOf())}
 document.getElementById("lang").addEventListener("click",()=>{lang=lang==="th"?"en":"th";try{localStorage.setItem("lang",lang)}catch(e){}renderAll()});
 /* ---------- lock page scroll while a full-screen modal is open (iOS scrolled the page behind it) ---------- */

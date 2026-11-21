@@ -69,3 +69,20 @@ function deEmoji(root){if(!root)return;const w=document.createTreeWalker(root,No
   hits.forEach(n=>{const f=document.createDocumentFragment();n.nodeValue.split(EMO_RE).forEach((part,i)=>{if(i%2){const k=EMO[part]||EMO[part.replace(/️/g,"")];if(KEEP.test(part)){f.appendChild(document.createTextNode(part));return}
       const s=document.createElement("span");s.className="emo";s.innerHTML=licon(k||"dot");f.appendChild(s)}else if(part)f.appendChild(document.createTextNode(part))});n.replaceWith(f)})}
 document.addEventListener("DOMContentLoaded",()=>{deEmoji(document.body);new MutationObserver(ms=>ms.forEach(m=>{m.addedNodes.forEach(n=>{if(n.nodeType===1)deEmoji(n);else if(n.nodeType===3&&n.parentNode)deEmoji(n.parentNode)});if(m.type==="characterData"&&m.target.parentNode)deEmoji(m.target.parentNode)})).observe(document.body,{childList:true,subtree:true,characterData:true})});
+// ---- shared calendar card (Eat + Train): a week of boxed days; tap the title for the whole month ----
+// o: {key, sel, cell(ds)->{sub,mark,cls}, pick(ds), redraw(), extra(days)->html, foot}
+const CALST={};
+function calCard(box,o){const st=CALST[o.key]=CALST[o.key]||{open:false,anchor:null},a=new Date((st.anchor||o.sel)+"T12:00:00");let days,title,canNext;
+  if(st.open){const y=a.getFullYear(),m=a.getMonth(),lead=(new Date(y,m,1).getDay()+6)%7,n=new Date(y,m+1,0).getDate();
+    days=Array(lead).fill(null).concat([...Array(n)].map((_,i)=>dkey(new Date(y,m,i+1))));
+    title=new Date(y,m,1).toLocaleDateString(LOC(),{month:"long",year:"numeric"});canNext=dkey(new Date(y,m+1,1))<=TODAY}
+  else{const off=(a.getDay()+6)%7;days=[...Array(7)].map((_,i)=>{const d=new Date(a);d.setDate(a.getDate()-off+i);return dkey(d)});
+    title=`${thDate(days[0],{day:"numeric",month:"short"})} – ${thDate(days[6],{day:"numeric",month:"short"})}`;canNext=days[6]<TODAY}
+  const nar=i=>new Date(2024,0,1+i).toLocaleDateString(LOC(),{weekday:"narrow"});
+  box.innerHTML=`<div class="ec-h"><button class="btn sm" data-cm="-1" aria-label="prev">‹</button><button class="ec-t" data-ct aria-expanded="${st.open}">${esc(title)} <i>${st.open?"▴":"▾"}</i></button>${o.extra?o.extra(days.filter(Boolean)):"<span></span>"}<button class="btn sm" data-cm="1" ${canNext?"":"disabled"} aria-label="next">›</button></div>
+    ${st.open?`<div class="ec-dow">${[0,1,2,3,4,5,6].map(i=>`<small>${nar(i)}</small>`).join("")}</div>`:""}
+    <div class="ec-days${st.open?" month":""}">${days.map(ds=>{if(!ds)return"<span></span>";const fut=ds>TODAY,c=fut?{}:(o.cell(ds)||{});
+      return `<button class="ec-d ${fut?"fut":c.cls||"none"}${ds===o.sel?" on":""}${ds===TODAY?" today":""}" data-cd="${ds}" ${fut?"disabled":""}>${st.open?"":`<small>${nar((new Date(ds+"T12:00:00").getDay()+6)%7)}</small>`}<b>${+ds.slice(8)}</b>${st.open?"":`<span>${fut?"":esc(c.sub||"")}</span>`}<i>${fut?"":c.mark||""}</i></button>`}).join("")}</div>${o.foot||""}`;
+  box.querySelectorAll("[data-cm]").forEach(b=>b.addEventListener("click",()=>{const d=new Date(a),s=+b.dataset.cm;if(st.open)d.setMonth(d.getMonth()+s,1);else d.setDate(d.getDate()+7*s);let k=dkey(d);if(k>TODAY)k=TODAY;st.anchor=k;o.redraw()}));
+  box.querySelector("[data-ct]").addEventListener("click",()=>{st.open=!st.open;o.redraw()});
+  box.querySelectorAll("[data-cd]").forEach(b=>b.addEventListener("click",()=>{st.open=false;st.anchor=null;o.pick(b.dataset.cd)}))}
