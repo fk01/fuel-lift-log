@@ -241,6 +241,10 @@ const steps = [
     vis().querySelector("[data-add]").click(); if (!vis()) throw new Error("+Set must keep the exercise on screen"); if (vis().querySelectorAll(".sets input[type=checkbox]").length !== n0 + 1) throw new Error("+Set adds a row");
     vis().querySelector("[data-del]").click(); if (!vis() || vis().querySelectorAll(".sets input[type=checkbox]").length !== n0) throw new Error("−Set removes a row and keeps the card");
     vis().querySelector("[data-all]").click(); if (!vis()) throw new Error("Tick all keeps the card"); cancelProg(); }],
+  ["workout-cancel-during-rest", () => { location.hash = "gym"; cancelProg(); setDayMode("train"); pickLoc("gym"); renderGym(); const k = planList().find(q => !isCardio(PROGS[q])); startPlanItem(k, true);
+    const c = document.querySelector("#exs .ex.pg-on"); if (!c) return; const e = sessEx()[woIdx]; startRest(e, 0, draft.ex[e.id] || []);
+    const bar = document.getElementById("step4"); if (getComputedStyle(bar).display === "none") throw new Error("Cancel/Finish must stay reachable while resting");
+    document.getElementById("cancel-w").click(); if (picked) throw new Error("cancel during rest returns to the plan"); if (!document.getElementById("rest").hidden) throw new Error("rest timer closes on cancel"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }

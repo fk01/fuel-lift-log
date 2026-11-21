@@ -17,3 +17,7 @@
 
 ## Start button identical on Today and Train
 - Train lead Start uses the Today classes (btn primary sm hq-ps); no glow on either; measured: size, radius, border, gradient, shadow, font, colour all equal
+
+## Flow bug: start → tick → cancel looked frozen
+- ticking a set opens the rest sheet and the old CSS hid Cancel / Finish & save while resting (.wrap.has-rest .wo-bar{display:none}) → bar now stays; rest sheet sits right above it; solid bar background; no gaps (measured edges: rest bottom = bar top = 697, bar bottom = tab bar top = 774)
+- smoke test workout-cancel-during-rest
