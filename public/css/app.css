@@ -1329,3 +1329,28 @@ body.on-food .wrap>header{display:none}
 /* Eat strip sits exactly where Today's does */
 #v-food #eat-cal{display:block!important;gap:0!important;border:0!important}
 #v-food #eat-cal .hq-streak{margin-top:8px}
+/* ===== Train in the calm Today style ===== */
+body.on-gym .wrap>header{display:none}
+body.on-gym{background-image:none}
+#v-gym #week{display:block!important;background:none!important;border:0!important;padding:0!important;gap:0!important;box-shadow:none!important}
+#v-gym #week .hq-streak{display:block;text-align:center;margin-top:8px}
+#v-gym .pl-row,#v-gym .card,#v-gym .ex,#v-gym .rest-card{background:#1c2431!important;border:0!important;box-shadow:none!important;border-radius:20px}
+#v-gym .pc-go,#v-gym .btn.primary{box-shadow:none!important}
+#v-gym .pc-go{border-radius:12px!important;min-height:44px;min-width:96px}
+#v-gym .pc-chev{flex:none;width:44px;height:44px;display:grid;place-items:center;color:var(--muted);font-size:var(--t-xl)}
+#v-gym .row-ic{filter:none!important;box-shadow:none!important;border:0!important;background:#141a24!important}
+#v-gym .pl-h,#v-gym .dp-sub{background:none!important;padding-bottom:0}
+/* one Finish: the bottom bar; header keeps only the stats */
+#wo-finish{display:none!important}
+/* 44px targets in the workout */
+#wo-back{min-height:44px;padding:0 10px!important}
+#v-gym .sets button,#v-gym .restset button,#v-gym .sets [data-unit]{min-height:44px;min-width:44px}
+#v-gym .sets input[type=checkbox]{width:44px!important;height:44px!important}
+#v-gym .sets input[type=checkbox]:checked{accent-color:var(--green)}
+/* Train: greeting replaces the big title; workout top bar flat */
+#v-gym .dp-h{display:none}
+#v-gym .wo-top{background:#1c2431!important;border:0!important;box-shadow:none!important;border-radius:20px}
+#v-gym .wo-top b,#v-gym #wo-clock{text-shadow:none!important;filter:none!important}
+#v-gym .sets input[type=checkbox]{appearance:none;-webkit-appearance:none;border-radius:12px;background:#253245;border:2px solid #3a4658;display:grid;place-items:center;cursor:pointer}
+#v-gym .sets input[type=checkbox]:checked{background:var(--green);border-color:var(--green)}
+#v-gym .sets input[type=checkbox]:checked::after{content:"✓";color:#0b1a12;font-weight:800;font-size:22px}

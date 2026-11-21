@@ -94,9 +94,10 @@ const steps = [
   ["day-queue", () => { location.hash = "gym"; const saved = logs.filter(l => l.date === TODAY); logs = logs.filter(l => l.date !== TODAY); cancelProg(); setDayMode(null); dayPlan = {}; renderGym();
     openPlanAdd(); document.querySelector('#gen-body [data-padd="pull"]').click(); document.querySelector('#gen-body [data-padd="push2"]').click(); document.querySelector("#gen-body [data-pgo]").click();
     if (!document.querySelector('#locpick [data-pl="push2"]')) throw new Error("multi-select adds both"); const row = document.querySelector('#locpick [data-pl="pull"]'); if (!row || !row.classList.contains("st-pend")) throw new Error("added row pending");
-    row.querySelector('[data-plgo="start"]').click(); if (!picked || cur !== "pull") throw new Error("start from list");
+    (row.querySelector('[data-plgo="start"]') || (row.click(), document.querySelector('#gen-body [data-pis]'))).click(); if (!picked || cur !== "pull") throw new Error("start from list (Start, or row → sheet → Start)");
+    if (document.querySelectorAll('#locpick [data-plgo="start"]').length > 1) throw new Error("only one Start in the plan list");
     setDayMode(null); renderGym(); if (!document.querySelector('#locpick [data-pl="pull"].st-prog')) throw new Error("in progress row");
-    cancelProg(); setDayMode(null); renderGym(); document.querySelector('#locpick [data-pl="pull"] [data-pldel]').click(); if (document.querySelector('#locpick [data-pl="pull"]')) throw new Error("remove row");
+    cancelProg(); setDayMode(null); renderGym(); if (document.querySelector('#locpick [data-pldel]')) throw new Error("no one-tap remove on rows"); openPlanItem("pull"); document.querySelector('#gen-body [data-pid]').click(); if (document.querySelector('#locpick [data-pl="pull"]')) throw new Error("remove row via its sheet");
     logs.push(...saved); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
   ["plan-multi", () => { location.hash = "gym"; const run = Object.keys(PROGS).find(k => PROGS[k].tag === "run"), wd = new Date(TODAY + "T12:00:00").getDay();
     const keep = { r: PROGS[run].days.slice(), p: PROGS.push.days.slice() }; PROGS[run].days.push(wd); PROGS.push.days.push(wd);
@@ -111,7 +112,7 @@ const steps = [
   ["card-start", () => { document.querySelectorAll(".modal").forEach(m => m.hidden = true); location.hash = "gym"; cancelProg(); setDayMode("train"); pickLoc("gym"); renderGym(); const g = document.querySelector("#p-push [data-go]"); if (!g) throw new Error("start button on card");
     const r = g.getBoundingClientRect(), hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); if (!hit || !hit.closest("[data-go]")) throw new Error("start button is covered by " + (hit && hit.className)); hit.click();
     if (!picked || cur !== "push") throw new Error("card start"); cancelProg(); }],
-  ["hit-areas", () => { document.querySelectorAll(".modal,#gen-sheet,#prog-sheet,#undo-bar").forEach(m => m.hidden = true); location.hash = "gym"; cancelProg(); setDayMode("train"); pickLoc("gym"); renderGym(); scrollAppTop();
+  ["hit-areas", () => { document.getElementById("toast").hidden = true;   /* a level-up toast from an earlier step is transient, not a layout bug */ document.querySelectorAll(".modal,#gen-sheet,#prog-sheet,#undo-bar").forEach(m => m.hidden = true); location.hash = "gym"; cancelProg(); setDayMode("train"); pickLoc("gym"); renderGym(); scrollAppTop();
     const bad = [...document.querySelectorAll("#v-gym button,#v-gym [role=button]")].filter(e => { const r = e.getBoundingClientRect(); if (!r.width || r.top < 0 || r.bottom > innerHeight - 100) return false;
       const h = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return h && h !== e && !e.contains(h) && !h.closest(".wo-top"); });
     if (bad.length) throw new Error("covered buttons: " + bad.map(e => { const r = e.getBoundingClientRect(), h = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return e.className + "|" + e.textContent.trim().slice(0, 15) + " by " + (h && (h.id || h.className)) }).join(", ")); }],

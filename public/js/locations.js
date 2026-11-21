@@ -293,7 +293,7 @@ function startPlanItem(k,go){const p=PROGS[k];
   if(!picked){if(cur!==k)draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft);if(go){chosen=true;document.getElementById("start-w").click();return}}renderGym();scrollAppTop()}
 // a past day: what was logged + log something late (no old "pick a program" screen)
 function renderPastDay(box){const ls=logs.filter(l=>l.date===DAY),cx=Object.keys(PROGS).filter(k=>isCardio(PROGS[k])&&cxGet(k));
-  box.innerHTML=`<h1 class="dp-h">${t("ออกกำลัง")}</h1><div class="cal-slot"></div><h2 class="dp-sub pl-h">${t("ย้อนหลัง")} · ${thDate(DAY,{weekday:"long",day:"numeric",month:"short"})}</h2>
+  box.innerHTML=`<div class="cal-slot"></div><h2 class="dp-sub pl-h">${t("ย้อนหลัง")} · ${thDate(DAY,{weekday:"long",day:"numeric",month:"short"})}</h2>
     ${ls.map(l=>`<div class="pl-row st-done" data-pl="${esc(l.prog)}"><span class="row-ic">${licon("checkc")}</span><span class="row-tx"><span class="pl-st st-done">${t("Done")}</span><b>${esc(progName(l.prog))}</b><small>${esc(planSummary(l.prog,l))}</small></span></div>`).join("")}
     ${cx.map(k=>`<div class="pl-row st-done" data-pl="${esc(k)}"><span class="row-ic g">${licon("checkc")}</span><span class="row-tx"><span class="pl-st st-done">${t("Done")}</span><b>${esc(PROGS[k].name)}</b><small>${esc(cxTxt(k,cxGet(k)))}</small></span></div>`).join("")}
     ${ls.length||cx.length?"":`<small class="note pl-empty">${t("วันนี้ไม่ได้บันทึกอะไรไว้")}</small>`}
@@ -306,11 +306,12 @@ function renderPastDay(box){const ls=logs.filter(l=>l.date===DAY),cx=Object.keys
       b=>b.querySelectorAll("[data-lk]").forEach(x=>x.addEventListener("click",()=>{const k=x.dataset.lk;closeGen();if(isCardio(PROGS[k])){openCardio(k);return}
         cur=k;draft={prog:k,ex:{},started:1,day:DAY,loc:locOf(PROGS[k])};save("gymdraft",draft);picked=true;chosen=true;renderGym();scrollAppTop()})))})}
 function renderPlan(box){const ks=planList(),[d,n]=planStat();let sugK=null;try{sugK=(recSuggest()||[])[0]}catch(e){}
+  const lead=ks.find(q=>!planItemDone(q)&&!inProg(q)&&!isCardio(PROGS[q]))||ks.find(q=>!planItemDone(q)&&!inProg(q));
   const row=k=>{const p=PROGS[k],v=planItemDone(k),ip=inProg(k),L=locById(locOf(p)==="*"?p.lastLoc:locOf(p))||{},tod=(TOD.find(q=>q[0]===p.tod)||[])[1];
     const st=v?["done","Done"]:ip?["prog","In progress"]:["pend","Pending"];
     const sets=ip?Object.values(draft.ex||{}).flat():[],sub=v?planSummary(k,v):ip?`${t(L.name||"")} · ${sets.filter(x=>x.ok).length}/${sets.length} ${t("เซ็ต")}`:`${isCardio(p)?t("คาร์ดิโอ"):nU(p.ex.length,"ท่า")}${tod?" · "+t(tod):""}`;
     return `<div class="pl-row st-${st[0]}" data-pl="${esc(k)}"><span class="row-ic${isCardio(p)?" g":""}">${v?licon("checkc"):isCardio(p)?licon(LI[EMO[p.icon]]?EMO[p.icon]:"run"):licon("dumbbell")}</span>
-      <span class="row-tx"><span class="pl-st st-${st[0]}">${t(st[1])}</span>${sugK===k&&!v&&!ip?`<span class="pl-sug">${t("แนะนำ")}</span>`:""}<b>${esc(p.name)}</b><span class="pl-sub"><small>${esc(sub)}</small>${v||ip?"":`<span class="loc-chip loc-tag">${esc(L.icon||"📍")} ${esc(t(L.name||""))}</span>`}</span></span><span class="pc-act">${v?"":ip?`<button class="pc-go" data-plgo="resume">${t("กลับไปเล่น")}</button>`:`<button class="pc-go" data-plgo="start">▶ ${t("เริ่ม")}</button><button class="pc-more" data-pldel aria-label="${t("เอาออก")}">✕</button>`}</span></div>`};
+      <span class="row-tx">${st[0]==="pend"?"":`<span class="pl-st st-${st[0]}">${t(st[1]==="Done"?"เสร็จแล้ว_pl":"กำลังเล่น")}</span>`}${sugK===k&&!v&&!ip?`<span class="pl-sug">${t("แนะนำ")}</span>`:""}<b>${esc(p.name)}</b><span class="pl-sub"><small>${esc(sub)}</small>${v||ip?"":`<span class="loc-chip loc-tag">${esc(L.icon||"📍")} ${esc(t(L.name||""))}</span>`}</span></span><span class="pc-act">${v?"":ip?`<button class="pc-go" data-plgo="resume">${t("กลับไปเล่น")}</button>`:(k===lead?`<button class="pc-go" data-plgo="start">${t("เริ่ม")}</button>`:`<span class="pc-chev" aria-hidden="true">›</span>`)}</span></div>`};
   box.innerHTML=`<h1 class="dp-h">${t("ออกกำลัง")}</h1><div class="cal-slot"></div><div class="rec-slot"></div>
     ${dayMode()==="rest"?`<div class="card rest-card"><b>${licon("moon")} ${t("พักวันนี้")}</b><small class="note">${t("ให้กล้ามได้ฟื้น — พรุ่งนี้กลับมาใหม่")}</small><button class="btn sm" data-unrest>${t("เปลี่ยนใจ — ออกกำลังกาย")}</button></div>`:""}<h2 class="dp-sub pl-h">${t(n&&d===n?"ครบแล้ววันนี้ ✓":"วันนี้จะทำอะไร?")} ${n?`<span class="pill">${d}/${n}</span>`:""}</h2>${ks.map(row).join("")||`<small class="note pl-empty">${t("ยังไม่มีอะไรในวันนี้ — เพิ่มโปรแกรมที่จะทำ")}</small>`}
     <div class="pl-acts"><button class="${n?"pl-add":"btn primary pl-add-main"}" data-pladd>+ ${t("เพิ่มเข้าวันนี้")}</button>${d||ks.some(inProg)||dayMode()==="rest"?"":`<button class="btn pl-rest" data-plrest>${licon("moon")||""} ${t("พักวันนี้ดีกว่า")}</button>`}</div>`;
@@ -320,7 +321,7 @@ function renderPlan(box){const ks=planList(),[d,n]=planStat();let sugK=null;try{
     const g=ev.target.closest("[data-plgo]");if(g&&g.dataset.plgo==="resume"){setDayMode("train");renderGym();setTimeout(()=>document.getElementById("step3")?.scrollIntoView({block:"start"}),50);return}
     if(planItemDone(k)){openDoneItem(k);return}if(g)startPlanItem(k,true);else openPlanItem(k)})});
   box.querySelector("[data-plrest]")?.addEventListener("click",()=>{setDayMode("rest");renderGym()});box.querySelector("[data-unrest]")?.addEventListener("click",()=>{setDayMode(null);renderGym()});
-  box.querySelector("[data-pladd]").addEventListener("click",openPlanAdd)}
+  box.querySelector("[data-pladd]").addEventListener("click",e=>{window._sheetFrom=e.currentTarget;openPlanAdd();setTimeout(()=>document.querySelector("#gen-sheet button:not([data-gen-close]), #gen-sheet input")?.focus(),50)})}
 // "where?" sheet for one row of today's plan. Weights (option A): each place has its own copy of a program,
 // so picking a place swaps today's row to that place's copy. Cardio: any cardio place, remembered as lastLoc.
 // a done row can always be reopened: edit (cardio) or remove what was saved
@@ -456,3 +457,5 @@ function cardioWhere(host,k){if(!host)return;let w=host.querySelector(".cw");if(
   w.querySelectorAll("[data-cw]").forEach(c=>c.addEventListener("click",()=>{curLoc=c.dataset.cw;cardioWhere(host,k)}));
   w.querySelector("[data-cwnew]").addEventListener("click",()=>{const n=w.querySelector(".cw-new");n.hidden=false;n.querySelector("input").focus()});
   w.querySelector(".cw-new .btn").addEventListener("click",()=>{const v=w.querySelector(".cw-new input").value.trim();if(!v)return;const l={id:"l"+Date.now().toString(36),name:v,icon:"📍",map:"",eq:["body"],types:["cardio"]};LOCS.push(l);saveLocs();curLoc=l.id;cardioWhere(host,k)})}
+
+Object.assign(EN,{"เสร็จแล้ว_pl":"Done"});
