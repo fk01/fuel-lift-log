@@ -9,6 +9,7 @@ function renderHome(){const box=document.getElementById("v-home");if(!box)return
   let sug=null;try{sug=recSuggest()}catch(e){}
   const card=(go,ic,q,ans,sub,link)=>`<button class="hq-card" data-go="${go}"${link?"":" disabled"}><span class="hq-h"><span class="hq-q">${licon(ic)} ${t(q)}</span>${link?`<span class="hq-l">${t(link)} ›</span>`:""}</span><b class="hq-a">${ans}</b><small class="hq-s">${sub}</small></button>`;
   const restDay=dayMode()==="rest";
+  {const rw=document.getElementById("rec-wrap");if(rw&&box.contains(rw))document.body.appendChild(rw)}   // park it: innerHTML below would destroy it
   box.innerHTML=`<div class="date">${thDate(TODAY,{weekday:"long",day:"numeric",month:"short"})}</div>`
     +card("body","dumbbell","ร่างกายฉันเป็นยังไง",`${t("พร้อม")} ${ready.length}/${REC_ORDER.length} ${t("ส่วน")}`,
       [fresh.length?fresh.slice(0,3).map(m=>t(MUS_NAME[m])).join(" ")+" · "+t("เพิ่งเล่น"):t("กล้ามพร้อมทุกส่วน"),bw?`${t("น้ำหนัก")} ${bw.kg} kg`:""].filter(Boolean).join(" · "),"")

@@ -196,6 +196,8 @@ const steps = [
   ["cardio-close-stays", () => { location.hash = "gym"; setDayMode(null); renderGym(); const k = Object.keys(PROGS).find(q => PROGS[q].track === "dist");
     startPlanItem(k, true); if (document.getElementById("run-modal").hidden) throw new Error("cardio start should open the log");
     document.getElementById("run-close").click(); if (document.getElementById("locpick").hidden) throw new Error("closing the cardio log must leave the plan screen up"); }],
+  ["home-recovery-stays", () => { location.hash = ""; renderHome(); renderHome(); const w = document.getElementById("rec-wrap");
+    if (!w || !document.getElementById("v-home").contains(w) || w.hidden) throw new Error("muscle recovery must survive a re-render of Today"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
