@@ -42,3 +42,8 @@
 - the suggested item (primary Start) is always the first row; done items sink to the bottom
 - lead = planned lift with the fewest recovering muscles (every lift had one tired muscle, so "none tired" never matched)
 - smoke test home-lead-row-first
+
+## Today gets the shared week calendar (user request)
+- same calCard as Eat/Train; picking a day sets DAY → all three tabs follow
+- Today reads the picked day (food/logs/body log), past days say "เสร็จแล้ว" / "ดูบันทึก" instead of "วันนี้"
+- smoke test home-calendar-links-tabs
