@@ -21,3 +21,8 @@
 ## Flow bug: start → tick → cancel looked frozen
 - ticking a set opens the rest sheet and the old CSS hid Cancel / Finish & save while resting (.wrap.has-rest .wo-bar{display:none}) → bar now stays; rest sheet sits right above it; solid bar background; no gaps (measured edges: rest bottom = bar top = 697, bar bottom = tab bar top = 774)
 - smoke test workout-cancel-during-rest
+
+## Flow bug: tick all → next → back → Edit
+- edit card Done button was blank (key "เสร็จ" collides with another EN key) → "✓ เสร็จ" / "Done"
+- editing stacked two bottom bars (edit Cancel/Save over the workout Cancel/Finish) → workout bar hides while the edit bar is up; edit bar sits above the tab bar only during a workout
+- smoke test workout-edit-one-bar

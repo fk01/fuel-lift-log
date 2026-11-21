@@ -1379,3 +1379,6 @@ body.on-gym .rest{top:calc(var(--app-h) - var(--tabh) - 82px)!important}
 html.bar-hide #v-gym .wo-bar{bottom:calc(var(--tabh) - 4px)!important}
 body.on-gym .rest{top:calc(var(--app-h) - var(--tabh) - 78px)!important}
 body.on-gym .rest{top:calc(var(--app-h) - var(--tabh) - 73px)!important}
+/* while editing a workout exercise, its own Cancel/Save bar replaces the workout bar (no stacked bars) */
+body:has(#tx-bar:not([hidden])) #v-gym .wo-bar,body:has(.tx-bar:not([hidden])) #v-gym .wo-bar{display:none!important}
+body.on-gym.wo-focus .tx-bar{bottom:var(--tabh)!important}

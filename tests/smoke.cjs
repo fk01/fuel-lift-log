@@ -245,6 +245,11 @@ const steps = [
     const c = document.querySelector("#exs .ex.pg-on"); if (!c) return; const e = sessEx()[woIdx]; startRest(e, 0, draft.ex[e.id] || []);
     const bar = document.getElementById("step4"); if (getComputedStyle(bar).display === "none") throw new Error("Cancel/Finish must stay reachable while resting");
     document.getElementById("cancel-w").click(); if (picked) throw new Error("cancel during rest returns to the plan"); if (!document.getElementById("rest").hidden) throw new Error("rest timer closes on cancel"); }],
+  ["workout-edit-one-bar", () => { location.hash = "gym"; cancelProg(); setDayMode("train"); pickLoc("gym"); renderGym(); const k = planList().find(q => !isCardio(PROGS[q])); startPlanItem(k, true);
+    const c = () => document.querySelector("#exs .ex.pg-on"); if (!c()) return; c().querySelector("[data-all]").click(); goEx(1); goEx(0); c().querySelector("[data-edit]").click();
+    const d = c().querySelector("[data-done]"); if (!d || !d.textContent.trim()) throw new Error("edit card Done button needs a label");
+    const tx = document.getElementById("tx-bar"); if (tx && !tx.hidden && getComputedStyle(document.getElementById("step4")).display !== "none") throw new Error("only one bottom bar while editing");
+    d.click(); if (getComputedStyle(document.getElementById("step4")).display === "none") throw new Error("workout bar returns after Done"); cancelProg(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
