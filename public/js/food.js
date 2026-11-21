@@ -58,17 +58,18 @@ function renderFoodHist(){
   if(all30.length>7){const more=document.createElement("button");more.className="btn ghost";more.textContent=fhAll?t("ย่อ"):`${t("ดูทั้งหมด")} (${all30.length})`;more.addEventListener("click",()=>{fhAll=!fhAll;renderFoodHist()});box.appendChild(more)}
 }
 function renderFood(){renderFoodHist();
+  {const v=document.getElementById("v-food"),b0=document.getElementById("eat-back");if(v){if(DAY!==TODAY&&!b0){const b=document.createElement("button");b.id="eat-back";b.className="btn sm hq-back";b.textContent=t("กลับวันนี้");b.addEventListener("click",()=>{DAY=TODAY;renderAll()});v.prepend(b)}else if(DAY===TODAY&&b0)b0.remove();else if(b0)b0.textContent=t("กลับวันนี้")}}
   document.querySelectorAll(".chip[data-k]").forEach(c=>c.setAttribute("aria-pressed",!!fs().tags[c.dataset.k]));
   const box=document.getElementById("meals");box.innerHTML="";
   const meals=mealList();
   // next meal = first one not ticked; meals past their time (today only) are flagged
   const nowHM=(()=>{const d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")})();
-  const nextId=(meals.find(m=>!fs().done[m.id])||{}).id;
+  const nextId=DAY===TODAY?(meals.find(m=>!fs().done[m.id])||{}).id:null;
   meals.forEach(m=>{
     const done=!!fs().done[m.id],late=!done&&DAY===TODAY&&/^\d\d:\d\d$/.test(m.time)&&m.time<nowHM,isNext=m.id===nextId;
     const el=document.createElement("label");el.className="meal"+(done?" done mini":"")+(m.id.startsWith("x")?" extra":"")+(isNext?" next":"");
     el.dataset.flag=isNext?(late?t("เลยเวลา"):t("มื้อถัดไป")):late?t("เลยเวลา"):"";if(late)el.classList.add("late");
-    el.innerHTML=`<span class="row-ic">${licon(m.vit?"pill":m.id.startsWith("x")?"run":"bowl")}</span><input type="checkbox" id="c-${m.id}" ${done?"checked":""}><div><div class="row-head"><span><span class="time">${t(m.time)}</span> · ${t(m.name)}</span><span class="macro">${m.vit?"💊":`${m.k} kcal · P${m.p}`}</span></div><ul>${m.items.map(i=>`<li>${t(i)}</li>`).join("")}</ul></div>`;
+    el.innerHTML=`<span class="row-ic">${licon(m.vit?"pill":m.id.startsWith("x")?"run":"bowl")}</span><input type="checkbox" id="c-${m.id}" ${done?"checked":""}><div><div class="row-head"><span><span class="time">${t(m.time)}</span> · ${t(m.name)}</span><span class="macro">${m.vit||!m.k?t("วิตามิน_m").replace(/_m$/,""):`${m.k} kcal · ${t("โปรตีน")} ${m.p} g`}</span></div><ul>${m.items.map(i=>`<li>${t(i)}</li>`).join("")}</ul></div>`;
     el.querySelector("input").addEventListener("change",e=>{fs().done[m.id]=e.target.checked;save("mealcheck",food);renderFood()});
     box.appendChild(el);
     const xs=logOf(DAY).filter(x=>x.slot===m.id);if(xs.length)box.appendChild(logRows(xs));
@@ -80,7 +81,8 @@ function renderFood(){renderFoodHist();
   document.getElementById("kcal-f").style.width=Math.min(100,k/kt*100)+"%";
   document.getElementById("p-f").style.width=Math.min(100,p/P_TARGET*100)+"%";
   const left=meals.filter(m=>!fs().done[m.id]);
-  document.getElementById("status").textContent=left.length===0?t("ครบทุกมื้อแล้ว ✅"):
+  const over=k-kt,PAST=DAY!==TODAY;
+  document.getElementById("status").textContent=PAST?`${thDate(DAY,{weekday:"short",day:"numeric",month:"short"})} · ${t("กินไป")} ${k.toLocaleString()} kcal`:over>50?`${t("เกินเป้า")} ${over.toLocaleString()} kcal — ${left.length?t("มื้อที่เหลือกินเบาลงได้"):t("พรุ่งนี้กลับมาตามแผน")}`:left.length===0?t("ครบทุกมื้อแล้ว ✅"):
     p>=P_TARGET?`${t("ถึงเป้าแล้ว")} · ${left.length} ${t("เหลือ")}`:`${t("ขาดโปรตีน")} ${P_TARGET-p} g · ${t("ถัดไป")} ${left[0].time} ${t(left[0].name)}`;
   const h=document.getElementById("hist");if(h){h.innerHTML="";
   for(let i=6;i>=0;i--){const d=new Date(DAY+"T12:00:00");d.setDate(d.getDate()-i);const kk=dkey(d);const p2=dayP(kk);
@@ -131,3 +133,5 @@ function drawFoodRing(k,kt,p){const el=document.getElementById("food-ring");if(!
     <text x="110" y="102" text-anchor="middle" class="fr-big">${k.toLocaleString()}</text><text x="110" y="121" text-anchor="middle" class="fr-sm">/ ${kt.toLocaleString()} kcal</text>
     <text x="110" y="150" text-anchor="middle" class="fr-mid">${p} g</text><text x="110" y="166" text-anchor="middle" class="fr-sm">${t("โปรตีน")} / ${P_TARGET}</text></svg>`}
 document.getElementById("day-gear")?.addEventListener("click",ev=>{const s=document.getElementById("day-type");s.hidden=!s.hidden;ev.currentTarget.setAttribute("aria-expanded",!s.hidden)});
+
+Object.assign(EN,{"วิตามิน_m":"Vitamins","กินไป":"ate","มื้อที่เหลือกินเบาลงได้":"go lighter on the rest","พรุ่งนี้กลับมาตามแผน":"back on plan tomorrow"});

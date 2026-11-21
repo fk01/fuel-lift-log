@@ -134,4 +134,4 @@ document.getElementById("gen-sheet")?.addEventListener("click",e=>{if(e.target.i
 // "Back to today" lives in the calendar header, drawn after the cards — delegate
 document.addEventListener("click",e=>{if(!(e.target.closest&&e.target.closest("[data-backtoday]")))return;DAY=TODAY;try{draft.ex={};picked=false}catch(x){}renderAll()});
 // app.js (loaded after this file) defines show(): wrap it once everything is loaded
-window.addEventListener("DOMContentLoaded",()=>{if(typeof show!=="function")return;const _show=show;show=function(v){document.body.classList.toggle("on-home",v==="home"||!v);return _show.apply(this,arguments)}});
+window.addEventListener("DOMContentLoaded",()=>{if(typeof show!=="function")return;const _show=show;show=function(v){document.body.classList.toggle("on-home",v==="home"||!v);document.body.classList.toggle("on-food",v==="food");return _show.apply(this,arguments)}});
