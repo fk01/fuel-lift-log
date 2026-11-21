@@ -69,3 +69,9 @@
 - "เล่นตามแผน" underlined (reads as a button); ticked chips no longer truncate
 - "ออกกำลังอยู่ดี" switches day mode to train; weigh sheet moves focus inside
 - smoke test home-swap-counts-as-done
+
+## Round 12 (critique v12 32/40)
+- done headline lists only programs actually logged; subline shows "ข้าม N" for skipped lifts
+- next meal more than 2 h overdue reads "ยังไม่ติ๊ก <time> <meal>"
+- body: drops "never trained" once there is history; adds "กลุ่มแรกพร้อมใน ~N ชม."
+- "+ บันทึกร่างกาย" is an outlined pill (action, not nav); sheet focuses the first input and returns focus to the trigger
