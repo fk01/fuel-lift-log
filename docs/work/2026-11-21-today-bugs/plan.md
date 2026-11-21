@@ -6,3 +6,4 @@
 - Body card: no fold; muscle map + tiles always shown; "ดูรายละเอียด ›" header link to Stats; [+ บันทึกร่างกาย][⚙ ตั้งเวลาฟื้นตัว] side by side (only place for both)
 - Never-trained muscles show 100% (ready colour) in tiles/figure; legend drops "never"; summary counts them as ready
 - "ดูรายละเอียด" toggles the muscle map (aria-expanded, › rotates, remembered per device in localStorage); smoke test home-details-toggle
+- [+ บันทึกร่างกาย][⚙ ตั้งเวลาฟื้นตัว] move inside the Details fold with the muscle map
