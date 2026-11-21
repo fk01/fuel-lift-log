@@ -30,3 +30,7 @@
 ## Main lift + ↑↓ live only in "Edit exercises"
 - single exercise Edit (during a workout): sets, rep range, muscles, change exercise, Delete, Done
 - "Edit exercises" mode keeps Main lift + ↑↓ (aria-labels "Move earlier/later"); measured: single edit 0 ↑ / 0 main, edit mode 8 / 8
+
+## Rest timer first (user request, replaces #150 behaviour)
+- while the rest timer is up, Cancel / Finish & save are hidden; close it with Ready (or let it finish) and the bar comes back
+- rest sheet back to sitting directly on the tab bar; smoke test renamed workout-rest-then-cancel (bar hidden during rest → Ready → bar back → Cancel)
