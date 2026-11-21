@@ -18,8 +18,8 @@ function renderHome(){const box=document.getElementById("v-home");if(!box)return
   const wDone=ks.some(q=>!isCardio(PROGS[q])&&planItemDone(q)),doneQ=q=>!!planItemDone(q)||(wDone&&!isCardio(PROGS[q]));
   const udn=uks.filter(q=>doneQ(q)).length,un=uks.length;
   const sib=q=>q&&PROGS[q]?[q]:[],pick=q=>{if(!q||!PROGS[q])return q;const c=sib(q),w=homePick[PROGS[q].name];return c.includes(w)?w:q};   // q may be undefined: empty plan / rest day
-  const tiredOf=q=>{try{return [...new Set(PROGS[q].ex.flatMap(e=>musOf(exOf(e.id))[0]))].filter(m=>st(m)===1)}catch(e){return []}};   /* a planned lift whose muscles are rested leads */
-  const allDone=un>0&&udn===un,pk=pick(ks.find(q=>!doneQ(q)&&!isCardio(PROGS[q])&&!tiredOf(q).length)||ks.find(q=>!doneQ(q)&&!isCardio(PROGS[q]))||ks.find(q=>!doneQ(q))||ks[0]),more=uks.length-1;
+  const tiredOf=q=>{try{return [...new Set(PROGS[q].ex.flatMap(e=>musOf(exOf(e.id))[0]))].filter(m=>st(m)===1)}catch(e){return []}};   /* the planned lift with the fewest recovering muscles leads */
+  const allDone=un>0&&udn===un,pk=pick(ks.filter(q=>!doneQ(q)&&!isCardio(PROGS[q])).sort((a,b)=>tiredOf(a).length-tiredOf(b).length)[0]||ks.find(q=>!doneQ(q))||ks[0]),more=uks.length-1;
   const locOfK=q=>{const P=PROGS[q];return locById(locOf(P)==="*"?P.lastLoc:locOf(P))};
   const fitMs=q=>{try{return [...new Set(PROGS[q].ex.flatMap(e=>musOf(exOf(e.id))[0]))].filter(m=>[0,3,4].includes(st(m))).slice(0,2)}catch(e){return []}};
   // where: one inline place tag per item; a picker only when the same program is planned at places that really differ
@@ -58,7 +58,7 @@ function renderHome(){const box=document.getElementById("v-home");if(!box)return
       <b class="hq-a">${gymAns}</b>${!restDay&&!allDone&&!(uks.length>1)&&(swap||pk)&&pv(swap||pk)?`<small class="hq-s hq-pv">${pv(swap||pk)}${multiLoc(swap||pk)?"":where(swap||pk)}</small>${multiLoc(swap||pk)?where(swap||pk):""}`:""}${gymSub&&!tired.length?`<small class="hq-s">${gymSub}</small>`:""}
       ${hasHist&&!restDay&&!allDone&&(swap||pk)&&!isCardio(PROGS[swap||pk])&&fitMs(swap||pk).length?`<small class="hq-fit">${licon("checkc")} ${fitMs(swap||pk).map(m=>t(MUS_NAME[m])).join(", ")} ${t("พักพอแล้ว")}${swap?` → ${t("เหมาะกับวันนี้")}`:""}</small>`:""}
       ${tired.length?`<small class="hq-warn">${licon("moon")} ${tired.slice(0,2).map(m=>t(MUS_NAME[m])).join(", ")} ${t("ยังฟื้นไม่เต็มที่")}</small>`:""}
-      ${multi?`<div class="hq-plist">${uks.map(rowOf).join("")}</div>${swap?`<button class="hq-l hq-alt" data-start="${esc(pk)}">${t("เล่นตามแผน")}: ${nm(pk)}</button>`:""}`:allDone?`<button class="hq-l hq-alt" data-go="gym">${t("ดูบันทึกวันนี้")} ›</button>`:swap?`<button class="btn primary hq-go" data-start="${esc(swap)}">${t("เริ่ม")} ${esc(PROGS[swap].name)} ›</button><button class="hq-l hq-alt" data-start="${esc(pk)}">${t("เล่นตามแผน")}: ${nm(pk)}</button>`
+      ${multi?`<div class="hq-plist">${[...uks].sort((a,b)=>(a===pk?-1:b===pk?1:0)||(doneQ(a)-doneQ(b))).map(rowOf).join("")}</div>${swap?`<button class="hq-l hq-alt" data-start="${esc(pk)}">${t("เล่นตามแผน")}: ${nm(pk)}</button>`:""}`:allDone?`<button class="hq-l hq-alt" data-go="gym">${t("ดูบันทึกวันนี้")} ›</button>`:swap?`<button class="btn primary hq-go" data-start="${esc(swap)}">${t("เริ่ม")} ${esc(PROGS[swap].name)} ›</button><button class="hq-l hq-alt" data-start="${esc(pk)}">${t("เล่นตามแผน")}: ${nm(pk)}</button>`
         :gymBtn?`<button class="btn primary hq-go" ${pk?`data-start="${esc(pk)}"`:'data-go="gym"'}>${gymBtn} ›</button>`
         :restDay?`<button class="btn hq-swap" data-anyway>${t("ออกกำลังอยู่ดี")}</button>`:""}</section>
     <section class="hq-card"><span class="hq-h"><span class="hq-q">${licon("bowl")} ${t("วันนี้กินอะไร")}</span><button class="hq-l" data-go="food">${t("ดูแผน")} ›</button></span>

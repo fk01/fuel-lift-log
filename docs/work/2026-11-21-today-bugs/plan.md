@@ -37,3 +37,8 @@
 
 ## Start buttons: same shape and size on every row
 - .hq-ps / .hq-ps.primary: 96x44, radius 12 (primary keeps the gradient colour only)
+
+## Lead row first
+- the suggested item (primary Start) is always the first row; done items sink to the bottom
+- lead = planned lift with the fewest recovering muscles (every lift had one tired muscle, so "none tired" never matched)
+- smoke test home-lead-row-first
