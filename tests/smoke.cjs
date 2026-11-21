@@ -230,6 +230,8 @@ const steps = [
   ["home-swap-single-place", () => { location.hash = ""; renderHome(); const go = document.querySelector(".hq-main .hq-go[data-start]"); if (!go) return;
     const k = go.dataset.start; if (planList().includes(k)) return; if (document.querySelectorAll(".hq-main .hq-pv~.hq-locs [data-pick], .hq-main .hq-locs [data-pick]").length && !planList().some(q => PROGS[q].name === PROGS[k].name))
       throw new Error("a suggested program must show only its own place"); }],
+  ["home-lead-row-first", () => { location.hash = ""; renderHome(); const rows = document.querySelectorAll(".hq-plist .hq-pi"); if (rows.length < 2) return;
+    if (!rows[0].querySelector(".hq-ps.primary")) throw new Error("the suggested item (primary Start) must be the first row"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
