@@ -93,12 +93,12 @@ function renderRecCompact(box){const R=recPct(),g={3:[],2:[],1:[],0:[]};REC_ORDE
   box.querySelector("[data-recmap]").addEventListener("click",ev=>{ev.stopPropagation();openGen(t("การฟื้นตัวของกล้ามเนื้อ"),`<div class="card" id="rec-full"></div>`,b=>{renderRecovery(b.querySelector("#rec-full"));b.querySelector("#rec-full").addEventListener("click",e=>{const x=e.target.closest(".rec-t");if(x)openMuscle(x.dataset.m)})})})}
 function renderRecovery(full){const box=full||document.getElementById("rec-card");if(!box)return;if(!full&&box.closest(".rec-slot"))return renderRecCompact(box);const R=recPct();
   const state=o=>recState(o),ago=m=>R[m];
-  const lab=m=>{const o=R[m];return !o?"–":o.pct<40?t("เพิ่งเล่น"):o.pct+"%"},sub=m=>{const o=R[m];return !o?t("ยังไม่เคย"):o.days>NEGLECT?nU(o.days,"วันก่อน"):""};
+  const lab=m=>{const o=R[m];return !o?"100%":o.pct<40?t("เพิ่งเล่น"):o.pct+"%"},sub=m=>{const o=R[m];return !o?"":o.days>NEGLECT?nU(o.days,"วันก่อน"):""};
   const due=REC_ORDER.filter(m=>{const s=state(ago(m));return s===0||s===4});
-  const tiles=REC_ORDER.map(m=>{const o=R[m],s=state(o),w=!o?0:s===4?100:o.pct;return `<button class="rec-t s${s}" data-m="${m}"><b>${t(MUS_NAME[m])}</b><span class="rec-p">${lab(m)}</span><small class="rec-sub">${sub(m)||"&nbsp;"}</small><i class="rec-bar"><i style="width:${w}%;background:${REC_C[s]}"></i></i></button>`}).join("");
-  box.innerHTML=`<div class="rec-fig">${bodySVG([],[],320,m=>REC_C[state(ago(m))])}</div>
+  const tiles=REC_ORDER.map(m=>{const o=R[m],s=o?state(o):3,w=!o||s===4?100:o.pct;/* never trained = fully rested */return `<button class="rec-t s${s}" data-m="${m}"><b>${t(MUS_NAME[m])}</b><span class="rec-p">${lab(m)}</span><small class="rec-sub">${sub(m)||"&nbsp;"}</small><i class="rec-bar"><i style="width:${w}%;background:${REC_C[s]}"></i></i></button>`}).join("");
+  box.innerHTML=`<div class="rec-fig">${bodySVG([],[],320,m=>REC_C[ago(m)?state(ago(m)):3])}</div>
     <div class="rec-grid">${tiles}</div>
-    <div class="rec-leg">${[[1,"< 40%"],[2,"กำลังฟื้น"],[3,"พร้อม"],[0,"ยังไม่เคยเล่น"]].map(([k,l])=>`<span><i style="background:${REC_C[k]}"></i>${t(l)}</span>`).join("")}</div>`}
+    <div class="rec-leg">${[[1,"< 40%"],[2,"กำลังฟื้น"],[3,"พร้อม"]].concat([]).map(([k,l])=>`<span><i style="background:${REC_C[k]}"></i>${t(l)}</span>`).join("")}</div>`}
 /* ---------- generic bottom sheet ---------- */
 // sheet stack: a sheet opened from another sheet remembers it; ✕ / backdrop / Cancel go back ONE level (not to the page).
 // Same title = re-render (replace). Re-opening a title that is lower in the stack returns to it. closeGen() closes everything.
