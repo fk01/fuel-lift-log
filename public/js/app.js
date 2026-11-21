@@ -13,7 +13,7 @@ function show(v){const tab=v;if(v==="body"){stTab="body";applyStTab();v="stats"}
   if(v==="food")try{renderFood()}catch(e){}
   if(v==="explore")try{renderExplore()}catch(e){console.error(e)}
   if(v==="home")try{renderHome()}catch(e){console.error(e)}
-  if(v==="stats")try{renderHistChart();renderStatsExtra()}catch(e){}}
+  if(v==="stats")try{renderHistChart();renderStatsExtra();renderFoodHist()}catch(e){}}
 const viewOf=()=>location.hash.slice(1)||"home";
 document.querySelectorAll(".tabbar .tab").forEach(b=>b.addEventListener("click",()=>{if(location.hash==="#"+b.dataset.v)show(b.dataset.v);else location.hash=b.dataset.v}));
 window.addEventListener("hashchange",()=>show(viewOf()));
