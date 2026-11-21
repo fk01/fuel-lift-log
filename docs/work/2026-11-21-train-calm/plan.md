@@ -26,3 +26,7 @@
 - edit card Done button was blank (key "เสร็จ" collides with another EN key) → "✓ เสร็จ" / "Done"
 - editing stacked two bottom bars (edit Cancel/Save over the workout Cancel/Finish) → workout bar hides while the edit bar is up; edit bar sits above the tab bar only during a workout
 - smoke test workout-edit-one-bar
+
+## Main lift + ↑↓ live only in "Edit exercises"
+- single exercise Edit (during a workout): sets, rep range, muscles, change exercise, Delete, Done
+- "Edit exercises" mode keeps Main lift + ↑↓ (aria-labels "Move earlier/later"); measured: single edit 0 ↑ / 0 main, edit mode 8 / 8
