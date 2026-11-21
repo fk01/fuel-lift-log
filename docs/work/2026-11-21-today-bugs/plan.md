@@ -34,3 +34,6 @@
 - #130 left a // comment that swallowed the rest of where() on the same line
 - Today now mirrors Train: one row per plan item (Push B @Gym and Push B @Condo = two rows), one place each on its own line; place picker removed; never suggest a program already in the plan; a planned lift with rested muscles leads
 - smoke test home-one-row-per-plan-item (replaces home-where-pick)
+
+## Start buttons: same shape and size on every row
+- .hq-ps / .hq-ps.primary: 96x44, radius 12 (primary keeps the gradient colour only)

@@ -1212,7 +1212,7 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .hq-loc.on{border-color:color-mix(in srgb,var(--cyan) 55%,transparent);background:color-mix(in srgb,var(--cyan) 12%,transparent);color:var(--cyan)}
 .hq-fit{display:flex;gap:6px;align-items:flex-start;color:var(--green);font-size:var(--t-sm);font-weight:600;margin-top:4px}.hq-fit svg{flex:none;width:16px;height:16px;margin-top:2px}
 #v-home .hq-fit+.hq-warn{font-size:var(--t-meta);font-weight:400;color:color-mix(in srgb,var(--warn) 85%,var(--fg))}
-.hq-ps{border-radius:999px}
+.hq-ps,.hq-ps.primary{border-radius:var(--r-md,12px)!important;min-height:44px!important;height:44px;width:96px;min-width:96px!important;padding:0!important;box-sizing:border-box}
 .hq-mc.next:not(.on){border-color:color-mix(in srgb,var(--cyan) 55%,transparent);box-shadow:0 0 0 1px #2ee6ff55,0 0 22px #2ee6ff33}
 .hq-mc.mini{min-height:44px;font-size:var(--t-label)}.hq-mc.mini .hq-mt{opacity:.85}
 /* place always on its own line under the preview — same layout on every row */
