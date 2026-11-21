@@ -60,7 +60,9 @@ let modalY=null;(()=>{const sync=()=>{const on=[...document.querySelectorAll(".m
 function updMoreLang(){const e=document.getElementById("more-lang");if(e)e.textContent=lang==="th"?"ไทย":"English"}
 /* ---------- Stats sub-tabs: Training | Body ---------- */
 let stTab="train";
-function applyStTab(){document.querySelectorAll("#st-tabs [data-st]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.st===stTab));document.querySelectorAll(".st-pane").forEach(p=>p.hidden=p.dataset.pane!==stTab)}
+// Stats is one scroll: training then body, no tabs. "body" (e.g. from the Today card) just scrolls to the body part.
+function applyStTab(){document.getElementById("st-tabs").hidden=true;document.querySelectorAll(".st-pane").forEach(p=>p.hidden=false);
+  if(stTab==="body"){const b=document.querySelector('.st-pane[data-pane="body"]');if(b)setTimeout(()=>b.scrollIntoView({block:"start"}),50)}}
 document.getElementById("st-tabs").addEventListener("click",ev=>{const b=ev.target.closest("[data-st]");if(!b)return;stTab=b.dataset.st;try{localStorage.setItem("sttab",stTab)}catch(e){}applyStTab();scrollAppTop();try{renderStatsExtra();renderHistChart();renderRecovery(document.getElementById("rec-body"))}catch(e){}});
 applyStTab();
 /* ---------- startup ---------- */
