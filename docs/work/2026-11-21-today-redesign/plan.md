@@ -56,3 +56,9 @@
 - body summary count-first ("0 ready · 8 recovering · 8 not trained yet")
 - ticked chip shows ✓; warning replaces the preview line; "Stick to plan" more legible
 - train card gets a "Plan ›" header link; "+ Log body" reads as an action; weigh failure toasts
+
+## Round 10 (critique v10 30/40 — found 2 real bugs)
+- P0 done state: finished workout shows "✓ เสร็จแล้ววันนี้ <program>" + "ดูบันทึกวันนี้ ›", no Start/swap; next undone program leads when partially done
+- P1 0-kcal items (vitamins) never block "ครบทุกมื้อแล้ว"
+- swap reason in headline ("Pull A · แทน Push B"); readiness drops zero counts and the duplicate recovering list
+- chip ✓ inline without truncation; smoke test home-done-states
