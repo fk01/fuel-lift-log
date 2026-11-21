@@ -62,3 +62,10 @@
 - P1 0-kcal items (vitamins) never block "ครบทุกมื้อแล้ว"
 - swap reason in headline ("Pull A · แทน Push B"); readiness drops zero counts and the duplicate recovering list
 - chip ✓ inline without truncation; smoke test home-done-states
+
+## Round 11 (critique v11 32/40)
+- one lift session a day: once any weights program is logged, other planned lifts count as skipped (taken swap = done); cardio still counts on its own
+- "+ others" lists only remaining undone items; "never trained" wording
+- "เล่นตามแผน" underlined (reads as a button); ticked chips no longer truncate
+- "ออกกำลังอยู่ดี" switches day mode to train; weigh sheet moves focus inside
+- smoke test home-swap-counts-as-done
