@@ -1363,3 +1363,5 @@ html.bar-hide #v-gym .wo-bar{bottom:calc(var(--tabh) + 10px)!important}
 /* Train: tab bar never slides away, so the workout bar and the tab bar stay put together */
 html.bar-hide body.on-gym .tabbar{transform:none!important}
 html.bar-hide body.on-gym .rest{transform:none!important}
+/* Start button: identical on Today and Train (flat, no glow) */
+.hq-ps.primary{box-shadow:none!important}
