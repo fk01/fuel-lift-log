@@ -1108,3 +1108,5 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 /* explore: feed cards are <div>s (content-box) — keep them inside the column; plan tags are labels, not tap targets */
 .ex-card{box-sizing:border-box}
 .ex-tags .chip{min-height:0;padding:3px 10px;line-height:1.4}
+/* rest day: the rest card is the whole plan — hide the plan list, add button and place crumb under it */
+#locpick .rest-card~*,#v-gym.resting #lochead{display:none}
