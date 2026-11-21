@@ -16,3 +16,6 @@
 - rest day: secondary "ออกกำลังอยู่ดี"
 - meal tick: inline "✓ <meal> · ยกเลิก" chip (global Undo button stays off per #88)
 - bar turns amber when >110% of target
+
+## Body weight on Today
+- body card: latest kg (mono) + change vs ~7 days ago (neutral colour, no goal assumed) + "ชั่งวันนี้" when today not logged → number pad → BODY
