@@ -60,3 +60,10 @@
 - segment "แผนวันนี้ | สัปดาห์นี้": week = 4 stat tiles + kcal-per-day bars
 - flat cards (no border/glow), every plan item as a card row with a muscle thumbnail + "เวท · ~N นาที" chip
 - other tabs untouched (header/grid restored when leaving Today)
+
+## Critique v16 (29/40) — user picked 4 groups
+- week strip: missed/rest days = faint dot (no ×); today ring shows % of meals ticked
+- training card meta = "N ท่า · ~N นาที" (muscles in the preview sheet); one muted readiness line
+- single layer: training section is a label + item cards; week tab tiles flat
+- one Start (lead card); other cards tap → program sheet
+- week tab: weight tile "−0.8 kg · ใน 7 วัน"; empty kcal chart → hint text; week arrows + Thai preview button 44px

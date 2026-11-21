@@ -1262,3 +1262,22 @@ body.on-home{background-image:none}
 .hq-kbars span{display:grid;grid-template-rows:1fr auto;justify-items:center;height:100%;gap:4px}
 .hq-kbars i{display:block;width:100%;max-width:22px;align-self:end;border-radius:6px 6px 2px 2px;background:#2a3546;min-height:3px}.hq-kbars .ok i{background:var(--grad)}
 .hq-kbars small{font-size:var(--t-label);color:var(--muted)}
+/* v16 fixes: kind week strip, single-layer cards, one Start, 44px targets */
+.hq-rest{width:6px;height:6px;border-radius:50%;background:#3a4658}
+.hq-day.miss .hq-dot{background:#161d28}
+.hq-day.now .hq-dot,.hq-day.part .hq-dot{position:relative}
+.hq-pc{position:absolute;font-family:var(--f-num);font-size:11px;color:var(--fg)}
+.hq-dot .hq-arc{position:absolute}
+.hq-wnav{width:44px!important}
+.hq-pvb{min-height:44px;display:inline-flex;align-items:center}
+.hq-ready{display:flex;flex-wrap:wrap;gap:4px;align-items:center;color:var(--muted);font-size:var(--t-meta);margin-top:2px}.hq-ready svg{width:14px;height:14px;color:var(--green)}
+/* single layer: the section is a label + list, only items are cards */
+#v-home .hq-card.hq-main{background:none!important;padding:4px 0 0}
+#v-home .hq-main .hq-pi{background:#1c2431}
+#v-home .hq-main .hq-pi.lead{background:#223047}
+.hq-pgo{flex:none;width:44px;height:44px;border:0;border-radius:12px;background:none;color:var(--muted);font-size:var(--t-xl);cursor:pointer}
+#v-home .hq-pi:not(.lead){cursor:pointer}
+.hq-nokcal{display:block;margin-top:14px}
+#v-home .hq-card.hq-weekc{background:none!important;padding:0}
+#v-home .hq-weekc .hq-tile{background:#1c2431}
+#v-home .hq-pi .loc-tag{display:inline-flex;margin:0 0 0 8px}
