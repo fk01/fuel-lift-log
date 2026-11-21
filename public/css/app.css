@@ -1318,3 +1318,8 @@ body.on-food{background-image:none}
 #v-food #eat-cal .ec-d.ok{background:color-mix(in srgb,var(--green) 12%,transparent)!important}
 #v-food #eat-cal .btn{border:0!important;background:none!important;box-shadow:none!important}
 #v-food #eat-cal .ec-dow small,#v-food #eat-cal .ec-d small{color:var(--muted)}
+/* Eat: ring numbers calm (no neon), strip like Today, neutral late flag */
+#food-ring .fr-big{fill:var(--fg)!important}#food-ring .fr-mid{fill:var(--fg)!important;opacity:.85}
+#v-food #eat-cal{padding:10px 4px 12px!important}
+#v-food #eat-cal .hq-streak{display:block;text-align:center}
+#v-food .meal.late[data-flag]::after{background:#253245!important;color:var(--muted)!important;border-color:transparent!important}

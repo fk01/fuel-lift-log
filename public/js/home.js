@@ -135,3 +135,17 @@ document.getElementById("gen-sheet")?.addEventListener("click",e=>{if(e.target.i
 document.addEventListener("click",e=>{if(!(e.target.closest&&e.target.closest("[data-backtoday]")))return;DAY=TODAY;try{draft.ex={};picked=false}catch(x){}renderAll()});
 // app.js (loaded after this file) defines show(): wrap it once everything is loaded
 window.addEventListener("DOMContentLoaded",()=>{if(typeof show!=="function")return;const _show=show;show=function(v){document.body.classList.toggle("on-home",v==="home"||!v);document.body.classList.toggle("on-food",v==="food");return _show.apply(this,arguments)}});
+
+// Eat uses the same round week strip as Today (same DAY link)
+renderEatCal=function(){const box=document.getElementById("eat-cal");if(!box)return;
+  const a=new Date(DAY+"T12:00:00"),off=(a.getDay()+6)%7,full=[...Array(7)].map((_,i)=>{const d=new Date(a);d.setDate(a.getDate()-off+i);return dkey(d)});
+  const ms=mealList().filter(m=>m.k>0),pc=ds=>{const k=dayKcal(ds);return K_GOAL?Math.min(1,k/K_GOAL):0};
+  const ring=ds=>{const k=dayKcal(ds);if(k>=K_GOAL&&K_GOAL)return licon("checkc");if(ds<TODAY&&!k)return `<span class="hq-rest" aria-hidden="true"></span>`;
+    return `${ds===TODAY?`<b class="hq-pc">${Math.round(pc(ds)*100)}</b>`:""}<svg viewBox="0 0 36 36" class="hq-arc"><circle cx="18" cy="18" r="15"/><circle cx="18" cy="18" r="15" class="on" style="stroke-dasharray:${Math.round(pc(ds)*94)} 94"/></svg>`};
+  const st=ds=>ds>TODAY?"fut":dayKcal(ds)>=K_GOAL&&K_GOAL?"ok":ds<TODAY&&!dayKcal(ds)?"miss":"now";
+  const past=full.filter(ds=>ds<TODAY||ds===TODAY&&dayKcal(ds)>0),hit=past.filter(ds=>dayKcal(ds)>=K_GOAL).length;
+  const nar=ds=>new Date(ds+"T12:00:00").toLocaleDateString(LOC(),{weekday:"narrow"});
+  box.innerHTML=`<div class="hq-week"><button class="hq-wnav" data-wk="-7" aria-label="${t("สัปดาห์ก่อน")}">‹</button>${full.map(ds=>`<button class="hq-day ${st(ds)}${ds===DAY?" sel":""}${ds===TODAY?" today":""}" data-cd="${ds}" ${ds>TODAY?"disabled":""} aria-label="${thDate(ds,{weekday:"long",day:"numeric",month:"short"})}${dayKcal(ds)?" · "+dayKcal(ds)+" kcal":""}"><small>${new Date(ds+"T12:00:00").getDate()}</small><span class="hq-dot">${ds>TODAY?"":ring(ds)}</span><small>${nar(ds)}</small></button>`).join("")}<button class="hq-wnav" data-wk="7" aria-label="${t("สัปดาห์ถัดไป")}" ${full[6]>=TODAY?"disabled":""}>›</button></div>
+    <small class="hq-streak">${t("ถึงเป้า")} <b class="hq-num">${hit}/${past.length}</b> ${t("วัน_s").replace(/_s$/,"")} · ${t("เป้า")} ${K_GOAL.toLocaleString()} kcal ${t("ต่อวัน")}</small>`;
+  box.querySelectorAll("[data-cd]").forEach(b=>b.addEventListener("click",()=>{const ds=b.dataset.cd;if(ds===DAY)return;DAY=ds;food[DAY]=food[DAY]||{done:{},tags:{}};try{draft.ex={};picked=false}catch(e){}renderAll()}));
+  box.querySelectorAll("[data-wk]").forEach(b=>b.addEventListener("click",()=>{const d=new Date(DAY+"T12:00:00");d.setDate(d.getDate()+ +b.dataset.wk);let k=dkey(d);if(k>TODAY)k=TODAY;DAY=k;food[DAY]=food[DAY]||{done:{},tags:{}};renderAll()}))};
