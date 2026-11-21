@@ -17,7 +17,7 @@ function undoShow(){const g=undoGrp;undoGrp=null;if(!g||!g.loud&&![...g.keys()].
   if(!b){b=document.createElement("div");b.id="undo-bar";b.className="undo-bar";b.innerHTML=`<span></span><button class="btn sm" data-undo></button>`;document.body.appendChild(b);
     b.querySelector("[data-undo]").addEventListener("click",undoRun)}
   b.querySelector("span").textContent=undoMsg||"✓ "+t("บันทึกแล้ว");undoMsg="";b.querySelector("[data-undo]").textContent="↺ "+t("เลิกทำ");b.hidden=false;
-  clearTimeout(b._t);b._t=setTimeout(()=>{b.hidden=true;undoLast=null},8000)}
+  clearTimeout(b._t);b._t=setTimeout(()=>{b.hidden=true;undoLast=null},2500)}
 // a food-log entry added / edited / removed (not just a tick) is worth an Undo bar
 function foodLogChanged(prevRaw){try{const a=JSON.parse(prevRaw||"{}")[DAY]||{},b=food[DAY]||{};return JSON.stringify([a.log||[],a.tags||{}])!==JSON.stringify([b.log||[],b.tags||{}])}catch(e){return false}}
 function undoRun(){const g=undoLast;undoLast=null;document.getElementById("undo-bar").hidden=true;if(!g)return;undoBusy=true;
