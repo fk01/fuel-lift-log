@@ -7,3 +7,10 @@
 - Never-trained muscles show 100% (ready colour) in tiles/figure; legend drops "never"; summary counts them as ready
 - "ดูรายละเอียด" toggles the muscle map (aria-expanded, › rotates, remembered per device in localStorage); smoke test home-details-toggle
 - [+ บันทึกร่างกาย][⚙ ตั้งเวลาฟื้นตัว] move inside the Details fold with the muscle map
+
+## Critique v14 (32/40) — user picked 4 fixes + 1 request
+- preview "N ท่า · muscles" shows even when muscles are recovering
+- fresh body copy is a button that opens the log sheet; recovery-times sheet takes focus
+- single-item done state: no repeated "1 of 1" line/bar
+- ticked chips wrap full names; header links "ดูแผน ›" / "ดูแผน ›" / "ดูรายละเอียด ›" (EN: View plan / View meals / View details)
+- request: plan with several items → Today lists every item with its own Start (first undone = primary); smoke test home-lists-every-plan-item
