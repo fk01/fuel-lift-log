@@ -14,3 +14,6 @@
 - +Set / −Set / Tick all re-rendered the cards without re-applying the pager → the shown exercise vanished. renderEx now re-applies the pager; smoke test workout-set-buttons-keep-card
 - paging ‹ › scrolled the page to the pager every time → only scroll back if the pager is off-screen above (measured: scroll position unchanged)
 - Cancel / Finish & save drifted (sticky + bar-hide) → fixed above the tab bar; tab bar stays put on Train (measured: same y while scrolling)
+
+## Start button identical on Today and Train
+- Train lead Start uses the Today classes (btn primary sm hq-ps); no glow on either; measured: size, radius, border, gradient, shadow, font, colour all equal
