@@ -18,7 +18,7 @@ function editCard(box,e,i){
       <input type="number" readonly inputmode="none" data-pad="sets" id="es-${e.id}" value="${e.s}" aria-label="${t("เซ็ต")}">
       <input id="er-${e.id}" readonly inputmode="none" data-pad="rng" value="${esc(e.r)}" aria-label="${t("ช่วงครั้ง")}" style="min-width:0;box-sizing:border-box;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:var(--r-sm);padding:7px 6px;font-family:var(--f-num);text-align:center"></div>
       <label class="zone" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="em-${e.id}" ${e.main?"checked":""} ${lock?"disabled":""} style="accent-color:var(--accent)"> ${t("ท่าหลัก")}</label>
-      <div class="actions"><button class="btn sm" data-up ${i===0?"disabled":""}>↑</button><button class="btn sm" data-down ${i===list.length-1?"disabled":""}>↓</button><button class="btn sm ghost" data-del ${lock?"hidden":""}>${t("ลบท่า")}</button><button class="btn sm primary" data-done>${t("เสร็จ")}</button></div>`;
+      <div class="actions"><button class="btn sm" data-up ${i===0?"disabled":""}>↑</button><button class="btn sm" data-down ${i===list.length-1?"disabled":""}>↓</button><button class="btn sm ghost" data-del ${lock?"hidden":""}>${t("ลบท่า")}</button><button class="btn sm primary" data-done>✓ ${t("เสร็จแก้ท่า").replace(/แก้ท่า$/,"")}</button></div>`;
     const on=(sel,ev,fn)=>c.querySelector(sel).addEventListener(ev,fn);
     on(`#es-${e.id}`,"change",ev=>{e.s=Math.max(1,Math.min(10,+ev.target.value||1));if(draft.ex)delete draft.ex[e.id];saveProgs()});
     on(`#er-${e.id}`,"change",ev=>{e.r=ev.target.value.trim()||e.r;saveProgs()});
@@ -44,3 +44,5 @@ function renderEdit(box){
     PROGS[cur]=JSON.parse(JSON.stringify(DEFAULT_PROGS[cur]));draft.ex={};saveProgs();save("gymdraft",draft);renderEx()});
   box.appendChild(a);
 }
+
+Object.assign(EN,{"เสร็จแก้ท่า":"Done"});
