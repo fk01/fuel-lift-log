@@ -76,3 +76,6 @@
 
 ## Place beside the program name (device feedback)
 - plan cards: "Pull A 🏢 Gym" on the title line; preview line keeps "N ท่า · ~N นาที"
+
+## Name + place on one baseline
+- .hq-pn align-items:baseline; place tag inline, icon centred on the text
