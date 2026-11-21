@@ -1130,4 +1130,13 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .ec-d span{max-width:100%;padding:0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-sizing:border-box}
 .ec-days.month .ec-d{padding:6px 0;min-height:44px;gap:0}
 .ec-d.today b{color:var(--cyan)}
-#week.eat-cal{grid-template-columns:minmax(0,1fr);gap:8px;margin-top:8px}
+#week.eat-cal{grid-template-columns:minmax(0,1fr);gap:8px;margin-top:0}
+/* ===== one layout for every tab: title → sections (sec-t heading + card), same gaps and gutters ===== */
+.grp-h{font-family:var(--f-body)!important;font-size:var(--t-head);font-weight:700;color:var(--fg);margin:6px 0 -10px;padding-bottom:6px;background:var(--grad) left bottom/40px 2px no-repeat;letter-spacing:0;text-transform:none}
+/* Train: the calendar already shows the day — drop the extra date line, Share sits on the title row */
+#v-gym .locpick{position:relative}
+#v-gym #date{display:none}
+#v-gym .cal-slot #step1 .step{position:absolute;top:2px;right:0;margin:0}
+/* every tab header = title only (Today's date line repeated what the calendars show) */
+#v-home>.date{display:none}
+#v-stats .st-pane:first-of-type>.stack:first-child>.sec-t:first-child{margin-top:0}
