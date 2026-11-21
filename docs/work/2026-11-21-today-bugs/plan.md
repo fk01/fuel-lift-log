@@ -26,3 +26,6 @@
 
 ## Eat: Share meal plan / Manage plan buttons touched
 - .mp-open-row gap 8px (+ wrap)
+
+## Fix: suggested program showed two places
+- #129 listed every library program with the same name (Pull A @Gym + @Condo) → a suggested program now shows only its own place; picker stays only for one program planned at several places; smoke test home-swap-single-place
