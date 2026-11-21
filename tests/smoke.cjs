@@ -203,6 +203,12 @@ const steps = [
   ["home-body-log-button", () => { location.hash = ""; BODY = BODY.filter(x => x.d !== TODAY).concat([{ d: TODAY, kg: 70 }]); renderHome();
     const b = document.querySelector("[data-weigh]"); if (!b) throw new Error("body log button must stay after logging today"); b.click();
     if (document.getElementById("gen-sheet").hidden) throw new Error("body log button must open the sheet"); closeGen(); }],
+  ["home-done-states", () => { location.hash = ""; const keep = JSON.stringify(dayPlan); dayPlan = {}; const k = Object.keys(PROGS).find(q => !isCardio(PROGS[q])); planAdd(k); planList().filter(q => q !== k).forEach(q => { try { planDel && planDel(q) } catch (e) {} }); logs.push({ date: TODAY, at: Date.now(), prog: k, ex: {} });
+    food[TODAY] = food[TODAY] || { done: {} }; food[TODAY].done = food[TODAY].done || {}; mealList().forEach(m => food[TODAY].done[m.id] = true); renderHome();
+    const tx = document.getElementById("v-home").innerText; if (/Start|เริ่ม/.test(document.querySelector(".hq-main").innerText) && !/✓/.test(tx)) throw new Error("finished workout must show a done state: "+JSON.stringify({DAY,TODAY,k,cardio:isCardio(PROGS[k]),ks:planList(),txt:document.querySelector(".hq-main").innerText}));
+    if (document.querySelector(".hq-main .hq-go")) throw new Error("no Start button once today is done");
+    if (!document.querySelectorAll(".hq-mc.on").length || document.querySelector(".hq-mc:not(.on)")) throw new Error("all meal chips ticked");
+    logs.pop(); food[TODAY].done = {}; dayPlan = JSON.parse(keep); renderHome(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
