@@ -198,6 +198,11 @@ const steps = [
     document.getElementById("run-close").click(); if (document.getElementById("locpick").hidden) throw new Error("closing the cardio log must leave the plan screen up"); }],
   ["home-recovery-stays", () => { location.hash = ""; renderHome(); renderHome(); const w = document.getElementById("rec-wrap");
     if (!w || !document.getElementById("v-home").contains(w) || w.hidden) throw new Error("muscle recovery must survive a re-render of Today"); }],
+  ["home-rec-cfg-button", () => { location.hash = ""; renderHome(); document.getElementById("rec-cfg").click();
+    if (document.getElementById("gen-sheet").hidden) throw new Error("Recovery times button must open its sheet"); closeGen(); }],
+  ["home-body-log-button", () => { location.hash = ""; BODY = BODY.filter(x => x.d !== TODAY).concat([{ d: TODAY, kg: 70 }]); renderHome();
+    const b = document.querySelector("[data-weigh]"); if (!b) throw new Error("body log button must stay after logging today"); b.click();
+    if (document.getElementById("gen-sheet").hidden) throw new Error("body log button must open the sheet"); closeGen(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
