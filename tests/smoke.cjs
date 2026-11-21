@@ -229,6 +229,9 @@ const steps = [
     if (!document.querySelector("#v-home .hq-card")) throw new Error("Today must render with an empty plan");
     setDayMode("rest"); renderHome(); if (!document.querySelector("#v-home .hq-card")) throw new Error("Today must render on a rest day");
     setDayMode(null); dayPlan = JSON.parse(keep); renderHome(); }],
+  ["home-swap-single-place", () => { location.hash = ""; renderHome(); const go = document.querySelector(".hq-main .hq-go[data-start]"); if (!go) return;
+    const k = go.dataset.start; if (planList().includes(k)) return; if (document.querySelectorAll(".hq-main .hq-pv~.hq-locs [data-pick], .hq-main .hq-locs [data-pick]").length && !planList().some(q => PROGS[q].name === PROGS[k].name))
+      throw new Error("a suggested program must show only its own place"); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
