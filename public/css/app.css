@@ -1105,3 +1105,6 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .sets input[type=checkbox]{width:28px;height:28px}
 .btn.sm{min-width:44px}
 @keyframes ptrpulse{50%{opacity:.35}}
+/* explore: feed cards are <div>s (content-box) — keep them inside the column; plan tags are labels, not tap targets */
+.ex-card{box-sizing:border-box}
+.ex-tags .chip{min-height:0;padding:3px 10px;line-height:1.4}
