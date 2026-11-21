@@ -17,3 +17,6 @@
 
 ## Where on Today (user picked option 1)
 - every item shows its place (same chip as Train); a program planned at several places shows place chips, the chosen one decides what Start opens; smoke test home-where-pick
+
+## Hotfix: Today crashed with an empty plan / rest day
+- #125 pick()/sib() read PROGS[undefined].name when nothing is planned → guard; smoke test home-empty-plan-and-rest
