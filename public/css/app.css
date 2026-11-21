@@ -1217,3 +1217,11 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .hq-mc.mini{min-height:44px;font-size:var(--t-label)}.hq-mc.mini .hq-mt{opacity:.85}
 /* place always on its own line under the preview — same layout on every row */
 .hq-pv .loc-tag,.hq-pi .loc-tag{display:flex;width:max-content;margin:4px 0 0}
+/* Today: weekly streak under the calendar, preview opens the program, folded meals, other food */
+.hq-streak{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;justify-content:center;margin-top:8px;color:var(--muted);font-size:var(--t-meta)}
+.hq-streak svg{width:14px;height:14px}.hq-streak b{color:var(--fg)}
+.hq-back{white-space:nowrap}
+.hq-pvb{background:none;border:0;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer;min-height:24px}
+.hq-pvb:hover{color:var(--fg)}
+.hq-more-m{color:var(--cyan)}
+.hq-other{display:block;margin-top:8px}

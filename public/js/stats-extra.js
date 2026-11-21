@@ -46,7 +46,7 @@ addEventListener("hashchange",()=>{if(location.hash==="#stats")renderStatsExtra(
 /* ---------- recovery map: days since each muscle was last trained (primary) ---------- */
 
 Object.assign(EN,{"การฟื้นตัวของกล้ามเนื้อ":"Muscle recovery","พร้อม":"Ready","กำลังฟื้น":"Recovering","เพิ่งเล่น":"Just trained","วันก่อน":"d ago","วันนี้":"today",
-  "อก":"Chest","ไหล่หน้า":"Front delts","ไหล่หลัง":"Rear delts","บ่า":"Traps","หลัง":"Back","หน้าแขน":"Biceps","หลังแขน":"Triceps","แขนท่อนล่าง":"Forearms","หน้าท้อง":"Abs","ข้างลำตัว":"Obliques","ต้นขาหน้า":"Quads","ต้นขาหลัง":"Hamstrings","ก้น":"Glutes","น่อง":"Calves","ขานอก":"Abductors","ขาใน":"Adductors"});
+  "อก":"Chest","ไหล่หน้า":"Front shoulders","ไหล่หลัง":"Rear shoulders","บ่า":"Upper back","หลัง":"Back","หน้าแขน":"Biceps","หลังแขน":"Triceps","แขนท่อนล่าง":"Forearms","หน้าท้อง":"Abs","ข้างลำตัว":"Side waist","ต้นขาหน้า":"Front thighs","ต้นขาหลัง":"Back thighs","ก้น":"Glutes","น่อง":"Calves","ขานอก":"Outer thighs","ขาใน":"Inner thighs"});
 // last date each muscle was a primary target, plus which exercises hit it that day (shown on the tiles so the mapping can be checked)
 let recLast={};
 function lastTrained(){const out={},by={};logs.filter(l=>l.date<=TODAY).forEach(l=>Object.keys(l.ex).forEach(id=>{const x=exOf(id,l);musOf(x)[0].forEach(m=>{

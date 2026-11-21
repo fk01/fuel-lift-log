@@ -214,7 +214,7 @@ const steps = [
     logs.push({ date: TODAY, at: Date.now(), prog: other, ex: {} }); renderHome();
     const go = document.querySelector(".hq-main .hq-go"); if (go && go.dataset.start && !isCardio(PROGS[go.dataset.start])) throw new Error("swap-done: "+JSON.stringify({ks:planList(),k,other,txt:document.querySelector(".hq-main").innerText,DAY,TODAY}));
     logs = logs.filter(l => !(l.date === TODAY && !Object.keys(l.ex).length)); dayPlan = JSON.parse(keep); renderHome(); }],
-  ["home-all-meal-chips", () => { location.hash = ""; renderHome(); const n = document.querySelectorAll("#v-home [data-meal]").length;
+  ["home-all-meal-chips", () => { location.hash = ""; mealsOpen = false; renderHome(); if (!document.querySelector("#v-home [data-moremeals]") && mealList().length > 1) throw new Error("folded meals need a +N chip"); document.querySelector("#v-home [data-moremeals]")?.click(); const n = document.querySelectorAll("#v-home [data-meal]").length; mealsOpen = false;
     if (n !== mealList().length) throw new Error("Today must show a chip for every meal in the plan: " + n + " vs " + mealList().length); }],
   ["home-details-toggle", () => { location.hash = ""; renderHome(); const r = () => document.getElementById("hq-rec"), was = r().hidden;
     document.querySelector("[data-det]").click(); if (r().hidden === was) throw new Error("Details must show/hide the muscle map");

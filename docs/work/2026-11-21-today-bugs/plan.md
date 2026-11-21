@@ -47,3 +47,9 @@
 - same calCard as Eat/Train; picking a day sets DAY → all three tabs follow
 - Today reads the picked day (food/logs/body log), past days say "เสร็จแล้ว" / "ดูบันทึก" instead of "วันนี้"
 - smoke test home-calendar-links-tabs
+
+## Items 1–4 from "what to add"
+1. other day: title shows the date + "กลับวันนี้" in the calendar; training card shows what was done that day (no Start/suggestion); food card "ติ๊กแล้ว X/Y มื้อ"
+2. streak under the calendar: trained days this week · ate to goal X/Y · Lv + tier (hero XP)
+3. tap the "N ท่า · muscles ›" line → sheet listing exercises (sets × reps · muscles) with Start; empty plan → one-tap Start of the suggestion; EN muscle names in plain words (Front shoulders, Upper back, Front/Back thighs…)
+4. meal chips: next + ticked shown, rest behind "+N มื้ออื่น"; "+ กินอย่างอื่น" opens the food log
