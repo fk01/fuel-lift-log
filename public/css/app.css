@@ -1190,3 +1190,5 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .hq-of{color:var(--muted)}
 #v-home .hq-alt{color:color-mix(in srgb,var(--fg) 80%,transparent);min-height:44px}
 #v-home .hq-h .hq-l{margin-block:-10px}
+#v-home .hq-alt{text-decoration:underline;text-underline-offset:3px;text-decoration-color:color-mix(in srgb,var(--fg) 35%,transparent)}
+.hq-mc.on{padding-inline:4px;gap:3px}

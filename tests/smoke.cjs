@@ -206,9 +206,14 @@ const steps = [
   ["home-done-states", () => { location.hash = ""; const keep = JSON.stringify(dayPlan); dayPlan = {}; const k = Object.keys(PROGS).find(q => !isCardio(PROGS[q])); planAdd(k); planList().filter(q => q !== k).forEach(q => { try { planDel && planDel(q) } catch (e) {} }); logs.push({ date: TODAY, at: Date.now(), prog: k, ex: {} });
     food[TODAY] = food[TODAY] || { done: {} }; food[TODAY].done = food[TODAY].done || {}; mealList().forEach(m => food[TODAY].done[m.id] = true); renderHome();
     const tx = document.getElementById("v-home").innerText; if (/Start|เริ่ม/.test(document.querySelector(".hq-main").innerText) && !/✓/.test(tx)) throw new Error("finished workout must show a done state: "+JSON.stringify({DAY,TODAY,k,cardio:isCardio(PROGS[k]),ks:planList(),txt:document.querySelector(".hq-main").innerText}));
-    if (document.querySelector(".hq-main .hq-go")) throw new Error("no Start button once today is done");
+    const go = document.querySelector(".hq-main .hq-go"); if (go && go.dataset.start && !isCardio(PROGS[go.dataset.start])) throw new Error("no Start button once today is done");
     if (!document.querySelectorAll(".hq-mc.on").length || document.querySelector(".hq-mc:not(.on)")) throw new Error("all meal chips ticked");
     logs.pop(); food[TODAY].done = {}; dayPlan = JSON.parse(keep); renderHome(); }],
+  ["home-swap-counts-as-done", () => { location.hash = ""; const keep = JSON.stringify(dayPlan); dayPlan = {}; const ws = Object.keys(PROGS).filter(q => !isCardio(PROGS[q]));
+    const k = ws[0]; planAdd(k); const pl = planList(), other = ws.find(q => !pl.some(z => PROGS[z].name === PROGS[q].name)); pl.forEach(q => { if (q !== k) logs.push({ date: TODAY, at: Date.now(), prog: q, ex: {} }) });
+    logs.push({ date: TODAY, at: Date.now(), prog: other, ex: {} }); renderHome();
+    const go = document.querySelector(".hq-main .hq-go"); if (go && go.dataset.start && !isCardio(PROGS[go.dataset.start])) throw new Error("swap-done: "+JSON.stringify({ks:planList(),k,other,txt:document.querySelector(".hq-main").innerText,DAY,TODAY}));
+    logs = logs.filter(l => !(l.date === TODAY && !Object.keys(l.ex).length)); dayPlan = JSON.parse(keep); renderHome(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
