@@ -1205,11 +1205,3 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .hq-pi.done{opacity:.7}.hq-pi.done b{color:var(--green)}
 .hq-pt{flex:1;min-width:0;display:grid;gap:2px}.hq-pt b{font-size:var(--t-body)}
 .hq-ps{flex:none;min-height:44px;min-width:76px;justify-content:center}
-/* Today 4W1H brief: why · what · where (the cards below answer how) */
-.hq-brief dl{display:grid;gap:8px;margin:0;padding:12px 16px;border:1px solid var(--line);border-radius:var(--r-lg,18px)}
-.hq-brief dl>div{display:grid;grid-template-columns:4.5em minmax(0,1fr);gap:10px;align-items:start}
-.hq-brief dt{padding-top:3px}
-.hq-brief dt{color:var(--muted);font-size:var(--t-label)}
-.hq-brief dd{margin:0;font-weight:600;overflow-wrap:anywhere}
-.hq-why{background:none;border:0;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer;min-height:24px}
-.hq-good{color:var(--green)}

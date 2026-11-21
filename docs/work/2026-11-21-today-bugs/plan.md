@@ -14,7 +14,3 @@
 - single-item done state: no repeated "1 of 1" line/bar
 - ticked chips wrap full names; header links "ดูแผน ›" / "ดูแผน ›" / "ดูรายละเอียด ›" (EN: View plan / View meals / View details)
 - request: plan with several items → Today lists every item with its own Start (first undone = primary); smoke test home-lists-every-plan-item
-
-## Today as 4W1H (user request; Who = login, skipped)
-- brief card on top: ทำไม (goal from profile + 7-day trend of the goal metric, tap → profile) · อะไร (today items + meal count) · ที่ไหน (places of today items)
-- cards below are the How: "ออกกำลังยังไง" / "กินยังไง" / "ร่างกายเป็นยังไง"; multi-item list has no repeated count headline
