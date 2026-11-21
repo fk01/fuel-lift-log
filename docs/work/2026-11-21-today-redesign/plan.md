@@ -45,3 +45,9 @@
 - protein over target is not a warning (kcal only); "เกินเป้า" nowrap
 - body summary: "พร้อมเล่น X · กำลังฟื้น Y กลุ่มกล้าม"
 - "เล่นตามแผน" is a text link; meal chips 3-col grid; food/body cards flatter than the main card
+
+## Round 8 (critique v8 32/40)
+- body summary splits ready / recovering / not trained yet
+- zero-state: no "Done 0 of N", no "–" stats (one hint line), no rest-day duplicate
+- weigh placeholders read "ล่าสุด 70.4"; ticked chip = colour only (no truncation)
+- Start errors toast; muscle-map hint "100% = rested"; Escape/backdrop close sheets; dead CSS removed
