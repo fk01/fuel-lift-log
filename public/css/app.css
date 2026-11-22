@@ -1771,3 +1771,8 @@ body:has(#tx-bar:not([hidden])) :is(#pm-modal .modal-in,#gen-body,#lib-modal .mo
 .dn-t{flex:1;min-width:0;display:grid;gap:2px}.dn-t b{font-size:15px}.dn-t small{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .dn-n{flex:none;color:var(--muted);font-size:13px}
 .dn-share{width:100%;margin-bottom:8px}
+/* Today plan: every item, one column, compact; tap a row → Train */
+#v-home .hq-plist{grid-template-columns:1fr!important}
+#v-home .hq-plist .hq-pi{min-width:0}
+#v-home .hq-plist .hq-pi .hq-pt{min-width:0}
+#v-home .hq-plist .hq-s{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
