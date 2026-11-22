@@ -1687,3 +1687,4 @@ body.on-stats .wrap>header{display:none}
 .kc-s{font-size:13px;color:var(--muted)}
 #food-ring{width:auto!important;height:auto!important;max-width:none!important;aspect-ratio:auto!important}
 .wrap,.wrap *{overflow-anchor:none}
+#macro-bars{border:0!important;box-shadow:none!important;background:none!important;padding:8px 0!important}
