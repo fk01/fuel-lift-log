@@ -1458,3 +1458,4 @@ html{-webkit-text-size-adjust:100%;touch-action:manipulation}
 #v-gym #step3>#step4.wo-bar{position:static!important;padding:0!important;margin:4px 0 0!important;display:flex;gap:10px;background:none!important;border:0!important;box-shadow:none!important}
 #v-gym #step3>#wo-add{margin:0 0 6px}
 #v-gym #step3{padding-bottom:calc(var(--tabh) + 24px)!important}
+.hq-bw{grid-template-columns:repeat(4,minmax(0,1fr))!important}
