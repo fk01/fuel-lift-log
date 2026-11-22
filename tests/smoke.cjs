@@ -169,7 +169,7 @@ const steps = [
     closeGen(); delete PROGS[k]; LOCS = LOCS.filter(x => x !== l); paLoc = null; }],
   ["back-one-level", () => { location.hash = "gym"; cancelProg(); setDayMode(null); dayPlan = {}; planAdd("push"); renderGym(); closeGen();
     const x = () => document.querySelector("#gen-body .sh-x").click(), title = () => document.getElementById("gen-sheet").hidden ? "(closed)" : document.querySelector("#gen-body .sheet-h b").textContent, want = (v, w) => { if (v !== w) throw new Error("back went to " + v + " instead of " + w) };
-    openPlanItem("push"); const it = title(); document.querySelector("#gen-body [data-pil]").click(); const pl = title(); document.querySelector("#gen-body [data-ppman]").click(); const mp = title();
+    openPlanItem("push"); const it = title(); if (document.querySelector("#gen-body [data-pil]")) throw new Error("program sheet must not edit place"); if (document.querySelectorAll("#gen-body [data-pihow]").length !== PROGS.push.ex.length) throw new Error("every exercise numbered with how-to"); openPlanPlace("push"); const pl = title(); document.querySelector("#gen-body [data-ppman]").click(); const mp = title();
     document.querySelector("#gen-body [data-pl]").click(); x(); want(title(), mp); x(); want(title(), pl); x(); want(title(), it); x(); want(title(), "(closed)");
     openPlanAdd(); const ad = title(); document.querySelector("#gen-body [data-pcnew]").click(); document.querySelector("#gen-body [data-qb]").click(); want(title(), ad);
     document.querySelector("#gen-body [data-pnew]").click(); document.querySelector("#gen-body [data-qb]").click(); want(title(), ad); x(); want(title(), "(closed)");
