@@ -1720,3 +1720,7 @@ body:has(#tx-bar:not([hidden])) :is(#pm-modal .modal-in,#gen-body,#lib-modal .mo
 #pm-modal .ex>[data-add]{justify-self:stretch!important;width:100%;height:52px;border-style:dashed!important}
 .lib-ai{margin:10px 0 4px}
 #v-gym .pl-mine{margin-top:12px;border:1px solid var(--line);border-radius:16px;background:#1c2431;width:100%}
+/* done/in-progress row: status chip and type chip side by side, name aligned with the others */
+#v-gym .pl-row .row-tx{grid-template-columns:auto auto 1fr;column-gap:6px;align-items:center}
+#v-gym .pl-row .row-tx>.pl-st,#v-gym .pl-row .row-tx>.pl-sug,#v-gym .pl-row .row-tx>.hq-chip{grid-row:1;justify-self:start;margin:0 0 2px!important}
+#v-gym .pl-row .row-tx>.hq-pn,#v-gym .pl-row .row-tx>.pl-sub{grid-column:1/-1}
