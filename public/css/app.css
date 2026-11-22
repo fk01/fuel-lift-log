@@ -1650,3 +1650,6 @@ body.on-stats .wrap>header{display:none}
 .mp-open-row{display:flex;gap:8px;justify-content:flex-end}
 #v-gym .pl-acts{display:grid!important;grid-template-columns:1fr auto;gap:10px}#v-gym .pl-acts .pl-rest{grid-column:1/-1;justify-self:center}
 .ai-acts.only-analyse [data-aiask]:not([data-aiask="analyse"]){display:none}
+#macro-bars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:4px 0 10px}
+#macro-bars .mb{display:grid;gap:6px}#macro-bars .mb-l{display:grid;gap:2px;font-size:13px;color:var(--muted)}#macro-bars .mb-l b{font-weight:600}#macro-bars .mb-l span b{color:var(--text);font-size:15px}
+#macro-bars .mb>i{height:6px;border-radius:3px;background:var(--line);overflow:hidden;display:block}#macro-bars .mb>i>i{display:block;height:100%;border-radius:3px}
