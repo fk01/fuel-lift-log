@@ -1734,3 +1734,10 @@ body:has(#tx-bar:not([hidden])) :is(#pm-modal .modal-in,#gen-body,#lib-modal .mo
 #v-gym .ex .last{font-size:13px}
 #v-gym .note-in{min-height:36px!important;height:36px;padding:4px 0!important;font-size:14px!important;border:0!important;border-bottom:1px dashed var(--line)!important;background:none!important}
 #v-gym #step4 .btn,#v-gym #wo-add,#v-gym #edit-mode{min-height:40px!important;height:40px!important;border-radius:12px!important;padding:0 14px!important;font-size:15px!important}#v-gym #step4{gap:8px!important;margin:0!important}#v-gym #wo-add{margin:8px 0 0!important}#v-gym #step3 .step{margin-bottom:6px!important}
+/* all my programs on Train */
+.pl-allh{display:flex;align-items:center;justify-content:space-between;margin:20px 0 8px}.pl-allh .pl-h{margin:0!important}
+.pl-all{display:grid;gap:8px}
+.pl-ai-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px;border:0;border-radius:14px;background:#1c2431;color:var(--text);cursor:pointer}
+.pl-ai-row .pa-ic{width:40px;height:40px;border-radius:10px;background:#141a24;display:grid;place-items:center;color:var(--cyan);flex:none}
+.pl-ai-row .pa-t{flex:1;min-width:0;display:grid;gap:2px}.pl-ai-row b{font-size:15px}.pl-ai-row small{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-ai-row .pa-c{color:var(--muted)}
