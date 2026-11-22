@@ -180,9 +180,9 @@ function applyPager(){const box=document.getElementById("exs");if(!box)return;co
   woIdx=Math.max(0,Math.min(cards.length-1,woIdx));cards[woIdx].classList.add("pg-on");
   const ex=sessEx(),e=ex[woIdx]||{},done=r=>(draft.ex[r.id]||[]).every(x=>x.ok);
   const nav=document.createElement("div");nav.className="wo-pager";
-  nav.innerHTML=`<button class="btn sm" data-pg="-1" ${woIdx?"":"disabled"} aria-label="prev">‹</button><span class="pg-mid"><small>${woIdx+1}/${cards.length}</small><span class="pg-dots">${ex.map((x,i)=>`<i class="${i===woIdx?"cur":done(x)?"ok":""}"></i>`).join("")}</span></span><button class="btn sm" data-pg="1" ${woIdx<cards.length-1?"":"disabled"} aria-label="next">›</button>`;
+  nav.innerHTML=`<button class="btn sm" data-pg="-1" aria-label="prev">‹</button><span class="pg-mid"><small>${woIdx+1}/${cards.length}</small><span class="pg-dots">${ex.map((x,i)=>`<i class="${i===woIdx?"cur":done(x)?"ok":""}"></i>`).join("")}</span></span><button class="btn sm" data-pg="1" aria-label="next">›</button>`;
   cards[0].before(nav);nav.querySelectorAll("[data-pg]").forEach(b=>b.addEventListener("click",()=>goEx(woIdx+ +b.dataset.pg)))}
-function goEx(i){woIdx=i;applyPager();const n=document.querySelector("#exs .wo-pager");if(n&&n.getBoundingClientRect().top<0)n.scrollIntoView({block:"start",behavior:smoothB()})}   // only pull back if the pager scrolled out above
+function goEx(i){const nc=document.querySelectorAll("#exs>.ex").length||1;woIdx=((i%nc)+nc)%nc;applyPager();const n=document.querySelector("#exs .wo-pager");if(n&&n.getBoundingClientRect().top<0)n.scrollIntoView({block:"start",behavior:smoothB()})}   // only pull back if the pager scrolled out above
 (()=>{const box=document.getElementById("exs");let x0=null,y0=0;box.addEventListener("touchstart",e=>{if(!box.classList.contains("paged")||e.target.closest("input,textarea"))return;x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
   box.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)goEx(woIdx+(dx<0?1:-1))},{passive:true})})();
 
@@ -193,7 +193,7 @@ Object.assign(EN,{"ใส่น้ำหนักก่อนติ๊ก":"Ente
 /* confirm sheet — always ask before adding/removing during a workout */
 function cfm(title,sub,ok,danger,no){return new Promise(res=>{let m=document.getElementById("cf-sheet");if(!m){m=document.createElement("div");m.id="cf-sheet";m.className="modal sheet";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");document.body.appendChild(m)}
   m.innerHTML=`<div class="sheet-in"><div class="grab" aria-hidden="true"></div><div class="stack" style="gap:12px"><b class="cf-t">${title}</b>${sub?`<small class="note">${sub}</small>`:""}<div class="actions sheet-act"><button class="btn" data-cf="0">${no||t("ยกเลิก_cf").replace(/_cf$/,"")}</button><button class="btn ${danger?"danger":"primary"}" data-cf="1" style="flex:1">${ok}</button></div></div></div>`;
-  m.hidden=false;const end=v=>{m.hidden=true;res(v)};m.querySelectorAll("[data-cf]").forEach(b=>b.addEventListener("click",()=>end(b.dataset.cf==="1")));m.addEventListener("click",e=>{if(e.target===m)end(false)},{once:true})})}
+  m.hidden=false;try{modalSync()}catch(_){}const end=v=>{m.hidden=true;try{modalSync()}catch(_){}res(v)};m.querySelectorAll("[data-cf]").forEach(b=>b.addEventListener("click",()=>end(b.dataset.cf==="1")));m.addEventListener("click",e=>{if(e.target===m)end(false)},{once:true})})}
 Object.assign(EN,{"ทำไป":"Done","เซ็ตที่ยังไม่ติ๊กจะไม่ถูกบันทึก":"unticked sets won't be saved","ออกโดยไม่บันทึก?":"Quit without saving?","ยังไม่มีเซ็ตที่ติ๊ก":"No sets ticked yet","ยกเลิก_cf":"Cancel","เพิ่มท่านี้?":"Add this exercise?","เพิ่มท่า_cf":"Add exercise","เอาท่านี้ออก?":"Remove this exercise?","เซ็ตที่บันทึกในท่านี้จะหายด้วย":"Sets logged for it will be lost","เอาออก_cf":"Remove","ลบเซ็ตสุดท้าย?":"Remove the last set?","ลบเซ็ต_cf":"Remove set","เลือกท่าที่จะเพิ่ม":"Pick an exercise to add"});
 
 Object.assign(EN,{"แตะเพื่อแก้":"tap to edit"});

@@ -1539,3 +1539,5 @@ body:has(#rest:not([hidden])) .tabbar{display:none!important}
 @keyframes ra-air{0%,40%{opacity:0;transform:translateX(0)}60%{opacity:.9}100%{opacity:0;transform:translateX(-10px)}}
 @keyframes ra-drop{0%{opacity:0;transform:translateY(0)}20%{opacity:1}100%{opacity:0;transform:translateY(26px)}}
 @media (prefers-reduced-motion:reduce){.rest-anim *{animation:none!important}}
+/* rest gif: push off-white to pure white before invert so its box disappears into the card */
+#rest .rest-gif img{filter:brightness(1.12) contrast(1.15) invert(1) hue-rotate(180deg)!important}
