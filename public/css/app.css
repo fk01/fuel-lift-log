@@ -1649,3 +1649,4 @@ body.on-stats .wrap>header{display:none}
 .ai-btn{border:1.5px solid transparent!important;background:linear-gradient(#1c2431,#1c2431) padding-box,linear-gradient(135deg,#2ee6ff,#3dff8c) border-box!important;color:var(--text)!important;box-shadow:none!important}
 .mp-open-row{display:flex;gap:8px;justify-content:flex-end}
 #v-gym .pl-acts{display:grid!important;grid-template-columns:1fr auto;gap:10px}#v-gym .pl-acts .pl-rest{grid-column:1/-1;justify-self:center}
+.ai-acts.only-analyse [data-aiask]:not([data-aiask="analyse"]){display:none}
