@@ -57,3 +57,6 @@ function placeAICards(){[["#v-food","[data-aikind=meal]"]].forEach(([v,sel])=>{c
 {const _d=decorateStats;decorateStats=function(){_d();try{placeAICards()}catch(e){}}}
 
 window.addEventListener("DOMContentLoaded",()=>{["renderFood","renderEatCal"].forEach(n=>{if(typeof window[n]!=="function")return;const o=window[n];window[n]=function(){const r=o.apply(this,arguments);try{placeAICards()}catch(e){}return r}})});
+/* a reload starts at the top of the tab (layout settles after first paint and the browser kept the old offset) */
+try{history.scrollRestoration="manual"}catch(e){}
+window.addEventListener("load",()=>{const top=()=>{const w=typeof appScroll==="function"&&appScroll();if(w)w.scrollTop=0};top();requestAnimationFrame(top);setTimeout(top,300)});
