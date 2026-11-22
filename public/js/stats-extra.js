@@ -185,7 +185,8 @@ renderBody=function(){const box=document.getElementById("body-card");if(!box)ret
   box.querySelector("#bw-add").addEventListener("click",()=>openLog(TODAY));
   box.querySelectorAll("[data-bed]").forEach(b=>b.addEventListener("click",()=>openLog(b.dataset.bed)))};
 
-document.getElementById("rec-card").addEventListener("click",ev=>{const b=ev.target.closest(".rec-t,.rc-chip");if(b)openMuscle(b.dataset.m)});
+/* tiles live in Today now too, outside #rec-card — delegate on the document */
+document.addEventListener("click",ev=>{const b=ev.target.closest&&ev.target.closest(".rec-t[data-m],.rc-chip[data-m]");if(b)openMuscle(b.dataset.m)});
 /* ---------- muscle sheet: big figure, status, recent exercises that hit it, program exercises that train it ---------- */
 Object.assign(EN,{"ท่าที่เล่นล่าสุด":"Recent exercises","ท่าที่ช่วยมัดนี้ในโปรแกรม":"In your programs","หลัก":"primary","รอง":"secondary","ยังไม่มีท่าในโปรแกรมที่โดนมัดนี้":"No program exercise works this muscle yet","เพิ่มท่าได้ที่ จัดการโปรแกรม":"Add one in Manage programs"});
 function openMuscle(m){const lt=lastTrained(),d=lt[m]?Math.round((ds2d(TODAY)-ds2d(lt[m]))/864e5):null,ro=recPct()[m],st=recState(ro);
