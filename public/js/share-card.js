@@ -6,7 +6,7 @@ async function svgImg(svg){const im=new Image();await new Promise((ok,no)=>{im.o
 async function drawCard(l){
   try{await document.fonts.ready}catch(e){}
   const ids=Object.keys(l.ex);const W=1080,H=2340,P=80;
-  const grp=(s,u)=>{const out=[];s.forEach(q=>{const k=`${toDisp(q.kg,u)}${u} × ${q.reps}`;const last=out[out.length-1];if(last&&last.k===k)last.n++;else out.push({k,n:1})});return out.map(o=>o.n>1?`${o.k}  ×${o.n}`:o.k)};
+  const grp=(s,u)=>{const out=[];s.forEach(q=>{const k=`${toDisp(q.kg,u)}${u} × ${q.reps}`;const last=out[out.length-1];if(last&&last.k===k)last.n++;else out.push({k,n:1})});return out.map(o=>[o.k,o.n>1?`×${o.n}`:""])};
   const top=780,avail=H-top-150;const rowRaw=ids.map(id=>Math.max(2,grp(l.ex[id],uOf(id)).length)*52+70);
   const fit=Math.min(1,avail/rowRaw.reduce((a,b)=>a+b,0));const rowH=rowRaw.map(r=>r*fit);
   const c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
@@ -43,7 +43,7 @@ async function drawCard(l){
     x.fillStyle=FG;x.font=`700 ${Math.round(40*f)}px ${sans}`;let nm=exName(id,l);while(x.measureText(nm).width>600&&nm.length>4)nm=nm.slice(0,-2);if(nm!==exName(id,l))nm+="…";x.fillText(nm,P,y+32*f);
     const e1=Math.max(...s.map(q=>(+q.kg||0)*(1+(+q.reps||0)/30)));
     x.fillStyle="#bdbab4";x.font=`400 ${Math.round(34*f)}px ${sans}`;x.fillText(`e1RM ${toDisp(Math.round(e1*10)/10,u)}${u}`,P,y+82*f);
-    x.textAlign="right";grp(s,u).forEach((tx,r)=>{x.fillStyle=FG;x.font=`400 ${Math.round(36*f)}px ${sans}`;x.fillText(tx,W-P,y+32*f+r*52*f)});x.textAlign="left";
+    grp(s,u).forEach(([tx,n],r)=>{const yy=y+32*f+r*52*f;x.font=`400 ${Math.round(36*f)}px ${sans}`;x.fillStyle=FG;x.textAlign="right";x.fillText(tx,W-P-70*f,yy);x.fillStyle=MUTED;x.textAlign="right";if(n)x.fillText(n,W-P,yy)});x.textAlign="left";
     y+=rowH[k]}
   x.fillStyle=MUTED;x.font=`500 30px ${mono}`;x.textAlign="center";x.fillText(`🏆 ${weekStreak()} ${t("สัปดาห์ติดกัน").toUpperCase()}`,W/2,H-100);x.textAlign="left";
   return new Promise(r=>c.toBlob(b=>r(b),"image/png"));
