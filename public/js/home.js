@@ -17,7 +17,7 @@ function renderHome(){const box=document.getElementById("v-home");if(!box)return
   const restDay=dayMode()==="rest";
   const uks=ks.slice();   // one row per plan item, same as the Train tab (Push B @Gym and Push B @Condo are two rows)
   // one weights session a day: once any lift is logged, other planned lifts are skipped (a taken swap counts); cardio counts on its own
-  const wDone=ks.some(q=>!isCardio(PROGS[q])&&planItemDone(q)),doneQ=q=>!!planItemDone(q)||(wDone&&!isCardio(PROGS[q]));
+  const wDone=ks.some(q=>!isCardio(PROGS[q])&&planItemDone(q)),doneQ=q=>!!planItemDone(q);   /* each plan item counts on its own, same as Train */
   const udn=uks.filter(q=>doneQ(q)).length,un=uks.length;
   const sib=q=>q&&PROGS[q]?[q]:[],pick=q=>{if(!q||!PROGS[q])return q;const c=sib(q),w=homePick[PROGS[q].name];return c.includes(w)?w:q};   // q may be undefined: empty plan / rest day
   const tiredOf=q=>{try{return [...new Set(PROGS[q].ex.flatMap(e=>musOf(exOf(e.id))[0]))].filter(m=>st(m)===1)}catch(e){return []}};   /* the planned lift with the fewest recovering muscles leads */
