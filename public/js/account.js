@@ -23,7 +23,7 @@ function showLogin(){const m=document.getElementById("login");m.hidden=false;acc
   const gid=window.GOOGLE_CLIENT_ID;if(gid&&!document.getElementById("g-btn").dataset.on){
     const s=document.createElement("script");s.src="https://accounts.google.com/gsi/client";s.async=true;s.onload=()=>{try{
       google.accounts.id.initialize({client_id:gid,callback:r=>acctPost("/api/auth/google",{credential:r.credential})});
-      google.accounts.id.renderButton(document.getElementById("g-btn"),{theme:"filled_white",size:"large",shape:"pill",width:300,text:"continue_with",locale:lang==="th"?"th":"en"});
+      google.accounts.id.renderButton(document.getElementById("g-btn"),{theme:"filled_black",size:"large",shape:"pill",width:300,text:"continue_with",locale:lang==="th"?"th":"en"});
       document.getElementById("g-btn").dataset.on=1}catch(e){}};document.head.appendChild(s)}}
 function acctSetMode(m){acctMode=m;const su=m==="signup";[["acct-name","ชื่อ"],["acct-email","อีเมล"],["acct-pw","รหัสผ่าน"]].forEach(([i,p])=>document.getElementById(i).placeholder=t(p));document.getElementById("acct-name").hidden=!su;
   document.getElementById("acct-pw").autocomplete=su?"new-password":"current-password";

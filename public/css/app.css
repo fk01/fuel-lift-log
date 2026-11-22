@@ -1584,3 +1584,4 @@ body:has(#rest:not([hidden])) .tabbar{display:none!important}
 #v-gym .pl-row .pl-sub{flex-wrap:wrap;row-gap:2px}#v-gym .pl-det{flex-basis:100%}
 #v-home .hq-s:has(.hq-pvt){display:grid;gap:2px}
 #v-home .hq-pvb.pl-det{color:var(--cyan)!important;font-size:var(--t-sm,14px);justify-self:start;padding:0;background:none;border:0}
+#g-btn,#g-btn>div,#g-btn iframe{background:transparent!important;color-scheme:dark}#g-btn{display:flex;justify-content:center;border-radius:999px;overflow:hidden}
