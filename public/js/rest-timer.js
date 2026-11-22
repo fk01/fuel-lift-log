@@ -29,3 +29,5 @@ document.getElementById("rest-plus").addEventListener("click",()=>{rt.end+=15000
 document.getElementById("rest-skip").addEventListener("click",stopRest);
 // neon dial: the countdown sits inside the ring
 (()=>{const ring=document.querySelector("#rest .rest-ring"),tm=document.getElementById("rest-time");if(!ring||!tm)return;const d=document.createElement("div");d.className="rest-dial";ring.before(d);d.appendChild(ring);d.appendChild(tm)})();
+
+document.getElementById("rest-x")?.addEventListener("click",()=>document.getElementById("rest-skip").click());
