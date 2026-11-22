@@ -276,6 +276,8 @@ const TOD=[["am","เช้า"],["noon","กลางวัน"],["pm","เย�
 const todRank=k=>{const p=PROGS[k],i=TOD.findIndex(q=>q[0]===p.tod);if(i>=0)return i;return isCardio(p)?(p.tag==="run"?.5:2.5):1.5};
 let dayPlan=load("dayplan",{});const dp=()=>dayPlan.date===TODAY?dayPlan:(dayPlan={date:TODAY,add:[],del:[]});
 const planList=()=>{const d=dp(),ks=[...new Set(planKeys(DAY).filter(k=>!d.del.includes(k)).concat(d.add))].filter(k=>PROGS[k]);
+  /* a program deleted after it was logged: keep showing today's done entry via a hidden (non-saved, non-listed) stand-in */
+  logs.filter(l=>l.date===DAY&&l.prog!=="free"&&!PROGS[l.prog]).forEach(l=>{try{Object.defineProperty(PROGS,l.prog,{value:{name:progName(l.prog),ghost:1,loc:l.loc||"*",ex:Object.keys(l.ex||{}).map(id=>({id,n:exName(id,l),z:"🔩",s:(l.ex[id]||[]).length||3,r:"8"}))},enumerable:false,configurable:true,writable:true})}catch(e){}});
   logs.filter(l=>l.date===DAY&&PROGS[l.prog]&&!ks.includes(l.prog)).forEach(l=>ks.push(l.prog));return ks.sort((a,b)=>todRank(a)-todRank(b))};
 function planAdd(k){const d=dp();if(!d.add.includes(k))d.add.push(k);d.del=d.del.filter(x=>x!==k);save("dayplan",dayPlan)}
 function planDel(k){const d=dp();d.add=d.add.filter(x=>x!==k);if(!d.del.includes(k))d.del.push(k);save("dayplan",dayPlan)}
