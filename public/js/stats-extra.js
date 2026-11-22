@@ -103,7 +103,7 @@ function renderRecovery(full){const box=full||document.getElementById("rec-card"
 // sheet stack: a sheet opened from another sheet remembers it; ✕ / backdrop / Cancel go back ONE level (not to the page).
 // Same title = re-render (replace). Re-opening a title that is lower in the stack returns to it. closeGen() closes everything.
 const GEN_STACK=[];let genTitle="";
-function openGen(title,html,after){const sh=document.getElementById("gen-sheet"),body=document.getElementById("gen-body");
+function openGen(title,html,after){document.getElementById("gen-sheet").classList.remove("over-lib");const sh=document.getElementById("gen-sheet"),body=document.getElementById("gen-body");
   if(!sh.hidden&&genTitle&&title!==genTitle){const j=GEN_STACK.findIndex(x=>x.title===title);if(j>=0)GEN_STACK.length=j;else{const f=document.createDocumentFragment();while(body.firstChild)f.appendChild(body.firstChild);GEN_STACK.push({title:genTitle,frag:f})}}
   else if(sh.hidden)GEN_STACK.length=0;
   genTitle=title;body.innerHTML=`<div class="sheet-h has-x"><b>${title}</b><button class="sh-x" data-gen-close aria-label="${t("ปิด")}">✕</button></div>${html}`;sh.hidden=false;if(after)after(body)}
