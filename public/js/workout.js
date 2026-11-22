@@ -94,7 +94,7 @@ function commitDraft(day,prog){
   const i=logs.findIndex(l=>l.date===day&&l.prog===prog);
   const names={};all.forEach(e=>{if(ex[e.id])names[e.id]=e.n});
   const memo={};Object.entries(draft.memo||{}).forEach(([k,v])=>{if(ex[k]&&v.trim())memo[k]=v.trim()});const note=(draft.note||"").trim();
-  const rec={date:day,prog,ex,names,loc:draft.loc||curLoc};if(day===TODAY)rec.at=Date.now();if(Object.keys(memo).length)rec.memo=memo;if(note)rec.note=note;
+  const rec={date:day,prog,ex,names,loc:draft.loc||curLoc};if(PROGS[prog]&&PROGS[prog].name)rec.pn=PROGS[prog].name;if(day===TODAY)rec.at=Date.now();if(Object.keys(memo).length)rec.memo=memo;if(note)rec.note=note;
   if(i>=0)logs[i]=rec;else logs.push(rec);
   logs.sort((a,b)=>a.date.localeCompare(b.date));
   save("gymlog",logs);draft={};save("gymdraft",draft);try{if(day===TODAY&&hasPlanToday())setDayMode(null)}catch(e){}return true;

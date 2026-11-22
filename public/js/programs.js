@@ -39,7 +39,8 @@ const DEFAULT_PROGS={
 /* ตารางสัปดาห์: จ.=วิ่ง 10K · อ.=Push A · พ.=Pull A · พฤ.=แบด · ศ.=พัก · ส.=Push B · อา.=Pull B (ขากระจายทุกวันเวท) */
 const WEEK={1:"run",2:"push",3:"pull",4:"bad",6:"push2",0:"pull2"};
 const SCHEME=4;
-const progName=k=>k==="free"?t("ออกแบบอิสระ"):(PROGS[k]||{name:k==="legs"?"Legs":k}).name;
+/* program name survives deleting the program: live program → name saved in a log → built-in default → readable key */
+const progName=k=>{if(k==="free")return t("ออกแบบอิสระ");if(PROGS[k])return PROGS[k].name;const l=(typeof logs!=="undefined"?logs:[]).find(x=>x.prog===k&&x.pn);if(l)return l.pn;if(typeof DEFAULT_PROGS!=="undefined"&&DEFAULT_PROGS[k])return DEFAULT_PROGS[k].name;return k==="legs"?"Legs":String(k).replace(/^ai-/,"").replace(/-/g," ")};
 let PROGS=load("progs",null)||JSON.parse(JSON.stringify(DEFAULT_PROGS));
 function to5x5(){const keep={};Object.values(PROGS).forEach(p=>p.ex.forEach(e=>keep[e.id]=e));PROGS=JSON.parse(JSON.stringify(DEFAULT_PROGS));Object.values(PROGS).forEach(p=>p.ex.forEach(e=>{const o=keep[e.id];if(o){if(o.u)e.u=o.u;if(o.link)e.link=o.link}}))}
 if(load("scheme",1)<SCHEME){to5x5();try{localStorage.setItem("progs",JSON.stringify(PROGS));localStorage.setItem("scheme",String(SCHEME))}catch(e){};var _clearDraft=true}
@@ -48,7 +49,7 @@ const LB=2.20462;
 const toDisp=(kg,u)=>kg===""||kg==null?"":u!=="lb"?Math.round(kg*100)/100:Math.round(kg*LB*2)/2;
 const fromDisp=(v,u)=>v===""?"":u!=="lb"?+v:Math.round(v/LB*1000)/1000;
 function uOf(id){for(const p of Object.values(PROGS)){const e=p.ex.find(x=>x.id===id);if(e)return e.u||"kg"}return "kg"}
-function exName(id,l){if(l&&l.names&&l.names[id])return l.names[id];for(const p of Object.values(PROGS)){const e=p.ex.find(x=>x.id===id);if(e)return e.n}return id}
+function exName(id,l){if(l&&l.names&&l.names[id])return l.names[id];for(const p of Object.values(PROGS)){const e=(p.ex||[]).find(x=>x.id===id);if(e)return e.n}const x=(typeof EXLIB!=="undefined"&&EXLIB.find(q=>q.id===id))||(typeof logs!=="undefined"&&(logs.find(q=>q.names&&q.names[id])||{}).names||{})[id];return typeof x==="string"?x:x&&x.n?x.n:id}
 let restCfg=load("restcfg",{});
 // rest by movement, not by "main": heavy compounds 2:30, small isolation 1:00, everything else 1:30
 const HEAVY=["chest-press","incline-db","db-shoulder-press","squat","deadlift","lat-pulldown","wide-cable-row","seated-cable-row"];
