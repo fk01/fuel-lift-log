@@ -13,6 +13,7 @@ function startRest(e,i,rows){
   else next=`<b>${t("ครบทุกท่าแล้ว")}</b>`;
   document.getElementById("rest-next").innerHTML=next;
   {const up=i+1<rows.length?e:(ex[k+1]||e),g=document.getElementById("rest-gif");let src="";try{src=gifOf(EXLIB.find(q=>q.id===up.id)||up)}catch(_){}
+   document.getElementById("rest").classList.toggle("photo",!src);
    if(g){g.hidden=false;const im=g.querySelector("img");let sv=g.querySelector(".rest-anim");
      if(src){im.hidden=false;im.src=src;if(sv)sv.remove();g.querySelector("figcaption").textContent=up.n}
      else{im.hidden=true;im.removeAttribute("src");if(!sv){g.insertAdjacentHTML("afterbegin",REST_SVG)}g.querySelector("figcaption").textContent=t("หายใจลึกๆ ดื่มน้ำ")+" · "+up.n}}}
