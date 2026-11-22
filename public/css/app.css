@@ -1562,3 +1562,4 @@ body:has(#rest:not([hidden])) .tabbar{display:none!important}
 #rest.photo:not([hidden]){background:linear-gradient(180deg,rgba(31,37,49,.6) 0%,rgba(31,37,49,0) 20%,rgba(31,37,49,0) 70%,rgba(31,37,49,.9) 92%),url(/img/rest-bg.jpg) center bottom/cover no-repeat,#1f2531!important}
 #rest.photo .rest-dial .rest-time{text-shadow:0 0 12px rgba(0,0,0,.6),0 0 16px rgba(46,230,255,.6)!important}
 #rest.photo .rest-ring circle:first-child{stroke:rgba(255,255,255,.18)}
+#rest .rest-x{display:none!important}
