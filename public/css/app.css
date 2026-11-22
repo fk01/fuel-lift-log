@@ -1749,3 +1749,8 @@ body:has(#tx-bar:not([hidden])) :is(#pm-modal .modal-in,#gen-body,#lib-modal .mo
 .pl-allh .pl-h{display:flex!important;align-items:center;gap:10px;font-size:17px!important}
 .pl-allh .pl-h .pill{margin:0!important;position:static!important;font-size:13px;padding:2px 10px;line-height:1.4}
 .pl-allh{margin:24px 0 10px!important}.pl-allh .hq-l{font-size:15px}
+/* long program names never widen the page */
+#v-gym #step3 .step{display:flex!important;flex-wrap:wrap;align-items:center;gap:8px;min-width:0;max-width:100%}
+#v-gym #step3 .step-t{flex:1 1 200px;min-width:0;white-space:normal!important;overflow-wrap:anywhere;line-height:1.25}
+#v-gym #step3,#v-gym #exs,#v-gym .ex{min-width:0;max-width:100%}
+.wrap{overflow-x:hidden}
