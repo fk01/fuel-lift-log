@@ -2,7 +2,14 @@
 // Classic script: shares globals with the other files in /js (load order is set in index.html).
 const mpClone=()=>JSON.parse(JSON.stringify({meals:MEALS,run:EXTRAS.run,bad:EXTRAS.bad,p:P_TARGET,k:K_GOAL}));
 const mpFld="min-width:0;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:var(--r-sm);padding:8px;font:inherit";
-function mpTouch(){mpApply();save("mealplan",MP)}
+/* several meal plans: MP holds the active one + MP.saved=[{id,name,k,p,c,f,meals,run,bad}] (synced with MP) */
+const MP_F=["k","p","c","f","meals","run","bad"];
+function mpSnap(name){const o={id:MP.cur||("mp"+Date.now().toString(36)+"a"),name:name||MP.name||t("แผนหลัก")};MP_F.forEach(k=>{if(MP[k]!==undefined)o[k]=JSON.parse(JSON.stringify(MP[k]))});return o}
+function mpEnsure(){MP=MP||mpClone();if(!MP.meals)Object.assign(MP,mpClone());MP.saved=MP.saved||[];if(!MP.cur||!MP.saved.some(x=>x.id===MP.cur)){const o=mpSnap();MP.cur=o.id;MP.name=o.name;MP.saved.push(o)}}
+function mpSync(){if(!MP||!MP.saved)return;const i=MP.saved.findIndex(x=>x.id===MP.cur);if(i>=0)MP.saved[i]={...mpSnap(MP.saved[i].name),id:MP.cur}}
+function mpUse(id){mpSync();const o=MP.saved.find(x=>x.id===id);if(!o)return;MP_F.forEach(k=>{MP[k]=JSON.parse(JSON.stringify(o[k]!==undefined?o[k]:null))});if(!MP.c)delete MP.c;if(!MP.f)delete MP.f;MP.cur=id;MP.name=o.name;mpApply();save("mealplan",MP)}
+function mpAdd(plan,name){mpEnsure();mpSync();const id="mp"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),o={id,name,...JSON.parse(JSON.stringify(plan))};if(!o.run)o.run=MP.run;if(!o.bad)o.bad=MP.bad;MP.saved.push(o);mpUse(id);return id}
+function mpTouch(){mpSync();mpApply();save("mealplan",MP)}
 function mpMealRow(m,i,kind){const list=MP.meals,fixed=kind!=="meal";
   return `<div class="mp-row" data-i="${i}" data-kind="${kind}">
     <div class="mp-top">${fixed?`<span class="mp-ic">${licon(kind==="run"?"run":"racket")}</span>`:`<input type="time" data-f="time" aria-label="${t("เวลา")}" value="${esc(/^\d\d:\d\d$/.test(m.time)?m.time:"")}" style="${mpFld};width:6.6em">`}
@@ -10,11 +17,18 @@ function mpMealRow(m,i,kind){const list=MP.meals,fixed=kind!=="meal";
       ${fixed?"":`<button class="btn sm" data-mv="-1" ${i===0?"disabled":""} aria-label="${t("เลื่อนขึ้น")}">↑</button><button class="btn sm" data-mv="1" ${i===list.length-1?"disabled":""} aria-label="${t("เลื่อนลง")}">↓</button><button class="btn sm ghost" data-del aria-label="${t("ลบมื้อ")}">✕</button>`}</div>
     <div class="mp-num"><label>kcal<input inputmode="numeric" data-f="k" value="${+m.k||0}" style="${mpFld}"></label><label>${t("โปรตีน")} g<input inputmode="numeric" data-f="p" value="${+m.p||0}" style="${mpFld}"></label><label>${t("คาร์บ")} g<input inputmode="numeric" data-f="c" value="${+m.c||0}" style="${mpFld}"></label><label>${t("ไขมัน")} g<input inputmode="numeric" data-f="f" value="${+m.f||0}" style="${mpFld}"></label>${fixed?"":`<label class="mp-vit"><input type="checkbox" data-f="vit" aria-label="${t("วิตามิน")}" ${m.vit?"checked":""}> ${t("วิตามิน")}</label>`}</div>
     <textarea data-f="items" rows="2" aria-label="${t("รายการอาหาร (บรรทัดละ 1 อย่าง)")}" placeholder="${t("รายการอาหาร (บรรทัดละ 1 อย่าง)")}" style="${mpFld};width:100%;resize:vertical">${esc((m.items||[]).join("\n"))}</textarea></div>`}
-function openMealPlan(){MP=MP||mpClone();if(!MP.meals)MP=mpClone();
+function openMealPlan(){mpEnsure();
   const draw=b=>{const body=b.querySelector(".mp-body");
-    body.innerHTML=`<div class="card mp-card"><b>${t("เป้าต่อวัน")}</b><div class="mp-num"><label>kcal<input inputmode="numeric" data-g="k" value="${K_GOAL}" style="${mpFld}"></label><label>${t("โปรตีน")} g<input inputmode="numeric" data-g="p" value="${P_TARGET}" style="${mpFld}"></label><label>${t("คาร์บ")} g<input inputmode="numeric" data-g="c" value="${+MP.c||0}" style="${mpFld}"></label><label>${t("ไขมัน")} g<input inputmode="numeric" data-g="f" value="${+MP.f||0}" style="${mpFld}"></label></div></div>
+    body.innerHTML=`<div class="card mp-card"><b>${t("แผนกินของฉัน")}</b><div class="chips mp-plans">${MP.saved.map(x=>`<span class="mp-pl${x.id===MP.cur?" on":""}"><button class="chip" data-mpuse="${esc(x.id)}" aria-pressed="${x.id===MP.cur}">${esc(x.name)}</button>${x.id===MP.cur||MP.saved.length<2?"":`<button class="mp-x" data-mpdel="${esc(x.id)}" aria-label="${t("ลบแผน")}">✕</button>`}</span>`).join("")}</div>
+      <div class="mp-num" style="grid-template-columns:1fr auto auto!important"><input data-mpname value="${esc(MP.name||"")}" aria-label="${t("ชื่อแผน")}" style="${mpFld}"><button class="btn sm" data-mpdup>⧉ ${t("ทำสำเนา")}</button><button class="btn sm" data-mpnew>+ ${t("แผนใหม่")}</button></div></div>
+      <div class="card mp-card"><b>${t("เป้าต่อวัน")}</b><div class="mp-num"><label>kcal<input inputmode="numeric" data-g="k" value="${K_GOAL}" style="${mpFld}"></label><label>${t("โปรตีน")} g<input inputmode="numeric" data-g="p" value="${P_TARGET}" style="${mpFld}"></label><label>${t("คาร์บ")} g<input inputmode="numeric" data-g="c" value="${+MP.c||0}" style="${mpFld}"></label><label>${t("ไขมัน")} g<input inputmode="numeric" data-g="f" value="${+MP.f||0}" style="${mpFld}"></label></div></div>
       <div class="card mp-card"><b>${t("มื้อประจำวัน")}</b>${MP.meals.map((m,i)=>mpMealRow(m,i,"meal")).join("")}<button class="pl-add" data-addm>+ ${t("เพิ่มมื้อ")}</button></div>
       <div class="card mp-card"><b>${t("มื้อเสริมตามกิจกรรม")}</b>${mpMealRow(MP.run,0,"run")}${mpMealRow(MP.bad,0,"bad")}</div>`;
+    body.querySelectorAll("[data-mpuse]").forEach(x=>x.addEventListener("click",()=>{mpUse(x.dataset.mpuse);draw(b)}));
+    body.querySelectorAll("[data-mpdel]").forEach(x=>x.addEventListener("click",async()=>{const o=MP.saved.find(q=>q.id===x.dataset.mpdel);if(o&&await cfm(`${t("ลบแผน")}?<br>${esc(o.name)}`,"",t("ลบแผน"),1)){MP.saved=MP.saved.filter(q=>q!==o);mpTouch();draw(b)}}));
+    body.querySelector("[data-mpname]").addEventListener("change",ev=>{MP.name=ev.target.value.trim()||t("แผนหลัก");mpTouch();draw(b)});
+    body.querySelector("[data-mpdup]").addEventListener("click",()=>{mpSync();const o=mpSnap();delete o.id;mpAdd(o,(MP.name||t("แผนหลัก"))+" (2)");draw(b)});
+    body.querySelector("[data-mpnew]").addEventListener("click",()=>{mpAdd({k:K_GOAL,p:P_TARGET,meals:[{id:"m1",time:"08:00",name:"",k:0,p:0,c:0,f:0,items:[]}]},t("แผนใหม่"));draw(b)});
     body.querySelectorAll("[data-g]").forEach(x=>x.addEventListener("change",()=>{MP[x.dataset.g]=Math.max(0,+x.value||0);mpTouch()}));
     body.querySelectorAll(".mp-row").forEach(r=>{const kind=r.dataset.kind,i=+r.dataset.i,m=kind==="meal"?MP.meals[i]:MP[kind];
       r.querySelectorAll("[data-f]").forEach(x=>x.addEventListener("change",()=>{const f=x.dataset.f;
@@ -47,3 +61,4 @@ Object.assign(EN,{"ถึงเป้า":"Hit goal","ต่อวัน":"per d
 Object.assign(EN,{"คาร์บ":"Carbs","ไขมัน":"Fat"});
 Object.assign(EN,{"ให้ AI จัด":"Ask AI"});
 Object.assign(EN,{"ให้ AI จัดตารางอาหาร":"Ask AI for a meal plan","ตามเป้า kcal · P · C · F ของคุณ":"Built around your kcal · P · C · F targets","ให้ AI จัดโปรแกรมท่า":"Ask AI for workout programs","ตามเป้าหมาย การฟื้นตัว และอุปกรณ์ที่มี":"Built around your goal, recovery and equipment"});
+Object.assign(EN,{"แผนกินของฉัน":"My meal plans","แผนหลัก":"Main plan","ลบแผน":"Delete plan","ชื่อแผน":"Plan name","ทำสำเนา":"Duplicate","แผนใหม่":"New plan"});

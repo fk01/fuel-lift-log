@@ -1689,3 +1689,5 @@ body.on-stats .wrap>header{display:none}
 .wrap,.wrap *{overflow-anchor:none}
 #macro-bars{border:0!important;box-shadow:none!important;background:none!important;padding:8px 0!important}
 #day-gear{display:none!important}#macro-bars{padding:8px 20px!important}
+.mp-plans{gap:6px;flex-wrap:wrap}.mp-pl{display:inline-flex;align-items:center;gap:2px}.mp-pl.on .chip{background:color-mix(in srgb,var(--cyan) 16%,transparent)!important;border-color:var(--cyan)!important;color:var(--cyan)!important}
+.mp-x{border:0;background:none;color:var(--muted);width:28px;height:28px;cursor:pointer}
