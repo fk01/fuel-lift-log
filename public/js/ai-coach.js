@@ -52,19 +52,21 @@ function aiPreview(d){if(d.kind==="prog")return d.items.map(p=>`<div class="card
 async function aiCopy(txt){try{await navigator.clipboard.writeText(txt);return true}catch(e){return false}}
 function openAICoach(only){const box=b=>{
     b.querySelectorAll("[data-aiask]").forEach(x=>x.addEventListener("click",async()=>{const k=x.dataset.aiask,txt=k==="analyse"?aiReport():aiPrompt(k),ok=await aiCopy(txt);const ta=b.querySelector(".ai-md");ta.hidden=false;ta.value=txt;if(!ok){ta.focus();ta.select()}toast(ok?"✓ "+t("คัดลอกแล้ว — ไปวางในแชทบอท"):t("กดค้าง เลือกทั้งหมด แล้วคัดลอก"))}));
-    b.querySelector("[data-aipaste]").addEventListener("click",async()=>{const ta=b.querySelector(".ai-in");try{if(!ta.value&&navigator.clipboard.readText)ta.value=await navigator.clipboard.readText()}catch(e){}
+    b.querySelector("[data-aipaste]")?.addEventListener("click",async()=>{const ta=b.querySelector(".ai-in");try{if(!ta.value&&navigator.clipboard.readText)ta.value=await navigator.clipboard.readText()}catch(e){}
       const out=b.querySelector(".ai-out");try{const d=aiParse(ta.value);out.innerHTML=aiPreview(d)+`<button class="btn primary" data-aiok style="width:100%">✓ ${t(d.kind==="prog"?"สร้างโปรแกรมนี้":"ใช้แผนกินนี้")}</button>`;out.querySelector("[data-aiok]").addEventListener("click",()=>{aiApply(d);closeGen()})}
       catch(e){out.innerHTML=`<p class="field-err">${esc(e.message||String(e))}</p>`}})};
   try{loadCat()}catch(e){}
-  openGen("✦ "+t(only==="prog"?"ให้ AI จัดโปรแกรมท่า":only==="meal"?"ให้ AI จัดตารางอาหาร":"โค้ช AI"),`<small class="note">${t("1) คัดลอกคำขอ ไปวางในแชทบอท  2) คัดลอกคำตอบกลับมา วางด้านล่าง")}</small>
+  openGen("✦ "+t(only==="prog"?"ให้ AI จัดโปรแกรมท่า":only==="meal"?"ให้ AI จัดตารางอาหาร":only==="analyse"?"ให้ AI วิเคราะห์ข้อมูล":"โค้ช AI"),`<small class="note">${t(only==="analyse"?"กดเพื่อคัดลอก แล้วไปวางในแชท ChatGPT / Claude / Gemini":"1) คัดลอกคำขอ ไปวางในแชทบอท  2) คัดลอกคำตอบกลับมา วางด้านล่าง")}</small>
     <div class="ai-acts${only?" only-"+only:""}"><button class="menu-row" data-aiask="analyse"><span class="mi">${licon("bar")}</span><span class="mt"><b>${t("วิเคราะห์ข้อมูลของฉัน")}</b><small>${t("คำแนะนำจากสถิติ")}</small></span><span class="mc">⧉</span></button>
     <button class="menu-row" data-aiask="prog"><span class="mi">${licon("dumbbell")}</span><span class="mt"><b>${t("ให้ AI จัดโปรแกรมท่า")}</b><small>${t("ได้ JSON กลับมาสร้างโปรแกรม")}</small></span><span class="mc">⧉</span></button>
     <button class="menu-row" data-aiask="meal"><span class="mi">${licon("bowl")}</span><span class="mt"><b>${t("ให้ AI จัดตารางอาหาร")}</b><small>${t("ได้ JSON กลับมาเป็นแผนกิน")}</small></span><span class="mc">⧉</span></button></div>
     <textarea class="ai-md" readonly hidden></textarea>
-    <b class="ai-h">${t("วางคำตอบจาก AI")}</b><textarea class="ai-in" placeholder="${t("วางคำตอบทั้งหมดที่มี ```json ... ``` ตรงนี้")}"></textarea>
-    <button class="btn" data-aipaste>${t("ตรวจและดูตัวอย่าง")}</button><div class="ai-out stack" style="gap:10px"></div>
+    ${only==="analyse"?"":`<b class="ai-h">${t("วางคำตอบจาก AI")}</b><textarea class="ai-in" placeholder="${t("วางคำตอบทั้งหมดที่มี ```json ... ``` ตรงนี้")}"></textarea>
+    <button class="btn" data-aipaste>${t("ตรวจและดูตัวอย่าง")}</button><div class="ai-out stack" style="gap:10px"></div>`}
     <button class="btn ghost" data-gen-close>${t("ปิด")}</button>`,box)}
 Object.assign(EN,{"โค้ช AI":"AI coach","1) คัดลอกคำขอ ไปวางในแชทบอท  2) คัดลอกคำตอบกลับมา วางด้านล่าง":"1) Copy a request and paste it into a chatbot  2) Copy its reply and paste it below","วิเคราะห์ข้อมูลของฉัน":"Analyse my data","คำแนะนำจากสถิติ":"Advice from my stats","ให้ AI จัดโปรแกรมท่า":"Ask AI for workout programs","ได้ JSON กลับมาสร้างโปรแกรม":"Reply comes back as JSON to create programs","ให้ AI จัดตารางอาหาร":"Ask AI for a meal plan","ได้ JSON กลับมาเป็นแผนกิน":"Reply comes back as JSON for your meal plan","วางคำตอบจาก AI":"Paste the AI reply","วางคำตอบทั้งหมดที่มี ```json ... ``` ตรงนี้":"Paste the whole reply with ```json … ``` here","ตรวจและดูตัวอย่าง":"Check & preview","สร้างโปรแกรมนี้":"Create these programs","ใช้แผนกินนี้":"Use this meal plan","สร้างโปรแกรมแล้ว":"Programs created","ใช้แผนกินใหม่แล้ว":"New meal plan in use","ท่าใหม่":"new exercise","แผนกินเดิมจะถูกแทนที่":"Your current meal plan will be replaced","ไม่เจอ JSON ในข้อความ":"No JSON found in the reply","ไม่มีโปรแกรมในข้อมูล":"No programs in the JSON","ไม่มีมื้อในข้อมูล":"No meals in the JSON","รูปแบบไม่ตรง — ต้องเป็น weightgram.programs หรือ weightgram.mealplan":"Wrong format — must be weightgram.programs or weightgram.mealplan","คัดลอกแล้ว — ไปวางในแชทบอท":"Copied — paste it into the chatbot","กดค้าง เลือกทั้งหมด แล้วคัดลอก":"Press and hold, Select All, then Copy"});
 
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-aikind]");if(b){e.stopPropagation();openAICoach(b.dataset.aikind)}});
 Object.assign(EN,{"ให้ AI จัด":"Ask AI"});
+
+Object.assign(EN,{"กดเพื่อคัดลอก แล้วไปวางในแชท ChatGPT / Claude / Gemini":"Tap to copy, then paste into ChatGPT / Claude / Gemini"});
