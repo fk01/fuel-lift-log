@@ -6,9 +6,9 @@ const mpFld="min-width:0;box-sizing:border-box;background:var(--bg);color:var(--
 const MP_F=["k","p","c","f","meals","run","bad"];
 function mpSnap(name){const o={id:MP.cur||("mp"+Date.now().toString(36)+"a"),name:name||MP.name||t("แผนหลัก")};MP_F.forEach(k=>{if(MP[k]!==undefined)o[k]=JSON.parse(JSON.stringify(MP[k]))});return o}
 function mpEnsure(){MP=MP||mpClone();if(!MP.meals)Object.assign(MP,mpClone());MP.saved=MP.saved||[];if(!MP.cur||!MP.saved.some(x=>x.id===MP.cur)){const o=mpSnap();MP.cur=o.id;MP.name=o.name;MP.saved.push(o)}}
-function mpSync(){if(!MP||!MP.saved)return;const i=MP.saved.findIndex(x=>x.id===MP.cur);if(i>=0)MP.saved[i]={...mpSnap(MP.saved[i].name),id:MP.cur}}
+function mpSync(){if(!MP||!MP.saved)return;const i=MP.saved.findIndex(x=>x.id===MP.cur);if(i>=0)MP.saved[i]={...mpSnap(MP.name||MP.saved[i].name),id:MP.cur}}
 function mpUse(id){mpSync();const o=MP.saved.find(x=>x.id===id);if(!o)return;MP_F.forEach(k=>{MP[k]=JSON.parse(JSON.stringify(o[k]!==undefined?o[k]:null))});if(!MP.c)delete MP.c;if(!MP.f)delete MP.f;MP.cur=id;MP.name=o.name;mpApply();save("mealplan",MP)}
-function mpAdd(plan,name){mpEnsure();mpSync();const id="mp"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),o={id,name,...JSON.parse(JSON.stringify(plan))};if(!o.run)o.run=MP.run;if(!o.bad)o.bad=MP.bad;MP.saved.push(o);mpUse(id);return id}
+function mpAdd(plan,name){mpEnsure();mpSync();const id="mp"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),o={...JSON.parse(JSON.stringify(plan)),id,name};if(!o.run)o.run=MP.run;if(!o.bad)o.bad=MP.bad;MP.saved.push(o);mpUse(id);return id}
 function mpTouch(){mpSync();mpApply();save("mealplan",MP)}
 function mpMealRow(m,i,kind){const list=MP.meals,fixed=kind!=="meal";
   return `<div class="mp-row" data-i="${i}" data-kind="${kind}">
