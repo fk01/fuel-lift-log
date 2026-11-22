@@ -2,21 +2,21 @@
 // Classic script: shares globals with the other files in /js (load order is set in index.html).
 /* ---------- FOOD ---------- */
 const MEALS_DEF=[
- {id:"m1",time:"08:00",name:"เช้า",k:560,p:45,items:["Iso Soy 2 สกู๊ป + Mass 2 สกู๊ป ชงน้ำ","กล้วย 2 ลูก"]},
+ {id:"m1",time:"08:00",name:"เช้า",k:560,p:45,c:78,f:7,items:["Iso Soy 2 สกู๊ป + Mass 2 สกู๊ป ชงน้ำ","กล้วย 2 ลูก"]},
  {id:"v1",time:"08:15",name:"วิตามินหลังมื้อเช้า",k:0,p:0,vit:1,items:["วิตามินชุดเช้า"]},
- {id:"m2",time:"12:30",name:"กลางวัน",k:444,p:31,items:["ข้าวกล้อง 150 g","เนื้อวัว 90% 100 g","ไข่ต้ม 1 + ผัก 1-2 ถ้วย"]},
- {id:"m3",time:"15:00",name:"บ่าย",k:500,p:48,items:["Iso Soy 2 สกู๊ป + Mass 2 สกู๊ป ชงน้ำ","อัลมอนด์ / ถั่วอบ 1 กำมือ (~25 g)"]},
- {id:"m4",time:"19:00",name:"เย็น (มื้อสุดท้าย)",k:388,p:34,items:["ข้าวกล้อง 150 g","ปลาหรืออกไก่ 100 g","ไข่ต้ม 1 + ผัก 1-2 ถ้วย"]},
+ {id:"m2",time:"12:30",name:"กลางวัน",k:444,p:31,c:50,f:13,items:["ข้าวกล้อง 150 g","เนื้อวัว 90% 100 g","ไข่ต้ม 1 + ผัก 1-2 ถ้วย"]},
+ {id:"m3",time:"15:00",name:"บ่าย",k:500,p:48,c:38,f:17,items:["Iso Soy 2 สกู๊ป + Mass 2 สกู๊ป ชงน้ำ","อัลมอนด์ / ถั่วอบ 1 กำมือ (~25 g)"]},
+ {id:"m4",time:"19:00",name:"เย็น (มื้อสุดท้าย)",k:388,p:34,c:48,f:6,items:["ข้าวกล้อง 150 g","ปลาหรืออกไก่ 100 g","ไข่ต้ม 1 + ผัก 1-2 ถ้วย"]},
  {id:"v2",time:"19:15",name:"วิตามินหลังมื้อเย็น",k:0,p:0,vit:1,items:["วิตามินชุดเย็น"]},
- {id:"m5",time:"21:00",name:"หลังเวท / ก่อนนอน",k:140,p:30,items:["Iso Soy 2 สกู๊ป ชงน้ำ"]},
+ {id:"m5",time:"21:00",name:"หลังเวท / ก่อนนอน",k:140,p:30,c:2,f:2,items:["Iso Soy 2 สกู๊ป ชงน้ำ"]},
 ];
 const EXTRAS_DEF={
- run:{id:"x-run",time:"หลังวิ่ง",name:"เติมหลังวิ่ง",k:210,p:13,items:["Mass 2 สกู๊ป ชงน้ำ"]},
- bad:{id:"x-bad",time:"19:00",name:"เพิ่มวันแบด",k:105,p:1,items:["กล้วย 1 ลูก (กินพร้อมมื้อเย็น)"]},
+ run:{id:"x-run",time:"หลังวิ่ง",name:"เติมหลังวิ่ง",k:210,p:13,c:38,f:1,items:["Mass 2 สกู๊ป ชงน้ำ"]},
+ bad:{id:"x-bad",time:"19:00",name:"เพิ่มวันแบด",k:105,p:1,c:27,f:0,items:["กล้วย 1 ลูก (กินพร้อมมื้อเย็น)"]},
 };
 // the live meal plan is editable (meal-plan.js) and synced in the settings doc; MEALS_DEF / EXTRAS_DEF are only defaults
 let MP=load("mealplan",null),MEALS,EXTRAS,P_TARGET,K_GOAL;
-function mpApply(){const m=MP||{};MEALS=Array.isArray(m.meals)&&m.meals.length?m.meals:MEALS_DEF;EXTRAS={run:m.run||EXTRAS_DEF.run,bad:m.bad||EXTRAS_DEF.bad};P_TARGET=+m.p||160;K_GOAL=+m.k||2032}
+function mpApply(){const m=MP||{};MEALS=Array.isArray(m.meals)&&m.meals.length?m.meals:MEALS_DEF;/* plans saved before carbs/fat existed: fill C/F from the default meal with the same id */const fill=x=>{if(!x||x.c!=null)return;const d=MEALS_DEF.concat(Object.values(EXTRAS_DEF)).find(q=>q.id===x.id);if(d&&d.k===x.k&&d.p===x.p){x.c=d.c;x.f=d.f}};MEALS.forEach(fill);fill(m.run);fill(m.bad);EXTRAS={run:m.run||EXTRAS_DEF.run,bad:m.bad||EXTRAS_DEF.bad};P_TARGET=+m.p||160;K_GOAL=+m.k||2032}
 mpApply();
 // custom food entries per day: food[ds].log=[{id,n,k,p,slot,q}] (k / p per serving, q servings)
 const logOf=ds=>((food[ds]||{}).log)||[];
@@ -69,7 +69,7 @@ function renderFood(){renderFoodHist();
     const done=!!fs().done[m.id],late=!done&&DAY===TODAY&&/^\d\d:\d\d$/.test(m.time)&&m.time<nowHM,isNext=m.id===nextId;
     const el=document.createElement("label");el.className="meal"+(done?" done mini":"")+(m.id.startsWith("x")?" extra":"")+(isNext?" next":"");
     el.dataset.flag=isNext?t("มื้อถัดไป"):late?t("ยังไม่ติ๊ก"):"";if(late&&!isNext)el.classList.add("late");el.classList.toggle("lead",isNext);
-    el.innerHTML=`<span class="row-ic">${licon(m.vit?"pill":m.id.startsWith("x")?"run":"bowl")}</span><input type="checkbox" id="c-${m.id}" ${done?"checked":""}><div><div class="row-head"><span class="hq-chip time">${t(m.time)}</span><b class="mn">${t(m.name)}</b><span class="macro">${m.vit||!m.k?t("วิตามิน_m").replace(/_m$/,""):`${m.k} kcal · P ${m.p} g${+m.c?` · C ${m.c} g`:""}${+m.f?` · F ${m.f} g`:""}`}</span></div><ul>${m.items.map(i=>`<li>${t(i)}</li>`).join("")}</ul></div>`;
+    el.innerHTML=`<span class="row-ic">${licon(m.vit?"pill":m.id.startsWith("x")?"run":"bowl")}</span><input type="checkbox" id="c-${m.id}" ${done?"checked":""}><div><div class="row-head"><span class="hq-chip time">${t(m.time)}</span><b class="mn">${t(m.name)}</b><span class="macro">${m.vit||!m.k?t("วิตามิน_m").replace(/_m$/,""):`${m.k} kcal · P ${m.p} g · C ${m.c!=null?m.c:"–"} g · F ${m.f!=null?m.f:"–"} g`}</span></div><ul>${m.items.map(i=>`<li>${t(i)}</li>`).join("")}</ul></div>`;
     el.querySelector("input").addEventListener("change",e=>{fs().done[m.id]=e.target.checked;save("mealcheck",food);renderFood()});
     box.appendChild(el);
     const xs=logOf(DAY).filter(x=>x.slot===m.id);if(xs.length)box.appendChild(logRows(xs));
