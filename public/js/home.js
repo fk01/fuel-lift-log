@@ -78,6 +78,13 @@ function renderHome(){const box=document.getElementById("v-home");if(!box)return
     const mc=box.querySelector(".hq-main");if(mc)mc.innerHTML=`<span class="hq-h"><span class="hq-q">${licon("dumbbell")} ${t("วันนั้นออกกำลังอะไร")}</span><button class="hq-l" data-go="gym">${t("ดูบันทึก_วัน").replace(/_วัน$/,"")} ›</button></span>
       <b class="hq-a">${done.length?"✓ "+done.map(esc).join(", "):t("ไม่ได้ออกกำลัง")}</b>${!done.length&&ks.length?`<small class="hq-s">${t("แผนวันนั้น")}: ${uks.map(nm).join(", ")}</small>`:""}`;
     const fq=box.querySelectorAll(".hq-card .hq-q")[1];if(fq)fq.innerHTML=`${licon("bowl")} ${t("วันนั้นกินอะไร")}`}
+  /* today's plan all done: a celebratory card instead of a plain line */
+  if(!past&&allDone){const mc=box.querySelector(".hq-main"),dl=logs.filter(l=>l.date===DAY),sets=dl.reduce((a,l)=>a+Object.values(l.ex||{}).flat().filter(x=>x.ok!==false).length,0),vol=Math.round(dl.reduce((a,l)=>a+Object.values(l.ex||{}).flat().reduce((b,x)=>b+(+x.kg||0)*(+x.reps||0),0),0)),
+     mins=dl.reduce((a,l)=>a+(l.dur?Math.round(l.dur/60):0),0),names=[...new Set(dl.map(l=>progName(l.prog)).concat(ks.filter(q=>isCardio(PROGS[q])&&planItemDone(q)).map(q=>PROGS[q].name)))];let wk=0;try{wk=weekStreak()}catch(e){}
+   if(mc){mc.classList.add("hq-win");mc.innerHTML=`<div class="win-top"><span class="win-badge" aria-hidden="true"><svg viewBox="0 0 48 48" width="34" height="34"><path d="M14 25l7 7 14-15" fill="none" stroke="#0b1220" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+     <span class="win-t"><small>${t("วันนี้ออกกำลังเสร็จแล้ว")}</small><b>${t("เยี่ยมมาก! ครบตามแผน")}</b><em>${names.map(esc).join(" · ")}</em></span></div>
+     <div class="win-stats">${sets?`<span><b>${sets}</b><small>${t("เซ็ต")}</small></span>`:""}${vol?`<span><b>${vol.toLocaleString()}</b><small>kg</small></span>`:""}${mins?`<span><b>${mins}</b><small>${t("นาที")}</small></span>`:""}<span><b>${wk}</b><small>${t("สัปดาห์ติดกัน")}</small></span></div>
+     <div class="win-acts"><button class="btn sm" data-go="gym">${t("ดูบันทึกวันนี้")} ›</button></div>`}}
   box.querySelectorAll("[data-weigh]").forEach(w=>w.addEventListener("click",e=>{e.preventDefault();e.stopPropagation();try{renderBody();openBodyLog&&openBodyLog(DAY,true);window._sheetFrom=e.currentTarget;setTimeout(()=>(document.querySelector("#gen-sheet input:not([type=date])")||document.querySelector("#gen-sheet .bst"))?.focus(),50)}catch(err){console.error(err);toast(t("เปิดไม่สำเร็จ"))}}));
   box.querySelectorAll("[data-start]").forEach(b=>b.addEventListener("click",()=>{location.hash="gym";try{startPlanItem(b.dataset.start,true)}catch(e){console.error(e);toast(t("เปิดโปรแกรมไม่สำเร็จ — เลือกจากแท็บออกกำลัง"))}}));
   box.querySelector("[data-anyway]")?.addEventListener("click",()=>{try{setDayMode("train")}catch(e){}location.hash="gym"});
@@ -194,3 +201,5 @@ function bmiHTML(){const h=+((typeof PROFILE!=="undefined"&&PROFILE&&PROFILE.h)|
     <small class="hq-s bmi-note">${t("เกณฑ์เอเชีย (WHO) · คนกล้ามเยอะ BMI อาจสูงเกินจริง")}</small>`}
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("[data-bmih]")){try{openProfile()}catch(x){}}});
 Object.assign(EN,{"ใน_bmi":"over","ผอม":"Underweight","ปกติ":"Normal","ท้วม":"Overweight","อ้วน":"Obese I","อ้วนมาก":"Obese II","ใส่ส่วนสูงในโปรไฟล์เพื่อคำนวณ BMI":"Add your height in Profile to get BMI","ใส่ส่วนสูง":"Add height","ชั่งน้ำหนักเพื่อคำนวณ BMI":"Log your weight to get BMI","ชั่งอีกครั้งเพื่อดูกราฟ BMI":"Weigh in again to see the BMI chart","น้ำหนักปกติสำหรับส่วนสูง":"Healthy weight for","ครั้ง_bmi":"weigh-ins","ย้อนหลัง":"history","เกณฑ์เอเชีย (WHO) · คนกล้ามเยอะ BMI อาจสูงเกินจริง":"Asian cut-offs (WHO) · muscular people can read high"});
+
+Object.assign(EN,{"วันนี้ออกกำลังเสร็จแล้ว":"Workout complete","เยี่ยมมาก! ครบตามแผน":"Nice work — plan done!"});
