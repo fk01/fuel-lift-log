@@ -1453,3 +1453,4 @@ html{-webkit-text-size-adjust:100%;touch-action:manipulation}
 .bmi-cx{display:flex;justify-content:space-between;color:var(--muted)}
 .bmi-note{opacity:.8}
 .ex.folded .fold-sum{cursor:pointer}.fold-edit{color:var(--cyan)}.ex:not(.folded) .fold-edit{display:none}
+#v-gym .ex.folded [data-alt],#v-gym .ex.folded [data-edit]{display:none!important}
