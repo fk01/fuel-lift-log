@@ -1746,3 +1746,6 @@ body:has(#tx-bar:not([hidden])) :is(#pm-modal .modal-in,#gen-body,#lib-modal .mo
 .pa-add{flex:none;height:40px;padding:0 14px;border-radius:999px;border:1px solid color-mix(in srgb,var(--cyan) 55%,transparent);background:color-mix(in srgb,var(--cyan) 12%,transparent);color:var(--cyan);font:600 14px var(--f-body);cursor:pointer;white-space:nowrap}
 .pa-on{flex:none;color:#4ade80;font:600 13px var(--f-body);padding:0 6px;white-space:nowrap}
 #v-gym .pl-acts [data-pladd]{display:none!important}#v-gym .pl-acts{grid-template-columns:1fr!important}
+.pl-allh .pl-h{display:flex!important;align-items:center;gap:10px;font-size:17px!important}
+.pl-allh .pl-h .pill{margin:0!important;position:static!important;font-size:13px;padding:2px 10px;line-height:1.4}
+.pl-allh{margin:24px 0 10px!important}.pl-allh .hq-l{font-size:15px}
