@@ -77,6 +77,10 @@ function renderFood(){renderFoodHist();
   const sn=logOf(DAY).filter(x=>!meals.some(m=>m.id===x.slot));if(sn.length){const h=document.createElement("div");h.className="label";h.style.margin="6px 0 -6px";h.textContent=t("ของว่าง");box.appendChild(h);box.appendChild(logRows(sn))}
   const xs0=logSum(DAY);let k=xs0.k,p=xs0.p,kt=0;meals.forEach(m=>{kt+=m.k;if(fs().done[m.id]){k+=m.k;p+=m.p}});
   document.getElementById("kcal-t").textContent=`${k} / ${kt}`;drawFoodRing(k,kt,p);
+  {let c=0,f=0,ct=0,ft=0;meals.forEach(m=>{ct+=+m.c||0;ft+=+m.f||0;if(fs().done[m.id]){c+=+m.c||0;f+=+m.f||0}});ct=+(MP&&MP.c)||ct;ft=+(MP&&MP.f)||ft;
+   const fr=document.getElementById("food-ring");let mb=document.getElementById("macro-bars");if(fr&&!mb){mb=document.createElement("div");mb.id="macro-bars";fr.after(mb)}
+   const bar=(l,v,g,col)=>`<div class="mb"><span class="mb-l"><b style="color:${col}">${l}</b><span><b>${v}</b> / ${g||"–"} g</span></span><i><i style="width:${g?Math.min(100,v/g*100):0}%;background:${col}"></i></i></div>`;
+   if(mb)mb.innerHTML=bar(t("โปรตีน"),p,P_TARGET,"#3dff8c")+bar(t("คาร์บ"),c,ct,"#facc15")+bar(t("ไขมัน"),f,ft,"#fb923c")}
   document.getElementById("p-t").textContent=`${p} / ${P_TARGET} g`;
   document.getElementById("kcal-f").style.width=Math.min(100,k/kt*100)+"%";
   document.getElementById("p-f").style.width=Math.min(100,p/P_TARGET*100)+"%";

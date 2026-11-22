@@ -50,3 +50,5 @@ Object.assign(EN,{"ส่งให้ AI วิเคราะห์":"Send to A
 Object.assign(EN,{"วิเคราะห์สถิติ · จัดโปรแกรมท่า · จัดตารางอาหาร":"Analyse stats · build programs · plan meals"});
 
 Object.assign(EN,{"ให้ AI วิเคราะห์ข้อมูล":"Ask AI to analyse my data","คัดลอกสถิติไปวางในแชทบอท":"Copy your stats to paste into a chatbot"});
+/* first load straight into a tab (#food, #gym…): set the tab class too, so the old big title stays hidden */
+window.addEventListener("load",()=>{const v=(typeof curView!=="undefined"&&curView)||location.hash.slice(1)||"home";document.body.classList.toggle("on-home",v==="home");document.body.classList.toggle("on-food",v==="food");document.body.classList.toggle("on-gym",v==="gym");document.body.classList.toggle("on-stats",v==="stats"||v==="body")});
