@@ -25,16 +25,24 @@ function showLogin(){const m=document.getElementById("login");m.hidden=false;acc
       google.accounts.id.initialize({client_id:gid,callback:r=>acctPost("/api/auth/google",{credential:r.credential})});
       google.accounts.id.renderButton(document.getElementById("g-btn"),{theme:"filled_black",size:"large",shape:"pill",width:400,text:"continue_with",locale:lang==="th"?"th":"en"});
       document.getElementById("g-btn").dataset.on=1;document.getElementById("g-wrap").hidden=false}catch(e){}};document.head.appendChild(s)}}
-function acctSetMode(m){acctMode=m;const su=m==="signup";[["acct-name","ชื่อ"],["acct-email","อีเมล"],["acct-pw","รหัสผ่าน"]].forEach(([i,p])=>document.getElementById(i).placeholder=t(p));document.getElementById("acct-name").hidden=!su;
+function acctSetMode(m){acctMode=m;const su=m==="signup";document.getElementById("acct-pw").setAttribute("autocomplete",su?"new-password":"current-password");try{acctClearErr()}catch(e){}[["acct-name","ชื่อ"],["acct-email","อีเมล"],["acct-pw","รหัสผ่าน"]].forEach(([i,p])=>document.getElementById(i).placeholder=t(p));document.getElementById("acct-name").hidden=!su;
   document.getElementById("acct-pw").autocomplete=su?"new-password":"current-password";
   document.getElementById("acct-go").textContent=t(su?"สมัคร":"เข้าสู่ระบบ");document.getElementById("acct-sw-t").textContent=t(su?"มีบัญชีแล้ว?":"ยังไม่มีบัญชี?");
   document.getElementById("acct-sw").textContent=t(su?"เข้าสู่ระบบ":"สมัคร");document.getElementById("login-err").hidden=true}
-async function acctPost(u,b){const e=document.getElementById("login-err");e.hidden=true;
-  const r=await post(u,b);if(r.ok){location.reload();return}
-  const j=await r.json().catch(()=>({}));const map={"email taken":"อีเมลนี้มีบัญชีแล้ว — เข้าสู่ระบบแทน","wrong email or password":"อีเมลหรือรหัสผ่านไม่ถูกต้อง","password too short":"รหัสผ่านอย่างน้อย 8 ตัว","bad email":"อีเมลไม่ถูกต้อง","too many attempts":"ลองบ่อยเกินไป รอสักครู่","google sign-in failed":"เข้าสู่ระบบด้วย Google ไม่สำเร็จ"};
-  e.textContent=t(map[j.error]||"เข้าสู่ระบบไม่สำเร็จ");e.hidden=false}
+async function acctPost(u,b){const e=document.getElementById("login-err"),go=document.getElementById("acct-go");acctClearErr();
+  go.disabled=true;go.classList.add("busy");go.setAttribute("aria-busy","true");
+  let r;try{r=await post(u,b)}catch(x){r={ok:false,json:async()=>({error:"network"})}}
+  if(r.ok){location.reload();return}
+  go.disabled=false;go.classList.remove("busy");go.removeAttribute("aria-busy");
+  const j=await r.json().catch(()=>({}));const map={"email taken":["email","อีเมลนี้มีบัญชีแล้ว — กด เข้าสู่ระบบ แทน"],"wrong email or password":["pw","อีเมลหรือรหัสผ่านไม่ถูก — ลองพิมพ์ใหม่ หรือกดรูปตาเพื่อดูรหัส"],"password too short":["pw","รหัสผ่านต้องมีอย่างน้อย 8 ตัว"],"bad email":["email","รูปแบบอีเมลไม่ถูก เช่น name@gmail.com"],"too many attempts":["","ลองบ่อยเกินไป รอสักครู่แล้วลองใหม่"],"network":["","ต่อเน็ตไม่ได้ — เช็คอินเทอร์เน็ตแล้วลองใหม่"]};
+  const [f,m]=map[j.error]||["","เข้าสู่ระบบไม่สำเร็จ ลองใหม่อีกครั้ง"];if(f)acctErr(f,t(m));else{e.textContent=t(m);e.hidden=false}}
+function acctErr(f,m){const i=document.getElementById(f==="email"?"acct-email":"acct-pw"),p=document.getElementById("err-"+f);i.setAttribute("aria-invalid","true");i.setAttribute("aria-describedby","err-"+f);p.textContent=m;p.hidden=false;i.focus()}
+function acctClearErr(){document.getElementById("login-err").hidden=true;["email","pw"].forEach(f=>{const i=document.getElementById(f==="email"?"acct-email":"acct-pw");i.removeAttribute("aria-invalid");document.getElementById("err-"+f).hidden=true})}
+["acct-email","acct-pw"].forEach(id=>document.getElementById(id).addEventListener("input",acctClearErr));
+document.getElementById("pw-eye").addEventListener("click",ev=>{const i=document.getElementById("acct-pw"),b=ev.currentTarget,on=i.type==="password";i.type=on?"text":"password";b.setAttribute("aria-pressed",on);b.setAttribute("aria-label",t(on?"ซ่อนรหัสผ่าน":"แสดงรหัสผ่าน"));i.focus()});
+Object.assign(EN,{"อีเมลนี้มีบัญชีแล้ว — กด เข้าสู่ระบบ แทน":"This email already has an account — tap Sign in instead","อีเมลหรือรหัสผ่านไม่ถูก — ลองพิมพ์ใหม่ หรือกดรูปตาเพื่อดูรหัส":"Email or password is wrong — retype it, or tap the eye to check","รหัสผ่านต้องมีอย่างน้อย 8 ตัว":"Password needs at least 8 characters","รูปแบบอีเมลไม่ถูก เช่น name@gmail.com":"That email doesn't look right, e.g. name@gmail.com","ลองบ่อยเกินไป รอสักครู่แล้วลองใหม่":"Too many tries — wait a moment and try again","ต่อเน็ตไม่ได้ — เช็คอินเทอร์เน็ตแล้วลองใหม่":"Can't connect — check your internet and try again","เข้าสู่ระบบไม่สำเร็จ ลองใหม่อีกครั้ง":"Couldn't sign in — please try again","แสดงรหัสผ่าน":"Show password","ซ่อนรหัสผ่าน":"Hide password"});
 document.getElementById("acct-sw").addEventListener("click",()=>acctSetMode(acctMode==="login"?"signup":"login"));
-document.getElementById("login-form").addEventListener("submit",ev=>{ev.preventDefault();const em=document.getElementById("acct-email").value.trim(),pw=document.getElementById("acct-pw").value;
+document.getElementById("login-form").addEventListener("submit",ev=>{ev.preventDefault();const em=document.getElementById("acct-email").value.trim(),pw=document.getElementById("acct-pw").value;acctClearErr();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){acctErr("email",t("รูปแบบอีเมลไม่ถูก เช่น name@gmail.com"));return}if(pw.length<8){acctErr("pw",t("รหัสผ่านต้องมีอย่างน้อย 8 ตัว"));return}
   if(acctMode==="signup")acctPost("/api/auth/signup",{email:em,password:pw,name:document.getElementById("acct-name").value.trim()});else acctPost("/api/auth/login",{email:em,password:pw})});
 /* ---- first run: move the old PIN data into this account ---- */
 function showClaim(st){const m=document.getElementById("claim");m.hidden=false;document.getElementById("claim-pin").placeholder=t("PIN เดิม");
