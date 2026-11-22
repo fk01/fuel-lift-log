@@ -29,8 +29,9 @@ function renderEx(){
       ${exHistory(e.id)}`;
     const allOk=()=>rows.length>0&&rows.every(r=>r.ok);
     const foldCard=()=>{const f=foldPref[e.id]??allOk();card.classList.toggle("folded",f);card.querySelector("[data-fold]").setAttribute("aria-expanded",!f);
-      const done=rows.filter(r=>r.ok);card.querySelector(".fold-sum").innerHTML=`<span class="${allOk()?"up":""}">✓ ${done.length}/${rows.length}</span>${done.length?" · "+done.map(r=>`${toDisp(r.kg,u)}×${r.reps}`).join(" · ")+" "+u:""}`};
+      const done=rows.filter(r=>r.ok);card.querySelector(".fold-sum").innerHTML=`<span class="${allOk()?"up":""}">✓ ${done.length}/${rows.length}</span>${done.length?" · "+done.map(r=>`${toDisp(r.kg,u)}×${r.reps}`).join(" · ")+" "+u:""}${allOk()?` <span class="fold-edit">· ✎ ${t("แตะเพื่อแก้")}</span>`:""}`};
     card.querySelector("[data-fold]").addEventListener("click",ev=>{if(ev.target.closest("a"))return;foldPref[e.id]=!card.classList.contains("folded");foldCard()});
+    card.querySelector(".fold-sum").addEventListener("click",()=>{if(!card.classList.contains("folded"))return;foldPref[e.id]=false;foldCard()});
     foldCard();
     rows.forEach((r,i)=>{
       card.querySelector(`#kg-${e.id}-${i}`).addEventListener("input",ev=>{r.kg=fromDisp(ev.target.value,u);save("gymdraft",draft)});
@@ -194,3 +195,5 @@ function cfm(title,sub,ok,danger,no){return new Promise(res=>{let m=document.get
   m.innerHTML=`<div class="sheet-in"><div class="grab" aria-hidden="true"></div><div class="stack" style="gap:12px"><b class="cf-t">${title}</b>${sub?`<small class="note">${sub}</small>`:""}<div class="actions sheet-act"><button class="btn" data-cf="0">${no||t("ยกเลิก_cf").replace(/_cf$/,"")}</button><button class="btn ${danger?"danger":"primary"}" data-cf="1" style="flex:1">${ok}</button></div></div></div>`;
   m.hidden=false;const end=v=>{m.hidden=true;res(v)};m.querySelectorAll("[data-cf]").forEach(b=>b.addEventListener("click",()=>end(b.dataset.cf==="1")));m.addEventListener("click",e=>{if(e.target===m)end(false)},{once:true})})}
 Object.assign(EN,{"ทำไป":"Done","เซ็ตที่ยังไม่ติ๊กจะไม่ถูกบันทึก":"unticked sets won't be saved","ออกโดยไม่บันทึก?":"Quit without saving?","ยังไม่มีเซ็ตที่ติ๊ก":"No sets ticked yet","ยกเลิก_cf":"Cancel","เพิ่มท่านี้?":"Add this exercise?","เพิ่มท่า_cf":"Add exercise","เอาท่านี้ออก?":"Remove this exercise?","เซ็ตที่บันทึกในท่านี้จะหายด้วย":"Sets logged for it will be lost","เอาออก_cf":"Remove","ลบเซ็ตสุดท้าย?":"Remove the last set?","ลบเซ็ต_cf":"Remove set","เลือกท่าที่จะเพิ่ม":"Pick an exercise to add"});
+
+Object.assign(EN,{"แตะเพื่อแก้":"tap to edit"});

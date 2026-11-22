@@ -1452,3 +1452,4 @@ html{-webkit-text-size-adjust:100%;touch-action:manipulation}
 .bmi-c{width:100%;height:auto;display:block;border-radius:10px;background:#141a24}
 .bmi-cx{display:flex;justify-content:space-between;color:var(--muted)}
 .bmi-note{opacity:.8}
+.ex.folded .fold-sum{cursor:pointer}.fold-edit{color:var(--cyan)}.ex:not(.folded) .fold-edit{display:none}
