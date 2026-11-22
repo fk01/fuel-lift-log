@@ -17,7 +17,7 @@ function renderHome(){const box=document.getElementById("v-home");if(!box)return
   const restDay=dayMode()==="rest";
   const uks=ks.slice();   // one row per plan item, same as the Train tab (Push B @Gym and Push B @Condo are two rows)
   // one weights session a day: once any lift is logged, other planned lifts are skipped (a taken swap counts); cardio counts on its own
-  const wDone=ks.some(q=>!isCardio(PROGS[q])&&planItemDone(q)),doneQ=q=>!!planItemDone(q)||(wDone&&!isCardio(PROGS[q]));
+  const wDone=ks.some(q=>!isCardio(PROGS[q])&&planItemDone(q)),doneQ=q=>!!planItemDone(q);   /* each plan item counts on its own, same as Train */
   const udn=uks.filter(q=>doneQ(q)).length,un=uks.length;
   const sib=q=>q&&PROGS[q]?[q]:[],pick=q=>{if(!q||!PROGS[q])return q;const c=sib(q),w=homePick[PROGS[q].name];return c.includes(w)?w:q};   // q may be undefined: empty plan / rest day
   const tiredOf=q=>{try{return [...new Set(PROGS[q].ex.flatMap(e=>musOf(exOf(e.id))[0]))].filter(m=>st(m)===1)}catch(e){return []}};   /* the planned lift with the fewest recovering muscles leads */
@@ -79,7 +79,7 @@ function renderHome(){const box=document.getElementById("v-home");if(!box)return
       <b class="hq-a">${done.length?"✓ "+done.map(esc).join(", "):t("ไม่ได้ออกกำลัง")}</b>${!done.length&&ks.length?`<small class="hq-s">${t("แผนวันนั้น")}: ${uks.map(nm).join(", ")}</small>`:""}`;
     const fq=box.querySelectorAll(".hq-card .hq-q")[1];if(fq)fq.innerHTML=`${licon("bowl")} ${t("วันนั้นกินอะไร")}`}
   /* today's plan all done: a celebratory card instead of a plain line */
-  if(!past&&allDone&&planList().every(q=>planItemDone(q))){const mc=box.querySelector(".hq-main"),dl=logs.filter(l=>l.date===DAY),sets=dl.reduce((a,l)=>a+Object.values(l.ex||{}).flat().filter(x=>x.ok!==false).length,0),vol=Math.round(dl.reduce((a,l)=>a+Object.values(l.ex||{}).flat().reduce((b,x)=>b+(+x.kg||0)*(+x.reps||0),0),0)),
+  if(!past&&allDone){const mc=box.querySelector(".hq-main"),dl=logs.filter(l=>l.date===DAY),sets=dl.reduce((a,l)=>a+Object.values(l.ex||{}).flat().filter(x=>x.ok!==false).length,0),vol=Math.round(dl.reduce((a,l)=>a+Object.values(l.ex||{}).flat().reduce((b,x)=>b+(+x.kg||0)*(+x.reps||0),0),0)),
      mins=dl.reduce((a,l)=>a+(l.dur?Math.round(l.dur/60):0),0),names=[...new Set(dl.map(l=>progName(l.prog)).concat(ks.filter(q=>isCardio(PROGS[q])&&planItemDone(q)).map(q=>PROGS[q].name)))];let wk=0;try{wk=weekStreak()}catch(e){}
    if(mc){mc.classList.add("hq-win");mc.innerHTML=`<div class="win-top"><span class="win-badge" aria-hidden="true"><svg viewBox="0 0 48 48" width="34" height="34"><path d="M14 25l7 7 14-15" fill="none" stroke="#0b1220" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
      <span class="win-t"><small>${t("วันนี้ออกกำลังเสร็จแล้ว")}</small><b>${t("เยี่ยมมาก! ครบตามแผน")}</b><em>${names.map(esc).join(" · ")}</em></span></div>
