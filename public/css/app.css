@@ -1580,3 +1580,5 @@ body:has(#rest:not([hidden])) .tabbar{display:none!important}
 #lib-modal .lib-row{min-width:0;max-width:100%}#lib-modal .lib-row b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#lib-modal .lib-row>span{min-width:0}
 #lib-modal .lib-tools{display:none!important}
 #gen-sheet.over-lib{z-index:50!important}
+#v-gym .pl-row .pl-sub{gap:8px}#v-gym .pl-det{color:var(--cyan);font-size:var(--t-sm,14px);white-space:nowrap}
+#v-gym .pl-row .pl-sub{flex-wrap:wrap;row-gap:2px}#v-gym .pl-det{flex-basis:100%}
