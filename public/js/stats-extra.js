@@ -205,7 +205,22 @@ function openMuscle(m){const lt=lastTrained(),d=lt[m]?Math.round((ds2d(TODAY)-ds
     ${rec.length?`<div class="sec-t" style="font-size:var(--t-md)">${t("ท่าที่เล่นล่าสุด")}</div><div class="sx">${rec.map(o=>{const u=uOf(o.x.id),b=best(o.sets);return row(o.x,`${o.sets.length} × ${toDisp(b.kg,u)} ${u} · ${b.reps} ${t("ครั้ง")}`,thDate(o.l.date,{weekday:"short",day:"numeric",month:"short"}),o.role)}).join("")}</div>`:""}
     <div class="sec-t" style="font-size:var(--t-md)">${t("ท่าที่ช่วยมัดนี้ในโปรแกรม")}</div>
     ${prog.length?`<div class="sx">${prog.map(o=>row(o.e,o.ps.join(", "),"",o.role)).join("")}</div>`:emptyBox("bar","ยังไม่มีท่าในโปรแกรมที่โดนมัดนี้","เพิ่มท่าได้ที่ จัดการโปรแกรม")}
-    <button class="btn" data-gen-close>${t("ปิด")}</button>`)}
+    <div class="sec-t" style="font-size:var(--t-md)">${t("ท่าในคลังที่ใช้กล้ามนี้")}</div><div class="sx msh-lib"><small class="note">${t("กำลังโหลด…")}</small></div>
+    <button class="btn" data-gen-close>${t("ปิด")}</button>`,b=>mshLib(b,m,prog.map(o=>o.e.id)))}
+/* catalog exercises for this muscle: tap ▶ for how-to, + to add to a program */
+function mshLib(b,m,have,all){const box=b.querySelector(".msh-lib");if(!box)return;
+  if(typeof CAT==="undefined"||!CAT){try{loadCat()}catch(e){}setTimeout(()=>{if(document.body.contains(box))mshLib(b,m,have,all)},400);return}
+  const seen=new Set(have),L=EXLIB.concat(CAT).filter(x=>{if(seen.has(x.id))return false;seen.add(x.id);return (musOf(x)[0]||[]).includes(m)}).sort((a,c)=>(gifOf(c)?1:0)-(gifOf(a)?1:0));
+  if(!L.length){box.innerHTML=`<small class="note">${t("ไม่มีท่าในคลังสำหรับกล้ามนี้")}</small>`;return}
+  const show=all?L:L.slice(0,8);
+  box.innerHTML=show.map(x=>`<div class="sx-row"><span class="sx-mini">${bodySVG(...musOf(x),44)}</span><span><b>${esc(x.n)}</b><small>${esc(capW(x.e||""))}</small></span>${howBtn(x)}<button class="btn sm msh-add" data-addp="${esc(x.id)}" aria-label="${t("เพิ่มเข้าโปรแกรม")}">+</button></div>`).join("")+(L.length>show.length?`<button class="btn ghost sm" data-mshall>${t("ดูทั้งหมด")} (${L.length})</button>`:"");
+  box.querySelector("[data-mshall]")?.addEventListener("click",()=>mshLib(b,m,have,true));
+  box.querySelectorAll("[data-addp]").forEach(btn=>btn.addEventListener("click",()=>{const c=L.find(q=>q.id===btn.dataset.addp);if(c)mshAddTo(c,m)}))}
+function mshAddTo(c,m){const ks=weightsHere();
+  openGen(`${t("เพิ่มเข้าโปรแกรม")}`,`<small class="note">${esc(c.n)} · 3 ${t("เซ็ต")} × 8-12</small><div class="pm-menu">${ks.map(k=>`<button class="menu-row" data-pk="${esc(k)}"><span class="mi">${licon("dumbbell")}</span><span class="mt"><b>${esc(PROGS[k].name)}</b><small>${nU(PROGS[k].ex.length,"ท่า")}</small></span><span class="mc">+</span></button>`).join("")}</div><button class="btn" data-gen-close>${t("ยกเลิก_cf").replace(/_cf$/,"")}</button>`,
+    b=>b.querySelectorAll("[data-pk]").forEach(x=>x.addEventListener("click",()=>{const k=x.dataset.pk,y=adoptCat(c);if(!PROGS[k].ex.some(e=>e.id===y.id)){PROGS[k].ex.push({...libPick(y),s:3,r:"8-12"});saveProgs()}
+      toast(`✓ ${c.n} → ${PROGS[k].name}`);openMuscle(m)})))}
+Object.assign(EN,{"ท่าในคลังที่ใช้กล้ามนี้":"From the exercise library","กำลังโหลด…":"Loading…","ไม่มีท่าในคลังสำหรับกล้ามนี้":"No library exercise for this muscle","เพิ่มเข้าโปรแกรม":"Add to a program","ดูทั้งหมด":"Show all"});
 Object.assign(EN,{"แตะกล้ามเพื่อดูบนหุ่น":"Tap a muscle to highlight it · set muscles per exercise in Edit workout (💪)"});
 
 setInterval(()=>{try{if(!document.getElementById("v-stats").hidden)renderRecovery()}catch(e){}},3e5);
