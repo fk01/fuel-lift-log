@@ -1776,3 +1776,4 @@ body:has(#tx-bar:not([hidden])) :is(#pm-modal .modal-in,#gen-body,#lib-modal .mo
 #v-home .hq-plist .hq-pi{min-width:0}
 #v-home .hq-plist .hq-pi .hq-pt{min-width:0}
 #v-home .hq-plist .hq-s{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-gym .hq-ps.ghost-start{background:none!important;border:1.5px solid color-mix(in srgb,var(--cyan) 60%,transparent)!important;color:var(--cyan)!important}
