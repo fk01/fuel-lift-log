@@ -297,7 +297,7 @@ function renderPastDay(box){const ls=logs.filter(l=>l.date===DAY),cx=Object.keys
     ${ls.map(l=>`<div class="pl-row st-done" data-pl="${esc(l.prog)}"><span class="row-ic">${licon("checkc")}</span><span class="row-tx"><span class="pl-st st-done">${t("Done")}</span><b>${esc(progName(l.prog))}</b><small>${esc(planSummary(l.prog,l))}</small></span></div>`).join("")}
     ${cx.map(k=>`<div class="pl-row st-done" data-pl="${esc(k)}"><span class="row-ic g">${licon("checkc")}</span><span class="row-tx"><span class="pl-st st-done">${t("Done")}</span><b>${esc(PROGS[k].name)}</b><small>${esc(cxTxt(k,cxGet(k)))}</small></span></div>`).join("")}
     ${ls.length||cx.length?"":`<small class="note pl-empty">${t("วันนี้ไม่ได้บันทึกอะไรไว้")}</small>`}
-    <div class="pl-acts"><button class="btn primary pl-add-main" data-late>+ ${t("บันทึกย้อนหลัง")}</button><button class="btn pl-rest" data-today>${t("กลับวันนี้")}</button></div>`;
+    <div class="pl-acts"><button class="btn primary pl-add-main" data-late>+ ${t("บันทึกย้อนหลัง")}</button></div>`;
   {const s1=document.getElementById("step1");box.querySelector(".cal-slot").appendChild(s1);s1.hidden=false}
   box.querySelectorAll("[data-pl]").forEach(r=>r.addEventListener("click",()=>openDoneItem(r.dataset.pl)));
   box.querySelector("[data-today]").addEventListener("click",()=>{DAY=TODAY;renderAll()});
