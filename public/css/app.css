@@ -1550,3 +1550,6 @@ body:has(#rest:not([hidden])) .tabbar{display:none!important}
 #rest.photo .rest-dial .rest-time{font-size:54px!important}
 #rest.photo .rest-dial::after{content:"";position:absolute;inset:8px;border-radius:50%;background:rgba(18,24,36,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:-1}
 #rest.photo .actions{margin-top:auto!important}
+/* photo rest: timer in the middle of the picture */
+#rest.photo .rest-in{position:relative}
+#rest.photo .rest-dial{position:fixed!important;left:50%;top:50%;transform:translate(-50%,-50%);margin:0!important;z-index:2}
