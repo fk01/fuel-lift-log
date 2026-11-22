@@ -1582,3 +1582,5 @@ body:has(#rest:not([hidden])) .tabbar{display:none!important}
 #gen-sheet.over-lib{z-index:50!important}
 #v-gym .pl-row .pl-sub{gap:8px}#v-gym .pl-det{color:var(--cyan);font-size:var(--t-sm,14px);white-space:nowrap}
 #v-gym .pl-row .pl-sub{flex-wrap:wrap;row-gap:2px}#v-gym .pl-det{flex-basis:100%}
+#v-home .hq-s:has(.hq-pvt){display:grid;gap:2px}
+#v-home .hq-pvb.pl-det{color:var(--cyan)!important;font-size:var(--t-sm,14px);justify-self:start;padding:0;background:none;border:0}
