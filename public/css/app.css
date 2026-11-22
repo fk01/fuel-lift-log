@@ -1703,3 +1703,15 @@ body.on-stats .wrap>header{display:none}
 .mp-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .mp-li [data-mpuse]{min-width:64px;border-radius:10px!important}
 .mp-acts .mp-copy{grid-column:1/-1;display:grid;gap:2px;justify-items:center}.mp-copy small{color:var(--muted);font-weight:400;font-size:12px}
+/* program editor rows: compact */
+.pm-row{padding:12px 0!important;border-top:1px solid var(--line);display:grid;gap:8px}
+.pm-row .pm-top{display:flex;align-items:flex-start;gap:10px}
+.pm-row .nm{display:grid;gap:2px;min-width:0;flex:1}.pm-row .nm b{font-size:15px;font-weight:700;overflow-wrap:anywhere}
+.pm-row .mg{justify-self:start;background:none;border:0;padding:0;color:var(--muted);font:400 13px var(--f-body);font-style:normal;cursor:pointer}
+.pm-row .pm-ctl{display:flex!important;align-items:center;gap:6px;flex-wrap:nowrap;padding-left:36px}
+.pm-n{display:grid;justify-items:center;gap:0}.pm-n input{width:56px!important;height:40px;text-align:center;font:600 15px var(--f-body)!important;border-radius:10px;background:#0f141d;border:1px solid var(--line);color:var(--text)}
+.pm-n small{font-size:11px;color:var(--muted)}.pm-x{color:var(--muted);align-self:flex-start;margin-top:10px}
+.pm-ic{margin-left:auto;display:flex;gap:4px}
+.pm-ic .ib{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:none;color:var(--text);font-size:15px;cursor:pointer;padding:0}
+.pm-ic .ib:disabled{opacity:.3}.pm-ic .ib.del{color:#ff8a80;border-color:color-mix(in srgb,#ff8a80 40%,transparent)}
+.pm-loc{gap:6px}
