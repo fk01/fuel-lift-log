@@ -355,10 +355,13 @@ function openPlanItem(k){const p=PROGS[k],cx=isCardio(p),L=locById(locOf(p)==="*
       b.querySelector("[data-pis]").addEventListener("click",()=>{closeGen();if(ip){setDayMode("train");renderGym();scrollAppTop();return}startPlanItem(k,true)})})}
 Object.assign(EN,{"ยกเลิกทั้งหมด":"Discard all","เซ็ตที่ทำไว้จะหายทั้งหมด":"All sets you did will be lost","ออกไปก่อนได้ — กลับมาเล่นต่อได้":"Step away anytime — it's saved","ย้อนหลัง":"Past day","วันนี้ไม่ได้บันทึกอะไรไว้":"Nothing logged this day","บันทึกย้อนหลัง":"Log for this day","กลับวันนี้":"Back to today","ให้กล้ามได้ฟื้น — พรุ่งนี้กลับมาใหม่":"Let your muscles recover — back tomorrow","เปลี่ยนใจ — ออกกำลังกาย":"Changed my mind — train","ยังเล่นค้างอยู่":"is still in progress","จะทำยังไงกับ":"What to do with","ก่อนเริ่ม":"before starting","ยังไม่เริ่ม":"Don't start","แล้วเริ่ม":"and start","เก็บเซ็ตที่ทำไว้":"Keeps the sets you did","กด ↺ เลิกทำ ได้":"You can ↺ Undo","เอาออกจากวันนี้":"Remove from today","เล่นต่อ":"Continue"});
 function openDoneItem(k){const p=PROGS[k],cx=isCardio(p),v=planItemDone(k);
-  openGen(esc(p.name),`<small class="note">${esc(planSummary(k,v))}</small><div class="pm-menu">${cx?`<button class="menu-row" data-dm="edit"><span class="mi">✎</span><span class="mt"><b>${t("แก้ไข")}</b></span></button>`:""}
+  const lg=cx?null:logs.find(x=>x.date===DAY&&x.prog===k);
+  const exList=lg?Object.entries(lg.ex||{}).map(([id,ss],i)=>{const u=uOf(id),ok=ss.filter(q=>q.ok!==false);const top=ok.reduce((a,q)=>(+q.kg||0)>(+a.kg||0)?q:a,ok[0]||{});
+    return `<div class="dn-ex"><i class="pi-no">${i+1}</i><span class="dn-t"><b>${esc(exName(id,lg))}</b><small>${ok.map(q=>`${toDisp(q.kg,u)}${u}×${q.reps}`).join(" · ")}</small></span><span class="dn-n">${ok.length} ${t("เซ็ต")}</span></div>`}).join(""):"";
+  openGen(esc(p.name),`<small class="note">${esc(planSummary(k,v))}</small>${exList?`<div class="dn-list">${exList}</div>`:""}${lg?`<button class="btn primary dn-share" data-dmshare>↗ ${t("แชร์รูปผลวันนี้")}</button>`:""}<div class="pm-menu">${cx?`<button class="menu-row" data-dm="edit"><span class="mi">✎</span><span class="mt"><b>${t("แก้ไข")}</b></span></button>`:""}
     <button class="menu-row warn" data-dm="del"><span class="mi">↺</span><span class="mt"><b>${t("ยกเลิกที่บันทึก")}</b><small>${t("กลับเป็นยังไม่ได้ทำ")}</small></span></button></div><button class="btn" data-gen-close>${t("ปิด")}</button>`,
-    b=>b.querySelectorAll("[data-dm]").forEach(x=>x.addEventListener("click",()=>{closeGen();if(x.dataset.dm==="edit"){openCardio(k,true);return}
-      if(cx)cxSet(k,null);else{logs=logs.filter(l=>!(l.date===DAY&&l.prog===k));save("gymlog",logs)}renderAll()})))}
+    b=>{b.querySelector("[data-dmshare]")?.addEventListener("click",()=>{closeGen();try{openShare(lg)}catch(e){console.error(e)}});b.querySelectorAll("[data-dm]").forEach(x=>x.addEventListener("click",()=>{closeGen();if(x.dataset.dm==="edit"){openCardio(k,true);return}
+      if(cx)cxSet(k,null);else{logs=logs.filter(l=>!(l.date===DAY&&l.prog===k));save("gymlog",logs)}renderAll()}))})}
 Object.assign(EN,{"ยกเลิกที่บันทึก":"Undo this entry","กลับเป็นยังไม่ได้ทำ":"Back to not done"});
 function openPlanPlace(k){const p=PROGS[k],cx=isCardio(p);
   const sib=cx?[]:Object.keys(PROGS).filter(q=>q!=="free"&&!isCardio(PROGS[q])&&PROGS[q].name.trim().toLowerCase()===p.name.trim().toLowerCase());
@@ -479,3 +482,5 @@ Object.assign(EN,{"จัดการ":"Manage"});
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-pladd1]");if(!b)return;const k=b.dataset.pladd1;planAdd(k);renderGym();toast("✓ "+t("เพิ่มเข้าวันนี้")+": "+PROGS[k].name)});
 
 Object.assign(EN,{"ลบแล้วกู้คืนไม่ได้":"This can't be undone"});
+
+Object.assign(EN,{"แชร์รูปผลวันนี้":"Share today's result"});

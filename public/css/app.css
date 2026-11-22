@@ -1766,3 +1766,8 @@ body:has(#tx-bar:not([hidden])) :is(#pm-modal .modal-in,#gen-body,#lib-modal .mo
 .win-stats b{font-size:20px;font-variant-numeric:tabular-nums;color:#fff}.win-stats small{font-size:12px;color:var(--muted)}
 .win-acts{display:flex;justify-content:flex-end}
 .win-stats small{text-align:center;line-height:1.2}#v-home .hq-card.hq-win{background:radial-gradient(120% 120% at 0% 0%,rgba(61,255,140,.22),transparent 60%),linear-gradient(135deg,#183a2e,#1c2431 70%)!important}
+.dn-list{display:grid;gap:0;margin:4px 0 8px}
+.dn-ex{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.dn-t{flex:1;min-width:0;display:grid;gap:2px}.dn-t b{font-size:15px}.dn-t small{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.dn-n{flex:none;color:var(--muted);font-size:13px}
+.dn-share{width:100%;margin-bottom:8px}
