@@ -33,7 +33,8 @@ document.getElementById("lang").addEventListener("click",()=>{lang=lang==="th"?"
 let modalY=null;(()=>{const sync=()=>{const on=[...document.querySelectorAll(".modal:not(.pad)")].some(m=>!m.hidden),h=document.documentElement,w=appScroll();
   if(on&&!h.classList.contains("modal-open"))modalY=w?w.scrollTop:0;h.classList.toggle("modal-open",on);
   if(!on&&modalY!=null&&w){const y=modalY;modalY=null;const put=()=>{if(Math.abs(w.scrollTop-y)>2&&!scrollReset)w.scrollTop=y};put();requestAnimationFrame(put);setTimeout(put,80)}};
-  const mo=new MutationObserver(sync);document.querySelectorAll(".modal").forEach(m=>mo.observe(m,{attributes:true,attributeFilter:["hidden"]}));sync()})();
+  window.modalSync=sync;const mo=new MutationObserver(sync);
+document.querySelectorAll(".modal").forEach(m=>mo.observe(m,{attributes:true,attributeFilter:["hidden"]}));sync()})();
 /* ---------- app height: home-screen iOS can report a viewport shorter than the screen, so size the shell from the screen itself ---------- */
 (()=>{const st=navigator.standalone===true||matchMedia("(display-mode: standalone)").matches;document.documentElement.classList.toggle("standalone",st);
   // use the visible height; if iOS already keeps a strip below the web view (home-screen apps), skip our own home-indicator padding
