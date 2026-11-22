@@ -15,7 +15,7 @@ function txSave(){const x=txTop();if(!x)return;
   if(TXS.length>1){const o=TXS[TXS.length-2];x.keys.forEach(k=>o.keys.add(k))}
   else{const v={progs:PROGS,exlib:EXLIB,gymdraft:draft,mealplan:MP};TXS.length=0;x.keys.forEach(k=>save(k,v[k]));TXS.push(x);if(x.keys.size)toast("✓ "+t("บันทึกการแก้ไขแล้ว"))}
   txEnd(x)}
-function txCancel(){const x=txTop();if(!x)return;PROGS=JSON.parse(x.snap[0]);EXLIB=JSON.parse(x.snap[1]);draft=JSON.parse(x.snap[2]);MP=JSON.parse(x.snap[3]);mpApply();txEnd(x)}
+function txCancel(){const x=txTop();if(!x)return;PROGS=JSON.parse(x.snap[0]);EXLIB=JSON.parse(x.snap[1]);{const keep=(draft&&draft.ex)||{};draft=JSON.parse(x.snap[2]);draft.ex={...(draft.ex||{}),...keep};try{localStorage.setItem("gymdraft",JSON.stringify(draft))}catch(e){}}MP=JSON.parse(x.snap[3]);mpApply();txEnd(x)}
 // ask before throwing away unsaved edits; then = what to do after the editor ends
 function txLeave(then){if(!TXS.length){if(then)then();return}
   if(!txDirty()){txCancel();if(then)then();return}
