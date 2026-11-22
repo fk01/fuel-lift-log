@@ -1427,8 +1427,8 @@ body.on-gym.wo-focus .tx-bar{bottom:var(--tabh)!important}
 #v-gym .pl-row .hq-pn{line-height:21px}
 #v-gym .pl-row .pl-sub{display:flex;align-items:center;min-height:44px}
 /* adding an exercise: picking is the main job, create is secondary */
-#lib-modal.adding #lib-new{order:9;background:none!important;border:1px dashed var(--line)!important;color:var(--muted)!important;box-shadow:none!important;font-weight:500}
-#lib-modal.adding .modal-in{display:flex;flex-direction:column}
-#lib-modal.adding #lib-new{margin-top:12px}
+#lib-modal.adding #lib-new{background:none!important;border:1px dashed var(--line)!important;color:var(--muted)!important;box-shadow:none!important;font-weight:500}
 #cf-sheet{z-index:60}.cf-t{font-size:var(--t-lg);line-height:1.35}
 .btn.danger{background:#e5484d!important;color:#fff!important;border:0!important}
+/* library: Close always reachable */
+#lib-modal .modal-in>.row-head:first-child{position:sticky;top:0;z-index:3;background:var(--k100,#000);padding:8px 0!important;margin:0!important;width:auto!important;box-shadow:0 -40px 0 var(--k100,#000)}
