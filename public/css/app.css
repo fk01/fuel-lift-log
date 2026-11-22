@@ -1563,3 +1563,6 @@ body:has(#rest:not([hidden])) .tabbar{display:none!important}
 #rest.photo .rest-dial .rest-time{text-shadow:0 0 12px rgba(0,0,0,.6),0 0 16px rgba(46,230,255,.6)!important}
 #rest.photo .rest-ring circle:first-child{stroke:rgba(255,255,255,.18)}
 #rest .rest-x{display:none!important}
+/* rest gif: iOS ignores blend on filtered images → match the card to the inverted gif (pure black) */
+#rest .rest-gif{background-image:linear-gradient(#000,#000),linear-gradient(135deg,#2ee6ff,#3dff8c)!important}
+#rest .rest-gif img{mix-blend-mode:normal!important;filter:brightness(1.12) contrast(1.15) invert(1) hue-rotate(180deg)!important;background:none!important}
