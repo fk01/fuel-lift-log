@@ -42,7 +42,7 @@ function renderEx(){
     card.querySelector("[data-load]")?.addEventListener("click",()=>{   // copy last session's weights and reps into this session
       last.sets.forEach((q,i)=>{if(!rows[i])rows.push({kg:"",reps:"",ok:false});rows[i].kg=q.kg;rows[i].reps=String(q.reps)});save("gymdraft",draft);renderEx();toast("↺ "+e.n)});
     card.querySelector("[data-memo]").addEventListener("input",ev=>{draft.memo=draft.memo||{};draft.memo[e.id]=ev.target.value;save("gymdraft",draft)});
-    card.querySelector("[data-unextra]")?.addEventListener("click",()=>{draft.extra=draft.extra.filter(x=>x!==e);if(draft.ex)delete draft.ex[e.id];save("gymdraft",draft);renderEx();updWoBar()});
+    card.querySelector("[data-unextra]")?.addEventListener("click",async()=>{if(!await cfm(`${t("เอาท่านี้ออก?")}<br>${esc(e.n)}`,t("เซ็ตที่บันทึกในท่านี้จะหายด้วย"),t("เอาออก_cf").replace(/_cf$/,""),1))return;draft.extra=draft.extra.filter(x=>x!==e);if(draft.ex)delete draft.ex[e.id];save("gymdraft",draft);renderEx();updWoBar()});
     card.querySelector("[data-all]").addEventListener("click",()=>{const fill=rows.filter(r=>!r.ok);if(!fill.length)return;
       fill.forEach(r=>{r.ok=true;if(!r.reps)r.reps=e.r.split("-")[0];if(r.kg===""&&last&&last.sets[0])r.kg=last.sets[0].kg});save("gymdraft",draft);renderEx();updWoBar();try{renderHero()}catch(_){}});
     const setRest=d=>{restCfg[e.id]=Math.max(15,Math.min(600,restFor(e)+d));save("restcfg",restCfg);card.querySelector(".restset b").textContent=fmt(restCfg[e.id])};
@@ -54,7 +54,7 @@ function renderEx(){
     card.querySelector("[data-rm-rest]").addEventListener("click",()=>setRest(-15));
     card.querySelector("[data-add-rest]").addEventListener("click",()=>setRest(15));
     card.querySelector("[data-add]").addEventListener("click",()=>{const l=rows[rows.length-1];rows.push({kg:l?.kg??"",reps:"",ok:false});save("gymdraft",draft);renderEx()});
-    card.querySelector("[data-del]")?.addEventListener("click",()=>{rows.pop();save("gymdraft",draft);renderEx()});
+    card.querySelector("[data-del]")?.addEventListener("click",async()=>{if(!await cfm(`${t("ลบเซ็ตสุดท้าย?")}`,esc(e.n)+" · "+t("เซ็ต")+" "+rows.length,t("ลบเซ็ต_cf").replace(/_cf$/,""),1))return;rows.pop();save("gymdraft",draft);renderEx()});
     box.appendChild(card);
   });
 }
@@ -162,7 +162,8 @@ setInterval(()=>{if(picked)tickClock()},1000);
 document.getElementById("wo-finish").addEventListener("click",finishWorkout);
 
 /* ---------- + add an exercise to the running workout (session only), and the empty "free" workout ---------- */
-document.getElementById("wo-add").addEventListener("click",()=>openLib({skip:new Set(sessEx().map(e=>e.id)),onPick:x=>{
+document.getElementById("wo-add").addEventListener("click",()=>openLib({add:1,skip:new Set(sessEx().map(e=>e.id)),onPick:async x=>{
+  if(!await cfm(`${t("เพิ่มท่านี้?")} <br>${esc(x.n)}`,`3 ${t("เซ็ต")} × 8-12`,`+ ${t("เพิ่มท่า_cf").replace(/_cf$/,"")}`)){document.getElementById("wo-add").click();return}
   draft.extra=draft.extra||[];draft.extra.push({...libPick(x),s:3,r:"8-12"});save("gymdraft",draft);renderEx();updWoBar();
   setTimeout(()=>{const c=[...document.querySelectorAll("#exs .ex")].pop();if(c)c.scrollIntoView({behavior:smoothB(),block:"center"})},60)}}));
 function startEmpty(){PROGS.free={name:t("ออกแบบอิสระ"),sub:"",ex:[]};cur="free";draft={prog:"free",loc:curLoc,ex:{},extra:[],started:1,day:DAY,t0:Date.now()};picked=true;chosen=false;
@@ -187,3 +188,8 @@ Object.assign(EN,{"ใส่น้ำหนักก่อนติ๊ก":"Ente
 
 // renderEx() rebuilds every card; re-apply the pager so the current exercise stays shown (+Set / −Set / Tick all)
 {const _renderEx=renderEx;renderEx=function(){const r=_renderEx.apply(this,arguments);try{applyPager()}catch(e){}return r}}
+/* confirm sheet — always ask before adding/removing during a workout */
+function cfm(title,sub,ok,danger){return new Promise(res=>{let m=document.getElementById("cf-sheet");if(!m){m=document.createElement("div");m.id="cf-sheet";m.className="modal sheet";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");document.body.appendChild(m)}
+  m.innerHTML=`<div class="sheet-in"><div class="grab" aria-hidden="true"></div><div class="stack" style="gap:12px"><b class="cf-t">${title}</b>${sub?`<small class="note">${sub}</small>`:""}<div class="actions sheet-act"><button class="btn" data-cf="0">${t("ยกเลิก_cf").replace(/_cf$/,"")}</button><button class="btn ${danger?"danger":"primary"}" data-cf="1" style="flex:1">${ok}</button></div></div></div>`;
+  m.hidden=false;const end=v=>{m.hidden=true;res(v)};m.querySelectorAll("[data-cf]").forEach(b=>b.addEventListener("click",()=>end(b.dataset.cf==="1")));m.addEventListener("click",e=>{if(e.target===m)end(false)},{once:true})})}
+Object.assign(EN,{"ยกเลิก_cf":"Cancel","เพิ่มท่านี้?":"Add this exercise?","เพิ่มท่า_cf":"Add exercise","เอาท่านี้ออก?":"Remove this exercise?","เซ็ตที่บันทึกในท่านี้จะหายด้วย":"Sets logged for it will be lost","เอาออก_cf":"Remove","ลบเซ็ตสุดท้าย?":"Remove the last set?","ลบเซ็ต_cf":"Remove set","เลือกท่าที่จะเพิ่ม":"Pick an exercise to add"});
