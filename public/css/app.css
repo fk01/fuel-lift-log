@@ -1686,3 +1686,4 @@ body.on-stats .wrap>header{display:none}
 .kc-bar{width:100%;max-width:320px;height:8px;border-radius:4px;background:var(--line);display:block;overflow:hidden}.kc-bar>i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#2ee6ff,#3dff8c)}
 .kc-s{font-size:13px;color:var(--muted)}
 #food-ring{width:auto!important;height:auto!important;max-width:none!important;aspect-ratio:auto!important}
+.wrap,.wrap *{overflow-anchor:none}
