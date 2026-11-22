@@ -85,8 +85,7 @@ function renderPM(){
       <button class="menu-row warn" data-m="del"><span class="mi">🗑</span><span class="mt">${t("ลบโปรแกรม")}</span></button></div><button class="btn" data-gen-close>${t("ปิด")}</button>`,g=>g.querySelectorAll("[data-m]").forEach(b=>b.addEventListener("click",()=>{const m=b.dataset.m;
       if(m==="view"){closeGen();document.getElementById("pm-modal").hidden=true;openPlanItem(k);return}if(m==="edit"){closeGen();pmOnly=k;pmFromList=true;renderPM();return}if(m==="up"||m==="down"){closeGen();move(m==="up"?-1:1);return}if(m==="copy"||m==="move"){openProgMove(k,m);return}if(m==="share"){openShareLink([k],locOf(p));return}if(m==="pub"){publishWorkout([k],locOf(p));return}
       if(p.ex.some(e=>isLocked(k,e))){toast("🔒 "+t("ท่าหลักห้ามลบหรือเปลี่ยน"));return}if(Object.keys(PROGS).filter(q=>q!=="free").length<2){toast(t("ต้องมีอย่างน้อย 1 โปรแกรม"));return}
-      if(!b.dataset.sure){b.dataset.sure=1;b.querySelector(".mt").textContent=t("ลบ")+"?";return}
-      closeGen();const o={...PROGS};delete o[k];pmCommit(o);renderPM();renderGym()}))));
+      cfm(`${t("ลบโปรแกรม")}?<br>${esc(p.name)}`,t("ลบแล้วกู้คืนไม่ได้"),t("ลบโปรแกรม"),1).then(ok=>{if(!ok)return;closeGen();try{planDel(k)}catch(e){}const o={...PROGS};delete o[k];pmCommit(o);renderPM();renderGym()})}))));
     box.appendChild(r)})});
   const a=document.createElement("button");a.className="btn primary";a.textContent="+ "+t("เพิ่มโปรแกรม");
   a.addEventListener("click",openAddProg);

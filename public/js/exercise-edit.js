@@ -8,7 +8,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 function saveProgs(){save("progs",PROGS)}
 function safeUrl(u){if(!u)return "";try{const x=new URL(u.trim());return /^https?:$/.test(x.protocol)?x.href:""}catch(e){return ""}}
 // main lifts of Push/Pull programs are locked: they cannot be swapped, removed or un-marked (sets/reps can still change)
-const isLocked=(k,e)=>!!e.main&&/^(push|pull)/i.test(k)&&!!DEFAULT_PROGS[k]&&DEFAULT_PROGS[k].ex.some(d=>d.id===e.id&&d.main);
+const isLocked=()=>false;   /* main lifts no longer locked (user choice) — delete/swap always ask to confirm */
 function editCard(box,e,i){
   const lock=isLocked(cur,e);gymTx();
   const list=PROGS[cur].ex;{
