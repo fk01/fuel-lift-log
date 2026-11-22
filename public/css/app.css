@@ -1435,3 +1435,6 @@ body.on-gym.wo-focus .tx-bar{bottom:var(--tabh)!important}
 /* iOS zooms into inputs under 16px — keep every field at 16px+ */
 input,select,textarea{font-size:max(16px,1em)!important}
 html{-webkit-text-size-adjust:100%;touch-action:manipulation}
+/* in-progress row: Resume + Discard all */
+.pl-ipa{display:grid;gap:6px;justify-items:center}
+.pl-disc{background:none;border:0;color:var(--muted);font:500 var(--t-label,12px)/1.2 var(--f-body);text-decoration:underline;padding:4px;cursor:pointer}

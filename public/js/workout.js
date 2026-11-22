@@ -133,7 +133,7 @@ document.getElementById("wo-loc").addEventListener("click",()=>{const ls=LOCS.fi
 function cancelProg(){const back=draft.fromHist;if(picked&&!back&&DAY===TODAY)setDayMode(null);picked=false;chosen=false;editing=false;editId=null;draft={prog:cur};save("gymdraft",draft);stopRest&&stopRest();updUnitBtn();if(back){DAY=TODAY;renderAll()}else renderGym()}
 // cancel: ask once (tap again within 3 s) when sets were already logged, so nothing is lost by accident
 // discard: immediate, with Undo (the bar brings the sets back)
-document.getElementById("cancel-w").addEventListener("click",()=>{const any=woProgress().any;cancelProg();if(any)undoLoud(t("ทิ้งแล้ว"));else toast(t("ยกเลิกการออกแล้ว"))});
+document.getElementById("cancel-w").addEventListener("click",async()=>{const any=woProgress().any;if(any&&!await cfm(`${t("ยกเลิกทั้งหมด")}?`,t("เซ็ตที่ทำไว้จะหายทั้งหมด"),t("ยกเลิกทั้งหมด"),1))return;cancelProg();if(any)undoLoud(t("ทิ้งแล้ว"));else toast(t("ยกเลิกการออกแล้ว"))});
 function renderGym(){setTimeout(()=>{try{renderToday()}catch(e){console.error(e)}},0);if(draft.prog==="free"&&!PROGS.free)PROGS.free={name:t("ออกแบบอิสระ"),sub:"",ex:[]};try{renderProgress()}catch(e){}try{renderStatsExtra()}catch(e){}try{renderHero()}catch(e){}
   ["step3","step4"].forEach(id=>document.getElementById(id).hidden=!picked&&!editing);
   document.getElementById("step1").classList.toggle("compact",(picked||editing)&&!document.getElementById("v-gym").hidden);document.getElementById("step2").hidden=picked||editing;
