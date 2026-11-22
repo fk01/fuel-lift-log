@@ -1665,3 +1665,17 @@ body.on-stats .wrap>header{display:none}
 #macro-bars .mb-v b{font-size:22px;font-weight:700;color:var(--text)}#macro-bars .mb-v small{color:var(--muted);font-size:12px}
 #macro-bars .mb>i{width:100%}
 #v-stats #st-head .hq-streak{display:block;text-align:center;margin-top:8px}#st-head{display:flex;flex-direction:column}
+/* ===== one type scale for Today / Eat / Train / Stats (same position = same size) ===== */
+:is(#v-home,#v-food,#v-gym,#v-stats) :is(.hq-num,.fr-big,.fr-mid,.mb-v b,.hq-pc,.time,.macro,.hq-day small,.stat b,.hq-bw b,.hq-st b){font-family:var(--f-body)!important;font-variant-numeric:tabular-nums;letter-spacing:0!important}
+:is(#v-home,#v-food,#v-gym,#v-stats) .hq-streak{font-size:13px!important}
+:is(#v-food,#v-gym,#v-stats) .st-ai{font:600 15px/1.3 var(--f-body)!important}
+:is(#v-food,#v-gym,#v-stats) .st-ai small{font:400 13px/1.3 var(--f-body)!important}
+:is(#v-home,#v-food,#v-gym,#v-stats) :is(.hq-q,.pl-h,.sec-t){font-size:17px!important;font-weight:700!important}
+:is(#v-home,#v-food,#v-gym,#v-stats) :is(.hq-pn,.mn){font-size:15px!important;font-weight:700!important}
+:is(#v-home,#v-food,#v-gym,#v-stats) :is(.pl-sub small,.hq-s,.macro,.pl-det){font-size:14px!important}
+:is(#v-home,#v-food,#v-gym,#v-stats) :is(.hq-chip,.time){font-size:12px!important;font-weight:500!important}
+/* Today food card: four bars, four colours (same as Eat) */
+#v-home .hq-prog .hq-s:nth-child(1) .hq-bar i{background:#2ee6ff!important}
+#v-home .hq-prog .hq-s:nth-child(2) .hq-bar i{background:#3dff8c!important}
+:is(#v-home,#v-food,#v-gym,#v-stats) .hq-num{font-weight:700!important}
+:is(#v-home,#v-food) :is(.hq-mt small,.hq-mc small){font-family:var(--f-body)!important;letter-spacing:0!important}
