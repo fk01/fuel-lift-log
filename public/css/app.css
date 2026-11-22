@@ -1432,3 +1432,6 @@ body.on-gym.wo-focus .tx-bar{bottom:var(--tabh)!important}
 .btn.danger{background:#e5484d!important;color:#fff!important;border:0!important}
 /* library: Close always reachable */
 #lib-modal .modal-in>.row-head:first-child{position:sticky;top:0;z-index:3;background:var(--k100,#000);padding:8px 0!important;margin:0!important;width:auto!important;box-shadow:0 -40px 0 var(--k100,#000)}
+/* iOS zooms into inputs under 16px — keep every field at 16px+ */
+input,select,textarea{font-size:max(16px,1em)!important}
+html{-webkit-text-size-adjust:100%;touch-action:manipulation}
