@@ -16,7 +16,9 @@ function calTag(ds){const tg=(food[ds]||{}).tags||{};
 function renderProgress(){
   const days=workoutDays(),streak=weekStreak(),best=bestStreak();
   const ym=(calM||DAY).slice(0,7);const monthCount=days.filter(d=>d.startsWith(ym)).length;
-  document.getElementById("stats").innerHTML=[[days.length,t("วันที่เล่น")],[streak,t("สัปดาห์ติดกัน")],[monthCount,t("เดือนนี้")]].map(([v,l])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join("");
+  const pm=(()=>{const d=new Date(ym+"-15T12:00:00");d.setMonth(d.getMonth()-1);return dkey(d).slice(0,7)})(),prevCount=days.filter(d=>d.startsWith(pm)).length,df=monthCount-prevCount;
+  const tr=df>0?`<i class="st-up">▲ ${df} ${t("วัน_s").replace(/_s$/,"")} ${t("จากเดือนก่อน")}</i>`:df<0?`<i class="st-dn">▼ ${-df} ${t("วัน_s").replace(/_s$/,"")} ${t("จากเดือนก่อน")}</i>`:`<i>${t("เท่าเดือนก่อน")}</i>`;
+  document.getElementById("stats").innerHTML=[[monthCount,t("เดือนนี้"),tr],[streak,t("สัปดาห์ติดกัน"),streak?`<i>${t("ดีสุด")} ${best}</i>`:`<i>${t("เล่น 1 ครั้งเพื่อเริ่มนับ")}</i>`],[days.length,t("วันที่เล่นทั้งหมด"),""]].map(([v,l,x])=>`<div class="stat"><b>${v}</b><span>${l}</span>${x}</div>`).join("");
   const [Y,M]=ym.split("-").map(Number);const first=new Date(Y,M-1,1);const lead=(first.getDay()+6)%7;const n=new Date(Y,M,0).getDate();
   document.getElementById("cal-title").textContent=first.toLocaleDateString(LOC(),{month:"long",year:"numeric"});
   const set=new Set(days);const dows=lang==="th"?["จ","อ","พ","พฤ","ศ","ส","อา"]:["M","T","W","T","F","S","S"];
@@ -51,3 +53,5 @@ const goDay=v=>{const ds=dayDs;closeDay();weekOpen=false;wkMonth=null;try{render
 document.getElementById("day-sheet").addEventListener("click",ev=>{if(ev.target.id==="day-sheet")closeDay()});
 document.getElementById("day-gym").addEventListener("click",()=>goDay(curView==="food"?"gym":"gym"));
 document.getElementById("day-food").addEventListener("click",()=>goDay("food"));
+
+Object.assign(EN,{"จากเดือนก่อน":"vs last month","เท่าเดือนก่อน":"same as last month","ดีสุด":"best","เล่น 1 ครั้งเพื่อเริ่มนับ":"train once to start","วันที่เล่นทั้งหมด":"days trained total"});

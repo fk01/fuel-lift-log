@@ -62,10 +62,10 @@ function renderHistInto(sec){
   if(histEx!=="all"&&!ids.includes(histEx)){const l=logs[logs.length-1];histEx=Object.keys(l.ex).find(id=>l.ex[id].length)||ids[0]}
   const byG={};ids.forEach(id=>{const x={id,n:exName(id)};(byG[groupOf(x)]=byG[groupOf(x)]||[]).push(x)});
   const chips=(arr,cur,attr)=>arr.map(([v,l])=>`<button class="chip" data-${attr}="${v}" aria-pressed="${cur===v}">${t(l)}</button>`).join("");
-  sec.innerHTML=`<select id="hist-ex" aria-label="${t("เลือกท่า")}" style="background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px;font:inherit;width:100%">
+  sec.innerHTML=`<label class="st-pick"><small>${t("ดูท่า")}</small><select id="hist-ex" aria-label="${t("เลือกท่า")}" style="background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px;font:inherit;width:100%">
       <option value="all" ${histEx==="all"?"selected":""}>${t("รวมทุกท่า")} · ${t("วอลุ่มต่อวัน")}</option>
-      ${GROUPS.filter(([g])=>byG[g]).map(([g,l])=>`<optgroup label="${t(l)}">${byG[g].sort((a,b)=>a.n.localeCompare(b.n)).map(x=>`<option value="${x.id}" ${histEx===x.id?"selected":""}>${esc(x.n)}</option>`).join("")}</optgroup>`).join("")}</select>
-    ${histEx==="all"?"":`<div class="chips">${chips(HIST_METRICS,histMetric,"hm")}</div>`}
+      ${GROUPS.filter(([g])=>byG[g]).map(([g,l])=>`<optgroup label="${t(l)}">${byG[g].sort((a,b)=>a.n.localeCompare(b.n)).map(x=>`<option value="${x.id}" ${histEx===x.id?"selected":""}>${esc(x.n)}</option>`).join("")}</optgroup>`).join("")}</select></label>
+    ${histEx==="all"?`<small class="note st-cap">${t("แต่ละแท่ง = น้ำหนักรวม (kg × ครั้ง) ของวันที่เล่น")}</small>`:`<div class="chips">${chips(HIST_METRICS,histMetric,"hm")}</div><small class="note st-cap">${t(histMetric==="e1rm"?"1RM = น้ำหนักที่น่าจะยกได้ 1 ครั้ง คำนวณจากเซ็ตที่เล่น":histMetric==="vol"?"น้ำหนักรวม (kg × ครั้ง) ของท่านี้ในแต่ละวัน":"แต่ละจุด = น้ำหนักหนักสุดของวันนั้น ไม่ใช่สถิติดีสุด — ขึ้นลงได้ตามวันเบา/หนัก")}</small>`}
     <div class="stats" id="hist-stats"></div>
     <div class="cal"><div id="hist-plot"></div><div class="chips" style="justify-content:flex-end">${chips(HIST_RANGES,histRange,"hr")}</div></div>`;
   sec.querySelector("#hist-ex").addEventListener("change",ev=>{histEx=ev.target.value;renderHistChart()});
@@ -84,3 +84,5 @@ document.getElementById("exs").addEventListener("click",ev=>{const b=ev.target.c
   document.getElementById("chart-modal").hidden=false;renderHistChart()});
 document.getElementById("chart-close").addEventListener("click",()=>{histPop=false;document.getElementById("chart-modal").hidden=true;document.getElementById("chart-body").innerHTML="";renderHistChart()});
 window.addEventListener("resize",()=>{if(histPop||histMode==="chart"&&!document.getElementById("v-stats").hidden)renderHistChart()});
+
+Object.assign(EN,{"แต่ละแท่ง = น้ำหนักรวม (kg × ครั้ง) ของวันที่เล่น":"Each bar = total weight (kg × reps) on a training day","1RM = น้ำหนักที่น่าจะยกได้ 1 ครั้ง คำนวณจากเซ็ตที่เล่น":"1RM = the weight you could likely lift once, estimated from your sets","น้ำหนักรวม (kg × ครั้ง) ของท่านี้ในแต่ละวัน":"Total weight (kg × reps) for this exercise each day","แต่ละจุด = น้ำหนักหนักสุดของวันนั้น ไม่ใช่สถิติดีสุด — ขึ้นลงได้ตามวันเบา/หนัก":"Each dot = heaviest set that day, not your best ever — it moves with light/heavy days","ดูท่า":"Exercise"});
