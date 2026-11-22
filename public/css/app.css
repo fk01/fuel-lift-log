@@ -1422,3 +1422,7 @@ body.on-gym.wo-focus .tx-bar{bottom:var(--tabh)!important}
 #v-food .meal .row-head .macro{font:400 var(--t-sm,14px)/1.4 var(--f-body)!important;color:var(--muted)!important;letter-spacing:0!important;font-variant-numeric:tabular-nums}
 #v-food .meal ul{margin:4px 0 0!important;font-size:var(--t-sm,14px);color:var(--muted)}
 #v-food .meal.lead,#v-food .meal.next{outline:0!important;box-shadow:none!important;border:0!important}#v-food .meal::before{display:none!important}
+/* Train rows: same height as Today (115px) */
+#v-gym .pl-row{padding:12px!important}
+#v-gym .pl-row .hq-pn{line-height:21px}
+#v-gym .pl-row .pl-sub{display:flex;align-items:center;min-height:44px}
