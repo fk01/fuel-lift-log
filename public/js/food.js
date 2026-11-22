@@ -79,8 +79,8 @@ function renderFood(){renderFoodHist();
   document.getElementById("kcal-t").textContent=`${k} / ${kt}`;drawFoodRing(k,kt,p);
   {let c=0,f=0,ct=0,ft=0;meals.forEach(m=>{ct+=+m.c||0;ft+=+m.f||0;if(fs().done[m.id]){c+=+m.c||0;f+=+m.f||0}});ct=+(MP&&MP.c)||ct;ft=+(MP&&MP.f)||ft;
    const fr=document.getElementById("food-ring");let mb=document.getElementById("macro-bars");if(fr&&!mb){mb=document.createElement("div");mb.id="macro-bars";fr.after(mb)}
-   const bar=(l,v,g,col)=>`<div class="mb"><span class="mb-l"><b style="color:${col}">${l}</b><span><b>${v}</b> / ${g||"–"} g</span></span><i><i style="width:${g?Math.min(100,v/g*100):0}%;background:${col}"></i></i></div>`;
-   if(mb)mb.innerHTML=bar(t("โปรตีน"),p,P_TARGET,"#3dff8c")+bar(t("คาร์บ"),c,ct,"#facc15")+bar(t("ไขมัน"),f,ft,"#fb923c")}
+   const bar=(ic,l,v,g,col)=>`<div class="mb"><span class="mb-ic" aria-hidden="true">${ic}</span><small class="mb-n">${l}</small><span class="mb-v"><b>${v}</b><small> / ${g||"–"} g</small></span><i><i style="width:${g?Math.min(100,v/g*100):0}%;background:${col}"></i></i></div>`;
+   if(mb)mb.innerHTML=bar(MAC_IC.p,t("โปรตีน"),p,P_TARGET,"#3dff8c")+bar(MAC_IC.c,t("คาร์บ"),c,ct,"#facc15")+bar(MAC_IC.f,t("ไขมัน"),f,ft,"#fb923c")}
   document.getElementById("p-t").textContent=`${p} / ${P_TARGET} g`;
   document.getElementById("kcal-f").style.width=Math.min(100,k/kt*100)+"%";
   document.getElementById("p-f").style.width=Math.min(100,p/P_TARGET*100)+"%";
@@ -139,3 +139,9 @@ function drawFoodRing(k,kt,p){const el=document.getElementById("food-ring");if(!
 document.getElementById("day-gear")?.addEventListener("click",ev=>{const s=document.getElementById("day-type");s.hidden=!s.hidden;ev.currentTarget.setAttribute("aria-expanded",!s.hidden)});
 
 Object.assign(EN,{"ยังไม่ติ๊ก":"Not ticked yet","วิตามิน_m":"Vitamins","กินไป":"ate","มื้อที่เหลือกินเบาลงได้":"go lighter on the rest","พรุ่งนี้กลับมาตามแผน":"back on plan tomorrow"});
+
+/* macro icons drawn in SVG: steak (protein), rice bowl (carbs), butter (fat) */
+const MAC_IC={
+ p:`<svg viewBox="0 0 48 48" width="36" height="36"><path d="M9 21c0-8 8-13 17-12 9 1 14 7 13 14-1 6-6 9-10 10-3 1-4 4-8 6-5 2-12-1-12-8 0-4 0-6 0-10z" fill="#c0392b"/><path d="M12 22c0-6 6-10 14-9 7 1 10 6 9 11-1 4-5 6-8 7-3 1-4 3-7 4-4 1-8-1-8-6z" fill="#e74c3c"/><path d="M17 20c3-2 8-2 11 0M16 26c4-2 9-1 12 1" stroke="#f5b7b1" stroke-width="1.6" fill="none" stroke-linecap="round"/><ellipse cx="30" cy="22" rx="3.2" ry="2.6" fill="#fdebd0"/></svg>`,
+ c:`<svg viewBox="0 0 48 48" width="36" height="36"><path d="M6 24h36c0 10-8 17-18 17S6 34 6 24z" fill="#5d6d7e"/><path d="M6 24h36c-1 3-3 5-6 6H12c-3-1-5-3-6-6z" fill="#85929e"/><path d="M9 24c0-8 7-13 15-13s15 5 15 13z" fill="#f4f6f7"/><g fill="#d5dbdb"><ellipse cx="17" cy="19" rx="1.6" ry=".9"/><ellipse cx="24" cy="15" rx="1.6" ry=".9"/><ellipse cx="30" cy="19" rx="1.6" ry=".9"/><ellipse cx="21" cy="21" rx="1.6" ry=".9"/><ellipse cx="27" cy="22" rx="1.6" ry=".9"/></g></svg>`,
+ f:`<svg viewBox="0 0 48 48" width="36" height="36"><path d="M6 30l20-10 16 6-20 10z" fill="#d4ac0d"/><path d="M6 30v4l16 6v-4z" fill="#b7950b"/><path d="M22 36v4l20-8v-6z" fill="#9a7d0a"/><path d="M10 26l16-8 12 5-16 8z" fill="#f9e79f"/><path d="M10 26v4l12 5v-4z" fill="#f7dc6f"/><path d="M22 31v4l16-7v-5z" fill="#f4d03f"/></svg>`};

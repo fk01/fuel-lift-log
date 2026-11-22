@@ -1657,3 +1657,10 @@ body.on-stats .wrap>header{display:none}
 #v-gym .pl-acts{grid-template-columns:1fr 1fr!important}#v-gym .pl-acts .pl-rest{grid-column:auto!important;justify-self:stretch!important}#v-gym .pl-ai{margin:4px 0 12px}#v-food .st-ai{margin:0 0 10px}
 .hq-streak+.st-ai{margin:12px 0 4px!important}
 #v-food #eat-cal .st-ai{background:linear-gradient(#1c2431,#1c2431) padding-box,linear-gradient(135deg,#2ee6ff,#3dff8c) border-box!important;border:1.5px solid transparent!important;width:100%}
+/* macro columns like the reference: icon · name · value · bar, centred */
+#macro-bars{background:#1c2431;border:1.5px solid color-mix(in srgb,var(--cyan) 55%,transparent);border-radius:16px;padding:14px 12px;gap:8px!important;box-shadow:0 0 18px rgba(46,230,255,.12)}
+#macro-bars .mb{justify-items:center;text-align:center;gap:4px}
+#macro-bars .mb-ic{height:36px}
+#macro-bars .mb-n{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+#macro-bars .mb-v b{font-size:22px;font-weight:700;color:var(--text)}#macro-bars .mb-v small{color:var(--muted);font-size:12px}
+#macro-bars .mb>i{width:100%}
