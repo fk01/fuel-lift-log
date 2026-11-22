@@ -1588,3 +1588,10 @@ body:has(#rest:not([hidden])) .tabbar{display:none!important}
 /* login footer: one baseline */
 .acct-sw{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;line-height:1.4}
 .acct-sw .linkb{font:inherit!important;line-height:inherit!important;padding:0!important;margin:0!important;min-height:0!important;height:auto!important;vertical-align:baseline;display:inline-flex;align-items:center;gap:4px}
+/* Google sign-in: our own themed face; the real GSI button sits on top, invisible, and takes the tap */
+.g-wrap{position:relative;width:100%;height:52px;border-radius:999px;overflow:hidden}
+.g-wrap[hidden]{display:none!important}
+.g-face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid var(--line);border-radius:999px;background:var(--card,#1c2433);color:var(--text,#e8eef7);font:600 16px/1 var(--f-body);pointer-events:none}
+.g-wrap .g-btn{position:absolute!important;inset:0;opacity:.01;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.g-wrap .g-btn>div,.g-wrap .g-btn iframe{width:100%!important;height:100%!important;transform:scale(1.4)}
+.g-wrap:active .g-face{filter:brightness(1.15)}
