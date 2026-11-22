@@ -40,3 +40,6 @@
 
 ## Cancel / Finish & save sit after "+ Add exercise" (user request)
 - bar is part of the page (static), right under "+ Add exercise", scrolls with the content; room below so it clears the tab bar (measured: add bottom 533 → bar top 565, bar bottom 714 < tab bar 774)
+
+## Program sheet lists every exercise (user request)
+- openPlanItem no longer cuts at 6 ("+1 exercises"); measured 7/7 rows for Pull B
