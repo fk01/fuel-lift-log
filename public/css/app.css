@@ -1480,3 +1480,23 @@ html{-webkit-text-size-adjust:100%;touch-action:manipulation}
 .rest-gif img{width:100%;max-height:34vh;object-fit:contain;border-radius:14px;background:#fff}
 .rest-gif figcaption{color:var(--muted);font-size:var(--t-sm,14px)}
 body:has(#rest:not([hidden])) .tabbar{display:none!important}
+/* rest screen — calm, centered */
+#rest:not([hidden]){background:radial-gradient(120% 70% at 50% 0%,#1b2a3d 0%,#121824 60%)!important}
+#rest .rest-in{gap:20px!important;max-width:400px}
+#rest .rest-top{display:flex!important;flex-direction:column;align-items:center;gap:6px;text-align:center}
+#rest .rest-top .label{display:inline-block;font:600 12px/1 var(--f-body)!important;letter-spacing:.14em!important;text-transform:uppercase;color:var(--cyan)!important;background:color-mix(in srgb,var(--cyan) 12%,transparent);padding:6px 12px;border-radius:999px}
+#rest .rest-next{text-align:center!important;font:400 15px/1.4 var(--f-body)!important;color:var(--muted)!important}
+#rest .rest-next b{color:var(--text,#e8eef7)!important;font-weight:600}
+#rest .rest-dial{order:2;width:236px!important}
+#rest .rest-ring{width:236px!important;height:236px!important;filter:drop-shadow(0 0 18px rgba(46,230,255,.18))!important}
+#rest .rest-ring circle{stroke-width:7}
+#rest .rest-dial .rest-time{font:300 64px/1 var(--f-body)!important;color:#fff!important;text-shadow:none!important;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+#rest .rest-dial .rest-time.done{color:var(--up)!important}
+#rest .rest-gif{order:3;background:#fff;border-radius:20px;padding:10px 10px 8px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+#rest .rest-gif img{max-height:26vh;border-radius:12px;background:#fff}
+#rest .rest-gif figcaption{color:#475569!important;font:500 13px/1.2 var(--f-body)}
+#rest .actions{order:4;grid-template-columns:1fr 1.6fr 1fr!important;gap:12px!important;align-items:center}
+#rest #rest-minus{order:1}#rest #rest-skip{order:2}#rest #rest-plus{order:3}
+#rest #rest-minus,#rest #rest-plus{height:56px;border-radius:999px!important;background:rgba(255,255,255,.06)!important;border:1px solid rgba(255,255,255,.08)!important;color:var(--text,#e8eef7)!important;font:600 16px/1 var(--f-body)!important}
+#rest #rest-skip{height:64px;border-radius:999px!important;font:700 18px/1 var(--f-body)!important;box-shadow:0 8px 24px rgba(61,255,140,.25)!important}
+#rest .rest-gif{box-sizing:border-box;width:100%;padding:10px}#rest .rest-gif figcaption{display:none}
