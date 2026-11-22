@@ -12,6 +12,8 @@ function startRest(e,i,rows){
   else if(ex[k+1]){next=`${t("ท่าถัดไป")} <b>${ex[k+1].n}</b>`;if(typeof goEx==="function"&&woIdx===k)setTimeout(()=>goEx(k+1),400)}
   else next=`<b>${t("ครบทุกท่าแล้ว")}</b>`;
   document.getElementById("rest-next").innerHTML=next;
+  {const up=i+1<rows.length?e:(ex[k+1]||e),g=document.getElementById("rest-gif");let src="";try{src=gifOf(EXLIB.find(q=>q.id===up.id)||up)}catch(_){}
+   if(g){g.hidden=!src;if(src){g.querySelector("img").src=src;g.querySelector("figcaption").textContent=up.n}}}
   rt={end:Date.now()+secs*1000,total:secs,iv:rt.iv,beeped:false};
   document.getElementById("rest").hidden=false;document.querySelector(".wrap").classList.add("has-rest");
   clearInterval(rt.iv);rt.iv=setInterval(tick,250);tick();
