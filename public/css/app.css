@@ -1718,3 +1718,4 @@ body.on-stats .wrap>header{display:none}
 /* editors with the Save/Cancel bar: leave room so the last button (+ Add exercise / + Add meal) is never under it */
 body:has(#tx-bar:not([hidden])) :is(#pm-modal .modal-in,#gen-body,#lib-modal .modal-in){padding-bottom:calc(var(--txh,120px) + env(safe-area-inset-bottom,0px))!important}
 #pm-modal .ex>[data-add]{justify-self:stretch!important;width:100%;height:52px;border-style:dashed!important}
+.lib-ai{margin:10px 0 4px}

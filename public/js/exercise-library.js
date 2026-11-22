@@ -102,7 +102,7 @@ function renderLib(){const G=libView==="grid",FS=G?96:40;document.querySelectorA
   const eq=document.getElementById("lib-eq");if(eq){eq.innerHTML="";[...(hereLoc().eq.length<EQ_ALL.length?[["here",`${hereLoc().icon||"📍"} ${t(hereLoc().name)}`]]:[]),["all","ทุกอุปกรณ์"],["🔩","🔩 "+t("เครื่อง")],["🏋️","🏋️ "+t("ดัมเบล/บาร์")],["🔗","🔗 "+t("เคเบิล")]].forEach(([k,l])=>{const b=document.createElement("button");b.className="chip";b.setAttribute("aria-pressed",libEq===k);b.textContent=t(l);b.addEventListener("click",()=>{libEq=k;renderLib()});eq.appendChild(b)})}
   renderFilt();
   const order=g=>GROUPS.findIndex(q=>q[0]===g);
-  const items=all.filter(x=>x.id===libEdit||libGroup==="all"||groupOf(x)===libGroup).sort((a,b)=>order(groupOf(a))-order(groupOf(b))||(a.n||"").localeCompare(b.n||""));
+  const items=window.__libAll=all.filter(x=>x.id===libEdit||libGroup==="all"||groupOf(x)===libGroup).sort((a,b)=>order(groupOf(a))-order(groupOf(b))||(a.n||"").localeCompare(b.n||""));
   const hint=document.createElement("p");hint.className="note";
   const MAX=80,shown=items.filter(x=>!x.cat).concat(items.filter(x=>x.cat)).slice(0,MAX).sort((a,b)=>order(groupOf(a))-order(groupOf(b))||(a.cat||0)-(b.cat||0)||(a.n||"").localeCompare(b.n||""));
   hint.textContent=t(!all.length?"ไม่มีท่าอื่นให้เลือก สร้างท่าใหม่ได้เลย":!items.length?"ไม่มีท่าในหมวดนี้":libMode?"แตะท่าเพื่อเลือก":"แตะท่าเพื่อแก้ไข")
@@ -144,3 +144,12 @@ function openMusPick(id,name,after){const x=EXLIB.find(q=>q.id===id)||{id,n:name
     b.querySelectorAll("[data-mus]").forEach(c=>c.addEventListener("click",()=>{const [p0,s0]=musOf(x),m=c.dataset.mus;let p=p0.filter(q=>q!==m),s=s0.filter(q=>q!==m);
       if(p0.includes(m))s.push(m);else if(!s0.includes(m))p.push(m);
       if(!EXLIB.some(q=>q.id===id)){EXLIB.push({...x});}libUpdate(id,{mp:p,ms:s});x.mp=p;x.ms=s;draw(b);if(after)after()}))})}
+
+/* "Copy prompt for AI": the exercises in the current filter, grouped by target muscle, + the programs JSON format */
+function libAIPrompt(){const L=(window.__libAll||[]),by={};L.forEach(x=>{const tg=((musOf(x)[0]||[])[0]&&(EN[MUS_NAME[musOf(x)[0][0]]]||MUS_NAME[musOf(x)[0][0]]))||"other";(by[tg]=by[tg]||[]).push(x.n+(x.e?` (${x.e})`:""))});
+  const parts=Object.keys(by).sort().map(k=>`### ${k} (${by[k].length})\n`+by[k].slice(0,40).map(n=>"- "+n).join("\n"));
+  let base="";try{base=aiPrompt("prog").split("## Task")[0]}catch(e){}
+  return [base,"## Exercises I can use (grouped by target muscle)","Pick exercises ONLY from this list and keep the names exactly as written.","",...parts,"","## Task: build my weekly workout programs","Balance the target muscles across the week, respect recovery, and use the places above.","","### Reply format (required)","Explain briefly, then put the plan in ONE ```json code block matching exactly:","```json",AI_PROG_SCHEMA.replace("one of: PLACES","one of my place ids").replace(/\s*\/\/.*$/gm,""),"```"].join("\n")}
+document.addEventListener("click",async e=>{if(!(e.target.closest&&e.target.closest("[data-libai]")))return;const txt=libAIPrompt();let ok=false;try{await navigator.clipboard.writeText(txt);ok=true}catch(_){}
+  if(ok)toast("✓ "+t("คัดลอกแล้ว — วางในแชทบอท แล้วเอาคำตอบไปวางที่ Ask AI ใน Train"));else{const ta=document.createElement("textarea");ta.className="ai-md";ta.value=txt;document.getElementById("lib-filt").after(ta);ta.select()}});
+Object.assign(EN,{"คัดลอก prompt ให้ AI จัดโปรแกรม":"Copy prompt: AI builds programs","จากท่าที่กรองไว้ แยกตามกล้ามเป้าหมาย":"From the filtered exercises, grouped by target muscle","คัดลอกแล้ว — วางในแชทบอท แล้วเอาคำตอบไปวางที่ Ask AI ใน Train":"Copied — paste into a chatbot, then paste its reply into Ask AI on Train"});
