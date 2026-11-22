@@ -1381,3 +1381,7 @@ body.on-gym.wo-focus .tx-bar{bottom:var(--tabh)!important}
 /* Train: one typeface everywhere (no mono mixed in) — numbers keep equal widths */
 #v-gym,#v-gym *:not(svg):not(svg *),#rest,#rest *:not(svg):not(svg *),#pad,#pad *{font-family:var(--f-body)!important;letter-spacing:0!important;text-transform:none!important;font-variant-numeric:tabular-nums}
 #v-gym .wo-top b,#v-gym #wo-clock,#rest b{font-weight:700}
+/* workout: Cancel / Finish & save sit in the page right after "+ Add exercise" (no floating) */
+#v-gym .wo-bar,html.bar-hide #v-gym .wo-bar{position:static!important;left:auto;right:auto;bottom:auto!important;margin:12px 0 0!important;padding:0!important;background:none!important;z-index:auto}
+#v-gym #step3{padding-bottom:0}
+#v-gym #step4{padding-bottom:calc(var(--tabh) + 24px)!important}

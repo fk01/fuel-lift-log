@@ -37,3 +37,6 @@
 
 ## One typeface on Train (user request)
 - #v-gym, rest sheet and number pad use the body font everywhere (no mono mixed in: "5 Set × 5 Reps", "No history", set numbers, clock, pad); tabular numbers keep digits aligned
+
+## Cancel / Finish & save sit after "+ Add exercise" (user request)
+- bar is part of the page (static), right under "+ Add exercise", scrolls with the content; room below so it clears the tab bar (measured: add bottom 533 → bar top 565, bar bottom 714 < tab bar 774)
