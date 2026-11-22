@@ -192,6 +192,12 @@ const steps = [
     if (b.locs.length !== 3 || ws.length !== 8) throw new Error("4 programs × 2 places, got " + ws.length); if (ws.filter(p => p.days.length).length !== 4) throw new Error("only the first place is scheduled");
     if (!Object.values(b.progs).some(p => p.tag === "run")) throw new Error("cardio"); const home = b.locs[1].id; if (ws.filter(p => p.loc === home).some(p => p.ex.some(e => e.z === "🔩"))) throw new Error("no machines at home"); }],
   ["onboarding-ui", () => { openOnboarding(); const m = document.getElementById("onb"); if (m.hidden || !m.querySelector("[data-p='age']")) throw new Error("step 1"); for (let i = 0; i < 3; i++) m.querySelector('[data-onb="next"]').click(); if (!m.querySelector("[data-plan]")) throw new Error("step 4"); m.hidden = true; }],
+  ["meal-plans", () => { openMealPlan(); const b = document.getElementById("gen-body"), nm = b.querySelector("[data-mpname]"); nm.value = "Bulk"; nm.dispatchEvent(new Event("change"));
+    if (MP.saved.map(x => x.name).join() !== "Bulk") throw new Error("rename kept");
+    b.querySelector("[data-mpdup]").click(); const nm2 = document.querySelector("#gen-body [data-mpname]"); nm2.value = "Cut"; nm2.dispatchEvent(new Event("change"));
+    if (MP.saved.map(x => x.name).join() !== "Bulk,Cut" || new Set(MP.saved.map(x => x.id)).size !== 2) throw new Error("duplicate is its own plan: " + MP.saved.map(x => x.name));
+    document.querySelector("#gen-body [data-mpuse]").click(); if (MP.name !== "Bulk") throw new Error("switch");
+    txCancel(); closeGen(); }],
   ["explore-ui", () => { location.hash = "explore"; show("explore"); if (document.querySelectorAll("#v-explore [data-xt]").length !== 6) throw new Error("explore tabs");
     publishMeals(); if (!document.querySelector("#gen-body #pub-t") || document.querySelectorAll("#gen-body [data-tag]").length < 10) throw new Error("share sheet"); closeGen(); location.hash = "gym"; }],
   ["cardio-close-stays", () => { location.hash = "gym"; setDayMode(null); renderGym(); const k = Object.keys(PROGS).find(q => PROGS[q].track === "dist");
