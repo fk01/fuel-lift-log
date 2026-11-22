@@ -24,7 +24,7 @@ function startRest(e,i,rows){
 function tick(){const left=(rt.end-Date.now())/1000;const el=document.getElementById("rest-time");
   el.textContent=left>0?fmt(left):t("ไปต่อ!");el.classList.toggle("done",left<=0);
   const f=Math.max(0,Math.min(1,left/rt.total));document.getElementById("rest-fill").style.width=(1-f)*100+"%";const rg=document.getElementById("rest-ring");if(rg)rg.style.strokeDashoffset=String(565*(1-f));
-  if(left<=0&&!rt.beeped){rt.beeped=true;beep()}
+  if(left<=0&&!rt.beeped){rt.beeped=true;beep();setTimeout(()=>{if(!document.getElementById("rest").hidden){stopRest();readyVideo()}},900)}
   if(left<-20)stopRest()}
 function stopRest(){clearInterval(rt.iv);document.getElementById("rest").hidden=true;document.querySelector(".wrap").classList.remove("has-rest")}
 document.getElementById("rest-minus").addEventListener("click",()=>{rt.end-=15000;rt.total=Math.max(15,rt.total-15);tick()});
