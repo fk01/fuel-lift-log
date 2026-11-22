@@ -1553,3 +1553,12 @@ body:has(#rest:not([hidden])) .tabbar{display:none!important}
 /* photo rest: timer in the middle of the picture */
 #rest.photo .rest-in{position:relative}
 #rest.photo .rest-dial{position:fixed!important;left:50%;top:50%;transform:translate(-50%,-50%);margin:0!important;z-index:2}
+/* Ready clip */
+#ready-vid{position:fixed;inset:0;z-index:300;background:#1f2531;display:none;opacity:0;transition:opacity .25s}
+#ready-vid.on{display:block;opacity:1}
+#ready-vid video{width:100%;height:100%;object-fit:cover;display:block}
+/* photo rest: clear dial, full-bleed picture */
+#rest.photo .rest-dial::after{display:none!important}
+#rest.photo:not([hidden]){background:linear-gradient(180deg,rgba(31,37,49,.6) 0%,rgba(31,37,49,0) 20%,rgba(31,37,49,0) 70%,rgba(31,37,49,.9) 92%),url(/img/rest-bg.jpg) center bottom/cover no-repeat,#1f2531!important}
+#rest.photo .rest-dial .rest-time{text-shadow:0 0 12px rgba(0,0,0,.6),0 0 16px rgba(46,230,255,.6)!important}
+#rest.photo .rest-ring circle:first-child{stroke:rgba(255,255,255,.18)}
