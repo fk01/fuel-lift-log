@@ -46,14 +46,14 @@ addEventListener("hashchange",()=>{if(location.hash==="#stats")renderStatsExtra(
 /* ---------- recovery map: days since each muscle was last trained (primary) ---------- */
 
 Object.assign(EN,{"การฟื้นตัวของกล้ามเนื้อ":"Muscle recovery","พร้อม":"Ready","กำลังฟื้น":"Recovering","เพิ่งเล่น":"Just trained","วันก่อน":"d ago","วันนี้":"today",
-  "หลังล่าง":"Lower back","อก":"Chest","ไหล่หน้า":"Front shoulders","ไหล่หลัง":"Rear shoulders","บ่า":"Upper back","หลัง":"Back","หน้าแขน":"Biceps","หลังแขน":"Triceps","แขนท่อนล่าง":"Forearms","หน้าท้อง":"Abs","ข้างลำตัว":"Side waist","ต้นขาหน้า":"Front thighs","ต้นขาหลัง":"Back thighs","ก้น":"Glutes","น่อง":"Calves","ขานอก":"Outer thighs","ขาใน":"Inner thighs"});
+  "หลังล่าง":"Lower back","ซี่โครงข้าง":"Serratus","คอ":"Neck","อก":"Chest","ไหล่หน้า":"Front shoulders","ไหล่หลัง":"Rear shoulders","บ่า":"Upper back","หลัง":"Back","หน้าแขน":"Biceps","หลังแขน":"Triceps","แขนท่อนล่าง":"Forearms","หน้าท้อง":"Abs","ข้างลำตัว":"Side waist","ต้นขาหน้า":"Front thighs","ต้นขาหลัง":"Back thighs","ก้น":"Glutes","น่อง":"Calves","ขานอก":"Outer thighs","ขาใน":"Inner thighs"});
 // last date each muscle was a primary target, plus which exercises hit it that day (shown on the tiles so the mapping can be checked)
 let recLast={};
 function lastTrained(){const out={},by={};logs.filter(l=>l.date<=TODAY).forEach(l=>Object.keys(l.ex).forEach(id=>{const x=exOf(id,l);musOf(x)[0].forEach(m=>{
     if(!out[m]||out[m]<l.date){out[m]=l.date;by[m]=[]}if(out[m]===l.date&&!by[m].includes(x.n))by[m].push(x.n)})}));recLast=by;return out}
 let recSel=null;
 // all 16 muscles always shown, fixed anatomical order; state: 0 never · 1 just trained (≤1d) · 2 recovering (2d) · 3 ready (3–7d) · 4 neglected (>7d)
-const REC_ORDER=["chest","delt","rear","traps","lats","lowback","bi","tri","fore","abs","obl","glute","quad","ham","add","abd","calf"],NEGLECT=7;
+const REC_ORDER=["chest","serr","delt","rear","neck","traps","lats","lowback","bi","tri","fore","abs","obl","glute","quad","ham","add","abd","calf"],NEGLECT=7;
 // recovery colour sets (never, <40%, recovering, ready, neglected=ready); picked in More › Settings, stored per device
 const REC_PALS={heat:["ความร้อน",["#3a4658","#ff5a4e","#ff9f43","#5ad1ff"]],classic:["ไฟจราจร",["#55606f","#e07a6a","#d9a46c","#7cc47a"]],neon:["นีออน",["#3a4658","#ff4f8b","#ffd23f","#2ee6ff"]],app:["โทนแอป",["#3a4658","#b46bff","#2ee6ff","#3dff8c"]],mono:["ฟ้าไล่ระดับ",["#3a4658","#1e5a8a","#2e9bd6","#7fe3ff"]]};
 let recPal=(()=>{try{return localStorage.getItem("recpal")||"heat"}catch(e){return "heat"}})();if(!REC_PALS[recPal])recPal="heat";
@@ -64,7 +64,7 @@ function openRecPal(){openGen(t("สีการฟื้นตัว"),`<div cl
 function updPalSum(){const e=document.getElementById("pal-sum");if(e)e.textContent=t(REC_PALS[recPal][0])}
 Object.assign(EN,{"แท็บวันนี้":"Today","เพิ่ม · แก้อุปกรณ์ · ลบ":"Add · equipment · delete","คาร์ดิโอทำได้ทุกที่":"Cardio works anywhere","เวท: แต่ละที่มีชุดโปรแกรมของตัวเอง":"Weights: each place has its own copy","กล้ามพร้อมแล้ว":"Muscles ready","ดูแผนที่กล้าม":"Muscle map","เพิ่งเล่น":"just trained","แนะนำวันนี้":"Suggested today","เล่นที่ไหน?":"Where?","ใช้ที่นี่":"Use this place","ก๊อปไปที่…":"Copy to…","จัดการสถานที่":"Manage places","ที่อื่นยังไม่มีโปรแกรมนี้":"Other places don't have this program yet","ที่ใหม่":"New place","ฟื้น":"Recovered","พร้อมเต็มที่":"fully ready","พร้อมแล้ว":"Ready","พรุ่งนี้":"Tomorrow","เล่นล่าสุด":"last trained","ยังไม่ฟื้นเต็ม":"not fully recovered","กำลังฟื้น":"Recovering","พร้อม":"Ready","ยังไม่เคยเล่น":"Never","ยังไม่เคย":"Never","ละเลย":"Neglected","ควรเล่น":"Due","ท่าที่เล่นล่าสุด":"Last exercises"});
 // recovery %: hours since the last session that hit the muscle ÷ full recovery time (by muscle size, scaled by that session's sets)
-const REC_H={chest:72,lats:72,lowback:72,quad:72,ham:72,glute:72,delt:48,rear:48,traps:48,bi:48,tri:48,add:48,abd:48,calf:36,abs:36,obl:36,fore:36};
+const REC_H={chest:72,lats:72,lowback:72,serr:48,neck:48,quad:72,ham:72,glute:72,delt:48,rear:48,traps:48,bi:48,tri:48,add:48,abd:48,calf:36,abs:36,obl:36,fore:36};
 // per-muscle full-recovery hours: user overrides on top of REC_H (people recover at different speeds); synced in settings
 let REC_USER=load("rech",{});const recH=m=>+REC_USER[m]||REC_H[m]||48;
 function openRecCfg(){const d={...REC_USER};const H=m=>+d[m]||REC_H[m]||48;

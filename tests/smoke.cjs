@@ -48,7 +48,7 @@ const steps = [
   ["stats", () => (location.hash = "stats")], ["more", () => (location.hash = "more")],
   ["library", () => openLib()], ["programs", () => { pmOnly = null; renderPM(); document.getElementById("pm-modal").hidden = false; }],
   ["sheet", () => openSheet("push")],
-  ["recovery-17", () => { location.hash = "stats"; if (document.querySelectorAll("#rec-card .rec-grid .rec-t").length !== 17) throw new Error("recovery should list 17 muscles"); }],
+  ["recovery-19", () => { location.hash = "stats"; if (document.querySelectorAll("#rec-card .rec-grid .rec-t").length !== 19) throw new Error("recovery should list 19 muscles"); }],
   ["muscle-sheet", () => { openMuscle("calf"); if (document.getElementById("gen-sheet").hidden || !document.getElementById("gen-body").textContent.includes("program")) throw new Error("muscle sheet"); document.getElementById("gen-sheet").hidden = true; }],
   ["no-inline-gif", () => { openSheet("push"); const n = document.querySelectorAll('#prog-sheet img[src$=".gif"]').length; document.getElementById("prog-sheet").hidden = true; openLib(); const m = document.querySelectorAll('#lib-list img[src$=".gif"]').length; document.getElementById("lib-modal").hidden = true; if (n || m) throw new Error("inline gif found"); }],
   ["howto", () => { openHowTo("chest-press", "Chest Press Machine"); document.getElementById("gen-sheet").hidden = true; }],
