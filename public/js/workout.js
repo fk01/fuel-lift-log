@@ -8,21 +8,21 @@ function renderEx(){
   const box=document.getElementById("exs");box.innerHTML="";
   if(editing){renderEdit(box);return}
   draft.ex=draft.ex||{};
-  if(picked&&!editing){const n=document.createElement("input");n.className="note-in";n.placeholder=t("โน้ตวันนี้…");n.value=draft.note||"";n.addEventListener("input",()=>{draft.note=n.value;save("gymdraft",draft)});box.appendChild(n)}
+  if(picked&&!editing){const n=document.createElement("input");n.className="note-in";n.placeholder="✎ "+t("โน้ตวันนี้…");n.value=draft.note||"";n.addEventListener("input",()=>{draft.note=n.value;save("gymdraft",draft)});box.appendChild(n)}
   (editing?PROGS[cur].ex:sessEx()).forEach((e,ei)=>{if(e.id===editId){editCard(box,e,ei);return}
     const last=lastFor(e.id);const u=e.u||"kg";
     const rows=draft.ex[e.id]||(draft.ex[e.id]=Array.from({length:e.s},(_,i)=>({kg:last?.sets[i]?.kg??"",reps:"",ok:false})));
     const hitAll=last&&last.sets.length>=e.s&&last.sets.every(s=>+s.reps>=+(e.r.split("-")[1]||e.r));
     const card=document.createElement("div");card.className="ex";
-    let lastTxt=last?`${t("ล่าสุด")} ${thDate(last.date,{day:"numeric",month:"short"})}: ${last.sets.map(s=>`${toDisp(s.kg,u)}×${s.reps}`).join(" · ")} ${u}`:t("ยังไม่มีประวัติ");
+    let lastTxt=last?`${t("ล่าสุด")} ${thDate(last.date,{day:"numeric",month:"short"})}: ${last.sets.map(s=>`${toDisp(s.kg,u)}×${s.reps}`).join(" · ")} ${u}`:t("ครั้งแรก — เลือกน้ำหนักที่ยกได้ประมาณ 12 ครั้งสบายๆ");
     if(hitAll)lastTxt+=` <span class="up">↑ ${t("ลอง")} ${u==="kg"?"+2.5 kg":"+5 lb"}</span>`;
     const th=gifOf(e),e1=last?Math.round(Math.max(...last.sets.map(q=>(+q.kg||0)*(1+(+q.reps||0)/30)))*(u==="lb"?LB:1)):0;
     card.innerHTML=`<div class="row-head"><span class="ex-name" data-fold role="button" tabindex="0" aria-label="${t("ย่อ/ขยาย")} ${esc(e.n)}" style="display:flex;gap:8px;align-items:center;cursor:pointer"><span class="fold-i"></span>${howBtn(e)}<span>${e.z} ${e.n}${e.swap?` <i class="swap-tag">${t("แปลงแล้ว")}${e.swapN?" · "+t("แทน")+" "+esc(e.swapN):""}</i>`:""}${safeUrl(e.link)?` <a href="${esc(safeUrl(e.link))}" target="_blank" rel="noopener" style="color:var(--up);font-size:var(--t-meta);white-space:nowrap">▶ ${t("ดูวิธีเล่น")}</a>`:""}</span></span><span style="display:flex;gap:8px;align-items:center"><span class="macro">${e.s} ${t("เซ็ต")} × ${e.r} ${t("ครั้ง")}${HEAVY.includes(e.id)?` · ${t("วอม")}`:""} · <b style="color:var(--fg)">${u}</b></span>${e.alt&&altName(e.alt)?`<button class="btn sm" data-alt>⇄ ${esc(altName(e.alt))}</button>`:""}<button class="btn sm" data-edit aria-label="${t("แก้ไข")} ${esc(e.n)}">✎ ${t("แก้ไข")}</button></span></div>
       <div class="last fold-sum"></div>
       <div class="row-head"><div class="last">${lastTxt}</div><div class="restset">⏱ <button data-rm-rest aria-label="− ${e.n}">−</button><b>${fmt(restFor(e))}</b><button data-add-rest aria-label="+ ${e.n}">+</button></div></div>
-      ${HEAVY.includes(e.id)?`<div class="zone">${t("วอม")}: 50% × 8 · 75% × 3</div>`:""}
+      ${HEAVY.includes(e.id)?(()=>{const w=+(last&&last.sets[0]&&last.sets[0].kg)||0,r=v=>toDisp(Math.max(0,Math.round(v/2.5)*2.5),u);return `<div class="zone">${t("วอร์มก่อน")}: ${w?`${r(w*.5)}${u} × 8 → ${r(w*.75)}${u} × 3`:t("เบาๆ 8 ครั้ง แล้วหนักขึ้น 3 ครั้ง")}</div>`})():""}
       <div class="sets"><span class="h">${t("เซ็ต")}</span><button class="h" data-unit aria-label="${t("หน่วย")} ${e.n}" style="border:1px solid var(--line);background:none;color:var(--fg);border-radius:999px;font-family:var(--f-num);font-size:var(--t-label);cursor:pointer;padding:2px 0">${u} ⇄</button><span class="h">${t("ครั้ง")}</span><span class="h">✓</span>
-      ${rows.map((r,i)=>`<span class="n">${i+1}</span><input type="number" readonly inputmode="none" data-pad="kg" id="kg-${e.id}-${i}" value="${toDisp(r.kg,u)}" placeholder="${u}" aria-label="${e.n} ${i+1} weight"><input type="number" readonly inputmode="none" data-pad="reps" id="rp-${e.id}-${i}" value="${r.reps}" placeholder="${e.r}" aria-label="${e.n} ${i+1} reps"><input type="checkbox" id="ok-${e.id}-${i}" ${r.ok?"checked":""} aria-label="${i+1} done">`).join("")}
+      ${rows.map((r,i)=>`<span class="n">${i+1}</span><input type="number" readonly inputmode="none" data-pad="kg" id="kg-${e.id}-${i}" value="${toDisp(r.kg,u)}" placeholder="${last&&last.sets[i]&&+last.sets[i].kg?toDisp(last.sets[i].kg,u):last&&last.sets[0]&&+last.sets[0].kg?toDisp(last.sets[0].kg,u):u}" aria-label="${e.n} ${i+1} weight"><input type="number" readonly inputmode="none" data-pad="reps" id="rp-${e.id}-${i}" value="${r.reps}" placeholder="${e.r}" aria-label="${e.n} ${i+1} reps"><input type="checkbox" id="ok-${e.id}-${i}" ${r.ok?"checked":""} aria-label="${i+1} done">`).join("")}
       </div>
       <input class="memo" data-memo placeholder="${t("เมโม…")}" value="${esc((draft.memo||{})[e.id]||"")}">
       <div class="actions"><button class="btn sm" data-add>+ ${t("เซ็ต")}</button>${(draft.extra||[]).includes(e)?`<button class="btn sm ghost" data-unextra>✕ ${t("เอาท่าออก")}</button>`:""}${last?`<button class="btn sm" data-load>↺ ${t("ใช้ค่าครั้งก่อน")}</button>`:""}<button class="btn sm" data-all>✓✓ ${t("ติ๊กทั้งหมด")}</button>${e1?`<span class="macro" style="margin-left:auto;align-self:center">e1RM ${e1} ${u}</span>`:""}${rows.length>1?`<button class="btn sm ghost" data-del>− ${t("เซ็ต")}</button>`:""}</div>
@@ -197,3 +197,5 @@ function cfm(title,sub,ok,danger,no){return new Promise(res=>{let m=document.get
 Object.assign(EN,{"ทำไป":"Done","เซ็ตที่ยังไม่ติ๊กจะไม่ถูกบันทึก":"unticked sets won't be saved","ออกโดยไม่บันทึก?":"Quit without saving?","ยังไม่มีเซ็ตที่ติ๊ก":"No sets ticked yet","ยกเลิก_cf":"Cancel","เพิ่มท่านี้?":"Add this exercise?","เพิ่มท่า_cf":"Add exercise","เอาท่านี้ออก?":"Remove this exercise?","เซ็ตที่บันทึกในท่านี้จะหายด้วย":"Sets logged for it will be lost","เอาออก_cf":"Remove","ลบเซ็ตสุดท้าย?":"Remove the last set?","ลบเซ็ต_cf":"Remove set","เลือกท่าที่จะเพิ่ม":"Pick an exercise to add"});
 
 Object.assign(EN,{"แตะเพื่อแก้":"tap to edit"});
+
+Object.assign(EN,{"ครั้งแรก — เลือกน้ำหนักที่ยกได้ประมาณ 12 ครั้งสบายๆ":"First time — pick a weight you can lift about 12 times comfortably","วอร์มก่อน":"Warm up","เบาๆ 8 ครั้ง แล้วหนักขึ้น 3 ครั้ง":"light × 8, then heavier × 3"});

@@ -19,7 +19,7 @@ function padCommit(){if(!pad||!pad.dirty)return;pad.dirty=false;const el=pad.el;
 function padClose(){padCommit();pad=null;document.getElementById("pad").hidden=true}
 function openPad(el){const c=PAD[el.dataset.pad];if(!c)return;el.blur();
   const raw=el.value.trim();let v=raw===""?null:c.text?raw:c.time?parseDur(raw):+raw;if(!c.text&&v!==null&&!isFinite(v))v=null;
-  pad={el,c,v,dirty:false};if(v===null&&c.def!=null){pad.v=c.def;pad.dirty=true}
+  pad={el,c,v,dirty:false};if(v===null&&c.def!=null){pad.v=c.def;pad.dirty=true}if(v===null&&el.dataset.pad==="kg"&&+el.placeholder>0){pad.v=+el.placeholder;pad.dirty=true}
   const lab=el.closest("label");document.getElementById("pad-t").textContent=el.getAttribute("aria-label")||(lab&&lab.querySelector("span")?lab.querySelector("span").textContent:"");
   let chips=(c.chips||[]).slice();
   if(c.sib){const g=el.closest(".sets");if(g)chips=[...new Set([...g.querySelectorAll(`[data-pad="${el.dataset.pad}"]`)].map(x=>x.value).filter(x=>x!==""))].slice(0,8)}

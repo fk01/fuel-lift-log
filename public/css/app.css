@@ -1724,3 +1724,13 @@ body:has(#tx-bar:not([hidden])) :is(#pm-modal .modal-in,#gen-body,#lib-modal .mo
 #v-gym .pl-row .row-tx{grid-template-columns:auto auto 1fr;column-gap:6px;align-items:center}
 #v-gym .pl-row .row-tx>.pl-st,#v-gym .pl-row .row-tx>.pl-sug,#v-gym .pl-row .row-tx>.hq-chip{grid-row:1;justify-self:start;margin:0 0 2px!important}
 #v-gym .pl-row .row-tx>.hq-pn,#v-gym .pl-row .row-tx>.pl-sub{grid-column:1/-1}
+/* workout screen: less above the first set */
+#v-gym #step3>#step4.wo-bar .btn,#v-gym #step3>#wo-add{min-height:44px!important;height:44px;border-radius:12px!important;padding:0 14px!important;font-size:15px!important}
+#v-gym #step3>#wo-add{margin:6px 0 0!important}
+#v-gym #wo-memo,#v-gym .wo-note,#v-gym textarea[placeholder*="note" i],#v-gym input[placeholder*="note" i]{min-height:0!important;padding:6px 0!important;font-size:14px!important}
+#v-gym .ex .restset{transform:scale(.85);transform-origin:right center;gap:2px}
+#v-gym .ex .restset button{width:32px!important;height:32px!important;min-height:0!important}
+#v-gym .ex .zone{font-size:13px;color:var(--muted);margin:2px 0 6px}
+#v-gym .ex .last{font-size:13px}
+#v-gym .note-in{min-height:36px!important;height:36px;padding:4px 0!important;font-size:14px!important;border:0!important;border-bottom:1px dashed var(--line)!important;background:none!important}
+#v-gym #step4 .btn,#v-gym #wo-add,#v-gym #edit-mode{min-height:40px!important;height:40px!important;border-radius:12px!important;padding:0 14px!important;font-size:15px!important}#v-gym #step4{gap:8px!important;margin:0!important}#v-gym #wo-add{margin:8px 0 0!important}#v-gym #step3 .step{margin-bottom:6px!important}
