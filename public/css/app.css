@@ -1415,7 +1415,6 @@ body.on-gym.wo-focus .tx-bar{bottom:var(--tabh)!important}
 /* Eat meal cards = Today plan rows */
 #v-food .meal{border:0!important;border-radius:16px!important;background:#1c2431!important;box-shadow:none!important;padding:16px 12px!important;gap:12px!important;align-items:center!important}
 #v-food .meal.lead{background:#223047!important}
-#v-food .meal[data-flag]::after{display:none!important}
 #v-food .meal .row-ic{width:52px;height:56px;border-radius:12px;background:#141a24!important;border:0!important}
 #v-food .meal .row-head{display:grid!important;gap:2px;justify-items:start}
 #v-food .meal .row-head .time{font:500 var(--t-label)/1.4 var(--f-body)!important;color:var(--cyan)!important;letter-spacing:0!important}
