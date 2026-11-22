@@ -1741,3 +1741,8 @@ body:has(#tx-bar:not([hidden])) :is(#pm-modal .modal-in,#gen-body,#lib-modal .mo
 .pl-ai-row .pa-ic{width:40px;height:40px;border-radius:10px;background:#141a24;display:grid;place-items:center;color:var(--cyan);flex:none}
 .pl-ai-row .pa-t{flex:1;min-width:0;display:grid;gap:2px}.pl-ai-row b{font-size:15px}.pl-ai-row small{color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pl-ai-row .pa-c{color:var(--muted)}
+.pl-ai-wrap{display:flex;align-items:center;gap:8px;background:#1c2431;border-radius:14px;padding-right:10px}
+.pl-ai-wrap .pl-ai-row{background:none;flex:1;min-width:0}
+.pa-add{flex:none;height:40px;padding:0 14px;border-radius:999px;border:1px solid color-mix(in srgb,var(--cyan) 55%,transparent);background:color-mix(in srgb,var(--cyan) 12%,transparent);color:var(--cyan);font:600 14px var(--f-body);cursor:pointer;white-space:nowrap}
+.pa-on{flex:none;color:#4ade80;font:600 13px var(--f-body);padding:0 6px;white-space:nowrap}
+#v-gym .pl-acts [data-pladd]{display:none!important}#v-gym .pl-acts{grid-template-columns:1fr!important}
