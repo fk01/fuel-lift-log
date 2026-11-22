@@ -1227,7 +1227,7 @@ input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
 .hq-other{display:block;margin-top:8px}
 /* ===== Today, calm layout (try-out on Today only): greeting, round week strip, segment, flat cards ===== */
 body.on-home .wrap>header{display:none}
-body.on-home{background-image:none}
+/* grid kept on every tab */
 #v-home .hq-calc{background:none!important;border:0!important;box-shadow:none!important;padding:0}
 .hq-hello{display:flex;align-items:center;gap:12px;padding:4px 2px 14px}
 .hq-av{flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:var(--t-lg);color:var(--on-accent,#06121a);background:var(--grad)}
@@ -1312,7 +1312,7 @@ body.on-home{background-image:none}
 #v-food #food-add::before{font-size:var(--t-lg)}
 #meals{padding-bottom:0}
 /* Eat calendar like Today's strip: no tile borders, round selected day, no grid behind */
-body.on-food{background-image:none}
+
 #v-food #eat-cal .ec-d{border:0!important;background:none!important;box-shadow:none!important;border-radius:999px}
 #v-food #eat-cal .ec-d.on{background:#253245!important;box-shadow:0 0 0 2px var(--cyan) inset!important}
 #v-food #eat-cal .ec-d.ok{background:color-mix(in srgb,var(--green) 12%,transparent)!important}
@@ -1331,7 +1331,7 @@ body.on-food .wrap>header{display:none}
 #v-food #eat-cal .hq-streak{margin-top:8px}
 /* ===== Train in the calm Today style ===== */
 body.on-gym .wrap>header{display:none}
-body.on-gym{background-image:none}
+
 #v-gym #week{display:block!important;background:none!important;border:0!important;padding:0!important;gap:0!important;box-shadow:none!important}
 #v-gym #week .hq-streak{display:block;text-align:center;margin-top:8px}
 #v-gym .pl-row,#v-gym .card,#v-gym .ex,#v-gym .rest-card{background:#1c2431!important;border:0!important;box-shadow:none!important;border-radius:20px}
