@@ -1645,3 +1645,7 @@ body.on-stats .wrap>header{display:none}
 .ai-acts .menu-row .mt{flex:1}.ai-acts .menu-row .mc{margin-left:auto}
 .mp-num{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.mp-num .mp-vit{grid-column:1/-1}
 .mp-top{flex-wrap:wrap}.mp-row[data-kind="meal"] .mp-top [data-f="name"]{order:-1;flex:1 1 100%!important}
+.ai-acts.only-prog [data-aiask]:not([data-aiask="prog"]),.ai-acts.only-meal [data-aiask]:not([data-aiask="meal"]){display:none}
+.ai-btn{border:1.5px solid transparent!important;background:linear-gradient(#1c2431,#1c2431) padding-box,linear-gradient(135deg,#2ee6ff,#3dff8c) border-box!important;color:var(--text)!important;box-shadow:none!important}
+.mp-open-row{display:flex;gap:8px;justify-content:flex-end}
+#v-gym .pl-acts{display:grid!important;grid-template-columns:1fr auto;gap:10px}#v-gym .pl-acts .pl-rest{grid-column:1/-1;justify-self:center}

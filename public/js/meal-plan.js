@@ -45,3 +45,4 @@ Object.assign(EN,{"ถึงเป้า":"Hit goal","ต่อวัน":"per d
 {const rf=renderFood;renderFood=function(){rf.apply(this,arguments);try{renderEatCal()}catch(e){console.error(e)}}}
 
 Object.assign(EN,{"คาร์บ":"Carbs","ไขมัน":"Fat"});
+Object.assign(EN,{"ให้ AI จัด":"Ask AI"});
