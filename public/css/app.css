@@ -1679,3 +1679,10 @@ body.on-stats .wrap>header{display:none}
 #v-home .hq-prog .hq-s:nth-child(2) .hq-bar i{background:#3dff8c!important}
 :is(#v-home,#v-food,#v-gym,#v-stats) .hq-num{font-weight:700!important}
 :is(#v-home,#v-food) :is(.hq-mt small,.hq-mc small){font-family:var(--f-body)!important;letter-spacing:0!important}
+/* kcal block replaces the double ring (protein lives in the macro card) */
+#food-ring .kc{display:grid;justify-items:center;gap:6px;padding:8px 0 4px;text-align:center}
+.kc-l{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kc-v{font:700 40px/1.05 var(--f-body);font-variant-numeric:tabular-nums;color:var(--text)}.kc-v small{font-size:15px;font-weight:400;color:var(--muted)}
+.kc-bar{width:100%;max-width:320px;height:8px;border-radius:4px;background:var(--line);display:block;overflow:hidden}.kc-bar>i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#2ee6ff,#3dff8c)}
+.kc-s{font-size:13px;color:var(--muted)}
+#food-ring{width:auto!important;height:auto!important;max-width:none!important;aspect-ratio:auto!important}

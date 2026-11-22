@@ -131,11 +131,11 @@ function openFoodLog(id){const L=(fs().log=fs().log||[]),cur0=id?L.find(x=>x.id=
 document.getElementById("food-add")?.addEventListener("click",()=>openFoodLog(null));
 
 /* ---------- neon ring: kcal (outer, cyan) + protein (inner, green) ---------- */
-function drawFoodRing(k,kt,p){const el=document.getElementById("food-ring");if(!el)return;
-  const arc=(r,f,c,w)=>{const C=2*Math.PI*r;return `<circle cx="110" cy="110" r="${r}" fill="none" stroke="var(--line)" stroke-width="${w}"/><circle cx="110" cy="110" r="${r}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="${Math.max(.001,Math.min(1,f))*C} ${C}" transform="rotate(-90 110 110)"/>`};
-  el.innerHTML=`<svg viewBox="0 0 220 220" role="img" aria-label="kcal ${k}/${kt}, protein ${p}/${P_TARGET}">${arc(96,k/kt,"var(--cyan,#2ee6ff)",12)}${arc(76,p/P_TARGET,"var(--green,#3dff8c)",10)}
-    <text x="110" y="102" text-anchor="middle" class="fr-big">${k.toLocaleString()}</text><text x="110" y="121" text-anchor="middle" class="fr-sm">/ ${kt.toLocaleString()} kcal</text>
-    <text x="110" y="150" text-anchor="middle" class="fr-mid">${p} g</text><text x="110" y="166" text-anchor="middle" class="fr-sm">${t("โปรตีน")} / ${P_TARGET}</text></svg>`}
+function drawFoodRing(k,kt,p){const el=document.getElementById("food-ring");if(!el)return;const pc=kt?Math.min(100,Math.round(k/kt*100)):0,left=kt-k;
+  el.innerHTML=`<div class="kc"><svg class="kc-ic" viewBox="0 0 48 48" width="34" height="34" aria-hidden="true"><path d="M24 4c2 7 10 11 10 22a10 10 0 0 1-20 0c0-5 3-8 5-11 0 4 2 6 4 6 0-6-2-11 1-17z" fill="#ff7a1a"/><path d="M24 22c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-3-1-6 1-9z" fill="#ffd23f"/></svg>
+    <small class="kc-l">${t("แคลอรี่วันนี้")}</small><b class="kc-v">${k.toLocaleString()}<small> / ${kt.toLocaleString()} kcal</small></b>
+    <i class="kc-bar"><i style="width:${pc}%"></i></i><small class="kc-s">${left>=0?`${left.toLocaleString()} kcal ${t("เหลือ_kc").replace(/_kc$/,"")}`:`${t("เกินเป้า")} ${(-left).toLocaleString()} kcal`}</small></div>`}
+Object.assign(EN,{"แคลอรี่วันนี้":"Calories today"});
 document.getElementById("day-gear")?.addEventListener("click",ev=>{const s=document.getElementById("day-type");s.hidden=!s.hidden;ev.currentTarget.setAttribute("aria-expanded",!s.hidden)});
 
 Object.assign(EN,{"ยังไม่ติ๊ก":"Not ticked yet","วิตามิน_m":"Vitamins","กินไป":"ate","มื้อที่เหลือกินเบาลงได้":"go lighter on the rest","พรุ่งนี้กลับมาตามแผน":"back on plan tomorrow"});
@@ -145,3 +145,4 @@ const MAC_IC={
  p:`<svg viewBox="0 0 48 48" width="36" height="36"><path d="M9 21c0-8 8-13 17-12 9 1 14 7 13 14-1 6-6 9-10 10-3 1-4 4-8 6-5 2-12-1-12-8 0-4 0-6 0-10z" fill="#c0392b"/><path d="M12 22c0-6 6-10 14-9 7 1 10 6 9 11-1 4-5 6-8 7-3 1-4 3-7 4-4 1-8-1-8-6z" fill="#e74c3c"/><path d="M17 20c3-2 8-2 11 0M16 26c4-2 9-1 12 1" stroke="#f5b7b1" stroke-width="1.6" fill="none" stroke-linecap="round"/><ellipse cx="30" cy="22" rx="3.2" ry="2.6" fill="#fdebd0"/></svg>`,
  c:`<svg viewBox="0 0 48 48" width="36" height="36"><path d="M6 24h36c0 10-8 17-18 17S6 34 6 24z" fill="#5d6d7e"/><path d="M6 24h36c-1 3-3 5-6 6H12c-3-1-5-3-6-6z" fill="#85929e"/><path d="M9 24c0-8 7-13 15-13s15 5 15 13z" fill="#f4f6f7"/><g fill="#d5dbdb"><ellipse cx="17" cy="19" rx="1.6" ry=".9"/><ellipse cx="24" cy="15" rx="1.6" ry=".9"/><ellipse cx="30" cy="19" rx="1.6" ry=".9"/><ellipse cx="21" cy="21" rx="1.6" ry=".9"/><ellipse cx="27" cy="22" rx="1.6" ry=".9"/></g></svg>`,
  f:`<svg viewBox="0 0 48 48" width="36" height="36"><path d="M6 30l20-10 16 6-20 10z" fill="#d4ac0d"/><path d="M6 30v4l16 6v-4z" fill="#b7950b"/><path d="M22 36v4l20-8v-6z" fill="#9a7d0a"/><path d="M10 26l16-8 12 5-16 8z" fill="#f9e79f"/><path d="M10 26v4l12 5v-4z" fill="#f7dc6f"/><path d="M22 31v4l16-7v-5z" fill="#f4d03f"/></svg>`};
+Object.assign(EN,{"เหลือ_kc":"to go"});
