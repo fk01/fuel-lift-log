@@ -52,3 +52,8 @@ Object.assign(EN,{"วิเคราะห์สถิติ · จัดโป
 Object.assign(EN,{"ให้ AI วิเคราะห์ข้อมูล":"Ask AI to analyse my data","คัดลอกสถิติไปวางในแชทบอท":"Copy your stats to paste into a chatbot"});
 /* first load straight into a tab (#food, #gym…): set the tab class too, so the old big title stays hidden */
 window.addEventListener("load",()=>{const v=(typeof curView!=="undefined"&&curView)||location.hash.slice(1)||"home";document.body.classList.toggle("on-home",v==="home");document.body.classList.toggle("on-food",v==="food");document.body.classList.toggle("on-gym",v==="gym");document.body.classList.toggle("on-stats",v==="stats"||v==="body")});
+/* Ask AI card sits right under the week strip on Eat and Train too (same spot as Stats) */
+function placeAICards(){[["#v-food","[data-aikind=meal]"]].forEach(([v,sel])=>{const box=document.querySelector(v),c=box&&box.querySelector(sel),s=box&&[...box.querySelectorAll(".hq-streak")].find(x=>x.offsetParent);if(c&&s&&s.nextElementSibling!==c)s.after(c)})}
+{const _d=decorateStats;decorateStats=function(){_d();try{placeAICards()}catch(e){}}}
+
+window.addEventListener("DOMContentLoaded",()=>{["renderFood","renderEatCal"].forEach(n=>{if(typeof window[n]!=="function")return;const o=window[n];window[n]=function(){const r=o.apply(this,arguments);try{placeAICards()}catch(e){}return r}})});

@@ -1655,3 +1655,5 @@ body.on-stats .wrap>header{display:none}
 #macro-bars .mb>i{height:6px;border-radius:3px;background:var(--line);overflow:hidden;display:block}#macro-bars .mb>i>i{display:block;height:100%;border-radius:3px}
 .hq-prog{row-gap:10px}.hq-prog .hq-s:nth-child(3) .hq-bar i{background:#facc15!important}.hq-prog .hq-s:nth-child(4) .hq-bar i{background:#fb923c!important}
 #v-gym .pl-acts{grid-template-columns:1fr 1fr!important}#v-gym .pl-acts .pl-rest{grid-column:auto!important;justify-self:stretch!important}#v-gym .pl-ai{margin:4px 0 12px}#v-food .st-ai{margin:0 0 10px}
+.hq-streak+.st-ai{margin:12px 0 4px!important}
+#v-food #eat-cal .st-ai{background:linear-gradient(#1c2431,#1c2431) padding-box,linear-gradient(135deg,#2ee6ff,#3dff8c) border-box!important;border:1.5px solid transparent!important;width:100%}
