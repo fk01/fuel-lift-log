@@ -46,3 +46,4 @@ Object.assign(EN,{"ถึงเป้า":"Hit goal","ต่อวัน":"per d
 
 Object.assign(EN,{"คาร์บ":"Carbs","ไขมัน":"Fat"});
 Object.assign(EN,{"ให้ AI จัด":"Ask AI"});
+Object.assign(EN,{"ให้ AI จัดตารางอาหาร":"Ask AI for a meal plan","ตามเป้า kcal · P · C · F ของคุณ":"Built around your kcal · P · C · F targets","ให้ AI จัดโปรแกรมท่า":"Ask AI for workout programs","ตามเป้าหมาย การฟื้นตัว และอุปกรณ์ที่มี":"Built around your goal, recovery and equipment"});
