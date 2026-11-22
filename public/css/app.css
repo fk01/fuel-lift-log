@@ -1653,3 +1653,4 @@ body.on-stats .wrap>header{display:none}
 #macro-bars{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:4px 0 10px}
 #macro-bars .mb{display:grid;gap:6px}#macro-bars .mb-l{display:grid;gap:2px;font-size:13px;color:var(--muted)}#macro-bars .mb-l b{font-weight:600}#macro-bars .mb-l span b{color:var(--text);font-size:15px}
 #macro-bars .mb>i{height:6px;border-radius:3px;background:var(--line);overflow:hidden;display:block}#macro-bars .mb>i>i{display:block;height:100%;border-radius:3px}
+.hq-prog{row-gap:10px}.hq-prog .hq-s:nth-child(3) .hq-bar i{background:#facc15!important}.hq-prog .hq-s:nth-child(4) .hq-bar i{background:#fb923c!important}
