@@ -76,6 +76,7 @@ function renderFood(){renderFoodHist();
   });
   const sn=logOf(DAY).filter(x=>!meals.some(m=>m.id===x.slot));if(sn.length){const h=document.createElement("div");h.className="label";h.style.margin="6px 0 -6px";h.textContent=t("ของว่าง");box.appendChild(h);box.appendChild(logRows(sn))}
   const xs0=logSum(DAY);let k=xs0.k,p=xs0.p,kt=0;meals.forEach(m=>{kt+=m.k;if(fs().done[m.id]){k+=m.k;p+=m.p}});
+  {const c=document.getElementById("mp-cur");if(c){const n=(MP&&MP.name)||t("แผนหลัก"),many=MP&&MP.saved&&MP.saved.length>1;c.innerHTML=`<small>${t("แผนที่ใช้")}</small><b>${esc(n)}</b>${many?`<small>${MP.saved.length} ${t("แผน_n").replace(/_n$/,"")}</small>`:""}`}}
   document.getElementById("kcal-t").textContent=`${k} / ${kt}`;drawFoodRing(k,kt,p);
   {let c=0,f=0,ct=0,ft=0;meals.forEach(m=>{ct+=+m.c||0;ft+=+m.f||0;if(fs().done[m.id]){c+=+m.c||0;f+=+m.f||0}});ct=+(MP&&MP.c)||ct;ft=+(MP&&MP.f)||ft;
    const fr=document.getElementById("food-ring");let mb=document.getElementById("macro-bars");if(fr&&!mb){mb=document.createElement("div");mb.id="macro-bars";fr.after(mb)}
@@ -146,3 +147,4 @@ const MAC_IC={
  c:`<svg viewBox="0 0 48 48" width="36" height="36"><path d="M6 24h36c0 10-8 17-18 17S6 34 6 24z" fill="#5d6d7e"/><path d="M6 24h36c-1 3-3 5-6 6H12c-3-1-5-3-6-6z" fill="#85929e"/><path d="M9 24c0-8 7-13 15-13s15 5 15 13z" fill="#f4f6f7"/><g fill="#d5dbdb"><ellipse cx="17" cy="19" rx="1.6" ry=".9"/><ellipse cx="24" cy="15" rx="1.6" ry=".9"/><ellipse cx="30" cy="19" rx="1.6" ry=".9"/><ellipse cx="21" cy="21" rx="1.6" ry=".9"/><ellipse cx="27" cy="22" rx="1.6" ry=".9"/></g></svg>`,
  f:`<svg viewBox="0 0 48 48" width="36" height="36"><path d="M6 30l20-10 16 6-20 10z" fill="#d4ac0d"/><path d="M6 30v4l16 6v-4z" fill="#b7950b"/><path d="M22 36v4l20-8v-6z" fill="#9a7d0a"/><path d="M10 26l16-8 12 5-16 8z" fill="#f9e79f"/><path d="M10 26v4l12 5v-4z" fill="#f7dc6f"/><path d="M22 31v4l16-7v-5z" fill="#f4d03f"/></svg>`};
 Object.assign(EN,{"เหลือ_kc":"to go"});
+Object.assign(EN,{"แผนที่ใช้":"Using","แผน_n":"plans"});
