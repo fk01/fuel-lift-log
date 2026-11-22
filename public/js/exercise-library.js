@@ -94,7 +94,7 @@ function renderLib(){const G=libView==="grid",FS=G?96:40;document.querySelectorA
   const haveId=new Set(EXLIB.map(x=>x.id)),haveN=new Set(EXLIB.map(x=>(x.n||"").trim().toLowerCase()));
   const extra=(CAT||[]).filter(c=>!c.as&&!haveId.has(c.id)&&!haveN.has(c.n.toLowerCase())).map(c=>Object.assign({cat:1},c));
   const q=libQ.trim().toLowerCase(),hit=x=>!q||x.id===libEdit||[x.n,x.t,x.e].some(s=>s&&s.toLowerCase().includes(q));
-  const all=mine.concat(extra).filter(hit).filter(x=>Object.keys(libF).every(k=>!libF[k]||(k==="t"?(musOf(x)[0]||[]).includes(libF.t):fval(x,k)===libF[k]))).filter(x=>libEq==="all"||(libEq==="here"?canDo(x):(x.z||"🔩")===libEq));
+  const all=mine.concat(extra).filter(hit).filter(x=>Object.keys(libF).every(k=>!libF[k]||fval(x,k)===libF[k])).filter(x=>libEq==="all"||(libEq==="here"?canDo(x):(x.z||"🔩")===libEq));
   const count={};all.forEach(x=>{const g=groupOf(x);count[g]=(count[g]||0)+1});
   const chips=document.getElementById("lib-groups");chips.innerHTML="";
   [["all","ทั้งหมด"],...GROUPS].forEach(([g,l])=>{if(g!=="all"&&!count[g])return;const b=document.createElement("button");b.className="chip";b.setAttribute("aria-pressed",libGroup===g);
@@ -125,9 +125,9 @@ document.getElementById("lib-close").addEventListener("click",()=>txLeave(closeL
 function renderFilt(){const tog=document.getElementById("lib-ftog"),box=document.getElementById("lib-filt");if(!tog)return;
   const n=Object.values(libF).filter(Boolean).length;tog.textContent=`⚙ ${t("ตัวกรอง")}${n?` (${n})`:""} ${libFOpen?"▴":"▾"}`;tog.setAttribute("aria-expanded",libFOpen);tog.setAttribute("aria-pressed",!!n);
   box.hidden=!libFOpen;if(!libFOpen)return;box.innerHTML="";
-  [["b","หมวด"],["e","อุปกรณ์"],["t","กล้ามเป้าหมาย"]].forEach(([k,l])=>{const vals=k==="t"?MUS_KEYS.slice():[...new Set((CAT||[]).map(c=>c[k]).filter(Boolean))].sort();if(!vals.length)return;
+  [["b","หมวด"],["e","อุปกรณ์"],["t","กล้ามเป้าหมาย"]].forEach(([k,l])=>{const vals=[...new Set((CAT||[]).map(c=>c[k]).filter(Boolean))].sort();if(!vals.length)return;
     const sec=document.createElement("div");sec.innerHTML=`<h4>${t(l)}</h4><div class="chips"></div>`;const row=sec.lastChild;
-    vals.forEach(v=>{const b=document.createElement("button");b.className="chip";b.setAttribute("aria-pressed",libF[k]===v);b.textContent=k==="t"?t(MUS_NAME[v]):capW(v);
+    vals.forEach(v=>{const b=document.createElement("button");b.className="chip";b.setAttribute("aria-pressed",libF[k]===v);b.textContent=capW(v);
       b.addEventListener("click",()=>{libF[k]=libF[k]===v?"":v;renderLib()});row.appendChild(b)});box.appendChild(sec)});
   if(n){const c=document.createElement("button");c.className="btn sm ghost";c.textContent=t("ล้างตัวกรอง");c.addEventListener("click",()=>{libF={b:"",e:"",t:""};renderLib()});box.appendChild(c)}}
 document.getElementById("lib-ftog").addEventListener("click",()=>{libFOpen=!libFOpen;renderLib()});
