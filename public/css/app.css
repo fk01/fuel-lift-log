@@ -1528,3 +1528,14 @@ body:has(#rest:not([hidden])) .tabbar{display:none!important}
   clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0 calc(100% - 10px),0 10px)}
 #rest #rest-skip{height:58px;background:linear-gradient(90deg,#3dff8c,#2ee6ff)!important;color:#0b1220!important;box-shadow:0 0 22px rgba(61,255,140,.45)!important}
 #rest .rest-gif img{mix-blend-mode:screen}#rest .rest-dial .rest-time{font-weight:500!important}#rest .rest-dial::before{inset:-12px}
+/* rest fallback animation */
+#rest .rest-anim{width:100%;max-height:30vh;display:block}
+.rest-anim .ra-body,.rest-anim .ra-head,.rest-anim .ra-towel{transform-origin:118px 124px;animation:ra-breathe 4s ease-in-out infinite}
+.rest-anim .ra-arm{transform-origin:113px 92px;animation:ra-sip 8s ease-in-out infinite}
+.rest-anim .ra-breath{opacity:0;animation:ra-air 4s ease-in-out infinite}
+.rest-anim .ra-drop{animation:ra-drop 3s ease-in infinite}
+@keyframes ra-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035) translateY(-2px)}}
+@keyframes ra-sip{0%,55%,100%{transform:rotate(0)}65%,85%{transform:rotate(-38deg)}}
+@keyframes ra-air{0%,40%{opacity:0;transform:translateX(0)}60%{opacity:.9}100%{opacity:0;transform:translateX(-10px)}}
+@keyframes ra-drop{0%{opacity:0;transform:translateY(0)}20%{opacity:1}100%{opacity:0;transform:translateY(26px)}}
+@media (prefers-reduced-motion:reduce){.rest-anim *{animation:none!important}}
