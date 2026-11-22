@@ -30,7 +30,7 @@ function editCard(box,e,i){
     on("[data-done]","click",()=>{if(editing){editId=null;renderGym()}else txSave()});
     c.querySelector("[data-up]")?.addEventListener("click",()=>{list.splice(i-1,0,list.splice(i,1)[0]);saveProgs();renderEx()});
     c.querySelector("[data-down]")?.addEventListener("click",()=>{list.splice(i+1,0,list.splice(i,1)[0]);saveProgs();renderEx()});
-    on("[data-del]","click",ev=>{if(lock)return;const b=ev.target;if(!b.dataset.sure){b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน");return}
+    on("[data-del]","click",async ev=>{if(lock)return;if(!await cfm(`${t("เอาท่านี้ออก?")}<br>${esc(e.n)}`,t("เซ็ตที่บันทึกในท่านี้จะหายด้วย"),t("เอาออก_cf").replace(/_cf$/,""),1))return;
       list.splice(i,1);if(draft.ex)delete draft.ex[e.id];saveProgs();save("gymdraft",draft);renderEx();toast(t("ลบท่าแล้ว"))});
     box.appendChild(c);
   }
@@ -39,7 +39,7 @@ function renderEdit(box){
   const list=PROGS[cur].ex;list.forEach((e,i)=>editCard(box,e,i));
   const a=document.createElement("div");a.className="actions";
   a.innerHTML=`<button class="btn primary" id="add-ex">+ ${t("เพิ่มท่า")}</button><button class="btn ghost" id="reset-ex">${t("คืนค่าเริ่มต้น")}</button>`;
-  a.querySelector("#add-ex").addEventListener("click",()=>openLib({skip:new Set(list.map(q=>q.id)),onPick:x=>{list.push({...libPick(x),s:5,r:"5"});saveProgs();renderEx()}}));
+  a.querySelector("#add-ex").addEventListener("click",()=>openLib({skip:new Set(list.map(q=>q.id)),onPick:async x=>{if(!await cfm(`${t("เพิ่มท่านี้?")}<br>${esc(x.n)}`,"5 "+t("เซ็ต")+" × 5","+ "+t("เพิ่มท่า_cf").replace(/_cf$/,"")))return;list.push({...libPick(x),s:5,r:"5"});saveProgs();renderEx()}}));
   a.querySelector("#reset-ex").addEventListener("click",ev=>{const b=ev.target;if(!b.dataset.sure){b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน");return}
     PROGS[cur]=JSON.parse(JSON.stringify(DEFAULT_PROGS[cur]));draft.ex={};saveProgs();save("gymdraft",draft);renderEx()});
   box.appendChild(a);

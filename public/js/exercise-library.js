@@ -45,7 +45,7 @@ function libUpdate(id,patch){const x=EXLIB.find(q=>q.id===id);if(x)Object.assign
 
 let libMode=null,libEdit=null,libGroup="all",libEq="all";         // libMode: null = manage, {skip:Set,onPick:fn} = pick for a program
 const libNamed=x=>!!(x.n&&x.n.trim());
-function openLib(mode){libMode=mode||null;libEdit=null;libGroup="all";libQ="";libEq=hereLoc().eq.length<EQ_ALL.length?"here":"all";const q=document.getElementById("lib-q");if(q){q.value="";q.placeholder=t("ค้นหาท่า")}loadCat();renderLib();document.getElementById("lib-modal").hidden=false}
+function openLib(mode){libMode=mode||null;document.getElementById("lib-modal").classList.toggle("adding",!!(mode&&mode.add||mode&&mode.onPick));try{document.getElementById("lib-title").textContent=mode&&mode.onPick?t("เลือกท่าที่จะเพิ่ม"):t("คลังท่า")}catch(e){}libEdit=null;libGroup="all";libQ="";libEq=hereLoc().eq.length<EQ_ALL.length?"here":"all";const q=document.getElementById("lib-q");if(q){q.value="";q.placeholder=t("ค้นหาท่า")}loadCat();renderLib();document.getElementById("lib-modal").hidden=false}
 function closeLib(){const n=EXLIB.length;EXLIB=EXLIB.filter(libNamed);if(EXLIB.length!==n)save("exlib",EXLIB);
   libEdit=null;libMode=null;document.getElementById("lib-modal").hidden=true;renderGym()}
 function libDone(x){
