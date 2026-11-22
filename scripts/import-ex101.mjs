@@ -1,5 +1,5 @@
 // Build a small exercise catalog + GIFs under public/ from the ex101 dataset,
-// shipping only the exercises listed in scripts/ex101-pick.json (add ids there as you start using them).
+// shipping every exercise; scripts/ex101-pick.json maps ex101 ids onto existing app exercises (`as`).
 // Usage: node scripts/import-ex101.mjs [path-to-ex101]   (default: ../ex101)
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync, existsSync, readdirSync, rmSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
@@ -22,9 +22,9 @@ mkdirSync(gifDir, { recursive: true });
 mkdirSync(join(root, "public", "data"), { recursive: true });
 
 const out = [], keep = new Set();
-for (const [id, as] of Object.entries(pick)) {
-  const x = byId.get(id);
-  if (!x) { console.warn(`skip ${id}: not in ex101`); continue; }
+for (const id of Object.keys(pick)) if (!byId.has(id)) console.warn(`pick ${id}: not in ex101`);
+for (const [id, x] of byId) {
+  const as = pick[id] || null;
   const gif = `${id}.gif`, from = join(src, x.gif_url), has = existsSync(from);
   if (has) { copyFileSync(from, join(gifDir, gif)); keep.add(gif); }
   const o = { id: "x" + id, n: title(x.name), g: GROUP[x.body_part] || "other", z: equip(x.equipment),

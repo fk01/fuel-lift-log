@@ -1,5 +1,5 @@
 {
-  "_": "ex101 exercises to ship. Key = ex101 id. Value = name of an existing exercise in this app to attach the GIF/how-to to, or null to add it as a new library exercise. Rebuild: node scripts/import-ex101.mjs",
+  "_": "Every ex101 exercise ships. This maps an ex101 id to the name of an existing exercise in this app to attach the GIF/how-to to. Rebuild: node scripts/import-ex101.mjs",
   "0194": "Cable Overhead Triceps Extension",
   "0178": "Cable Side Lateral Raise",
   "0230": "Cable Wood Chop",
