@@ -1635,3 +1635,7 @@ body.on-stats .wrap>header{display:none}
 #v-stats .empty .btn{margin-top:10px}
 #v-stats .sec-t,#v-stats .st-pane>h2{background:none!important;padding-bottom:0!important}#v-stats .row-head .sec-t{margin:0}
 #v-stats .hq-wsum{text-align:center}#v-stats .seg{flex-wrap:nowrap!important;overflow-x:auto}#v-stats .seg .chip{flex:1 0 auto;padding:6px 10px!important}
+.st-ai{width:100%;display:grid;gap:2px;justify-items:center;padding:12px!important;margin-top:12px;border-radius:16px!important;background:linear-gradient(#1c2431,#1c2431) padding-box,linear-gradient(135deg,#2ee6ff,#3dff8c) border-box!important;border:1.5px solid transparent!important;color:var(--text)!important;font-weight:600!important}
+.st-ai small{color:var(--muted);font-weight:400;font-size:13px}
+.ai-md{width:100%;box-sizing:border-box;height:46vh;background:#0f141d;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font:13px/1.45 ui-monospace,Menlo,monospace!important;white-space:pre;overflow:auto}
+.ai-md{max-width:100%;min-width:0;display:block;white-space:pre-wrap!important;word-break:break-word}
