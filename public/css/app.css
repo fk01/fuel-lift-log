@@ -1578,3 +1578,4 @@ body:has(#rest:not([hidden])) .tabbar{display:none!important}
 #lib-modal .modal-in>*{min-width:0;max-width:100%;box-sizing:border-box}
 #lib-modal .note,#lib-modal small{white-space:normal!important;overflow-wrap:anywhere}
 #lib-modal .lib-row{min-width:0;max-width:100%}#lib-modal .lib-row b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#lib-modal .lib-row>span{min-width:0}
+#lib-modal .lib-tools{display:none!important}
