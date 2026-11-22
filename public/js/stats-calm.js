@@ -1,0 +1,18 @@
+// stats-calm.js — Stats tab in the calm style: greeting + week strip header (same spot as Today/Eat/Train),
+// body weight lives on Today, empty states point to where to act.
+function renderStatsHead(){const v=document.getElementById("v-stats");if(!v)return;let h=document.getElementById("st-head");
+  if(!h){h=document.createElement("div");h.id="st-head";v.prepend(h)}
+  const nameOf=(typeof PROFILE!=="undefined"&&PROFILE&&PROFILE.name)||(typeof ME!=="undefined"&&ME&&ME.name)||"";
+  const a=new Date(TODAY+"T12:00:00"),off=(a.getDay()+6)%7,wk=[...Array(7)].map((_,i)=>{const d=new Date(a);d.setDate(a.getDate()-off+i);return dkey(d)});
+  const on=ds=>logs.some(l=>l.date===ds)||(typeof cxAny==="function"&&cxAny(ds)),n=wk.filter(on).length;
+  h.innerHTML=`<div class="hq-hello"><span class="hq-av" aria-hidden="true">${esc((nameOf||"W").trim().charAt(0).toUpperCase())}</span><span class="hq-hi"><small>${thDate(TODAY,{weekday:"long",day:"numeric",month:"long"})}</small><b>${t("ฉันก้าวหน้าแค่ไหน")}</b></span></div>
+  <div class="hq-week st-week"><span class="hq-wnav" aria-hidden="true"></span>${wk.map(ds=>`<span class="hq-day ${ds>TODAY?"fut":on(ds)?"ok":ds<TODAY?"miss":"now"}${ds===TODAY?" today sel":""}" aria-label="${thDate(ds,{weekday:"long",day:"numeric"})}${on(ds)?" ✓":""}"><small>${new Date(ds+"T12:00:00").getDate()}</small><span class="hq-dot">${on(ds)?licon("checkc"):ds<TODAY?'<span class="hq-rest"></span>':""}</span><small>${new Date(ds+"T12:00:00").toLocaleDateString(LOC(),{weekday:"narrow"})}</small></span>`).join("")}<span class="hq-wnav" aria-hidden="true"></span></div>
+  <p class="hq-wsum">${t("สัปดาห์นี้เล่น")} <b>${n}</b> ${t("วัน_s").replace(/_s$/,"")}</p>`}
+function decorateStats(){try{renderStatsHead()}catch(e){console.error(e)}
+  const fh=document.getElementById("food-hist");if(fh&&fh.querySelector(".empty")&&!fh.querySelector("[data-go-food]"))fh.querySelector(".empty").insertAdjacentHTML("beforeend",`<button class="btn sm" data-go-food>${t("ไปติ๊กมื้อ")} ›</button>`);
+  ["hist-chart","sessions"].forEach(id=>{const b=document.getElementById(id);if(b&&b.querySelector(".empty")&&!b.querySelector("[data-go-gym]"))b.querySelector(".empty").insertAdjacentHTML("beforeend",`<button class="btn sm" data-go-gym>${t("ไปเริ่มเล่น")} ›</button>`)});
+  const v=document.getElementById("v-stats");if(v&&!document.getElementById("st-bodylink")){const p=document.createElement("button");p.id="st-bodylink";p.className="menu-row";p.innerHTML=`<span class="mi">${licon("body")||licon("scale")}</span><span class="mt"><b>${t("น้ำหนักตัว · BMI")}</b><small>${t("ดูในหน้า Today")}</small></span><span class="mc">›</span>`;p.addEventListener("click",()=>{location.hash="home";setTimeout(()=>{if(!recOpen)document.querySelector("#v-home [data-det]")?.click();document.querySelector("#v-home .hq-body")?.scrollIntoView({block:"start",behavior:"smooth"})},120)});const tools=v.querySelector(".stats-tools");if(tools)tools.prepend(p)}}
+document.addEventListener("click",e=>{if(e.target.closest("[data-go-food]"))location.hash="food";else if(e.target.closest("[data-go-gym]"))location.hash="gym"});
+window.addEventListener("DOMContentLoaded",()=>{const _ra=renderAll;renderAll=function(){const r=_ra.apply(this,arguments);try{decorateStats()}catch(e){}return r};
+  const _show=show;show=function(v){document.body.classList.toggle("on-stats",v==="stats"||v==="body");const r=_show.apply(this,arguments);if(v==="stats"||v==="body"){decorateStats()}return r};setTimeout(decorateStats,0)});
+Object.assign(EN,{"ฉันก้าวหน้าแค่ไหน":"How am I progressing?","ไปติ๊กมื้อ":"Tick meals","ไปเริ่มเล่น":"Start a workout","น้ำหนักตัว · BMI":"Body weight · BMI","ดูในหน้า Today":"On the Today tab"});
