@@ -28,7 +28,7 @@ for (const [id, x] of byId) {
   const gif = `${id}.gif`, from = join(src, x.gif_url), has = existsSync(from);
   if (has) { copyFileSync(from, join(gifDir, gif)); keep.add(gif); }
   const o = { id: "x" + id, n: title(x.name), g: GROUP[x.body_part] || "other", z: equip(x.equipment),
-    t: x.target, e: x.equipment, s: (x.instruction_steps && x.instruction_steps.en) || [] };
+    b: x.body_part, t: x.target, e: x.equipment, s: (x.instruction_steps && x.instruction_steps.en) || [] };
   if (has) o.gif = "/ex/" + gif;
   if (as) o.as = as;            // attach to this existing exercise instead of adding a new one
   out.push(o);

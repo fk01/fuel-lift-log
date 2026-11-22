@@ -1570,3 +1570,6 @@ body:has(#rest:not([hidden])) .tabbar{display:none!important}
 #rest .rest-gif{background-image:linear-gradient(#fff,#fff),linear-gradient(135deg,#2ee6ff,#3dff8c)!important}
 #rest .rest-gif img{filter:none!important;mix-blend-mode:normal!important;background:#fff!important}
 #rest .rest-gif figcaption{color:#475569!important}
+
+.lib-ftog{align-self:flex-start;margin-top:8px}.lib-filt{display:grid;gap:12px;padding:12px;border:1px solid var(--line);border-radius:var(--r-sm);margin-top:8px}
+.lib-filt h4{margin:0 0 6px;font-size:var(--t-meta);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.lib-filt .chips{gap:6px}.lib-filt .chip{min-height:30px;padding:4px 10px;font-size:var(--t-meta)}

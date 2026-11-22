@@ -17,7 +17,10 @@ const libPick=e=>{const o={id:e.id,n:e.n,z:e.z||"🔩"};if(e.g)o.g=e.g;if(e.mp)o
 // ex101 catalog (public/data/ex101.json, built by scripts/import-ex101.mjs): read-only, merged into the library view;
 // an entry is copied into EXLIB only when picked or edited, so synced settings stay small.
 Object.assign(EN,{"กล้ามที่โดน":"Muscles worked","แตะ 1 ครั้ง = หลัก, 2 = รอง, 3 = ไม่โดน":"tap: primary → secondary → off","ทุกอุปกรณ์":"All equipment","ค้นหาท่า":"Search exercises","กำลังโหลดท่า…":"Loading exercises…","แสดง":"Showing","พิมพ์เพื่อค้นหาเพิ่ม":"type to narrow down","วิธีเล่น":"How to"});
-let CAT=null,catLoading=false,libQ="";
+let CAT=null,catLoading=false,libQ="",libF={b:"",e:"",t:""},libFOpen=false;
+Object.assign(EN,{"ตัวกรอง":"Filters","หมวด":"Category","อุปกรณ์":"Equipment","กล้ามเป้าหมาย":"Target muscle","ล้างตัวกรอง":"Clear filters"});
+const capW=s=>String(s).replace(/(^|[\s(\-/])([a-z])/g,(m,a,b)=>a+b.toUpperCase());
+const fval=(x,k)=>x[k]||(catOf(x)||{})[k]||"";
 const lc=s=>(s||"").trim().toLowerCase();
 const catOf=x=>CAT&&CAT.find(c=>c.id===x.id||(c.as&&lc(c.as)===lc(x.n)));   // own entry, or one attached to this exercise by name
 function loadCat(){if(CAT||catLoading)return;catLoading=true;
@@ -45,7 +48,7 @@ function libUpdate(id,patch){const x=EXLIB.find(q=>q.id===id);if(x)Object.assign
 
 let libMode=null,libEdit=null,libGroup="all",libEq="all";         // libMode: null = manage, {skip:Set,onPick:fn} = pick for a program
 const libNamed=x=>!!(x.n&&x.n.trim());
-function openLib(mode){libMode=mode||null;document.getElementById("lib-modal").classList.toggle("adding",!!(mode&&mode.add||mode&&mode.onPick));try{document.getElementById("lib-title").textContent=mode&&mode.onPick?t("เลือกท่าที่จะเพิ่ม"):t("คลังท่า")}catch(e){}libEdit=null;libGroup="all";libQ="";libEq=hereLoc().eq.length<EQ_ALL.length?"here":"all";const q=document.getElementById("lib-q");if(q){q.value="";q.placeholder=t("ค้นหาท่า")}loadCat();renderLib();document.getElementById("lib-modal").hidden=false}
+function openLib(mode){libMode=mode||null;document.getElementById("lib-modal").classList.toggle("adding",!!(mode&&mode.add||mode&&mode.onPick));try{document.getElementById("lib-title").textContent=mode&&mode.onPick?t("เลือกท่าที่จะเพิ่ม"):t("คลังท่า")}catch(e){}libEdit=null;libGroup="all";libQ="";libF={b:"",e:"",t:""};libFOpen=false;libEq=hereLoc().eq.length<EQ_ALL.length?"here":"all";const q=document.getElementById("lib-q");if(q){q.value="";q.placeholder=t("ค้นหาท่า")}loadCat();renderLib();document.getElementById("lib-modal").hidden=false}
 function closeLib(){const n=EXLIB.length;EXLIB=EXLIB.filter(libNamed);if(EXLIB.length!==n)save("exlib",EXLIB);
   libEdit=null;libMode=null;document.getElementById("lib-modal").hidden=true;renderGym()}
 function libDone(x){
@@ -91,12 +94,13 @@ function renderLib(){const G=libView==="grid",FS=G?96:40;document.querySelectorA
   const haveId=new Set(EXLIB.map(x=>x.id)),haveN=new Set(EXLIB.map(x=>(x.n||"").trim().toLowerCase()));
   const extra=(CAT||[]).filter(c=>!c.as&&!haveId.has(c.id)&&!haveN.has(c.n.toLowerCase())).map(c=>Object.assign({cat:1},c));
   const q=libQ.trim().toLowerCase(),hit=x=>!q||x.id===libEdit||[x.n,x.t,x.e].some(s=>s&&s.toLowerCase().includes(q));
-  const all=mine.concat(extra).filter(hit).filter(x=>libEq==="all"||(libEq==="here"?canDo(x):(x.z||"🔩")===libEq));
+  const all=mine.concat(extra).filter(hit).filter(x=>Object.keys(libF).every(k=>!libF[k]||fval(x,k)===libF[k])).filter(x=>libEq==="all"||(libEq==="here"?canDo(x):(x.z||"🔩")===libEq));
   const count={};all.forEach(x=>{const g=groupOf(x);count[g]=(count[g]||0)+1});
   const chips=document.getElementById("lib-groups");chips.innerHTML="";
   [["all","ทั้งหมด"],...GROUPS].forEach(([g,l])=>{if(g!=="all"&&!count[g])return;const b=document.createElement("button");b.className="chip";b.setAttribute("aria-pressed",libGroup===g);
     b.textContent=`${t(l)} ${g==="all"?all.length:count[g]}`;b.addEventListener("click",()=>{libGroup=g;renderLib()});chips.appendChild(b)});
   const eq=document.getElementById("lib-eq");if(eq){eq.innerHTML="";[...(hereLoc().eq.length<EQ_ALL.length?[["here",`${hereLoc().icon||"📍"} ${t(hereLoc().name)}`]]:[]),["all","ทุกอุปกรณ์"],["🔩","🔩 "+t("เครื่อง")],["🏋️","🏋️ "+t("ดัมเบล/บาร์")],["🔗","🔗 "+t("เคเบิล")]].forEach(([k,l])=>{const b=document.createElement("button");b.className="chip";b.setAttribute("aria-pressed",libEq===k);b.textContent=t(l);b.addEventListener("click",()=>{libEq=k;renderLib()});eq.appendChild(b)})}
+  renderFilt();
   const order=g=>GROUPS.findIndex(q=>q[0]===g);
   const items=all.filter(x=>x.id===libEdit||libGroup==="all"||groupOf(x)===libGroup).sort((a,b)=>order(groupOf(a))-order(groupOf(b))||(a.n||"").localeCompare(b.n||""));
   const hint=document.createElement("p");hint.className="note";
@@ -118,6 +122,15 @@ document.getElementById("lib-new").addEventListener("click",()=>{
   EXLIB=EXLIB.filter(libNamed);const x={id:"c"+Date.now().toString(36),n:"",z:"🔩"};if(libGroup!=="all")x.g=libGroup;EXLIB.push(x);libEdit=x.id;renderLib();
   const inp=document.querySelector('#lib-list [data-f="n"]');if(inp){inp.scrollIntoView({block:"center"});inp.focus()}});
 document.getElementById("lib-close").addEventListener("click",()=>txLeave(closeLib));
+function renderFilt(){const tog=document.getElementById("lib-ftog"),box=document.getElementById("lib-filt");if(!tog)return;
+  const n=Object.values(libF).filter(Boolean).length;tog.textContent=`⚙ ${t("ตัวกรอง")}${n?` (${n})`:""} ${libFOpen?"▴":"▾"}`;tog.setAttribute("aria-expanded",libFOpen);tog.setAttribute("aria-pressed",!!n);
+  box.hidden=!libFOpen;if(!libFOpen)return;box.innerHTML="";
+  [["b","หมวด"],["e","อุปกรณ์"],["t","กล้ามเป้าหมาย"]].forEach(([k,l])=>{const vals=[...new Set((CAT||[]).map(c=>c[k]).filter(Boolean))].sort();if(!vals.length)return;
+    const sec=document.createElement("div");sec.innerHTML=`<h4>${t(l)}</h4><div class="chips"></div>`;const row=sec.lastChild;
+    vals.forEach(v=>{const b=document.createElement("button");b.className="chip";b.setAttribute("aria-pressed",libF[k]===v);b.textContent=capW(v);
+      b.addEventListener("click",()=>{libF[k]=libF[k]===v?"":v;renderLib()});row.appendChild(b)});box.appendChild(sec)});
+  if(n){const c=document.createElement("button");c.className="btn sm ghost";c.textContent=t("ล้างตัวกรอง");c.addEventListener("click",()=>{libF={b:"",e:"",t:""};renderLib()});box.appendChild(c)}}
+document.getElementById("lib-ftog").addEventListener("click",()=>{libFOpen=!libFOpen;renderLib()});
 document.getElementById("lib-q").addEventListener("input",ev=>{libQ=ev.target.value;renderLib()});
 document.getElementById("lib-open").addEventListener("click",()=>openLib());
 
