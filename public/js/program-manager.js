@@ -72,7 +72,8 @@ function renderPM(){
     return}
   if(pmOnly)return pmEditOne(box,pmOnly);
   // list view: one compact row per program; tap a row to edit that program
-  const keys=progsHere();const lh=document.createElement("div");lh.className="pick-h";lh.textContent=`${hereLoc().icon||"📍"} ${t(hereLoc().name)}`;box.appendChild(lh);
+  const groups=LOCS.map(L=>[L.icon||"📍",t(L.name),Object.keys(PROGS).filter(k=>k!=="free"&&locOf(PROGS[k])===L.id)]).concat([["🏃",t("ที่ไหนก็ได้"),Object.keys(PROGS).filter(k=>k!=="free"&&locOf(PROGS[k])==="*")]]).filter(g=>g[2].length);
+  groups.forEach(([ic,nm,keys])=>{const lh=document.createElement("div");lh.className="pick-h";lh.textContent=`${ic} ${nm}`;box.appendChild(lh);
   keys.forEach((k,i)=>{const p=PROGS[k];const r=document.createElement("div");r.className="pm-li";
     r.innerHTML=`<button class="pm-open" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}"><b>${esc(p.name)}</b><small>${esc(t(p.sub||""))}</small><small>${isCardio(p)?(p.icon||"🏃")+" "+t("คาร์ดิโอ"):nU(p.ex.length,"ท่า")}${(p.days||[]).length?" · "+p.days.map(d=>lang==="th"?WD[d]:WD_EN[d]).join(" "):""} ›</small></button>
       <div class="pm-li-act"><button class="btn sm pm-more" data-menu aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</button></div>`;
@@ -83,10 +84,10 @@ function renderPM(){
       ${isCardio(p)?"":`<button class="menu-row" data-m="view"><span class="mi">☰</span><span class="mt"><b>${t("ดูท่าทั้งหมด")}</b><small>${nU(p.ex.length,"ท่า")}</small></span></button><button class="menu-row" data-m="edit"><span class="mi">✎</span><span class="mt"><b>${t("แก้ไขโปรแกรม")}</b></span></button>`}<button class="menu-row" data-m="pub"><span class="mi">🌐</span><span class="mt">${t("แชร์ให้ชุมชน")}</span></button><button class="menu-row" data-m="share"><span class="mi">↗</span><span class="mt">${t("แชร์ลิงก์")}</span></button><button class="menu-row" data-m="copy"><span class="mi">⧉</span><span class="mt">${t("คัดลอกไป…")}</span></button><button class="menu-row" data-m="move"><span class="mi">→</span><span class="mt">${t("ย้ายไป…")}</span></button>
       <button class="menu-row warn" data-m="del"><span class="mi">🗑</span><span class="mt">${t("ลบโปรแกรม")}</span></button></div><button class="btn" data-gen-close>${t("ปิด")}</button>`,g=>g.querySelectorAll("[data-m]").forEach(b=>b.addEventListener("click",()=>{const m=b.dataset.m;
       if(m==="view"){closeGen();document.getElementById("pm-modal").hidden=true;openPlanItem(k);return}if(m==="edit"){closeGen();pmOnly=k;pmFromList=true;renderPM();return}if(m==="up"||m==="down"){closeGen();move(m==="up"?-1:1);return}if(m==="copy"||m==="move"){openProgMove(k,m);return}if(m==="share"){openShareLink([k],locOf(p));return}if(m==="pub"){publishWorkout([k],locOf(p));return}
-      if(p.ex.some(e=>isLocked(k,e))){toast("🔒 "+t("ท่าหลักห้ามลบหรือเปลี่ยน"));return}if(keys.length<2){toast(t("ต้องมีอย่างน้อย 1 โปรแกรม"));return}
+      if(p.ex.some(e=>isLocked(k,e))){toast("🔒 "+t("ท่าหลักห้ามลบหรือเปลี่ยน"));return}if(Object.keys(PROGS).filter(q=>q!=="free").length<2){toast(t("ต้องมีอย่างน้อย 1 โปรแกรม"));return}
       if(!b.dataset.sure){b.dataset.sure=1;b.querySelector(".mt").textContent=t("ลบ")+"?";return}
       closeGen();const o={...PROGS};delete o[k];pmCommit(o);renderPM();renderGym()}))));
-    box.appendChild(r)});
+    box.appendChild(r)})});
   const a=document.createElement("button");a.className="btn primary";a.textContent="+ "+t("เพิ่มโปรแกรม");
   a.addEventListener("click",openAddProg);
   const j=document.createElement("button");j.className="btn text sm";j.style.justifySelf="center";j.textContent=t("แก้แบบ JSON (ขั้นสูง)");j.addEventListener("click",()=>{pmTab="json";renderPM()});
