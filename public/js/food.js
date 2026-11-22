@@ -69,7 +69,7 @@ function renderFood(){renderFoodHist();
     const done=!!fs().done[m.id],late=!done&&DAY===TODAY&&/^\d\d:\d\d$/.test(m.time)&&m.time<nowHM,isNext=m.id===nextId;
     const el=document.createElement("label");el.className="meal"+(done?" done mini":"")+(m.id.startsWith("x")?" extra":"")+(isNext?" next":"");
     el.dataset.flag=isNext?t("มื้อถัดไป"):late?t("ยังไม่ติ๊ก"):"";if(late&&!isNext)el.classList.add("late");el.classList.toggle("lead",isNext);
-    el.innerHTML=`<span class="row-ic">${licon(m.vit?"pill":m.id.startsWith("x")?"run":"bowl")}</span><input type="checkbox" id="c-${m.id}" ${done?"checked":""}><div><div class="row-head"><span class="hq-chip time">${t(m.time)}</span><b class="mn">${t(m.name)}</b><span class="macro">${m.vit||!m.k?t("วิตามิน_m").replace(/_m$/,""):`${m.k} kcal · ${t("โปรตีน")} ${m.p} g`}</span></div><ul>${m.items.map(i=>`<li>${t(i)}</li>`).join("")}</ul></div>`;
+    el.innerHTML=`<span class="row-ic">${licon(m.vit?"pill":m.id.startsWith("x")?"run":"bowl")}</span><input type="checkbox" id="c-${m.id}" ${done?"checked":""}><div><div class="row-head"><span class="hq-chip time">${t(m.time)}</span><b class="mn">${t(m.name)}</b><span class="macro">${m.vit||!m.k?t("วิตามิน_m").replace(/_m$/,""):`${m.k} kcal · P ${m.p} g${+m.c?` · C ${m.c} g`:""}${+m.f?` · F ${m.f} g`:""}`}</span></div><ul>${m.items.map(i=>`<li>${t(i)}</li>`).join("")}</ul></div>`;
     el.querySelector("input").addEventListener("change",e=>{fs().done[m.id]=e.target.checked;save("mealcheck",food);renderFood()});
     box.appendChild(el);
     const xs=logOf(DAY).filter(x=>x.slot===m.id);if(xs.length)box.appendChild(logRows(xs));

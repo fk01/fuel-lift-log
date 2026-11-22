@@ -1643,3 +1643,5 @@ body.on-stats .wrap>header{display:none}
 .ai-h{font-size:15px;margin-top:4px}.ai-pv{display:grid;gap:4px;padding:12px!important}.ai-pv ol{margin:4px 0 0;padding-left:20px;display:grid;gap:4px}.ai-pv small{color:var(--muted)}.ai-new{color:#facc15;font-style:normal}
 .ai-md{max-height:30vh}
 .ai-acts .menu-row .mt{flex:1}.ai-acts .menu-row .mc{margin-left:auto}
+.mp-num{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.mp-num .mp-vit{grid-column:1/-1}
+.mp-top{flex-wrap:wrap}.mp-row[data-kind="meal"] .mp-top [data-f="name"]{order:-1;flex:1 1 100%!important}
