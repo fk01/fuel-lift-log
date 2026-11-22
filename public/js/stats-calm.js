@@ -20,7 +20,7 @@ Object.assign(EN,{"ฉันก้าวหน้าแค่ไหน":"How am 
 function aiReport(){const L=[],d0=new Date(TODAY+"T12:00:00"),ago=n=>{const d=new Date(d0);d.setDate(d.getDate()-n);return dkey(d)},r1=x=>Math.round(x*10)/10;
   const P=(typeof PROFILE!=="undefined"&&PROFILE)||{},goal={cut:"lose fat",bulk:"build muscle",keep:"maintain"}[P.goal]||P.goal||"-";
   L.push(`# My training & nutrition data (WeightGram, exported ${TODAY})`,"",`Please analyse this data like a coach: what is going well, what is lagging, and give me 3–5 concrete changes for the next 4 weeks.`,"");
-  L.push("## Profile",`- Sex: ${P.sex==="f"?"female":P.sex==="m"?"male":"-"} · Age: ${P.age||"-"} · Height: ${P.h||"-"} cm`,`- Goal: ${goal} · Activity: ${P.act||"-"}`,`- Daily targets: ${typeof K_GOAL!=="undefined"?K_GOAL:"-"} kcal, protein ${typeof P_TARGET!=="undefined"?P_TARGET:"-"} g`,"");
+  L.push("## Profile",`- Sex: ${P.sex==="f"?"female":P.sex==="m"?"male":"-"} · Age: ${P.age||"-"} · Height: ${P.h||"-"} cm`,`- Goal: ${goal} · Activity: ${P.act||"-"}`,`- Daily targets: ${typeof K_GOAL!=="undefined"?K_GOAL:"-"} kcal, protein ${typeof P_TARGET!=="undefined"?P_TARGET:"-"} g${MP&&+MP.c?`, carbs ${MP.c} g`:""}${MP&&+MP.f?`, fat ${MP.f} g`:""}`,"");
   const B=(typeof BODY!=="undefined"?BODY:[]).filter(x=>x.kg>0).slice().sort((a,b)=>a.d.localeCompare(b.d));
   L.push("## Body");if(B.length){const z=B[B.length-1],w4=B.filter(x=>x.d>=ago(28))[0]||B[0];L.push(`- Latest weight: ${z.kg} kg (${z.d})${z.mm?` · muscle ${z.mm} kg`:""}${z.fat?` · body fat ${z.fat}%`:""}`,`- 4-week change: ${r1(z.kg-w4.kg)>0?"+":""}${r1(z.kg-w4.kg)} kg (from ${w4.kg} kg on ${w4.d})`);
     if(P.h){try{const b=bmiOf(z.kg,P.h);L.push(`- BMI: ${b.toFixed(1)} (${EN[bmiZ(b)[2]]||bmiZ(b)[2]}, Asian cut-offs)`)}catch(e){}}

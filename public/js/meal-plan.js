@@ -8,17 +8,17 @@ function mpMealRow(m,i,kind){const list=MP.meals,fixed=kind!=="meal";
     <div class="mp-top">${fixed?`<span class="mp-ic">${licon(kind==="run"?"run":"racket")}</span>`:`<input type="time" data-f="time" aria-label="${t("เวลา")}" value="${esc(/^\d\d:\d\d$/.test(m.time)?m.time:"")}" style="${mpFld};width:6.6em">`}
       <input data-f="name" aria-label="${t("ชื่อมื้อ")}" value="${esc(m.name||"")}" placeholder="${t("ชื่อมื้อ")}" style="${mpFld};flex:1">
       ${fixed?"":`<button class="btn sm" data-mv="-1" ${i===0?"disabled":""} aria-label="${t("เลื่อนขึ้น")}">↑</button><button class="btn sm" data-mv="1" ${i===list.length-1?"disabled":""} aria-label="${t("เลื่อนลง")}">↓</button><button class="btn sm ghost" data-del aria-label="${t("ลบมื้อ")}">✕</button>`}</div>
-    <div class="mp-num"><label>kcal<input inputmode="numeric" data-f="k" value="${+m.k||0}" style="${mpFld}"></label><label>${t("โปรตีน")} g<input inputmode="numeric" data-f="p" value="${+m.p||0}" style="${mpFld}"></label>${fixed?"":`<label class="mp-vit"><input type="checkbox" data-f="vit" aria-label="${t("วิตามิน")}" ${m.vit?"checked":""}> ${t("วิตามิน")}</label>`}</div>
+    <div class="mp-num"><label>kcal<input inputmode="numeric" data-f="k" value="${+m.k||0}" style="${mpFld}"></label><label>${t("โปรตีน")} g<input inputmode="numeric" data-f="p" value="${+m.p||0}" style="${mpFld}"></label><label>${t("คาร์บ")} g<input inputmode="numeric" data-f="c" value="${+m.c||0}" style="${mpFld}"></label><label>${t("ไขมัน")} g<input inputmode="numeric" data-f="f" value="${+m.f||0}" style="${mpFld}"></label>${fixed?"":`<label class="mp-vit"><input type="checkbox" data-f="vit" aria-label="${t("วิตามิน")}" ${m.vit?"checked":""}> ${t("วิตามิน")}</label>`}</div>
     <textarea data-f="items" rows="2" aria-label="${t("รายการอาหาร (บรรทัดละ 1 อย่าง)")}" placeholder="${t("รายการอาหาร (บรรทัดละ 1 อย่าง)")}" style="${mpFld};width:100%;resize:vertical">${esc((m.items||[]).join("\n"))}</textarea></div>`}
 function openMealPlan(){MP=MP||mpClone();if(!MP.meals)MP=mpClone();
   const draw=b=>{const body=b.querySelector(".mp-body");
-    body.innerHTML=`<div class="card mp-card"><b>${t("เป้าต่อวัน")}</b><div class="mp-num"><label>kcal<input inputmode="numeric" data-g="k" value="${K_GOAL}" style="${mpFld}"></label><label>${t("โปรตีน")} g<input inputmode="numeric" data-g="p" value="${P_TARGET}" style="${mpFld}"></label></div></div>
+    body.innerHTML=`<div class="card mp-card"><b>${t("เป้าต่อวัน")}</b><div class="mp-num"><label>kcal<input inputmode="numeric" data-g="k" value="${K_GOAL}" style="${mpFld}"></label><label>${t("โปรตีน")} g<input inputmode="numeric" data-g="p" value="${P_TARGET}" style="${mpFld}"></label><label>${t("คาร์บ")} g<input inputmode="numeric" data-g="c" value="${+MP.c||0}" style="${mpFld}"></label><label>${t("ไขมัน")} g<input inputmode="numeric" data-g="f" value="${+MP.f||0}" style="${mpFld}"></label></div></div>
       <div class="card mp-card"><b>${t("มื้อประจำวัน")}</b>${MP.meals.map((m,i)=>mpMealRow(m,i,"meal")).join("")}<button class="pl-add" data-addm>+ ${t("เพิ่มมื้อ")}</button></div>
       <div class="card mp-card"><b>${t("มื้อเสริมตามกิจกรรม")}</b>${mpMealRow(MP.run,0,"run")}${mpMealRow(MP.bad,0,"bad")}</div>`;
     body.querySelectorAll("[data-g]").forEach(x=>x.addEventListener("change",()=>{MP[x.dataset.g]=Math.max(0,+x.value||0);mpTouch()}));
     body.querySelectorAll(".mp-row").forEach(r=>{const kind=r.dataset.kind,i=+r.dataset.i,m=kind==="meal"?MP.meals[i]:MP[kind];
       r.querySelectorAll("[data-f]").forEach(x=>x.addEventListener("change",()=>{const f=x.dataset.f;
-        if(f==="k"||f==="p")m[f]=Math.max(0,+x.value||0);else if(f==="vit")m.vit=x.checked?1:0;else if(f==="items")m.items=x.value.split("\n").map(s=>s.trim()).filter(Boolean);else m[f]=x.value.trim();mpTouch()}));
+        if(f==="k"||f==="p"||f==="c"||f==="f")m[f]=Math.max(0,+x.value||0);else if(f==="vit")m.vit=x.checked?1:0;else if(f==="items")m.items=x.value.split("\n").map(s=>s.trim()).filter(Boolean);else m[f]=x.value.trim();mpTouch()}));
       r.querySelectorAll("[data-mv]").forEach(x=>x.addEventListener("click",()=>{const j=i+ +x.dataset.mv;MP.meals.splice(j,0,MP.meals.splice(i,1)[0]);mpTouch();draw(b)}));
       r.querySelector("[data-del]")?.addEventListener("click",ev=>{const x=ev.currentTarget;if(!x.dataset.sure){x.dataset.sure=1;x.textContent=t("ลบ?");return}MP.meals.splice(i,1);mpTouch();draw(b)})});
     body.querySelector("[data-addm]").addEventListener("click",()=>{MP.meals.push({id:"m"+Date.now().toString(36),time:"",name:"",k:0,p:0,items:[]});mpTouch();draw(b);const r=b.querySelectorAll('.mp-row[data-kind="meal"]');r[r.length-1]?.querySelector('[data-f="name"]').focus()})};
@@ -43,3 +43,5 @@ function renderEatCal(){const box=document.getElementById("eat-cal");if(!box)ret
     pick:ds=>{DAY=ds;food[DAY]=food[DAY]||{done:{},tags:{}};renderAll()}})}
 Object.assign(EN,{"ถึงเป้า":"Hit goal","ต่อวัน":"per day","เป้า":"Goal"});
 {const rf=renderFood;renderFood=function(){rf.apply(this,arguments);try{renderEatCal()}catch(e){console.error(e)}}}
+
+Object.assign(EN,{"คาร์บ":"Carbs","ไขมัน":"Fat"});
