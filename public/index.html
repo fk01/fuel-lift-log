@@ -8,11 +8,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="WeightGram">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=138628">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=138629">
 <title>WeightGram</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Share+Tech+Mono&display=swap">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*{-webkit-tap-highlight-color:transparent}body{margin:0;font-size:var(--t-sm);font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
-<link rel="stylesheet" href="/css/app.css?v=138628">
+<link rel="stylesheet" href="/css/app.css?v=138629">
 </head><body>
 
 <div class="wrap">
@@ -173,15 +173,18 @@
     <img class="acct-mark" src="/img/weightgram.svg" alt="" width="132" height="88"><h1 class="acct-logo">WeightGram</h1><p class="acct-sub">WEIGHTGRAMMING</p>
     <p class="note acct-tag" data-i="ร่างกาย · กิน · ออกกำลัง — วันนี้">ร่างกาย · กิน · ออกกำลัง — วันนี้</p>
     <div class="g-wrap" id="g-wrap" hidden><span class="g-face" aria-hidden="true"><svg viewBox="0 0 48 48" width="20" height="20"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg><span data-i="ดำเนินการต่อด้วย Google">ดำเนินการต่อด้วย Google</span></span><div id="g-btn" class="g-btn"></div></div>
+    <button class="btn acct-fid" type="button" id="passkey-login" hidden><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M9 9v1M15 9v1M12 9v4h-1M9 16c1.7 1.2 4.3 1.2 6 0"/></svg><span>Face ID</span></button>
     <div class="acct-or"><span data-i="หรือ">หรือ</span></div>
-    <form id="login-form" class="stack" style="gap:8px">
-      <input class="le-in" id="acct-name" placeholder="ชื่อ" autocomplete="name" hidden>
-      <input class="le-in" id="acct-email" type="email" placeholder="อีเมล" autocomplete="email" required>
-      <input class="le-in" id="acct-pw" type="password" placeholder="รหัสผ่าน" autocomplete="current-password" required minlength="8">
+    <form id="login-form" novalidate class="stack" style="gap:8px">
+      <input class="le-in" id="acct-name" name="name" placeholder="ชื่อ" autocomplete="name" hidden>
+      <input class="le-in" id="acct-email" name="email" type="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="อีเมล" autocomplete="username email" required>
+      <p class="field-err" id="err-email" hidden></p>
+      <div class="pw-wrap"><input class="le-in" id="acct-pw" name="password" type="password" placeholder="รหัสผ่าน" autocomplete="current-password" required minlength="8"><button type="button" class="pw-eye" id="pw-eye" aria-label="แสดงรหัสผ่าน" aria-pressed="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="eye-off" d="M4 4l16 16"/></svg></button></div>
+      <p class="field-err" id="err-pw" hidden></p>
       <p class="note" id="login-err" hidden style="color:var(--warn)"></p>
       <button class="btn primary" type="submit" id="acct-go">เข้าสู่ระบบ</button>
     </form>
-    <p class="note acct-sw"><span id="acct-sw-t">ยังไม่มีบัญชี?</span> <button class="linkb" type="button" id="acct-sw">สมัคร</button> · <button class="linkb" type="button" id="passkey-login" hidden>🙂 Face ID</button></p>
+    <p class="note acct-sw"><span id="acct-sw-t">ยังไม่มีบัญชี?</span> <button class="linkb" type="button" id="acct-sw">สมัคร</button></p>
   </div>
 </div>
 <div class="modal" id="onb" hidden role="dialog" aria-modal="true" aria-label="Get started"><div class="modal-in onb-in" style="max-width:420px"></div></div>
@@ -280,37 +283,37 @@
   </div>
 </div>
 
-<script src="/js/core.js?v=138628"></script>
-<script src="/js/food.js?v=138628"></script>
-<script src="/js/locations.js?v=138628"></script>
-<script src="/js/programs.js?v=138628"></script>
-<script src="/js/run.js?v=138628"></script>
-<script src="/js/workout.js?v=138628"></script>
-<script src="/js/exercise-edit.js?v=138628"></script>
-<script src="/js/edit-tx.js?v=138628"></script>
-<script src="/js/exercise-library.js?v=138628"></script>
-<script src="/js/program-manager.js?v=138628"></script>
-<script src="/js/hero.js?v=138628"></script>
-<script src="/js/rest-timer.js?v=138628"></script>
-<script src="/js/auth.js?v=138628"></script>
-<script src="/js/push.js?v=138628"></script>
-<script src="/js/data-io.js?v=138628"></script>
-<script src="/js/sync.js?v=138628"></script>
-<script src="/js/muscle-map.js?v=138628"></script>
-<script src="/js/progress.js?v=138628"></script>
-<script src="/js/history-chart.js?v=138628"></script>
-<script src="/js/stats-extra.js?v=138628"></script>
-<script src="/js/meal-plan.js?v=138628"></script>
-<script src="/js/undo.js?v=138628"></script>
-<script src="/js/home.js?v=138628"></script>
-<script src="/js/share.js?v=138628"></script>
-<script src="/js/explore.js?v=138628"></script>
-<script src="/js/onboarding.js?v=138628"></script>
-<script src="/js/account.js?v=138628"></script>
-<script src="/js/share-card.js?v=138628"></script>
-<script src="/js/number-pad.js?v=138628"></script>
-<script src="/js/refresh.js?v=138628"></script>
-<script src="/js/app.js?v=138628"></script>
+<script src="/js/core.js?v=138629"></script>
+<script src="/js/food.js?v=138629"></script>
+<script src="/js/locations.js?v=138629"></script>
+<script src="/js/programs.js?v=138629"></script>
+<script src="/js/run.js?v=138629"></script>
+<script src="/js/workout.js?v=138629"></script>
+<script src="/js/exercise-edit.js?v=138629"></script>
+<script src="/js/edit-tx.js?v=138629"></script>
+<script src="/js/exercise-library.js?v=138629"></script>
+<script src="/js/program-manager.js?v=138629"></script>
+<script src="/js/hero.js?v=138629"></script>
+<script src="/js/rest-timer.js?v=138629"></script>
+<script src="/js/auth.js?v=138629"></script>
+<script src="/js/push.js?v=138629"></script>
+<script src="/js/data-io.js?v=138629"></script>
+<script src="/js/sync.js?v=138629"></script>
+<script src="/js/muscle-map.js?v=138629"></script>
+<script src="/js/progress.js?v=138629"></script>
+<script src="/js/history-chart.js?v=138629"></script>
+<script src="/js/stats-extra.js?v=138629"></script>
+<script src="/js/meal-plan.js?v=138629"></script>
+<script src="/js/undo.js?v=138629"></script>
+<script src="/js/home.js?v=138629"></script>
+<script src="/js/share.js?v=138629"></script>
+<script src="/js/explore.js?v=138629"></script>
+<script src="/js/onboarding.js?v=138629"></script>
+<script src="/js/account.js?v=138629"></script>
+<script src="/js/share-card.js?v=138629"></script>
+<script src="/js/number-pad.js?v=138629"></script>
+<script src="/js/refresh.js?v=138629"></script>
+<script src="/js/app.js?v=138629"></script>
 
 <div id="rec-wrap" class="stack" style="gap:10px" hidden><div class="rcf-head"><div class="sec-t" data-i="การฟื้นตัวของกล้ามเนื้อ">การฟื้นตัวของกล้ามเนื้อ</div><button class="btn sm" id="rec-cfg">⚙ <span data-i="ตั้งเวลาฟื้นตัว">ตั้งเวลาฟื้นตัว</span></button></div><div class="card" id="rec-body"></div></div>
 </body></html>
