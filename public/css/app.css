@@ -1459,3 +1459,14 @@ html{-webkit-text-size-adjust:100%;touch-action:manipulation}
 #v-gym #step3>#wo-add{margin:0 0 6px}
 #v-gym #step3{padding-bottom:calc(var(--tabh) + 24px)!important}
 .hq-bw{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+/* workout bar: one line, one text size */
+#v-gym #wo-top:not([hidden]){display:flex!important;align-items:baseline!important;gap:14px!important;padding:12px 16px!important;min-height:0!important;border-radius:16px!important;background:#1c2431!important;border:0!important;box-shadow:none!important;flex-wrap:nowrap;white-space:nowrap}
+#v-gym #wo-top>*{font:500 16px/1.2 var(--f-body)!important;letter-spacing:0!important;padding:0!important;margin:0!important;background:none!important;border:0!important;box-shadow:none!important;min-height:0!important;height:auto!important;border-radius:0!important}
+#v-gym #wo-top .wo-back{color:var(--cyan)!important}
+#v-gym #wo-top .wo-clock{color:var(--cyan)!important;font-weight:700!important;font-variant-numeric:tabular-nums}
+#v-gym #wo-top .wo-loc,#v-gym #wo-top .wo-loc *{color:var(--muted)!important;font-size:16px!important}
+#v-gym #wo-top .wo-loc svg{width:16px;height:16px;vertical-align:-2px}
+#v-gym #wo-top .wo-stat{display:inline-flex!important;flex-direction:row!important;align-items:baseline!important;gap:4px}
+#v-gym #wo-top .wo-stat b{font:700 16px/1.2 var(--f-body)!important;font-variant-numeric:tabular-nums;color:var(--text)}
+#v-gym #wo-top .wo-stat small{font:400 16px/1.2 var(--f-body)!important;color:var(--muted)!important}
+#v-gym #wo-top .wo-stat:first-of-type{margin-left:auto!important}
