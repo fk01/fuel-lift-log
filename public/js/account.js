@@ -19,7 +19,7 @@ async function acctBoot(){let st;try{st=await acctStatus()}catch(e){cloudLoad();
   if(!PROFILE&&!ME.owner)openOnboarding()}
 /* ---- sign in ---- */
 function showLogin(){const m=document.getElementById("login");m.hidden=false;acctSetMode("login");
-  if(window.PublicKeyCredential)document.getElementById("passkey-login").hidden=false;
+  
   const gid=window.GOOGLE_CLIENT_ID;if(gid&&!document.getElementById("g-btn").dataset.on){
     const s=document.createElement("script");s.src="https://accounts.google.com/gsi/client";s.async=true;s.onload=()=>{try{
       google.accounts.id.initialize({client_id:gid,callback:r=>acctPost("/api/auth/google",{credential:r.credential})});
