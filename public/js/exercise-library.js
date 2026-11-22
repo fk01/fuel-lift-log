@@ -48,7 +48,7 @@ function libUpdate(id,patch){const x=EXLIB.find(q=>q.id===id);if(x)Object.assign
 
 let libMode=null,libEdit=null,libGroup="all",libEq="all";         // libMode: null = manage, {skip:Set,onPick:fn} = pick for a program
 const libNamed=x=>!!(x.n&&x.n.trim());
-function openLib(mode){libMode=mode||null;document.getElementById("lib-modal").classList.toggle("adding",!!(mode&&mode.add||mode&&mode.onPick));try{document.getElementById("lib-title").textContent=mode&&mode.onPick?t("เลือกท่าที่จะเพิ่ม"):t("คลังท่า")}catch(e){}libEdit=null;libGroup="all";libQ="";libF={b:"",e:"",t:""};libFOpen=false;libEq=hereLoc().eq.length<EQ_ALL.length?"here":"all";const q=document.getElementById("lib-q");if(q){q.value="";q.placeholder=t("ค้นหาท่า")}loadCat();renderLib();document.getElementById("lib-modal").hidden=false}
+function openLib(mode){libMode=mode||null;document.getElementById("lib-modal").classList.toggle("adding",!!(mode&&mode.add||mode&&mode.onPick));try{document.getElementById("lib-title").textContent=mode&&mode.onPick?t("เลือกท่าที่จะเพิ่ม"):t("คลังท่า")}catch(e){}libEdit=null;libGroup="all";libQ="";libF={b:"",e:"",t:""};libFOpen=false;libEq="all";const q=document.getElementById("lib-q");if(q){q.value="";q.placeholder=t("ค้นหาท่า")}loadCat();renderLib();document.getElementById("lib-modal").hidden=false}
 function closeLib(){const n=EXLIB.length;EXLIB=EXLIB.filter(libNamed);if(EXLIB.length!==n)save("exlib",EXLIB);
   libEdit=null;libMode=null;document.getElementById("lib-modal").hidden=true;renderGym()}
 function libDone(x){
@@ -84,7 +84,7 @@ function libForm(x){
     if(libNamed(x)&&!b.dataset.sure){b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน");return}
     EXLIB=EXLIB.filter(q=>q!==x);save("exlib",EXLIB);txSave();if(libNamed(x))toast(t("ลบท่าแล้ว"))});
   return c}
-let libView=(()=>{try{return localStorage.getItem("libView")||"list"}catch(e){return "list"}})();
+let libView="list";   /* view toggle removed — list only */
 document.querySelectorAll("[data-lv]").forEach(b=>b.addEventListener("click",()=>{libView=b.dataset.lv;try{localStorage.setItem("libView",libView)}catch(e){}renderLib()}));
 function renderLib(){const G=libView==="grid",FS=G?96:40;document.querySelectorAll("[data-lv]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.lv===libView));
   document.getElementById("lib-list").classList.toggle("lib-grid",G);
