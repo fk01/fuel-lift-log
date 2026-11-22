@@ -1664,3 +1664,4 @@ body.on-stats .wrap>header{display:none}
 #macro-bars .mb-n{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 #macro-bars .mb-v b{font-size:22px;font-weight:700;color:var(--text)}#macro-bars .mb-v small{color:var(--muted);font-size:12px}
 #macro-bars .mb>i{width:100%}
+#v-stats #st-head .hq-streak{display:block;text-align:center;margin-top:8px}#st-head{display:flex;flex-direction:column}
