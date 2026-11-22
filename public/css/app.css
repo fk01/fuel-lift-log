@@ -1702,3 +1702,4 @@ body.on-stats .wrap>header{display:none}
 .mp-nm{display:grid;gap:4px;margin-top:10px}.mp-nm small{color:var(--muted);font-size:13px}
 .mp-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .mp-li [data-mpuse]{min-width:64px;border-radius:10px!important}
+.mp-acts .mp-copy{grid-column:1/-1;display:grid;gap:2px;justify-items:center}.mp-copy small{color:var(--muted);font-weight:400;font-size:12px}
