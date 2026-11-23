@@ -12,6 +12,7 @@ function txTouch(k){const x=txTop();if(x){x.keys.add(k);txBar()}}
 const txDirty=()=>{const x=txTop();return !!x&&x.keys.size>0};
 function txEnd(x){TXS.pop();txBar();if(x.onEnd)x.onEnd()}
 function txSave(){const x=txTop();if(!x)return;
+  x.beforeSave?.forEach(apply=>apply());
   if(TXS.length>1){const o=TXS[TXS.length-2];x.keys.forEach(k=>o.keys.add(k))}
   else{const v={progs:PROGS,exlib:EXLIB,gymdraft:draft,mealplan:MP};TXS.length=0;x.keys.forEach(k=>save(k,v[k]));TXS.push(x);if(x.keys.size)toast("✓ "+t("บันทึกการแก้ไขแล้ว"))}
   txEnd(x)}

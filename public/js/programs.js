@@ -66,7 +66,8 @@ function nextProg(){const wd=new Date(DAY+"T12:00:00").getDay();
   for(let i=0;i<7;i++){const k=ws.find(q=>daysOf(q).includes((wd+i)%7));if(k&&!(i===0&&logs.some(l=>l.date===DAY&&l.prog===k)))return k}
   return ws[0]||Object.keys(PROGS)[0]}
 let cur=draft.prog&&PROGS[draft.prog]?draft.prog:nextProg();
-function lastFor(id){for(let i=logs.length-1;i>=0;i--){if(logs[i].date>DAY||logLoc(logs[i])!==curLoc)continue;const s=logs[i].ex[id];if(s&&s.length)return{date:logs[i].date,sets:s}}return null}
+const workoutLoc=()=>draft.fromHist?(draft.loc||locOf(PROGS[draft.prog])):curLoc;
+function lastFor(id){for(let i=logs.length-1;i>=0;i--){if(logs[i].date>DAY||logLoc(logs[i])!==workoutLoc())continue;const s=logs[i].ex[id];if(s&&s.length)return{date:logs[i].date,sets:s}}return null}
 function best(sets){return sets.reduce((m,s)=>Math.max(m,+s.kg||0),0)}
 function renderProgs(){
   const pl=planFor(DAY);const box=document.getElementById("progs");box.innerHTML="";
