@@ -199,3 +199,20 @@ Object.assign(EN,{"ทำไป":"Done","เซ็ตที่ยังไม่
 Object.assign(EN,{"แตะเพื่อแก้":"tap to edit"});
 
 Object.assign(EN,{"ครั้งแรก — เลือกน้ำหนักที่ยกได้ประมาณ 12 ครั้งสบายๆ":"First time — pick a weight you can lift about 12 times comfortably","วอร์มก่อน":"Warm up","เบาๆ 8 ครั้ง แล้วหนักขึ้น 3 ครั้ง":"light × 8, then heavier × 3"});
+/* ===== log-sets layout (mock 3): thumb header, [✓n] [kg] × [reps] [−] rows, Add set row, next exercise card ===== */
+function decorateSets(){const ex=sessEx();document.querySelectorAll("#exs>.ex").forEach((card,ci)=>{if(card.dataset.dec)return;card.dataset.dec=1;const e=ex[ci];if(!e)return;
+  const g=(()=>{try{return gifOf(EXLIB.find(q=>q.id===e.id)||e)}catch(x){return ""}})(),rows=(draft.ex||{})[e.id]||[],last=(typeof lastLog==="function"?null:null);
+  const nm=card.querySelector(".ex-name");if(nm&&!card.querySelector(".ls-th")){nm.insertAdjacentHTML("afterbegin",`<span class="ls-th"${g?` style="background-image:url('${esc(g)}')"`:""}>${g?"":licon("dumbbell")}</span>`)}
+  const sets=card.querySelector(".sets");if(!sets)return;sets.classList.add("ls");
+  rows.forEach((r,i)=>{const kg=sets.querySelector(`#kg-${CSS.escape(e.id)}-${i}`),rp=sets.querySelector(`#rp-${CSS.escape(e.id)}-${i}`),ok=sets.querySelector(`#ok-${CSS.escape(e.id)}-${i}`);if(!kg||!rp||!ok)return;
+    const lab=document.createElement("label");lab.className="ls-n";lab.innerHTML=`<span>${i+1}</span>`;kg.before(lab);lab.prepend(ok);
+    const x=document.createElement("span");x.className="ls-x";x.textContent="×";kg.after(x);
+    const d=document.createElement("button");d.type="button";d.className="ls-del";d.setAttribute("aria-label",t("ลบเซ็ต_cf").replace(/_cf$/,"")+" "+(i+1));d.textContent="−";rp.after(d);
+    d.addEventListener("click",async()=>{if(!await cfm(`${t("ลบเซ็ต_cf").replace(/_cf$/,"")} ${i+1}?`,esc(e.n),t("ลบเซ็ต_cf").replace(/_cf$/,""),1))return;rows.splice(i,1);save("gymdraft",draft);renderEx();updWoBar()})});
+  const add=card.querySelector("[data-add]");if(add&&!card.querySelector(".ls-add")){const b=document.createElement("button");b.type="button";b.className="ls-add";b.innerHTML=`<span>${t("เพิ่มเซ็ต")}</span><i>+</i>`;b.addEventListener("click",()=>add.click());sets.after(b)}});
+  /* next exercise as a compact card under the current one */
+  const box=document.getElementById("exs");box.querySelectorAll(".ls-next").forEach(x=>x.remove());const cur=box.querySelector(".ex.pg-on");if(cur){const i=[...box.querySelectorAll(":scope>.ex")].indexOf(cur),n=ex[i+1];
+    if(n){const g=(()=>{try{return gifOf(EXLIB.find(q=>q.id===n.id)||n)}catch(x){return ""}})();cur.insertAdjacentHTML("afterend",`<button type="button" class="ls-next"><span class="ls-th"${g?` style="background-image:url('${esc(g)}')"`:""}>${g?"":licon("dumbbell")}</span><span><b>${esc(n.n)}</b><small>${n.s} ${t("เซ็ต")} · ${t("ถัดไป_n")}</small></span><i>›</i></button>`);box.querySelector(".ls-next").addEventListener("click",()=>goEx(i+1))}}}
+{const o=renderEx;renderEx=function(){const r=o.apply(this,arguments);try{decorateSets()}catch(e){console.error(e)}return r}}
+{const o=applyPager;applyPager=function(){const r=o.apply(this,arguments);try{decorateSets()}catch(e){}return r}}
+Object.assign(EN,{"เพิ่มเซ็ต":"Add set"});

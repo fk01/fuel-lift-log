@@ -1942,3 +1942,24 @@ body{background:radial-gradient(120% 38% at 50% 0%,#3a1d0c,transparent 62%),line
 #rest.player #rest-up b{font-size:18px}.ru-go{width:50px!important;height:50px!important}
 #rest.player.photo .rest-gif{background:#0a0b0d url(/img/rest-bg.jpg) center/cover!important}
 #rest.player #rest-up{width:auto!important;box-sizing:border-box}
+/* ===== workout log-sets (mock 3) ===== */
+#v-gym .ex .ls-th{flex:none;width:56px;height:56px;border-radius:14px;background:#fff center/contain no-repeat;display:grid;place-items:center;color:#ff8a3d}
+#v-gym .ex .ls-th:not([style]){background:#2a1a10}
+#v-gym .ex .ex-name{gap:12px!important;font-size:17px;font-weight:700}
+#v-gym .ex .sets.ls{display:grid!important;grid-template-columns:40px 1fr 14px 1fr 40px!important;gap:10px 8px!important;align-items:center}
+#v-gym .ex .sets.ls>.h,#v-gym .ex .sets.ls>.n{display:none!important}
+#v-gym .ex .ls-n{position:relative;width:40px;height:40px;cursor:pointer}
+#v-gym .ex .ls-n input{position:absolute;inset:0;width:40px!important;height:40px!important;margin:0;opacity:0;cursor:pointer;z-index:2}
+#v-gym .ex .ls-n span{position:absolute;inset:0;border-radius:50%;background:#23252a;display:grid;place-items:center;font-weight:600;color:#e5e7eb}
+#v-gym .ex .ls-n input:checked+span{background:#ff8a3d;color:#1a0d04;font-size:0}#v-gym .ex .ls-n input:checked+span::after{content:"✓";font-size:18px;font-weight:700}
+#v-gym .ex .sets.ls input[data-pad]{height:46px!important;min-height:0!important;border-radius:23px!important;background:#23252a!important;border:0!important;text-align:center;font:600 17px var(--f-body)!important}
+#v-gym .ex .ls-x{color:#6b6e75;text-align:center}
+#v-gym .ex .ls-del{width:40px;height:40px;border-radius:50%;border:0;background:rgba(239,68,68,.18);color:#f87171;font-size:22px;line-height:1;cursor:pointer}
+#v-gym .ex .ls-add{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:12px;padding:12px 4px 2px;border:0;border-top:1px solid #23252a;background:none;color:#a3a6ad;font:500 16px var(--f-body);cursor:pointer}
+#v-gym .ex .ls-add i{width:36px;height:36px;border-radius:50%;background:#23252a;color:#fff;display:grid;place-items:center;font-style:normal;font-size:20px}
+#v-gym .ex .actions [data-add],#v-gym .ex .actions [data-del]{display:none!important}
+.ls-next{display:flex;align-items:center;gap:12px;width:100%;margin-top:10px;padding:14px;border:0;border-radius:22px;background:#15171b;color:#fff;text-align:left;cursor:pointer}
+.ls-next>span:nth-child(2){flex:1;display:grid;gap:2px}.ls-next b{font-size:16px}.ls-next small{color:#a3a6ad;font-size:13px}.ls-next i{font-style:normal;color:#a3a6ad;font-size:20px}
+.ls-next .ls-th{flex:none;width:52px;height:52px;border-radius:14px;background:#fff center/contain no-repeat;display:grid;place-items:center;color:#ff8a3d}.ls-next .ls-th:not([style]){background:#2a1a10}
+#v-gym #wo-add{background:#f3f4f6!important;color:#0a0b0d!important;border:0!important;border-radius:28px!important;font-weight:700!important;height:52px!important}
+#v-gym .ex .memo{background:#23252a!important;border:0!important;border-radius:16px!important;padding:12px 14px!important}#v-gym .ex [data-all]{border-radius:24px!important}
