@@ -148,3 +148,13 @@ const MAC_IC={
  f:`<svg viewBox="0 0 48 48" width="36" height="36"><path d="M6 30l20-10 16 6-20 10z" fill="#d4ac0d"/><path d="M6 30v4l16 6v-4z" fill="#b7950b"/><path d="M22 36v4l20-8v-6z" fill="#9a7d0a"/><path d="M10 26l16-8 12 5-16 8z" fill="#f9e79f"/><path d="M10 26v4l12 5v-4z" fill="#f7dc6f"/><path d="M22 31v4l16-7v-5z" fill="#f4d03f"/></svg>`};
 Object.assign(EN,{"เหลือ_kc":"to go"});
 Object.assign(EN,{"แผนที่ใช้":"Using","แผน_n":"plans"});
+/* Eat: filter chips above the meal list (All / To eat / Eaten) */
+let mealF="all";
+function mealChips(){const box=document.getElementById("meals");if(!box)return;let c=document.getElementById("meal-chips");
+  if(!c){c=document.createElement("div");c.id="meal-chips";c.className="chips meal-chips";box.before(c)}
+  c.innerHTML=[["all","ทั้งหมด_m"],["todo","ยังไม่กิน"],["done","กินแล้ว_m"]].map(([k,l])=>`<button class="chip${mealF===k?" on":""}" data-mf="${k}" aria-pressed="${mealF===k}">${t(l).replace(/_m$/,"")}</button>`).join("");
+  c.querySelectorAll("[data-mf]").forEach(b=>b.addEventListener("click",()=>{mealF=b.dataset.mf;mealChips()}));
+  box.querySelectorAll(".meal").forEach(m=>{const d=m.querySelector('input[type=checkbox]')?.checked;m.hidden=mealF==="todo"?d:mealF==="done"?!d:false})}
+{const o=renderFood;renderFood=function(){const r=o.apply(this,arguments);try{mealChips()}catch(e){}return r}}
+document.addEventListener("change",e=>{if(e.target.closest&&e.target.closest("#meals .meal"))setTimeout(mealChips,0)});
+Object.assign(EN,{"ทั้งหมด_m":"All","ยังไม่กิน":"To eat","กินแล้ว_m":"Eaten"});

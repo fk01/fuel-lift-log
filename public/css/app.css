@@ -1820,3 +1820,14 @@ body{background:radial-gradient(120% 38% at 50% 0%,#3a1d0c,transparent 62%),line
 #v-home .hq-pi.lead>*{position:relative;z-index:1}
 #v-home .hq-pi.lead .hq-th{display:none}
 #v-home .hq-pi.lead .hq-pn{font-size:20px!important}
+/* ===== Eat v2 ===== */
+.meal-chips{display:flex;gap:8px;margin:4px 0 10px}
+.meal-chips .chip{background:#15171b!important;border:1.5px solid transparent!important;color:#e5e7eb!important;border-radius:24px!important;padding:9px 16px!important;min-height:0!important;font-size:14px!important}
+.meal-chips .chip.on{background:none!important;border-color:#ff8a3d!important;color:#ff8a3d!important}
+#v-food .meal{background:#15171b!important;border-radius:20px!important}
+#v-food .meal .row-ic{background:rgba(255,138,61,.14)!important;color:#ff8a3d!important;border-radius:14px!important}
+#v-food .meal.lead{outline:1.5px solid #ff8a3d!important;background:#17181b!important}
+#v-food .meal input[type=checkbox]{border-radius:10px!important}
+#v-food .meal input[type=checkbox]:checked{background:#ff8a3d!important;border-color:#ff8a3d!important}
+#v-food .meal ul{display:none}#v-food .meal:focus-within ul,#v-food .meal.lead ul{display:block}
+#v-food .meal input[type=checkbox]{width:40px!important;height:40px!important;border-radius:12px!important;background:none!important;border:1.5px solid #3a3c42!important}
