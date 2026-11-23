@@ -129,7 +129,7 @@ const freshDay=()=>DAY===TODAY&&!editing&&(!picked||!dayMode());
 const needDay=()=>freshDay()&&!dayMode();
 const resting=()=>freshDay()&&dayMode()==="rest";
 const pastDay=()=>DAY!==TODAY&&!picked&&!editing;
-const needPick=()=>pastDay()||resting()||needDay()||(freshDay()&&dayMode()==="train"&&(locDay.date!==TODAY||pickAnyway));
+const needPick=()=>!(picked&&draft.fromHist)&&(pastDay()||resting()||needDay()||(freshDay()&&dayMode()==="train"&&(locDay.date!==TODAY||pickAnyway)));
 let dayKind=load("daykind",{});const kindToday=()=>dayKind.date===TODAY?dayKind.k:null;
 function chooseDay(m){if(m==="cardio"||m==="train"){dayKind={date:TODAY,k:m==="cardio"?"cardio":"gym"};save("daykind",dayKind);m="train"}setDayMode(m);if(m==="train"){pickAnyway=false;locPrev=null;if(locDay.date===TODAY){locPrev=locDay;locDay={};save("locday",locDay);pickAnyway=true}}renderGym();scrollAppTop()}
 function weakest(n){try{const R=recPct();return REC_ORDER.filter(m=>R[m]&&R[m].pct<100&&R[m].days<=NEGLECT).sort((a,b)=>R[a].pct-R[b].pct).slice(0,n).map(m=>[m,R[m].pct])}catch(e){return []}}

@@ -259,7 +259,11 @@ const steps = [
     d.click(); if (getComputedStyle(document.getElementById("step4")).display === "none") throw new Error("workout bar returns after Done"); cancelProg(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
-for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
+await require("./history-edit.cjs")(b, p.url());
+console.log("ok history-edit");
+if (!process.argv.includes("--history-edit")) {
+  for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
+}
 await b.close(); srv.close();
 if (errs.length) { console.error("FAIL", errs); process.exit(1); }
 console.log("PASS");
