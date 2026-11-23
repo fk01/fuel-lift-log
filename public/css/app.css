@@ -1885,3 +1885,39 @@ body{background:radial-gradient(120% 38% at 50% 0%,#3a1d0c,transparent 62%),line
 #v-food #macro-bars{margin:10px 16px 6px!important;width:auto!important}
 #v-food .mp-open-row{display:grid!important;grid-template-columns:1fr auto;align-items:center;gap:10px}
 #v-food .mp-cur{display:grid!important;gap:2px}#v-food .mp-cur b{white-space:normal!important;line-height:1.25}
+/* ===== Train v3 ===== */
+/* program sheet = playlist */
+.pl-sum{color:#a3a6ad;font-size:13px;margin:-4px 0 6px}
+.pl-sec{font-weight:700;margin:8px 0 2px}
+#gen-body .pl-card{display:flex!important;align-items:center;gap:12px;width:100%;padding:10px!important;margin-top:8px;border:1px solid #23252a!important;border-radius:20px!important;background:#15171b!important;text-align:left}
+.pl-th{flex:none;width:72px;height:72px;border-radius:14px;background:#2a1a10 center/contain no-repeat;display:grid;place-items:center;color:#ff8a3d}
+.pl-th[style]{background-color:#fff}.pl-th svg{width:26px;height:26px}
+#gen-body .pl-card .pi-nm{display:grid!important;gap:2px;white-space:normal!important}#gen-body .pl-card .pi-t{font-size:15px;font-weight:700;white-space:normal}
+.pl-pt{color:#ff8a3d!important;font-size:12px!important;font-weight:600}
+#gen-body .pl-card .pi-how{color:#a3a6ad;font-size:18px}
+.pl-wu{opacity:.85}.pl-wu .pl-th{width:52px;height:52px}
+/* setup: day circles, stats, warm-up, white add */
+#pm-modal .chips.days{display:flex!important;justify-content:space-between;gap:4px}
+#pm-modal .chips.days .chip{width:40px;height:40px;min-height:0!important;padding:0!important;border-radius:50%!important;display:grid;place-items:center;background:#1c1d21!important;border:0!important;font-weight:600}
+#pm-modal .chips.days .chip[aria-pressed="true"]{background:#ff8a3d!important;color:#1a0d04!important}
+.pm-stats{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;margin:12px 0;font-size:11px;color:#a3a6ad;letter-spacing:.04em}.pm-stats b{display:block;color:#fff;font-size:17px;margin-top:4px;letter-spacing:0}.pm-stats div+div{border-left:1px solid #2a2c31}
+.pm-wu{background:#15171b;border-radius:22px;padding:12px;margin:6px 0 10px;display:grid;gap:6px}
+.pm-wuh{display:flex;justify-content:space-between;align-items:center}.pm-wuh b{font-size:17px}
+.pm-tg{width:46px;height:28px;border-radius:14px;border:0;background:#2a2c31;position:relative;cursor:pointer}.pm-tg::after{content:"";position:absolute;left:4px;top:4px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .15s}.pm-tg.on{background:#ff8a3d}.pm-tg.on::after{left:22px}
+.pm-wur{display:flex;align-items:center;gap:10px}.pm-wur .pl-th{width:46px;height:46px}.pm-wur .pi-nm{flex:1;display:grid}.pm-wur small{color:#a3a6ad}
+.pm-wuadd{border:0;border-top:1px solid #23252a;background:none;color:#ff8a3d;padding:10px 0 2px;font:500 14px var(--f-body);cursor:pointer}
+#pm-modal .ex>[data-add]{background:#f3f4f6!important;color:#0a0b0d!important;border:0!important;border-style:solid!important;border-radius:28px!important;font-weight:700!important}
+/* workout set rows: pills */
+#v-gym .ex .sets input[data-pad]{border-radius:16px!important;background:#23252a!important;border:0!important}
+#v-gym .ex .sets input[type=checkbox]{border-radius:50%!important}
+#v-gym .ex .sets input[type=checkbox]:checked{background:#ff8a3d!important;border-color:#ff8a3d!important}
+#v-gym .ex{border-radius:22px!important;background:#15171b!important;border:0!important}
+/* rest: coming up next */
+#rest-up{width:100%;display:flex;align-items:center;gap:10px;background:#15171b;border-radius:18px;padding:12px 14px;margin-top:12px}#rest-up[hidden]{display:none}
+#rest-up span:first-child{display:grid;flex:1}#rest-up small{color:#a3a6ad;font-size:12px}#rest-up b{font-size:16px}
+.ru-go{width:42px;height:42px;border-radius:50%;background:#ff8a3d;color:#1a0d04;display:grid;place-items:center}
+#gen-body .pl-card .pi-nm{flex:1;min-width:0;justify-items:start!important;text-align:left!important;align-items:start}
+#gen-body .pl-card .pi-nm>*{text-align:left!important;justify-self:start}
+#gen-body .pl-card .pl-pt{order:-1}
+#rest .rest-in{display:flex;flex-direction:column}#rest #rest-up{order:99}
+#gen-body .pl-card .pi-nm{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:2px!important}#gen-body .pl-card .pi-nm small{margin:0!important;flex:none!important}#gen-body .pl-card .pi-how{flex:none}
