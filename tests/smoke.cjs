@@ -17,7 +17,8 @@ await p.addInitScript(() => { const T0 = new Date("2026-11-19T10:00:00").getTime
   window.Date = D; localStorage.setItem("scheme", "4"); });
 await p.goto("http://localhost:8799/"); await p.waitForTimeout(800);
 await p.evaluate(() => (document.getElementById("login").hidden = true));
-const steps = [
+await require("./share-after-save.cjs")(b, p.url());
+const steps = process.argv.includes("--share-after-save") ? [] : [
   ["food", () => (location.hash = "food")], ["gym", () => (location.hash = "gym")],
   ["day-pick", () => { if (!document.querySelectorAll("#locpick [data-dm],#locpick [data-pl]").length) throw new Error("first screen should ask what today");
     (document.querySelector('#locpick [data-dm="rest"]') || document.querySelector("#locpick [data-plrest]")).click(); renderToday(); if (!document.getElementById("v-gym").classList.contains("resting") || !/พักวันนี้|Resting/.test(document.getElementById("today").textContent)) throw new Error("rest mode");
@@ -258,20 +259,6 @@ const steps = [
     const tx = document.getElementById("tx-bar"); if (tx && !tx.hidden && getComputedStyle(document.getElementById("step4")).display !== "none") throw new Error("only one bottom bar while editing");
     d.click(); if (getComputedStyle(document.getElementById("step4")).display === "none") throw new Error("workout bar returns after Done"); cancelProg(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
-  // after Save, the share card must show the log that was just saved — not another log on DAY / today
-  ["share-after-save", () => { const keepLogs = logs.slice(), realShare = openShare; let shared = null; openShare = l => { shared = l; };
-    try { const exA = PROGS.push.ex[0].id, exB = PROGS.pull.ex[0].id, past = dkey(new Date(new Date(TODAY + "T12:00:00").getTime() - 2 * 864e5));
-      const fail = [];
-      // 1) edit a past log from history while a log already exists today
-      logs = [{ date: past, prog: "push", ex: { [exA]: [{ kg: 40, reps: 8 }] } }, { date: TODAY, prog: "pull", ex: { [exB]: [{ kg: 30, reps: 10 }] } }];
-      DAY = past; cur = "push"; picked = true; draft = { prog: "push", ex: { [exA]: [{ kg: 50, reps: "8", ok: true }] }, started: 1, day: past, fromHist: 1 }; doSave();
-      if (!shared || shared.date !== past || shared.prog !== "push") fail.push("history edit shared " + (shared ? shared.date + "/" + shared.prog : "nothing") + ", want " + past + "/push");
-      // 2) second workout on the same day
-      shared = null; logs = [{ date: TODAY, prog: "pull", ex: { [exB]: [{ kg: 30, reps: 10 }] } }];
-      DAY = TODAY; cur = "push"; picked = true; draft = { prog: "push", ex: { [exA]: [{ kg: 50, reps: "8", ok: true }] }, started: 1, day: TODAY }; doSave();
-      if (!shared || shared.prog !== "push") fail.push("2nd session today shared " + (shared ? shared.date + "/" + shared.prog : "nothing") + ", want " + TODAY + "/push");
-      if (fail.length) throw new Error(fail.join("; "));
-    } finally { openShare = realShare; logs = keepLogs; save("gymlog", logs); DAY = TODAY; renderAll(); } }],
 ];
 for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
 await b.close(); srv.close();
