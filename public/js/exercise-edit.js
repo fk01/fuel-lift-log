@@ -11,27 +11,46 @@ function safeUrl(u){if(!u)return "";try{const x=new URL(u.trim());return /^https
 const isLocked=()=>false;   /* main lifts no longer locked (user choice) — delete/swap always ask to confirm */
 function editCard(box,e,i){
   const lock=isLocked(cur,e);gymTx();
-  const list=PROGS[cur].ex;{
+  const sessionList=!editing&&(draft.extra?.includes(e)?draft.extra:draft.historyExercises);
+  const list=sessionList||PROGS[cur].ex;
+  if(sessionList)i=list.indexOf(e);
+  const saveList=()=>sessionList?save("gymdraft",draft):saveProgs();
+  const historyRows=draft.fromHist&&sessionList&&draft.ex?.[e.id];
+  const setCount=historyRows&&!txTop().beforeSave?.has(e)?historyRows.length:e.s;
+  {
     const c=document.createElement("div");c.className="ex";
     c.innerHTML=`<div class="row-head" style="align-items:center"><span class="ex-name">${e.z} ${esc(e.n)}</span>${lock?`<span class="macro">🔒 ${t("ท่าหลัก")}</span>`:""}<button class="btn sm" data-mus-ed>💪 ${t("กล้ามที่โดน")}</button><button class="btn sm" data-swap ${lock?"hidden":""}>⇄ ${t("เปลี่ยนท่า")}</button></div>
       <div class="sets" style="grid-template-columns:1fr 1fr"><span class="h">${t("เซ็ต")}</span><span class="h">${t("ช่วงครั้ง")}</span>
-      <input type="number" readonly inputmode="none" data-pad="sets" id="es-${e.id}" value="${e.s}" aria-label="${t("เซ็ต")}">
-      <input id="er-${e.id}" readonly inputmode="none" data-pad="rng" value="${esc(e.r)}" aria-label="${t("ช่วงครั้ง")}" style="min-width:0;box-sizing:border-box;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:var(--r-sm);padding:7px 6px;font-family:var(--f-num);text-align:center"></div>
-      ${editing?`<label class="zone" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="em-${e.id}" ${e.main?"checked":""} ${lock?"disabled":""} style="accent-color:var(--accent)"> ${t("ท่าหลัก")}</label>`:""}
+      <input type="number" readonly inputmode="none" data-pad="sets" id="es-${esc(e.id)}" value="${setCount}" aria-label="${t("เซ็ต")}">
+      <input id="er-${esc(e.id)}" readonly inputmode="none" data-pad="rng" value="${esc(e.r)}" aria-label="${t("ช่วงครั้ง")}" style="min-width:0;box-sizing:border-box;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:var(--r-sm);padding:7px 6px;font-family:var(--f-num);text-align:center"></div>
+      ${editing?`<label class="zone" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="em-${esc(e.id)}" ${e.main?"checked":""} ${lock?"disabled":""} style="accent-color:var(--accent)"> ${t("ท่าหลัก")}</label>`:""}
       <div class="actions">${editing?`<button class="btn sm" data-up ${i===0?"disabled":""} aria-label="${t("เล่นก่อน")}">↑</button><button class="btn sm" data-down ${i===list.length-1?"disabled":""} aria-label="${t("เล่นทีหลัง")}">↓</button>`:""}<button class="btn sm ghost" data-del ${lock?"hidden":""}>${t("ลบท่า")}</button><button class="btn sm primary" data-done>✓ ${t("เสร็จแก้ท่า").replace(/แก้ท่า$/,"")}</button></div>`;
     const on=(sel,ev,fn)=>c.querySelector(sel).addEventListener(ev,fn);
-    on(`#es-${e.id}`,"change",ev=>{e.s=Math.max(1,Math.min(10,+ev.target.value||1));if(draft.ex)delete draft.ex[e.id];saveProgs()});
-    on(`#er-${e.id}`,"change",ev=>{e.r=ev.target.value.trim()||e.r;saveProgs()});
+    on(`#es-${CSS.escape(e.id)}`,"change",ev=>{
+      e.s=Math.max(1,Math.min(10,+ev.target.value||1));
+      if(historyRows){
+        // Apply the final count on editor Save. Cancel and intermediate count
+        // choices leave the recorded rows (and their source indices) intact.
+        const tx=txTop();
+        (tx.beforeSave??=new Map()).set(e,()=>{
+          historyRows.splice(e.s);
+          const kg=historyRows.at(-1)?.kg??"";
+          while(historyRows.length<e.s)historyRows.push({kg,reps:"",ok:false});
+        });
+        txTouch("gymdraft");
+      }else{if(draft.ex)delete draft.ex[e.id];saveList()}
+    });
+    on(`#er-${CSS.escape(e.id)}`,"change",ev=>{e.r=ev.target.value.trim()||e.r;saveList()});
     on("[data-mus-ed]","click",()=>openMusPick(e.id,e.n));
-    on("[data-swap]","click",()=>!lock&&openLib({skip:new Set(list.map(q=>q.id)),onPick:x=>{
+    on("[data-swap]","click",()=>!lock&&openLib({skip:new Set((sessionList?sessEx():list).map(q=>q.id)),onPick:x=>{
       if(draft.ex)delete draft.ex[e.id];const n={...libPick(x),s:e.s,r:e.r};if(e.main)n.main=1;list[i]=n;if(editId===e.id)editId=x.id;
-      saveProgs();save("gymdraft",draft);renderEx()}}));
-    c.querySelector(`#em-${e.id}`)?.addEventListener("change",ev=>{if(lock){ev.target.checked=true;return}e.main=ev.target.checked?1:0;saveProgs()});
+      if(!sessionList)saveProgs();save("gymdraft",draft);renderEx()}}));
+    c.querySelector(`#em-${CSS.escape(e.id)}`)?.addEventListener("change",ev=>{if(lock){ev.target.checked=true;return}e.main=ev.target.checked?1:0;saveProgs()});
     on("[data-done]","click",()=>{if(editing){editId=null;renderGym()}else txSave()});
     c.querySelector("[data-up]")?.addEventListener("click",()=>{list.splice(i-1,0,list.splice(i,1)[0]);saveProgs();renderEx()});
     c.querySelector("[data-down]")?.addEventListener("click",()=>{list.splice(i+1,0,list.splice(i,1)[0]);saveProgs();renderEx()});
     on("[data-del]","click",async ev=>{if(lock)return;if(!await cfm(`${t("เอาท่านี้ออก?")}<br>${esc(e.n)}`,t("เซ็ตที่บันทึกในท่านี้จะหายด้วย"),t("เอาออก_cf").replace(/_cf$/,""),1))return;
-      list.splice(i,1);if(draft.ex)delete draft.ex[e.id];saveProgs();save("gymdraft",draft);renderEx();toast(t("ลบท่าแล้ว"))});
+      list.splice(i,1);if(draft.ex)delete draft.ex[e.id];if(!sessionList)saveProgs();save("gymdraft",draft);renderEx();toast(t("ลบท่าแล้ว"))});
     box.appendChild(c);
   }
 }

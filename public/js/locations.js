@@ -129,7 +129,7 @@ const freshDay=()=>DAY===TODAY&&!editing&&(!picked||!dayMode());
 const needDay=()=>freshDay()&&!dayMode();
 const resting=()=>freshDay()&&dayMode()==="rest";
 const pastDay=()=>DAY!==TODAY&&!picked&&!editing;
-const needPick=()=>pastDay()||resting()||needDay()||(freshDay()&&dayMode()==="train"&&(locDay.date!==TODAY||pickAnyway));
+const needPick=()=>!(picked&&draft.fromHist)&&(pastDay()||resting()||needDay()||(freshDay()&&dayMode()==="train"&&(locDay.date!==TODAY||pickAnyway)));
 let dayKind=load("daykind",{});const kindToday=()=>dayKind.date===TODAY?dayKind.k:null;
 function chooseDay(m){if(m==="cardio"||m==="train"){dayKind={date:TODAY,k:m==="cardio"?"cardio":"gym"};save("daykind",dayKind);m="train"}setDayMode(m);if(m==="train"){pickAnyway=false;locPrev=null;if(locDay.date===TODAY){locPrev=locDay;locDay={};save("locday",locDay);pickAnyway=true}}renderGym();scrollAppTop()}
 function weakest(n){try{const R=recPct();return REC_ORDER.filter(m=>R[m]&&R[m].pct<100&&R[m].days<=NEGLECT).sort((a,b)=>R[a].pct-R[b].pct).slice(0,n).map(m=>[m,R[m].pct])}catch(e){return []}}
@@ -336,7 +336,7 @@ function openSwitchAsk(k){const o=PROGS[cur].name,n=PROGS[k].name,s=woProgress()
     <button class="menu-row warn" data-sw="drop"><span class="mi">✕</span><span class="mt"><b>${t("ทิ้ง")} ${esc(o)} ${t("แล้วเริ่ม")} ${esc(n)}</b><small>${t("กด ↺ เลิกทำ ได้")}</small></span></button></div>
     <button class="btn" data-gen-close>${t("ยกเลิก")}</button>`,b=>b.querySelectorAll("[data-sw]").forEach(x=>x.addEventListener("click",()=>{const a=x.dataset.sw;closeGen();
       if(a==="keep"){setDayMode("train");renderGym();return}
-      if(a==="save"){if(!commitDraft(DAY,cur)){toast(t("เซ็ตที่ติ๊กยังไม่ได้ใส่น้ำหนัก"));return}picked=false;chosen=false;stopRest&&stopRest()}
+      if(a==="save"){if(!trySaveWorkout())return;picked=false;chosen=false;stopRest&&stopRest()}
       else{cancelProg();undoLoud(t("ทิ้งแล้ว"))}startPlanItem(k,true)})))}
 // tapping a row (not ▶): details sheet — exercises, place, edit, remove, Start
 function openPlanItem(k){const p=PROGS[k],cx=isCardio(p),L=locById(locOf(p)==="*"?p.lastLoc:locOf(p))||hereLoc(),ip=inProg(k);
