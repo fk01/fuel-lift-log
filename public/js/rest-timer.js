@@ -67,3 +67,10 @@ Object.assign(EN,{"หายใจลึกๆ ดื่มน้ำ":"Breathe, 
     try{cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height)}catch(e){return}im.after(cv);g.classList.add("paused")});
   const o=window.startRest;if(typeof o==="function")window.startRest=function(){g.querySelector("canvas.gif-frz")?.remove();g.classList.remove("paused");return o.apply(this,arguments)}})();
 Object.assign(EN,{"แตะเพื่อหยุด/เล่นภาพ":"Tap to pause / play"});
+/* player-style rest: title "Exercise · Set N", time on the bar */
+{const o=window.startRest;window.startRest=function(e,i,rows){const r=o.apply(this,arguments);try{const R=document.getElementById("rest");R.classList.add("player");let h=document.getElementById("rest-ttl");if(!h){h=document.createElement("div");h.id="rest-ttl";R.querySelector(".rest-in").prepend(h)}
+  const up=i+1<rows.length?e:(sessEx()[sessEx().indexOf(e)+1]||e),sn=i+1<rows.length?i+2:1;h.innerHTML=`<b>${esc(up.n)}</b><small>${t("เซ็ต")} ${sn}</small>`;
+  let lb=document.getElementById("rest-lbl");if(!lb){lb=document.createElement("div");lb.id="rest-lbl";R.querySelector(".track").before(lb)}lb.innerHTML=`<span>${t("พัก")}</span><span id="rest-left"></span>`}catch(x){}return r}}
+setInterval(()=>{const R=document.getElementById("rest");if(!R||R.hidden)return;const tm=document.getElementById("rest-time"),l=document.getElementById("rest-left");if(tm&&l)l.textContent=tm.textContent},250);
+document.getElementById("rest-up")?.addEventListener?.("click",()=>document.getElementById("rest-skip").click());
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#rest-up"))document.getElementById("rest-skip").click()});
