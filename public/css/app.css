@@ -1963,3 +1963,10 @@ body{background:radial-gradient(120% 38% at 50% 0%,#3a1d0c,transparent 62%),line
 .ls-next .ls-th{flex:none;width:52px;height:52px;border-radius:14px;background:#fff center/contain no-repeat;display:grid;place-items:center;color:#ff8a3d}.ls-next .ls-th:not([style]){background:#2a1a10}
 #v-gym #wo-add{background:#f3f4f6!important;color:#0a0b0d!important;border:0!important;border-radius:28px!important;font-weight:700!important;height:52px!important}
 #v-gym .ex .memo{background:#23252a!important;border:0!important;border-radius:16px!important;padding:12px 14px!important}#v-gym .ex [data-all]{border-radius:24px!important}
+/* rest player, no-gif (photo) mode */
+#rest.player.photo .rest-anim{display:none!important}
+#rest.player.photo .rest-gif{background:#0a0b0d url(/img/rest-bg.jpg) center 35%/cover no-repeat!important}
+#rest.player.photo .rest-gif::after{background:linear-gradient(180deg,rgba(10,11,13,.75),transparent 28%,transparent 62%,#0a0b0d)!important}
+#rest.player.photo #rest-ttl{color:#fff}#rest.player.photo #rest-ttl small{color:#d1d5db}
+#rest-ttl{text-shadow:none}
+#rest.player #rest-up[hidden]{display:none!important}
