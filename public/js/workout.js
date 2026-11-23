@@ -216,3 +216,24 @@ function decorateSets(){const ex=sessEx();document.querySelectorAll("#exs>.ex").
 {const o=renderEx;renderEx=function(){const r=o.apply(this,arguments);try{decorateSets()}catch(e){console.error(e)}return r}}
 {const o=applyPager;applyPager=function(){const r=o.apply(this,arguments);try{decorateSets()}catch(e){}return r}}
 Object.assign(EN,{"เพิ่มเซ็ต":"Add set"});
+/* ===== workout = mock 3 exactly: top bar ‹ time · i/n ✓, card header thumb+name+sub+•••, pills with units, white Add exercise ===== */
+function mockTop(){const tp=document.getElementById("wo-top");if(!tp)return;if(!tp.querySelector(".wt-fin")){tp.insertAdjacentHTML("beforeend",`<span class="wt-pos" id="wt-pos"></span><button class="wt-fin" aria-label="${t("จบและบันทึก")}"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`);tp.querySelector(".wt-fin").addEventListener("click",()=>document.getElementById("save-w").click())}
+  const n=document.querySelectorAll("#exs>.ex").length;const p=document.getElementById("wt-pos");if(p)p.textContent=n?` · ${woIdx+1}/${n}`:""}
+function mockCards(){const ex=sessEx();document.querySelectorAll("#exs>.ex").forEach((card,ci)=>{const e=ex[ci];if(!e||card.dataset.mk)return;card.dataset.mk=1;
+  const L=lastFor(e.id),rows=(draft.ex||{})[e.id]||[],u=e.u||"kg";const kind=(()=>{try{return isCardio(PROGS[cur])?t("คาร์ดิโอ"):t("เวท")}catch(x){return ""}})();
+  const g=(()=>{try{return gifOf(EXLIB.find(q=>q.id===e.id)||e)}catch(x){return ""}})();
+  const hd=document.createElement("div");hd.className="mk-h";hd.innerHTML=`<span class="ls-th"${g?` style="background-image:url('${esc(g)}')"`:""}>${g?"":licon("dumbbell")}</span><span class="mk-t"><b>${esc(e.n)}</b><small><em>${kind}</em> · ${rows.length} ${t("เซ็ต")}${L&&L.sets[0]?` · ${t("ล่าสุด")} ${toDisp(L.sets[0].kg,u)}${u}×${L.sets[0].reps}`:""}</small></span><button type="button" class="mk-more" aria-label="${t("ตัวเลือก")}">⋯</button>`;
+  card.prepend(hd);
+  hd.querySelector(".mk-more").addEventListener("click",()=>{const q=s=>card.querySelector(s);
+    openGen(esc(e.n),`<div class="pm-menu">${[["how","▶","วิธีเล่น"],["edit","✎","แก้ไขท่า"],["load","↺","ใช้ค่าครั้งก่อน"],["all","✓✓","ติ๊กทุกเซ็ต"],["memo","✎","เมโม"],["rest","⏱",`${t("เวลาพัก")} ${fmt(restFor(e))}`],["unit","⇄",`${t("หน่วย")}: ${u}`],["cancel","✕","ยกเลิกการออก"]].filter(([k])=>k!=="load"||q("[data-load]")).map(([k,i,l])=>`<button class="menu-row${k==="cancel"?" warn":""}" data-mk="${k}"><span class="mi">${i}</span><span class="mt"><b>${t(l)}</b></span></button>`).join("")}</div><button class="btn" data-gen-close>${t("ปิด")}</button>`,
+      b=>b.querySelectorAll("[data-mk]").forEach(x=>x.addEventListener("click",()=>{const k=x.dataset.mk;closeGen();
+        if(k==="how")openHowTo(e.id,e.n);else if(k==="edit")q("[data-edit]")?.click();else if(k==="load")q("[data-load]")?.click();else if(k==="all")q("[data-all]")?.click();
+        else if(k==="memo"){const v=prompt(t("เมโม…"),(draft.memo||{})[e.id]||"");if(v!=null){draft.memo=draft.memo||{};draft.memo[e.id]=v;save("gymdraft",draft)}}
+        else if(k==="rest"){const v=prompt(t("เวลาพัก (วินาที)"),restFor(e));if(v&&+v>0){restCfg[e.id]=Math.max(15,Math.min(600,+v));save("restcfg",restCfg)}}
+        else if(k==="unit")q("[data-unit]")?.click();else if(k==="cancel")document.getElementById("cancel-w").click()})))});
+  /* pills: value + unit, future rows dimmed */
+  const first=rows.findIndex(r=>!r.ok);card.querySelectorAll(".sets.ls input[data-pad]").forEach(inp=>{if(inp.parentElement.classList.contains("mk-pill"))return;const w=document.createElement("span");w.className="mk-pill";inp.before(w);w.append(inp);w.insertAdjacentHTML("beforeend",`<i>${inp.dataset.pad==="kg"?u:t("ครั้ง_pm").replace(/_pm$/,"")}</i>`);
+    const i=+inp.id.split("-").pop();if(first>=0&&i>first)w.classList.add("dim");const fit=()=>{inp.style.width=(Math.max(1,String(inp.value||inp.placeholder||"").length)*0.62+0.5)+"em"};fit();inp.addEventListener("input",fit);inp.addEventListener("change",fit)})})}
+{const o=renderEx;renderEx=function(){const r=o.apply(this,arguments);try{mockCards();mockTop()}catch(e){console.error(e)}return r}}
+{const o=applyPager;applyPager=function(){const r=o.apply(this,arguments);try{mockTop()}catch(e){}return r}}
+Object.assign(EN,{"ตัวเลือก":"Options","แก้ไขท่า":"Edit exercise","ใช้ค่าครั้งก่อน":"Use last session","ติ๊กทุกเซ็ต":"Tick all sets","เมโม":"Memo","เวลาพัก":"Rest","เวลาพัก (วินาที)":"Rest (seconds)","หน่วย":"Unit","ยกเลิกการออก":"Cancel workout"});

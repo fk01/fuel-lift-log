@@ -1973,3 +1973,31 @@ body{background:radial-gradient(120% 38% at 50% 0%,#3a1d0c,transparent 62%),line
 .ru-go{flex:none;display:grid!important;place-items:center;padding:0!important;line-height:0}.ru-go svg{display:block;transform:translateX(1px)}
 #rest.player #rest-skip.paused::before{width:0;height:0;background:none;border-style:solid;border-width:20px 0 20px 32px;border-color:transparent transparent transparent #1a0d04;transform:translate(-38%,-50%)}
 :root{--text:#f3f4f6}
+/* ===== workout mock 3 exact ===== */
+#v-gym #wo-top:not([hidden]){display:grid!important;grid-template-columns:44px 1fr 48px!important;align-items:center;gap:8px!important;padding:6px 2px!important;background:none!important;border:0!important}
+#v-gym #wo-top .wo-loc,#v-gym #wo-top .wo-stat,#v-gym #wo-top #wo-finish{display:none!important}
+#v-gym #wo-top .wo-back{grid-column:1;width:44px!important;height:44px!important;border-radius:50%!important;border:1px solid #3a3c42!important;font-size:0!important;display:grid!important;place-items:center;color:#fff!important}
+#v-gym #wo-top .wo-back::before{content:"‹";font-size:24px;line-height:1}
+#v-gym #wo-top .wo-clock{grid-column:2;grid-row:1;justify-self:center;color:#fff!important;font:700 17px var(--f-body)!important}
+#v-gym #wo-top .wt-pos{grid-column:2;grid-row:1;justify-self:center;color:#fff;font:700 17px var(--f-body);transform:translateX(calc(50% + 24px))}
+#v-gym #wo-top .wo-clock{transform:translateX(-24px)}
+.wt-fin{grid-column:3;width:48px;height:48px;border-radius:50%;border:0;background:#ff8a3d;color:#1a0d04;display:grid;place-items:center;cursor:pointer;box-shadow:0 0 18px rgba(255,138,61,.4)}
+#v-gym #step3>#step4,#v-gym .note-in,#v-gym .wo-pager,#v-gym #step3>.step{display:none!important}
+#v-gym .ex>.row-head,#v-gym .ex>.last,#v-gym .ex .zone,#v-gym .ex>.memo,#v-gym .ex>.actions,#v-gym .ex .restset{display:none!important}
+.mk-h{display:flex;align-items:center;gap:12px;margin-bottom:12px}.mk-t{flex:1;min-width:0;display:grid;gap:2px}.mk-t b{font-size:17px}.mk-t small{color:#a3a6ad;font-size:13px}.mk-t em{color:#ff8a3d;font-style:normal}
+.mk-more{flex:none;width:40px;height:40px;border-radius:50%;border:0;background:#23252a;color:#a3a6ad;font-size:18px;cursor:pointer}
+#v-gym .ex .mk-h .ls-th{width:56px;height:56px}
+.mk-pill{display:flex;align-items:baseline;justify-content:center;gap:5px;height:46px;border-radius:23px;background:#23252a;padding:0 10px}
+.mk-pill input{width:3ch;height:auto!important;min-height:0!important;padding:0!important;background:none!important;border:0!important;text-align:right!important;font:600 17px var(--f-body)!important;color:#fff!important;align-self:center}
+.mk-pill i{font-style:normal;color:#e5e7eb;font-size:15px;align-self:center}.mk-pill.dim input,.mk-pill.dim i{color:#6b6e75!important}
+#v-gym .ex .sets.ls{grid-template-columns:40px 1fr 14px 1fr 40px!important}
+#v-gym #wo-add{position:fixed!important;left:36px;right:36px;bottom:calc(var(--tabh,84px) + 14px);z-index:9;height:54px!important;border-radius:28px!important;box-shadow:0 8px 24px rgba(0,0,0,.5)!important}
+#v-gym #exs{padding-bottom:90px}
+#v-gym .ex{padding:16px!important}
+#v-gym #wo-top:not([hidden])>.wt-fin{width:48px!important;height:48px!important;border-radius:50%!important;background:#ff8a3d!important;color:#1a0d04!important;padding:0!important;display:grid!important;place-items:center;box-shadow:0 0 18px rgba(255,138,61,.4)!important}
+#v-gym #wo-top .wo-clock{justify-self:end!important;transform:none!important;text-align:right;padding-right:4px!important}
+#v-gym #wo-top .wt-pos{justify-self:start!important;transform:none!important;margin-left:50%!important;padding-left:2px}
+#v-gym #wo-top .wo-clock{margin-right:50%!important}
+.mk-pill input{overflow:visible}
+.mk-pill input{-moz-appearance:textfield;appearance:textfield}
+.mk-pill input::-webkit-outer-spin-button,.mk-pill input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;display:none}
