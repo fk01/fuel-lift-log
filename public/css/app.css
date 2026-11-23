@@ -1782,3 +1782,5 @@ body:has(#tx-bar:not([hidden])) :is(#pm-modal .modal-in,#gen-body,#lib-modal .mo
 #rest .rest-gif.paused img{visibility:hidden}
 .gif-pp{position:absolute;right:20px;top:20px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(15,20,29,.75);color:#fff;font-size:12px;letter-spacing:-1px;z-index:2}
 #rest .rest-gif.paused .gif-pp::before{content:"▶";font-size:14px;letter-spacing:0}#rest .rest-gif.paused .gif-pp{font-size:0}
+.gif-pp{font-size:0!important}.gif-pp::before{content:none!important}
+.gif-pp .pp-play{display:none;margin-left:2px}#rest .rest-gif.paused .gif-pp .pp-play{display:block}#rest .rest-gif.paused .gif-pp .pp-pause{display:none}
