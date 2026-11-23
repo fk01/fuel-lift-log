@@ -86,14 +86,31 @@ function renderSessions(){
     box.appendChild(d);
   });
 }
-function historyDraft(log){
+// Older drafts have editable values but no row IDs. Only reuse metadata when
+// the original sequence is intact or both sides have a unique matching set.
+function matchLegacySets(rows,original){
+  const same=(a,b)=>String(a.kg)===String(b.kg)&&String(a.reps)===String(b.reps);
+  const intact=rows.length===original.length&&rows.every((row,i)=>same(row,original[i]));
+  return rows.map((row,i)=>{
+    if(intact)return {...row,sourceIndex:i};
+    const sourceIndex=original.findIndex(set=>same(row,set));
+    if(sourceIndex<0||original.some((set,j)=>j!==sourceIndex&&same(row,set))||
+       rows.some((other,j)=>i!==j&&same(row,other)))return row;
+    return {...row,sourceIndex};
+  });
+}
+function historyDraft(log,prior){
   const historyExercises=[],ex={};
-  for(const [id,sets] of Object.entries(log.ex)){
+  // A pre-upgrade draft already contained every recorded exercise. Missing
+  // entries were explicitly removed, and draft.extra owns any new exercises.
+  for(const [id,sets] of Object.entries(prior?.ex||log.ex)){
+    ex[id]=prior?.ex?matchLegacySets(sets,log.ex[id]||[]):sets.map((s,sourceIndex)=>({kg:s.kg,reps:s.reps,ok:true,sourceIndex}));
+    if(prior?.extra?.some(e=>e.id===id))continue;
+    if(!log.ex[id]&&!sets.some(row=>row.ok||row.reps!==""&&row.reps!=null))continue;
     const template=PROGS[log.prog]?.ex.find(e=>e.id===id)||EXLIB.find(e=>e.id===id)||{};
     historyExercises.push({...libPick(template),id,n:exName(id,log),s:sets.length,r:template.r||"8-12"});
-    ex[id]=sets.map((s,sourceIndex)=>({kg:s.kg,reps:s.reps,ok:true,sourceIndex}));
   }
-  return {fromHist:1,started:1,day:log.date,prog:log.prog,loc:log.loc,note:log.note,memo:{...log.memo},historyExercises,ex};
+  return {fromHist:1,started:1,day:log.date,prog:log.prog,loc:log.loc,note:log.note,...prior,memo:{...log.memo,...prior?.memo},historyExercises,ex};
 }
 function editedHistoryRecord(log){
   const rec={...log,ex:{}},names={...log.names},memo={...log.memo};
@@ -106,7 +123,7 @@ function editedHistoryRecord(log){
       const set={...original};
       if(row.kg!==original?.kg){
         if(row.kg==="")continue;
-        set.kg=+row.kg;
+        set.kg=row.kg===null?null:+row.kg;
       }
       if(row.reps!==original?.reps){
         if(row.reps==="")continue;
@@ -148,8 +165,22 @@ function commitDraft(day,prog){
   logs.sort((a,b)=>a.date.localeCompare(b.date));
   save("gymlog",logs);draft={};save("gymdraft",draft);try{if(day===TODAY&&hasPlanToday())setDayMode(null)}catch(e){}return true;
 }
+function checkHistoryTarget(){
+  if(!draft.fromHist||draft.day===DAY&&draft.prog===cur&&logs.some(l=>l.date===draft.day&&l.prog===draft.prog))return true;
+  cfm(t("ไม่พบบันทึกเดิมในวันนี้"),t("บันทึกอาจถูกย้ายวันหรือลบแล้ว การแก้ไขยังอยู่ในหน้านี้"),t("ทิ้งการแก้ไขและกลับประวัติ"),1,t("แก้ไขต่อ")).then(discard=>{
+    if(discard){cancelProg();location.hash="stats"}
+  });
+  return false;
+}
+function trySaveWorkout(){
+  if(!checkHistoryTarget())return false;
+  if(commitDraft(DAY,cur))return true;
+  const noKg=Object.values(draft.ex||{}).some(rows=>rows.some(row=>row.ok&&row.kg===""));
+  toast(t(noKg?"เซ็ตที่ติ๊กยังไม่ได้ใส่น้ำหนัก":"ยังไม่ได้ติ๊กเซ็ตไหนเลย"));
+  return false;
+}
 // finishing with exercises left untouched: confirm once, listing what will be skipped
-function finishWorkout(){const left=sessEx().filter(e=>!((draft.ex||{})[e.id]||[]).some(r=>r.ok));
+function finishWorkout(){if(!checkHistoryTarget())return;const left=sessEx().filter(e=>!((draft.ex||{})[e.id]||[]).some(r=>r.ok));
   if(!sessEx().some(e=>((draft.ex||{})[e.id]||[]).some(r=>r.ok))){toast(t("ยังไม่ได้ติ๊กเซ็ตไหนเลย"));return}
   {const pg=woProgress();if(!left.length&&pg.done<pg.total){cfm(`${t("จบวันนี้เลยไหม?")}`,`${t("ทำไป")} ${pg.done}/${pg.total} ${t("เซ็ต")} · ${t("เซ็ตที่ยังไม่ติ๊กจะไม่ถูกบันทึก")}`,"✓ "+t("บันทึกเท่าที่เล่น"),0,t("เล่นต่อ")).then(ok=>{if(ok)doSave()});return}}
   if(left.length){openGen(t("จบวันนี้เลยไหม?"),`<p class="note">${t("ท่าที่ยังไม่ได้เล่นจะไม่ถูกบันทึก")}</p><ul class="prog-ex" style="margin:0">${left.map(e=>`<li><b class="no">–</b><em class="nm">${e.z} ${esc(e.n)}</em><span class="ss"></span></li>`).join("")}</ul>
@@ -157,7 +188,7 @@ function finishWorkout(){const left=sessEx().filter(e=>!((draft.ex||{})[e.id]||[
   doSave()}
 document.getElementById("save-w").addEventListener("click",finishWorkout);
 function doSave(){
-  const back=draft.fromHist;if(!commitDraft(DAY,cur)){const noKg=Object.values(draft.ex||{}).some(rs=>rs.some(r=>r.ok&&r.kg===""));toast(t(noKg?"เซ็ตที่ติ๊กยังไม่ได้ใส่น้ำหนัก":"ยังไม่ได้ติ๊กเซ็ตไหนเลย"));return}
+  const back=draft.fromHist;if(!trySaveWorkout())return;
   stopRest&&stopRest();if(back){DAY=TODAY}cur=nextProg();picked=false;chosen=false;editing=false;editId=null;renderAll();const just=logs.find(l=>l.date===DAY);toast(t("บันทึกแล้ว ✅"));if(just)openShare(just);
 }
 /* auto-save unsaved workout when the day ends */
@@ -167,13 +198,7 @@ function autoCommitOld(){
     // Old app versions kept only the editable rows in a History draft.
     if(!draft.historyExercises){
       const log=logs.find(l=>l.date===draft.day&&l.prog===draft.prog);
-      if(log){
-        const restored=historyDraft(log);
-        for(const [id,rows] of Object.entries(draft.ex||{})){
-          rows.forEach((row,i)=>{if(log.ex[id]?.[i])row.sourceIndex=i});
-        }
-        draft={...restored,...draft,memo:{...restored.memo,...draft.memo},ex:{...restored.ex,...draft.ex}};
-      }
+      if(log)draft=historyDraft(log,draft);
     }
     return false;
   }
@@ -252,6 +277,7 @@ function goEx(i){const nc=document.querySelectorAll("#exs>.ex").length||1;woIdx=
   box.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)goEx(woIdx+(dx<0?1:-1))},{passive:true})})();
 
 Object.assign(EN,{"ใส่น้ำหนักก่อนติ๊ก":"Enter the weight first"});
+Object.assign(EN,{"ไม่พบบันทึกเดิมในวันนี้":"Original workout missing from this date","บันทึกอาจถูกย้ายวันหรือลบแล้ว การแก้ไขยังอยู่ในหน้านี้":"The workout may have been moved or deleted. Your edits are still open.","ทิ้งการแก้ไขและกลับประวัติ":"Discard edits and return to History","แก้ไขต่อ":"Keep editing"});
 
 // renderEx() rebuilds every card; re-apply the pager so the current exercise stays shown (+Set / −Set / Tick all)
 {const _renderEx=renderEx;renderEx=function(){const r=_renderEx.apply(this,arguments);try{applyPager()}catch(e){}return r}}
@@ -268,7 +294,7 @@ Object.assign(EN,{"ครั้งแรก — เลือกน้ำหน�
 function decorateSets(){const ex=sessEx();document.querySelectorAll("#exs>.ex").forEach((card,ci)=>{if(card.dataset.dec)return;card.dataset.dec=1;const e=ex[ci];if(!e)return;
   const g=(()=>{try{return gifOf(EXLIB.find(q=>q.id===e.id)||e)}catch(x){return ""}})(),rows=(draft.ex||{})[e.id]||[],last=(typeof lastLog==="function"?null:null);
   const nm=card.querySelector(".ex-name");if(nm&&!card.querySelector(".ls-th")){nm.insertAdjacentHTML("afterbegin",`<span class="ls-th"${g?` style="background-image:url('${esc(g)}')"`:""}>${g?"":licon("dumbbell")}</span>`)}
-  const sets=card.querySelector(".sets");if(!sets)return;sets.classList.add("ls");
+  const sets=card.querySelector(".sets");if(!sets||sets.querySelector('[data-pad="sets"]'))return;sets.classList.add("ls");
   rows.forEach((r,i)=>{const kg=sets.querySelector(`#kg-${CSS.escape(e.id)}-${i}`),rp=sets.querySelector(`#rp-${CSS.escape(e.id)}-${i}`),ok=sets.querySelector(`#ok-${CSS.escape(e.id)}-${i}`);if(!kg||!rp||!ok)return;
     const lab=document.createElement("label");lab.className="ls-n";lab.innerHTML=`<span>${i+1}</span>`;kg.before(lab);lab.prepend(ok);
     const x=document.createElement("span");x.className="ls-x";x.textContent="×";kg.after(x);

@@ -336,7 +336,7 @@ function openSwitchAsk(k){const o=PROGS[cur].name,n=PROGS[k].name,s=woProgress()
     <button class="menu-row warn" data-sw="drop"><span class="mi">✕</span><span class="mt"><b>${t("ทิ้ง")} ${esc(o)} ${t("แล้วเริ่ม")} ${esc(n)}</b><small>${t("กด ↺ เลิกทำ ได้")}</small></span></button></div>
     <button class="btn" data-gen-close>${t("ยกเลิก")}</button>`,b=>b.querySelectorAll("[data-sw]").forEach(x=>x.addEventListener("click",()=>{const a=x.dataset.sw;closeGen();
       if(a==="keep"){setDayMode("train");renderGym();return}
-      if(a==="save"){if(!commitDraft(DAY,cur)){toast(t("เซ็ตที่ติ๊กยังไม่ได้ใส่น้ำหนัก"));return}picked=false;chosen=false;stopRest&&stopRest()}
+      if(a==="save"){if(!trySaveWorkout())return;picked=false;chosen=false;stopRest&&stopRest()}
       else{cancelProg();undoLoud(t("ทิ้งแล้ว"))}startPlanItem(k,true)})))}
 // tapping a row (not ▶): details sheet — exercises, place, edit, remove, Start
 function openPlanItem(k){const p=PROGS[k],cx=isCardio(p),L=locById(locOf(p)==="*"?p.lastLoc:locOf(p))||hereLoc(),ip=inProg(k);

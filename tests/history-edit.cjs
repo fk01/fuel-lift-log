@@ -34,6 +34,91 @@ module.exports = async function historyEdit(browser, url) {
   const finish = async () => {
     await page.locator(".wt-fin").click();
   };
+  const seed = records => page.evaluate(items => {
+    logs = items; save("gymlog", logs); renderSessions();
+  }, records);
+  async function checkLegacyDraft() {
+    const original = {
+      date: record.date, prog: "push", loc: "condo", at: record.at,
+      names: { retired: "Old press", removed: "Old row", twins: "Hold", curl: "Old curl" },
+      memo: { retired: "Slow", removed: "Elastic" },
+      ex: {
+        retired: [{ kg: 5, reps: 6, tag: "A" }, { kg: 7, reps: 9, tag: "B" }],
+        removed: [{ kg: 9, reps: 4 }],
+        twins: [{ kg: 0, reps: 5, tag: "left" }, { kg: 0, reps: 5, tag: "right" }],
+        curl: [{ kg: null, reps: 8 }],
+      },
+    };
+    await seed([original]);
+    await page.evaluate(log => {
+      // Old Edit sets stored checked rows, omitted a deleted exercise, and
+      // had no source indices. The remaining identical set has no identity.
+      const prior = { fromHist: 1, started: 1, day: log.date, prog: log.prog,
+        note: "Updated before upgrade",
+        ex: { retired: [{ kg: 7, reps: "9", ok: true }], twins: [{ kg: 0, reps: "5", ok: true }],
+          curl: [{ kg: null, reps: "12", ok: true }] },
+      };
+      localStorage.setItem("gymdraft", JSON.stringify(prior));
+    }, original);
+    await page.reload(); await page.locator("#login").waitFor();
+    await page.evaluate(() => { document.getElementById("login").hidden = true; });
+    assert.deepEqual(await page.locator("#exs .mk-t b").allTextContents(), ["Old press", "Hold", "Old curl"]);
+    await finish();
+    assert.deepEqual(await stored(), [{ ...original, note: "Updated before upgrade",
+      names: { retired: "Old press", twins: "Hold", curl: "Old curl" }, memo: { retired: "Slow" },
+      ex: { retired: [original.ex.retired[1]], twins: [{ kg: 0, reps: 5 }], curl: [{ kg: null, reps: 12 }] },
+    }]);
+  }
+  async function checkSetCount() {
+    const entry = { ...record, names: { "chest-press": "Bench", "incline-db": "Incline" },
+      memo: { "chest-press": "Slow" }, ex: {
+        "chest-press": [{ kg: 5, reps: 6, tag: "A" }, { kg: 7, reps: 9, tag: "B" }],
+        "incline-db": [{ kg: 4, reps: 8 }],
+      },
+    };
+    await seed([entry]); await open(0);
+    const count = async n => {
+      await page.locator("#exs .pg-on .mk-more").click();
+      await page.locator('[data-mk="edit"]').click();
+      await page.locator("#es-chest-press").click();
+      await page.locator(`#pad-chips [data-v="${n}"]`).click();
+    };
+    const rows = page.locator("#exs .pg-on input[data-pad=reps]");
+    await count(1);
+    await page.locator("#tx-bar [data-tx-cancel]").click();
+    await page.locator("#tx-ask [data-drop]").click();
+    assert.equal(await rows.count(), 2);
+    await count(4); await page.locator("#tx-bar [data-tx-save]").click();
+    assert.deepEqual(await rows.evaluateAll(inputs => inputs.map(el => el.value)), ["6", "9", "", ""]);
+    await finish(); await page.locator('[data-cf="1"]').click();
+    assert.deepEqual(await stored(), [entry], "increasing set count erased saved rows");
+    await open(0); await count(1); await page.locator("#tx-bar [data-tx-save]").click();
+    assert.equal(await rows.count(), 1);
+    await finish();
+    entry.ex["chest-press"].pop();
+    assert.deepEqual(await stored(), [entry], "reducing set count should remove only trailing rows");
+  }
+  async function checkConflict(action) {
+    await seed([record]); await open(0); await reps("chest-press", 14);
+    await page.locator("#tab-stats").click();
+    const row = page.locator("#sessions details").first();
+    await row.locator("summary").click();
+    const moved = "2020-05-11";
+    if (action === "move") await row.locator("[data-mv]").fill(moved);
+    else {
+      await row.locator("[data-rm]").click();
+      await row.locator("[data-rm]").click();
+    }
+    await page.locator("#tab-gym").click(); await finish();
+    const conflict = page.locator("#cf-sheet");
+    assert.match(await conflict.innerText(), /moved or deleted/i);
+    await conflict.locator('[data-cf="0"]').click();
+    assert.equal(await page.locator("#rp-chest-press-0").inputValue(), "14");
+    await finish(); await conflict.locator('[data-cf="1"]').click();
+    await page.locator("#v-stats").waitFor();
+    assert.equal(await page.evaluate(() => Boolean(draft.fromHist)), false);
+    assert.deepEqual(await stored(), action === "move" ? [{ ...record, date: moved }] : []);
+  }
   try {
     await page.goto(url);
     await page.locator("#login").waitFor();
@@ -98,6 +183,11 @@ module.exports = async function historyEdit(browser, url) {
     await finish();
     legacy.ex["lat-pulldown"][0].reps = 5;
     assert.deepEqual(await stored(), [legacy, record], "legacy entry gained or lost unrelated fields");
+
+    await checkLegacyDraft();
+    await checkSetCount();
+    await checkConflict("move");
+    await checkConflict("delete");
 
     const today = { ...structuredClone(legacy), date: await page.evaluate(() => TODAY), at: 123456 };
     await page.evaluate(entry => {
