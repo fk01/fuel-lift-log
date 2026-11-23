@@ -16,6 +16,8 @@ function renderEx(){
   (editing?PROGS[cur].ex:sessEx()).forEach((e,ei)=>{if(e.id===editId){editCard(box,e,ei);return}
     const last=lastFor(e.id),u=e.u||"kg",id=CSS.escape(e.id);
     const allowsBlank=!draft.fromHist&&allowsBlankWorkoutWeight(e);
+    // Imported History rows can retain null or omitted kg. The keypad writes "" when cleared.
+    const needsWeight=kg=>draft.fromHist?kg==="":!allowsBlank&&isBlankWorkoutWeight(kg);
     const rows=draft.ex[e.id]||(draft.ex[e.id]=Array.from({length:e.s},(_,i)=>({kg:last?.sets[i]?.kg??"",reps:"",ok:false})));
     const hitAll=last&&last.sets.length>=e.s&&last.sets.every(s=>+s.reps>=+(e.r.split("-")[1]||e.r));
     const card=document.createElement("div");card.className="ex";
@@ -42,7 +44,7 @@ function renderEx(){
       const kgBox=card.querySelector(`#kg-${id}-${i}`),okBox=card.querySelector(`#ok-${id}-${i}`);
       kgBox.addEventListener("input",ev=>{
         r.kg=fromDisp(ev.target.value,u);
-        if(r.ok&&!allowsBlank&&isBlankWorkoutWeight(r.kg)){
+        if(r.ok&&needsWeight(r.kg)){
           r.ok=okBox.checked=false;
           delete foldPref[e.id];foldCard();updWoBar();try{renderHero()}catch(_){}
           toast(t("ล้างน้ำหนักและยกเลิกติ๊กเซ็ตนี้แล้ว"));
@@ -54,7 +56,7 @@ function renderEx(){
         if(okBox.checked){
           const first=rows.findIndex(q=>!q.ok);
           if(first>=0&&first<i){okBox.checked=false;card.querySelector(`#ok-${id}-${first}`)?.click();return}
-          if(!allowsBlank&&isBlankWorkoutWeight(r.kg)){
+          if(needsWeight(r.kg)){
             const previous=rows.slice(0,i).reverse().find(q=>+q.kg>0);
             if(!previous){okBox.checked=false;toast(t("ใส่น้ำหนักก่อนติ๊ก"));openPad(kgBox);return}
             r.kg=previous.kg;kgBox.value=toDisp(r.kg,u);
@@ -72,7 +74,7 @@ function renderEx(){
       const fill=rows.filter(r=>!r.ok);if(!fill.length)return;
       const lastWeight=last?.sets[0]?.kg;
       for(const r of fill){
-        if(!allowsBlank&&isBlankWorkoutWeight(r.kg)){
+        if(needsWeight(r.kg)){
           if(isBlankWorkoutWeight(lastWeight))continue;
           r.kg=lastWeight;
         }
@@ -242,19 +244,23 @@ function historyTargetIndex(entries,day,prog){
   const index=entries.findIndex(l=>l.date===day&&l.prog===prog);
   return index>=0&&historyVersion(entries[index])===draft.historyVersion?index:-1;
 }
-function commitDraft(day,prog){
-  if(!draft.ex||(!draft.fromHist&&!PROGS[prog]))return false;
-  // A different tab can update local storage while this editor is open.
-  // Verify both copies and keep other persisted entries when saving.
-  const entries=draft.fromHist?load("gymlog",[]):logs;
+function commitDraft(day,prog,notify=false){
+  const refuse=message=>{if(notify)toast(t(message));return false};
+  if(!draft.ex||(!draft.fromHist&&!PROGS[prog]))return refuse("ยังไม่ได้ติ๊กเซ็ตไหนเลย");
+  // Another tab can save a workout while this draft is open.
+  const entries=load("gymlog",draft.fromHist?[]:logs);
   const i=draft.fromHist?historyTargetIndex(entries,day,prog):entries.findIndex(l=>l.date===day&&l.prog===prog);
   if(draft.fromHist&&(i<0||historyTargetIndex(logs,day,prog)<0))return false;
+  if(!draft.fromHist&&i>=0)return refuse("มีบันทึกโปรแกรมนี้ในวันที่ฝึกแล้ว ฉบับร่างยังอยู่");
   const rec=draft.fromHist?editedHistoryRecord(entries[i]):newWorkoutRecord(day,prog);
-  if(!rec||!Object.keys(rec.ex).length)return false;
+  if(!rec||!Object.keys(rec.ex).length){
+    const missingKg=!rec||hasMissingWorkoutWeight(sessEx());
+    return refuse(missingKg?"เซ็ตที่ติ๊กยังไม่ได้ใส่น้ำหนัก":"ยังไม่ได้ติ๊กเซ็ตไหนเลย");
+  }
   logs=entries;
   if(i>=0)logs[i]=rec;else logs.push(rec);
   logs.sort((a,b)=>a.date.localeCompare(b.date));
-  save("gymlog",logs);draft={};save("gymdraft",draft);try{if(day===TODAY&&hasPlanToday())setDayMode(null)}catch(e){}return true;
+  save("gymlog",logs);draft={};save("gymdraft",draft);try{if(day===TODAY&&hasPlanToday())setDayMode(null)}catch(e){}return rec;
 }
 function checkHistoryTarget(){
   if(!draft.fromHist||historyTargetIndex(logs,DAY,cur)>=0&&historyTargetIndex(load("gymlog",[]),DAY,cur)>=0)return true;
@@ -267,10 +273,7 @@ function checkHistoryTarget(){
 }
 function trySaveWorkout(){
   if(!checkHistoryTarget())return false;
-  if(commitDraft(DAY,cur))return true;
-  const noKg=hasMissingWorkoutWeight(sessEx());
-  toast(t(noKg?"เซ็ตที่ติ๊กยังไม่ได้ใส่น้ำหนัก":"ยังไม่ได้ติ๊กเซ็ตไหนเลย"));
-  return false;
+  return commitDraft(draft.day||DAY,draft.prog||cur,true);
 }
 // finishing with exercises left untouched: confirm once, listing what will be skipped
 function finishWorkout(){if(!checkHistoryTarget())return;const left=sessEx().filter(e=>!((draft.ex||{})[e.id]||[]).some(r=>r.ok));
@@ -281,8 +284,8 @@ function finishWorkout(){if(!checkHistoryTarget())return;const left=sessEx().fil
   doSave()}
 document.getElementById("save-w").addEventListener("click",finishWorkout);
 function doSave(){
-  const back=draft.fromHist;if(!trySaveWorkout())return;
-  stopRest&&stopRest();if(back){DAY=TODAY}cur=nextProg();picked=false;chosen=false;editing=false;editId=null;renderAll();const just=logs.find(l=>l.date===DAY);toast(t("บันทึกแล้ว ✅"));if(just)openShare(just);
+  const back=draft.fromHist,saved=trySaveWorkout();if(!saved)return;
+  stopRest&&stopRest();if(back){DAY=TODAY}cur=nextProg();picked=false;chosen=false;editing=false;editId=null;renderAll();toast(t("บันทึกแล้ว ✅"));openShare(saved);
 }
 /* auto-save unsaved workout when the day ends */
 function autoCommitOld(){
@@ -371,6 +374,7 @@ function goEx(i){const nc=document.querySelectorAll("#exs>.ex").length||1;woIdx=
   box.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)goEx(woIdx+(dx<0?1:-1))},{passive:true})})();
 
 Object.assign(EN,{"ใส่น้ำหนักก่อนติ๊ก":"Enter the weight first","ล้างน้ำหนักและยกเลิกติ๊กเซ็ตนี้แล้ว":"Weight cleared and set unchecked"});
+Object.assign(EN,{"มีบันทึกโปรแกรมนี้ในวันที่ฝึกแล้ว ฉบับร่างยังอยู่":"This program is already saved for the workout date. Your draft is still open."});
 Object.assign(EN,{"ยืนยันบันทึกเดิมไม่ได้":"Cannot verify the original workout","บันทึกเดิมมีการเปลี่ยนแปลง ย้ายวัน หรือลบแล้ว การแก้ไขยังอยู่ในหน้านี้":"The original workout was changed, moved or deleted. Your edits are still open.","ฉบับร่างเก่าไม่มีข้อมูลยืนยันต้นฉบับ ไปที่ประวัติ ตรวจสอบรายการ แล้วเลือกแก้เซ็ต":"This older draft has no saved source version. Review the workout in History and choose Edit sets to resume.","ทิ้งการแก้ไขและกลับประวัติ":"Discard edits and return to History","แก้ไขต่อ":"Keep editing","เก็บฉบับร่างและดูประวัติ":"Keep draft and review History","ใช้ฉบับร่างกับบันทึกนี้?":"Apply the older draft to this workout?","เมื่อบันทึก ฉบับร่างอาจเขียนทับเซ็ต โน้ต เมโม และสถานที่ตามรายการเปลี่ยนแปลงด้านล่าง":"When you save, the draft can overwrite this workout’s sets, note, memos and location. Review the changes below.","ทิ้งฉบับร่างที่เปิดอยู่?":"Discard the open workout draft?","ฉบับร่างที่เปิดอยู่":"Open draft","รายการที่เลือก":"Selected entry","โน้ตของการฝึก":"Workout note","ค่าที่บันทึก":"Saved value","หลังใช้ฉบับร่าง":"After applying draft","ค่าที่บันทึกเหมือนกับฉบับร่าง":"The saved workout and draft have the same values.","ใช้ฉบับร่างกับรายการนี้":"Apply draft to this entry","ทิ้งฉบับร่างและแก้รายการที่เลือก":"Discard draft and edit this entry"});
 
 // renderEx() rebuilds every card; re-apply the pager so the current exercise stays shown (+Set / −Set / Tick all)

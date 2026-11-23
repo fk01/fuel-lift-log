@@ -36,7 +36,7 @@ after(async () => {
   server?.close();
 });
 
-async function workout(t, { bodyweight = false, priorWeight = false, legacy = false } = {}) {
+async function workoutPage(t) {
   const page = await browser.newPage({ viewport: { width: 430, height: 932 } });
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
@@ -54,6 +54,12 @@ async function workout(t, { bodyweight = false, priorWeight = false, legacy = fa
   }, day);
   await page.goto(base);
   await page.waitForFunction(() => typeof startPlanItem === "function" && typeof renderGym === "function");
+  page.setDefaultTimeout(5000);
+  return page;
+}
+
+async function workout(t, { bodyweight = false, priorWeight = false, legacy = false } = {}) {
+  const page = await workoutPage(t);
   await page.evaluate(({ prog, bodyweight, priorWeight, legacy }) => {
     document.getElementById("login").hidden = true;
     location.hash = "gym";
@@ -73,7 +79,6 @@ async function workout(t, { bodyweight = false, priorWeight = false, legacy = fa
       renderGym();
     }
   }, { prog, bodyweight, priorWeight, legacy });
-  page.setDefaultTimeout(5000);
   return page;
 }
 
@@ -161,4 +166,79 @@ test("Finish keeps an older draft intact until its ticked blank weight is fixed"
   await enterWeight(page, "chest-press-0", 10);
   await finish(page);
   assert.deepEqual(await savedSets(page), { "chest-press": [{ kg: 10, reps: 10 }, { kg: 20, reps: 10 }] });
+});
+
+const draftDay = "2026-11-18";
+const todayPush = { date: day, prog: "push", loc: "gym", note: "Today's Push",
+  ex: { "chest-press": [{ kg: 40, reps: 8 }] } };
+
+async function resumeOvernightPush(t) {
+  const page = await workoutPage(t);
+  await page.evaluate(({ draftDay, todayPush }) => {
+    localStorage.setItem("gymlog", JSON.stringify([todayPush]));
+    localStorage.setItem("gymdraft", JSON.stringify({ day: draftDay, prog: "push", started: 1, loc: "gym",
+      ex: { "chest-press": [{ kg: "", reps: "10", ok: true }] } }));
+    location.hash = "gym";
+  }, { draftDay, todayPush });
+  await page.reload();
+  await page.locator("#login").waitFor();
+  await page.evaluate(() => {
+    document.getElementById("login").hidden = true;
+    setDayMode("train"); renderGym();
+  });
+  assert.equal(await page.evaluate(() => DAY), day);
+  assert.equal(await page.locator("#ok-chest-press-0").isChecked(), true);
+  assert.equal(await page.locator("#kg-chest-press-0").inputValue(), "");
+  // The previous 40 kg is suggested by the keypad. One +10 step repairs the draft.
+  await enterWeight(page, "chest-press-0", 10);
+  assert.equal(await page.locator("#kg-chest-press-0").inputValue(), "50");
+  return page;
+}
+
+test("finishing the Nov 18 Push on Nov 19 preserves both workouts after reload", async t => {
+  const page = await resumeOvernightPush(t);
+  const editedDay = await page.evaluate(() => JSON.parse(localStorage.getItem("gymdraft")).day);
+  await finish(page);
+  await page.locator("#share-modal").waitFor();
+  assert.equal(await page.evaluate(() => shareName), "workout-2026-11-18-push.png");
+  await page.reload();
+  const logs = await page.evaluate(() => JSON.parse(localStorage.getItem("gymlog")));
+  assert.deepEqual(logs.map(l => [l.date, l.prog, l.ex]), [
+    [draftDay, "push", { "chest-press": [{ kg: 50, reps: 10 }] }],
+    [day, "push", todayPush.ex],
+  ]);
+  assert.deepEqual(logs[1], todayPush);
+  assert.equal(editedDay, draftDay);
+});
+
+test("a workout saved into the draft's own slot in another tab survives Finish and auto-save", async t => {
+  const page = await resumeOvernightPush(t);
+  const occupied = [{ ...todayPush, date: draftDay, note: "Already saved for Nov 18" }, todayPush];
+  await page.evaluate(logs => localStorage.setItem("gymlog", JSON.stringify(logs)), occupied);
+  await finish(page);
+  assert.match(await page.locator("#toast").textContent(), /already saved/i);
+  await page.reload();
+  assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem("gymlog"))), occupied);
+  const draft = await page.evaluate(() => JSON.parse(localStorage.getItem("gymdraft")));
+  assert.equal(draft.day, draftDay);
+  assert.deepEqual(draft.ex["chest-press"], [{ kg: 50, reps: "10", ok: true }]);
+});
+
+test("History can re-tick imported bodyweight sets with null and omitted kg", async t => {
+  const page = await workoutPage(t);
+  const record = { date: draftDay, prog: "push", loc: "gym", ex: { crunch: [{ kg: null, reps: 12 }, { reps: 9 }] } };
+  await page.evaluate(record => {
+    document.getElementById("login").hidden = true;
+    logs = [record]; save("gymlog", logs);
+    openHistoryEdit(logs[0]);
+  }, record);
+  await tick(page, "crunch-1");
+  await tick(page, "crunch-0");
+  await tick(page, "crunch-0");
+  assert.equal(await page.locator("#ok-crunch-0").isChecked(), true);
+  await tickAll(page, "crunch");
+  assert.equal(await page.locator("#ok-crunch-1").isChecked(), true);
+  await page.click(".wt-fin");
+  await page.reload();
+  assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem("gymlog"))), [record]);
 });
