@@ -40,13 +40,14 @@ module.exports = async function historyEdit(browser, url) {
   async function checkLegacyDraft() {
     const original = {
       date: record.date, prog: "push", loc: "condo", at: record.at,
-      names: { retired: "Old press", removed: "Old row", twins: "Hold", curl: "Old curl" },
+      names: { retired: "Old press", removed: "Old row", twins: "Hold", curl: "Old curl", press: "Strict press" },
       memo: { retired: "Slow", removed: "Elastic" },
       ex: {
         retired: [{ kg: 5, reps: 6, tag: "A" }, { kg: 7, reps: 9, tag: "B" }],
         removed: [{ kg: 9, reps: 4 }],
         twins: [{ kg: 0, reps: 5, tag: "left" }, { kg: 0, reps: 5, tag: "right" }],
         curl: [{ kg: null, reps: 8 }],
+        press: [{ kg: 7, reps: 9, tag: "original set" }],
       },
     };
     await seed([original]);
@@ -56,17 +57,25 @@ module.exports = async function historyEdit(browser, url) {
       const prior = { fromHist: 1, started: 1, day: log.date, prog: log.prog,
         note: "Updated before upgrade",
         ex: { retired: [{ kg: 7, reps: "9", ok: true }], twins: [{ kg: 0, reps: "5", ok: true }],
-          curl: [{ kg: null, reps: "12", ok: true }] },
+          curl: [{ kg: null, reps: "12", ok: true }], press: [{ kg: 7, reps: "10", ok: true, sourceIndex: 0 }] },
       };
       localStorage.setItem("gymdraft", JSON.stringify(prior));
     }, original);
     await page.reload(); await page.locator("#login").waitFor();
     await page.evaluate(() => { document.getElementById("login").hidden = true; });
-    assert.deepEqual(await page.locator("#exs .mk-t b").allTextContents(), ["Old press", "Hold", "Old curl"]);
+    await finish();
+    assert.match(await page.locator("#cf-sheet").innerText(), /older draft has no saved source version/i);
+    assert.deepEqual(await stored(), [original], "an unbound older draft must require a verified target");
+    await page.locator('#cf-sheet [data-cf="0"]').click();
+    const row = page.locator("#sessions details").first();
+    await row.locator("summary").click(); await row.locator("[data-ed]").click();
+    await page.locator("[data-resume-edit]").click();
+    assert.deepEqual(await page.locator("#exs .mk-t b").allTextContents(), ["Old press", "Hold", "Old curl", "Strict press"]);
     await finish();
     assert.deepEqual(await stored(), [{ ...original, note: "Updated before upgrade",
-      names: { retired: "Old press", twins: "Hold", curl: "Old curl" }, memo: { retired: "Slow" },
-      ex: { retired: [original.ex.retired[1]], twins: [{ kg: 0, reps: 5 }], curl: [{ kg: null, reps: 12 }] },
+      names: { retired: "Old press", twins: "Hold", curl: "Old curl", press: "Strict press" }, memo: { retired: "Slow" },
+      ex: { retired: [original.ex.retired[1]], twins: [{ kg: 0, reps: 5 }], curl: [{ kg: null, reps: 12 }],
+        press: [{ kg: 7, reps: 10 }] },
     }]);
   }
   async function checkSetCount() {
@@ -98,7 +107,7 @@ module.exports = async function historyEdit(browser, url) {
     entry.ex["chest-press"].pop();
     assert.deepEqual(await stored(), [entry], "reducing set count should remove only trailing rows");
   }
-  async function checkConflict(action) {
+  async function checkConflict(action, replace = false, oldDraft = false) {
     await seed([record]); await open(0); await reps("chest-press", 14);
     await page.locator("#tab-stats").click();
     const row = page.locator("#sessions details").first();
@@ -109,15 +118,56 @@ module.exports = async function historyEdit(browser, url) {
       await row.locator("[data-rm]").click();
       await row.locator("[data-rm]").click();
     }
-    await page.locator("#tab-gym").click(); await finish();
+    const saved = action === "move" ? [{ ...record, date: moved }] : [];
+    if (replace) {
+      // Same program, date, saved timestamp and names, but a different workout.
+      const other = structuredClone(record);
+      other.ex["chest-press"][0].kg = 99;
+      saved.push(other);
+      await seed(saved);
+    }
+    await page.locator("#tab-gym").click();
+    if (replace) {
+      if (oldDraft) await page.evaluate(() => {
+        const persisted = JSON.parse(localStorage.getItem("gymdraft"));
+        delete persisted.historyVersion;
+        delete persisted.historyDetached;
+        delete persisted.historyExercises;
+        for (const rows of Object.values(persisted.ex)) {
+          for (const set of rows) delete set.sourceIndex;
+        }
+        localStorage.setItem("gymdraft", JSON.stringify(persisted));
+      });
+      await page.reload(); await page.locator("#login").waitFor();
+      await page.evaluate(() => { document.getElementById("login").hidden = true; });
+    }
+    assert.equal(await page.evaluate(() => commitDraft(DAY,cur)), false);
+    await finish();
     const conflict = page.locator("#cf-sheet");
-    assert.match(await conflict.innerText(), /moved or deleted/i);
+    assert.match(await conflict.innerText(), oldDraft ? /no saved source version/i : /moved or deleted/i);
     await conflict.locator('[data-cf="0"]').click();
+    if (oldDraft) await page.locator("#tab-gym").click();
     assert.equal(await page.locator("#rp-chest-press-0").inputValue(), "14");
     await finish(); await conflict.locator('[data-cf="1"]').click();
     await page.locator("#v-stats").waitFor();
     assert.equal(await page.evaluate(() => Boolean(draft.fromHist)), false);
-    assert.deepEqual(await stored(), action === "move" ? [{ ...record, date: moved }] : []);
+    assert.deepEqual(await stored(), saved);
+  }
+  async function checkPersistedVersion() {
+    await seed([record]); await open(0); await reps("chest-press", 12);
+    // Simulate another tab writing a different version while this one has a
+    // stale in-memory record, with no reload or changes to the open draft.
+    const changed = { ...record, note: "Changed elsewhere" };
+    await page.evaluate(log => localStorage.setItem("gymlog", JSON.stringify([log])), changed);
+    await finish(); await page.locator('#cf-sheet [data-cf="0"]').click();
+    assert.deepEqual(await stored(), [changed]);
+    // A semantically identical source version and an unrelated new entry can
+    // coexist. Saving the draft must preserve the new entry.
+    const same = Object.fromEntries(Object.entries(record).reverse());
+    await page.evaluate(items => localStorage.setItem("gymlog", JSON.stringify(items)), [legacy, same]);
+    await finish();
+    const edited = structuredClone(record); edited.ex["chest-press"][0].reps = 12;
+    assert.deepEqual(await stored(), [legacy, edited]);
   }
   try {
     await page.goto(url);
@@ -188,6 +238,10 @@ module.exports = async function historyEdit(browser, url) {
     await checkSetCount();
     await checkConflict("move");
     await checkConflict("delete");
+    await checkConflict("move", true);
+    await checkConflict("delete", true);
+    await checkConflict("delete", true, true);
+    await checkPersistedVersion();
 
     const today = { ...structuredClone(legacy), date: await page.evaluate(() => TODAY), at: 123456 };
     await page.evaluate(entry => {

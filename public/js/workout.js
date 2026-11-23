@@ -64,6 +64,9 @@ function exHistory(id){const u=uOf(id);
   if(!h.length)return"";
   return `<details class="log"><summary>${t("ประวัติ")} (${all.length})</summary><button class="btn sm" data-chart="${id}" style="margin-top:6px">📈 ${t("ดูกราฟ")}</button><table>${h.map(l=>`<tr><td>${thDate(l.date,{day:"numeric",month:"short"})}</td><td>${l.ex[id].map(s=>`${toDisp(s.kg,u)}×${s.reps}`).join(" · ")} ${u}</td><td>${t("สูงสุด")} ${toDisp(best(l.ex[id]),u)}</td></tr>`).join("")}</table></details>`;
 }
+function historySetsTable(log){
+  return `<table>${Object.entries(log.ex).map(([id,sets])=>`<tr><td>${esc(exName(id,log))}</td><td>${sets.map(s=>`${toDisp(s.kg,uOf(id))}×${esc(s.reps??"")}`).join(" · ")} ${uOf(id)}</td></tr>`).join("")}</table>`;
+}
 function renderSessions(){
   if(typeof renderHistChart==="function")renderHistChart();
   const box=document.getElementById("sessions");box.innerHTML="";
@@ -73,17 +76,43 @@ function renderSessions(){
     const d=document.createElement("details");d.className="ex log";
     const vol=Object.values(l.ex).flat().reduce((a,s)=>a+(+s.kg||0)*(+s.reps||0),0);
     d.innerHTML=`<summary><b>${thDate(l.date,{weekday:"short",day:"numeric",month:"short"})}</b> · ${esc(name)} · ${nU(Object.keys(l.ex).length,"ท่า")} · ${t("วอลุ่ม")} ${Math.round(vol).toLocaleString()} kg</summary>
-      <table>${Object.keys(l.ex).map(id=>`<tr><td>${esc(exName(id,l))}</td><td>${l.ex[id].map(s=>`${toDisp(s.kg,uOf(id))}×${s.reps}`).join(" · ")} ${uOf(id)}</td></tr>`).join("")}</table>
+      ${historySetsTable(l)}
       <div class="actions" style="margin-top:8px;align-items:center"><label style="display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:2px 10px">📅<input type="date" data-mv value="${l.date}" max="${TODAY}" aria-label="${t("ย้ายวัน")}" style="background:none;color:var(--fg);border:0;min-width:9.5em;min-height:26px;font-family:var(--f-num);font-size:var(--t-meta)"></label>${PROGS[l.prog]?`<button class="btn sm" data-ed>✎ ${t("แก้เซ็ต")}</button>`:""}<button class="btn sm" data-sh>↗ ${t("แชร์")}</button><button class="btn sm ghost" data-rm>${t("ลบรายการนี้")}</button></div>`;
     d.querySelector("[data-sh]").addEventListener("click",()=>openShare(l));
     d.querySelector("[data-mv]").addEventListener("change",ev=>{const v=ev.target.value;if(!v||v>TODAY||v===l.date)return;
-      const clash=logs.findIndex(x=>x!==l&&x.date===v&&x.prog===l.prog);if(clash>=0)logs.splice(clash,1);
+      detachHistoryDraft(l);
+      const clash=logs.findIndex(x=>x!==l&&x.date===v&&x.prog===l.prog);if(clash>=0){detachHistoryDraft(logs[clash]);logs.splice(clash,1)}
       l.date=v;logs.sort((a,b)=>a.date.localeCompare(b.date));save("gymlog",logs);renderGym();toast(t("ย้ายวันแล้ว"))});
-    d.querySelector("[data-ed]")?.addEventListener("click",()=>{DAY=l.date;cur=l.prog;editId=null;editing=false;picked=true;woIdx=0;
-      draft=historyDraft(l);save("gymdraft",draft);location.hash="gym";renderAll();scrollAppTop(true);toast(t("แก้แล้วกด Save"))});
+    d.querySelector("[data-ed]")?.addEventListener("click",()=>openHistoryEdit(l));
     d.querySelector("[data-rm]").addEventListener("click",ev=>{const b=ev.target;
-      if(b.dataset.sure){logs.splice(idx,1);save("gymlog",logs);renderGym();toast(t("ลบแล้ว"))}else{b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน")}});
+      if(b.dataset.sure){detachHistoryDraft(l);logs.splice(idx,1);save("gymlog",logs);renderGym();toast(t("ลบแล้ว"))}else{b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน")}});
     box.appendChild(d);
+  });
+}
+// A History entry has no immutable ID. Keep the complete selected version
+// in the draft, including records without a timestamp. Key order can change
+// in a JSON round trip without changing the saved workout.
+const historyVersion=log=>JSON.stringify(log,(_,value)=>
+  value&&typeof value==="object"&&!Array.isArray(value)
+    ?Object.fromEntries(Object.keys(value).sort().map(k=>[k,value[k]])):value);
+function detachHistoryDraft(log){
+  if(draft.fromHist&&draft.day===log.date&&draft.prog===log.prog&&draft.historyVersion===historyVersion(log)){
+    draft.historyDetached=true;save("gymdraft",draft);
+  }
+}
+function openHistoryEdit(log){
+  const source=historyVersion(log);
+  const open=prior=>{
+    DAY=log.date;cur=log.prog;editId=null;editing=false;picked=true;woIdx=0;
+    draft=historyDraft(log,prior);draft.historyVersion=source;delete draft.historyDetached;
+    save("gymdraft",draft);location.hash="gym";renderAll();scrollAppTop(true);toast(t("แก้แล้วกด Save"));
+  };
+  if(!draft.fromHist||draft.historyVersion||draft.day!==log.date||draft.prog!==log.prog){open();return}
+  const label=thDate(log.date,{day:"numeric",month:"short",year:"numeric"})+" · "+(log.pn||progName(log.prog));
+  openGen(t("ใช้ฉบับร่างกับบันทึกนี้?"),`<p class="note"><b>${esc(label)}</b><br>${t("ตรวจสอบรายการที่เลือกแล้วใช้เซ็ตจากฉบับร่างแทนเซ็ตในรายการนี้")}</p>${historySetsTable(log)}
+    <button class="btn primary" data-resume-edit>${t("ใช้ฉบับร่างกับรายการนี้")}</button><button class="btn" data-fresh-edit>${t("ทิ้งฉบับร่างและแก้รายการที่เลือก")}</button><button class="btn" data-gen-close>${t("ยกเลิก")}</button>`,b=>{
+    b.querySelector("[data-resume-edit]").onclick=()=>{closeGen();open(draft)};
+    b.querySelector("[data-fresh-edit]").onclick=()=>{closeGen();open()};
   });
 }
 // Older drafts have editable values but no row IDs. Only reuse metadata when
@@ -91,7 +120,8 @@ function renderSessions(){
 function matchLegacySets(rows,original){
   const same=(a,b)=>String(a.kg)===String(b.kg)&&String(a.reps)===String(b.reps);
   const intact=rows.length===original.length&&rows.every((row,i)=>same(row,original[i]));
-  return rows.map((row,i)=>{
+  return rows.map((value,i)=>{
+    const row={...value};delete row.sourceIndex; // indices from an unverified draft cannot identify this version
     if(intact)return {...row,sourceIndex:i};
     const sourceIndex=original.findIndex(set=>same(row,set));
     if(sourceIndex<0||original.some((set,j)=>j!==sourceIndex&&same(row,set))||
@@ -110,7 +140,7 @@ function historyDraft(log,prior){
     const template=PROGS[log.prog]?.ex.find(e=>e.id===id)||EXLIB.find(e=>e.id===id)||{};
     historyExercises.push({...libPick(template),id,n:exName(id,log),s:sets.length,r:template.r||"8-12"});
   }
-  return {fromHist:1,started:1,day:log.date,prog:log.prog,loc:log.loc,note:log.note,...prior,memo:{...log.memo,...prior?.memo},historyExercises,ex};
+  return {...prior,fromHist:1,started:1,day:log.date,prog:log.prog,loc:prior?.loc??log.loc,note:prior?.note??log.note,memo:{...log.memo,...prior?.memo},historyExercises,ex};
 }
 function editedHistoryRecord(log){
   const rec={...log,ex:{}},names={...log.names},memo={...log.memo};
@@ -155,20 +185,31 @@ function newWorkoutRecord(day,prog){
   const rec={date:day,prog,ex,names,loc:draft.loc||curLoc};if(PROGS[prog]&&PROGS[prog].name)rec.pn=PROGS[prog].name;if(day===TODAY)rec.at=Date.now();if(Object.keys(memo).length)rec.memo=memo;if(note)rec.note=note;
   return rec;
 }
+function historyTargetIndex(entries,day,prog){
+  if(!Array.isArray(entries)||!draft.historyVersion||draft.historyDetached||draft.day!==day||draft.prog!==prog)return -1;
+  const index=entries.findIndex(l=>l.date===day&&l.prog===prog);
+  return index>=0&&historyVersion(entries[index])===draft.historyVersion?index:-1;
+}
 function commitDraft(day,prog){
   if(!draft.ex||(!draft.fromHist&&!PROGS[prog]))return false;
-  const i=logs.findIndex(l=>l.date===day&&l.prog===prog);
-  if(draft.fromHist&&(i<0||day!==draft.day||prog!==draft.prog))return false;
-  const rec=draft.fromHist?editedHistoryRecord(logs[i]):newWorkoutRecord(day,prog);
+  // A different tab can update local storage while this editor is open.
+  // Verify both copies and keep other persisted entries when saving.
+  const entries=draft.fromHist?load("gymlog",[]):logs;
+  const i=draft.fromHist?historyTargetIndex(entries,day,prog):entries.findIndex(l=>l.date===day&&l.prog===prog);
+  if(draft.fromHist&&(i<0||historyTargetIndex(logs,day,prog)<0))return false;
+  const rec=draft.fromHist?editedHistoryRecord(entries[i]):newWorkoutRecord(day,prog);
   if(!Object.keys(rec.ex).length)return false;
+  logs=entries;
   if(i>=0)logs[i]=rec;else logs.push(rec);
   logs.sort((a,b)=>a.date.localeCompare(b.date));
   save("gymlog",logs);draft={};save("gymdraft",draft);try{if(day===TODAY&&hasPlanToday())setDayMode(null)}catch(e){}return true;
 }
 function checkHistoryTarget(){
-  if(!draft.fromHist||draft.day===DAY&&draft.prog===cur&&logs.some(l=>l.date===draft.day&&l.prog===draft.prog))return true;
-  cfm(t("ไม่พบบันทึกเดิมในวันนี้"),t("บันทึกอาจถูกย้ายวันหรือลบแล้ว การแก้ไขยังอยู่ในหน้านี้"),t("ทิ้งการแก้ไขและกลับประวัติ"),1,t("แก้ไขต่อ")).then(discard=>{
-    if(discard){cancelProg();location.hash="stats"}
+  if(!draft.fromHist||historyTargetIndex(logs,DAY,cur)>=0&&historyTargetIndex(load("gymlog",[]),DAY,cur)>=0)return true;
+  const older=!draft.historyVersion;
+  cfm(t("ยืนยันบันทึกเดิมไม่ได้"),t(older?"ฉบับร่างเก่าไม่มีข้อมูลยืนยันต้นฉบับ ไปที่ประวัติ ตรวจสอบรายการ แล้วเลือกแก้เซ็ต":"บันทึกเดิมมีการเปลี่ยนแปลง ย้ายวัน หรือลบแล้ว การแก้ไขยังอยู่ในหน้านี้"),t("ทิ้งการแก้ไขและกลับประวัติ"),1,t(older?"เก็บฉบับร่างและดูประวัติ":"แก้ไขต่อ")).then(discard=>{
+    if(discard)cancelProg();
+    if(discard||older){location.hash="stats";document.querySelector('#hist-mode [data-m="list"]').click()}
   });
   return false;
 }
@@ -197,8 +238,9 @@ function autoCommitOld(){
     DAY=draft.day;
     // Old app versions kept only the editable rows in a History draft.
     if(!draft.historyExercises){
-      const log=logs.find(l=>l.date===draft.day&&l.prog===draft.prog);
-      if(log)draft=historyDraft(log,draft);
+      // Keep the old draft available for review without binding it to whoever
+      // currently occupies this slot. An explicit selection establishes that.
+      draft=historyDraft({date:draft.day,prog:draft.prog,ex:{}},draft);
     }
     return false;
   }
@@ -277,7 +319,7 @@ function goEx(i){const nc=document.querySelectorAll("#exs>.ex").length||1;woIdx=
   box.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)goEx(woIdx+(dx<0?1:-1))},{passive:true})})();
 
 Object.assign(EN,{"ใส่น้ำหนักก่อนติ๊ก":"Enter the weight first"});
-Object.assign(EN,{"ไม่พบบันทึกเดิมในวันนี้":"Original workout missing from this date","บันทึกอาจถูกย้ายวันหรือลบแล้ว การแก้ไขยังอยู่ในหน้านี้":"The workout may have been moved or deleted. Your edits are still open.","ทิ้งการแก้ไขและกลับประวัติ":"Discard edits and return to History","แก้ไขต่อ":"Keep editing"});
+Object.assign(EN,{"ยืนยันบันทึกเดิมไม่ได้":"Cannot verify the original workout","บันทึกเดิมมีการเปลี่ยนแปลง ย้ายวัน หรือลบแล้ว การแก้ไขยังอยู่ในหน้านี้":"The original workout was changed, moved or deleted. Your edits are still open.","ฉบับร่างเก่าไม่มีข้อมูลยืนยันต้นฉบับ ไปที่ประวัติ ตรวจสอบรายการ แล้วเลือกแก้เซ็ต":"This older draft has no saved source version. Review the workout in History and choose Edit sets to resume.","ทิ้งการแก้ไขและกลับประวัติ":"Discard edits and return to History","แก้ไขต่อ":"Keep editing","เก็บฉบับร่างและดูประวัติ":"Keep draft and review History","ใช้ฉบับร่างกับบันทึกนี้?":"Apply the older draft to this workout?","ตรวจสอบรายการที่เลือกแล้วใช้เซ็ตจากฉบับร่างแทนเซ็ตในรายการนี้":"Check the selected entry. Applying the draft replaces its sets when you save.","ใช้ฉบับร่างกับรายการนี้":"Apply draft to this entry","ทิ้งฉบับร่างและแก้รายการที่เลือก":"Discard draft and edit this entry"});
 
 // renderEx() rebuilds every card; re-apply the pager so the current exercise stays shown (+Set / −Set / Tick all)
 {const _renderEx=renderEx;renderEx=function(){const r=_renderEx.apply(this,arguments);try{applyPager()}catch(e){}return r}}
