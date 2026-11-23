@@ -1971,3 +1971,4 @@ body{background:radial-gradient(120% 38% at 50% 0%,#3a1d0c,transparent 62%),line
 #rest-ttl{text-shadow:none}
 #rest.player #rest-up[hidden]{display:none!important}
 .ru-go{flex:none;display:grid!important;place-items:center;padding:0!important;line-height:0}.ru-go svg{display:block;transform:translateX(1px)}
+#rest.player #rest-skip.paused::before{width:0;height:0;background:none;border-style:solid;border-width:20px 0 20px 32px;border-color:transparent transparent transparent #1a0d04;transform:translate(-38%,-50%)}

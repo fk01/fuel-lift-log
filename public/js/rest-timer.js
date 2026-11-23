@@ -12,7 +12,7 @@ function startRest(e,i,rows){
   else if(ex[k+1]){next=`${t("ท่าถัดไป")} <b>${ex[k+1].n}</b>`;if(typeof goEx==="function"&&woIdx===k)setTimeout(()=>goEx(k+1),400)}
   else next=`<b>${t("ครบทุกท่าแล้ว")}</b>`;
   document.getElementById("rest-next").innerHTML=next;
-  {const nx=i+1<rows.length?null:ex[k+1];let c=document.getElementById("rest-up");if(!c){c=document.createElement("div");c.id="rest-up";document.querySelector("#rest .actions").after(c)}c.hidden=!nx;if(nx)c.innerHTML=`<span><small>${t("ถัดไป_n")}</small><b>${esc(nx.n)}</b></span><span class="ru-go"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M9 6.5v11a1 1 0 0 0 1.5.86l8.6-5.5a1 1 0 0 0 0-1.72l-8.6-5.5A1 1 0 0 0 9 6.5z" fill="currentColor"/></svg></span>`}
+  {const nx=i+1<rows.length?{n:`${e.n} · ${t("เซ็ต")} ${i+2}`}:ex[k+1];let c=document.getElementById("rest-up");if(!c){c=document.createElement("div");c.id="rest-up";document.querySelector("#rest .actions").after(c)}c.hidden=!nx;if(nx)c.innerHTML=`<span><small>${t("ถัดไป_n")}</small><b>${esc(nx.n)}</b></span><span class="ru-go"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M9 6.5v11a1 1 0 0 0 1.5.86l8.6-5.5a1 1 0 0 0 0-1.72l-8.6-5.5A1 1 0 0 0 9 6.5z" fill="currentColor"/></svg></span>`}
   {const up=i+1<rows.length?e:(ex[k+1]||e),g=document.getElementById("rest-gif");let src="";try{src=gifOf(EXLIB.find(q=>q.id===up.id)||up)}catch(_){}
    document.getElementById("rest").classList.toggle("photo",!src);
    if(g){g.hidden=false;const im=g.querySelector("img");let sv=g.querySelector(".rest-anim");
@@ -76,3 +76,10 @@ document.getElementById("rest-up")?.addEventListener?.("click",()=>document.getE
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#rest-up"))document.getElementById("rest-skip").click()});
 /* no clip after rest (user request) */
 readyVideo=function(){};
+
+/* centre button = pause / resume (not skip); Next card ends the rest */
+document.getElementById("rest-skip").addEventListener("click",ev=>{const R=document.getElementById("rest");if(!R.classList.contains("player"))return;ev.stopImmediatePropagation();ev.preventDefault();
+  const b=ev.currentTarget;if(rt.paused){rt.end=Date.now()+rt.paused;rt.paused=0;clearInterval(rt.iv);rt.iv=setInterval(tick,250);tick();b.classList.remove("paused")}
+  else{rt.paused=Math.max(0,rt.end-Date.now());clearInterval(rt.iv);b.classList.add("paused")}},true);
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#rest-up")){e.stopImmediatePropagation();rt.paused=0;document.getElementById("rest-skip").classList.remove("paused");stopRest()}},true);
+{const o=window.startRest;window.startRest=function(){rt.paused=0;document.getElementById("rest-skip")?.classList.remove("paused");return o.apply(this,arguments)}}
