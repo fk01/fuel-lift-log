@@ -109,7 +109,8 @@ function finishWorkout(){const left=sessEx().filter(e=>!((draft.ex||{})[e.id]||[
 document.getElementById("save-w").addEventListener("click",finishWorkout);
 function doSave(){
   const back=draft.fromHist;if(!commitDraft(DAY,cur)){const noKg=Object.values(draft.ex||{}).some(rs=>rs.some(r=>r.ok&&r.kg===""));toast(t(noKg?"เซ็ตที่ติ๊กยังไม่ได้ใส่น้ำหนัก":"ยังไม่ได้ติ๊กเซ็ตไหนเลย"));return}
-  stopRest&&stopRest();if(back){DAY=TODAY}cur=nextProg();picked=false;chosen=false;editing=false;editId=null;renderAll();const just=logs.find(l=>l.date===DAY);toast(t("บันทึกแล้ว ✅"));if(just)openShare(just);
+  const just=logs.find(l=>l.date===DAY&&l.prog===cur);   // the log just saved: grab it before DAY/cur move on
+  stopRest&&stopRest();if(back){DAY=TODAY}cur=nextProg();picked=false;chosen=false;editing=false;editId=null;renderAll();toast(t("บันทึกแล้ว ✅"));if(just)openShare(just);
 }
 /* auto-save unsaved workout when the day ends */
 function autoCommitOld(){if(draft.day&&draft.day<TODAY&&commitDraft(draft.day,draft.prog||cur)){cur=nextProg();toast(t("บันทึกเวทเมื่อวานให้แล้ว"));return true}return false}
