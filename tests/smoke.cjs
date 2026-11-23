@@ -1,21 +1,28 @@
 // Smoke test: serves public/ with a fake API (401), opens every tab and main modal on an
 // iPhone-sized viewport, and fails on any page error. Run: npm test
 const { chromium } = require("playwright");
+const { execFileSync } = require("node:child_process");
 const http = require("node:http"), fs = require("node:fs"), path = require("node:path");
 (async () => {
+if (process.argv.length === 2) {
+  for (const suite of ["workout-blank-kg.cjs", "workout-weight-controls.cjs"]) {
+    execFileSync(process.execPath, [path.join(__dirname, suite)], { stdio: "inherit" });
+  }
+}
 const root = path.resolve("public"), types = { js: "text/javascript", css: "text/css", png: "image/png", gif: "image/gif", json: "application/json" };
 const srv = http.createServer((q, r) => {
   if (q.url.startsWith("/api")) { r.writeHead(401, { "content-type": "application/json" }); return r.end("{}"); }
   const f = path.join(root, q.url === "/" ? "index.html" : decodeURIComponent(q.url.split("?")[0]));
   fs.readFile(f, (e, d) => { if (e) { r.writeHead(404); return r.end(); } r.writeHead(200, { "content-type": types[f.split(".").pop()] || "text/html" }); r.end(d); });
-}).listen(8799);
+});
+await new Promise(resolve => srv.listen(0, "127.0.0.1", resolve));
 const b = await chromium.launch(), p = await (await b.newContext({ viewport: { width: 430, height: 932 } })).newPage(), errs = [];
 p.on("pageerror", e => errs.push(e.message));
 // pin the clock to a Thursday (badminton day in the default schedule) so date-based steps are stable
 await p.addInitScript(() => { const T0 = new Date("2026-11-19T10:00:00").getTime(), real = Date.now(), R = Date;
   class D extends R { constructor(...a) { if (a.length) super(...a); else super(T0 + (R.now() - real)); } static now() { return T0 + (R.now() - real); } }
   window.Date = D; localStorage.setItem("scheme", "4"); });
-await p.goto("http://localhost:8799/"); await p.waitForTimeout(800);
+await p.goto(`http://127.0.0.1:${srv.address().port}/`); await p.waitForTimeout(800);
 await p.evaluate(() => (document.getElementById("login").hidden = true));
 const focused = process.argv.slice(2).filter(arg => ["--share-after-save", "--history-edit"].includes(arg));
 if (!focused.length || focused.includes("--share-after-save")) await require("./share-after-save.cjs")(b, p.url());
