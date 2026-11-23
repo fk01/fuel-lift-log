@@ -74,3 +74,5 @@ Object.assign(EN,{"แตะเพื่อหยุด/เล่นภาพ":"
 setInterval(()=>{const R=document.getElementById("rest");if(!R||R.hidden)return;const tm=document.getElementById("rest-time"),l=document.getElementById("rest-left");if(tm&&l)l.textContent=tm.textContent},250);
 document.getElementById("rest-up")?.addEventListener?.("click",()=>document.getElementById("rest-skip").click());
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#rest-up"))document.getElementById("rest-skip").click()});
+/* no clip after rest (user request) */
+readyVideo=function(){};
