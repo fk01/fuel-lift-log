@@ -2,6 +2,10 @@
 // Classic script: shares globals with the other files in /js (load order is set in index.html).
 // History owns its exercise list. A new workout starts with the current program.
 const sessEx=()=>(draft.historyExercises||PROGS[cur]?.ex||[]).concat(draft.extra||[]);
+const isBlankWorkoutWeight=kg=>kg==null||kg==="";
+const allowsBlankWorkoutWeight=e=>eqOf(e).every(eq=>eq==="body"||eq==="bench"||eq==="bar");
+const hasMissingWorkoutWeight=exercises=>exercises.some(e=>!allowsBlankWorkoutWeight(e)&&
+  (draft.ex?.[e.id]||[]).some(r=>r.ok&&isBlankWorkoutWeight(r.kg)));
 let foldPref={};   // manual fold/unfold per exercise id; without one, a card folds once every set is ticked
 const altName=id=>(EXLIB.find(q=>q.id===id)||{}).n||(exName(id)!==id?exName(id):"");
 function renderEx(){
@@ -10,7 +14,8 @@ function renderEx(){
   draft.ex=draft.ex||{};
   if(picked&&!editing){const n=document.createElement("input");n.className="note-in";n.placeholder="✎ "+t("โน้ตวันนี้…");n.value=draft.note||"";n.addEventListener("input",()=>{draft.note=n.value;save("gymdraft",draft)});box.appendChild(n)}
   (editing?PROGS[cur].ex:sessEx()).forEach((e,ei)=>{if(e.id===editId){editCard(box,e,ei);return}
-    const last=lastFor(e.id);const u=e.u||"kg";
+    const last=lastFor(e.id),u=e.u||"kg",id=CSS.escape(e.id);
+    const allowsBlank=!draft.fromHist&&allowsBlankWorkoutWeight(e);
     const rows=draft.ex[e.id]||(draft.ex[e.id]=Array.from({length:e.s},(_,i)=>({kg:last?.sets[i]?.kg??"",reps:"",ok:false})));
     const hitAll=last&&last.sets.length>=e.s&&last.sets.every(s=>+s.reps>=+(e.r.split("-")[1]||e.r));
     const card=document.createElement("div");card.className="ex";
@@ -34,18 +39,48 @@ function renderEx(){
     card.querySelector(".fold-sum").addEventListener("click",()=>{if(!card.classList.contains("folded"))return;foldPref[e.id]=false;foldCard()});
     foldCard();
     rows.forEach((r,i)=>{
-      card.querySelector(`#kg-${CSS.escape(e.id)}-${i}`).addEventListener("input",ev=>{r.kg=fromDisp(ev.target.value,u);save("gymdraft",draft)});
-      card.querySelector(`#rp-${CSS.escape(e.id)}-${i}`).addEventListener("input",ev=>{r.reps=ev.target.value;save("gymdraft",draft)});
-      card.querySelector(`#ok-${CSS.escape(e.id)}-${i}`).addEventListener("change",ev=>{if(ev.target.checked){const f=rows.findIndex(q=>!q.ok);if(f>=0&&f<i){ev.target.checked=false;const b=card.querySelector(`#ok-${CSS.escape(e.id)}-${f}`);if(b){b.click()}return}}if(ev.target.checked&&!(+r.kg>0)&&(rows.some(q=>+q.kg>0)||(last&&last.sets.some(q=>+q.kg>0)))){   /* weighted exercise: no 0-kg ticks (bodyweight moves have no kg history and pass) */const pv=rows.slice(0,i).reverse().find(q=>+q.kg>0);if(pv){r.kg=pv.kg;card.querySelector(`#kg-${CSS.escape(e.id)}-${i}`).value=toDisp(r.kg,u)}else{ev.target.checked=false;toast(t("ใส่น้ำหนักก่อนติ๊ก"));openPad(card.querySelector(`#kg-${CSS.escape(e.id)}-${i}`));return}}r.ok=ev.target.checked;try{navigator.vibrate&&navigator.vibrate(r.ok?15:0)}catch(_){}updWoBar();
-        if(r.ok&&!r.reps){r.reps=e.r.split("-")[0];card.querySelector(`#rp-${CSS.escape(e.id)}-${i}`).value=r.reps}save("gymdraft",draft);
+      const kgBox=card.querySelector(`#kg-${id}-${i}`),okBox=card.querySelector(`#ok-${id}-${i}`);
+      kgBox.addEventListener("input",ev=>{
+        r.kg=fromDisp(ev.target.value,u);
+        if(r.ok&&!allowsBlank&&isBlankWorkoutWeight(r.kg)){
+          r.ok=okBox.checked=false;
+          delete foldPref[e.id];foldCard();updWoBar();try{renderHero()}catch(_){}
+          toast(t("ล้างน้ำหนักและยกเลิกติ๊กเซ็ตนี้แล้ว"));
+        }
+        save("gymdraft",draft);
+      });
+      card.querySelector(`#rp-${id}-${i}`).addEventListener("input",ev=>{r.reps=ev.target.value;save("gymdraft",draft)});
+      okBox.addEventListener("change",()=>{
+        if(okBox.checked){
+          const first=rows.findIndex(q=>!q.ok);
+          if(first>=0&&first<i){okBox.checked=false;card.querySelector(`#ok-${id}-${first}`)?.click();return}
+          if(!allowsBlank&&isBlankWorkoutWeight(r.kg)){
+            const previous=rows.slice(0,i).reverse().find(q=>+q.kg>0);
+            if(!previous){okBox.checked=false;toast(t("ใส่น้ำหนักก่อนติ๊ก"));openPad(kgBox);return}
+            r.kg=previous.kg;kgBox.value=toDisp(r.kg,u);
+          }
+        }
+        r.ok=okBox.checked;try{navigator.vibrate&&navigator.vibrate(r.ok?15:0)}catch(_){}updWoBar();
+        if(r.ok&&!r.reps){r.reps=e.r.split("-")[0];card.querySelector(`#rp-${id}-${i}`).value=r.reps}save("gymdraft",draft);
         delete foldPref[e.id];foldCard();try{renderHero()}catch(_){}if(r.ok)startRest(e,i,rows)});
     });
     card.querySelector("[data-load]")?.addEventListener("click",()=>{   // copy last session's weights and reps into this session
       last.sets.forEach((q,i)=>{if(!rows[i])rows.push({kg:"",reps:"",ok:false});rows[i].kg=q.kg;rows[i].reps=String(q.reps)});save("gymdraft",draft);renderEx();toast("↺ "+e.n)});
     card.querySelector("[data-memo]").addEventListener("input",ev=>{draft.memo=draft.memo||{};draft.memo[e.id]=ev.target.value;save("gymdraft",draft)});
     card.querySelector("[data-unextra]")?.addEventListener("click",async()=>{if(!await cfm(`${t("เอาท่านี้ออก?")}<br>${esc(e.n)}`,t("เซ็ตที่บันทึกในท่านี้จะหายด้วย"),t("เอาออก_cf").replace(/_cf$/,""),1))return;draft.extra=draft.extra.filter(x=>x!==e);if(draft.ex)delete draft.ex[e.id];save("gymdraft",draft);renderEx();updWoBar()});
-    card.querySelector("[data-all]").addEventListener("click",()=>{const fill=rows.filter(r=>!r.ok);if(!fill.length)return;
-      fill.forEach(r=>{r.ok=true;if(!r.reps)r.reps=e.r.split("-")[0];if(r.kg===""&&last&&last.sets[0])r.kg=last.sets[0].kg});save("gymdraft",draft);renderEx();updWoBar();try{renderHero()}catch(_){}});
+    card.querySelector("[data-all]").addEventListener("click",()=>{
+      const fill=rows.filter(r=>!r.ok);if(!fill.length)return;
+      const lastWeight=last?.sets[0]?.kg;
+      for(const r of fill){
+        if(!allowsBlank&&isBlankWorkoutWeight(r.kg)){
+          if(isBlankWorkoutWeight(lastWeight))continue;
+          r.kg=lastWeight;
+        }
+        r.ok=true;if(!r.reps)r.reps=e.r.split("-")[0];
+      }
+      if(fill.some(r=>!r.ok))toast(t("ใส่น้ำหนักก่อนติ๊ก"));
+      save("gymdraft",draft);renderEx();updWoBar();try{renderHero()}catch(_){}
+    });
     const setRest=d=>{restCfg[e.id]=Math.max(15,Math.min(600,restFor(e)+d));save("restcfg",restCfg);card.querySelector(".restset b").textContent=fmt(restCfg[e.id])};
     card.querySelector("[data-alt]")?.addEventListener("click",()=>{   // swap this slot with its alternate (e.g. Chest Press ⇄ Peck Deck Fly)
       const list=PROGS[cur].ex,i=list.indexOf(e),x=EXLIB.find(q=>q.id===e.alt)||{id:e.alt,n:exName(e.alt),z:"🔩"};if(i<0)return;
@@ -194,7 +229,9 @@ function editedHistoryRecord(log,edit=draft){
 }
 function newWorkoutRecord(day,prog){
   const P=PROGS[prog];
-  const all=P.ex.concat(draft.extra||[]),ex={};all.forEach(e=>{const s=(draft.ex[e.id]||[]).filter(r=>r.ok&&r.reps!==""&&r.kg!=="").map(r=>({kg:+r.kg,reps:+r.reps}));if(s.length)ex[e.id]=s});
+  const all=P.ex.concat(draft.extra||[]),ex={};
+  if(hasMissingWorkoutWeight(all))return null;
+  all.forEach(e=>{const s=(draft.ex[e.id]||[]).filter(r=>r.ok&&r.reps!=="").map(r=>({kg:+(r.kg??0),reps:+r.reps}));if(s.length)ex[e.id]=s});
   const names={};all.forEach(e=>{if(ex[e.id])names[e.id]=e.n});
   const memo={};Object.entries(draft.memo||{}).forEach(([k,v])=>{if(ex[k]&&v.trim())memo[k]=v.trim()});const note=(draft.note||"").trim();
   const rec={date:day,prog,ex,names,loc:draft.loc||curLoc};if(PROGS[prog]&&PROGS[prog].name)rec.pn=PROGS[prog].name;if(day===TODAY)rec.at=Date.now();if(Object.keys(memo).length)rec.memo=memo;if(note)rec.note=note;
@@ -213,7 +250,7 @@ function commitDraft(day,prog){
   const i=draft.fromHist?historyTargetIndex(entries,day,prog):entries.findIndex(l=>l.date===day&&l.prog===prog);
   if(draft.fromHist&&(i<0||historyTargetIndex(logs,day,prog)<0))return false;
   const rec=draft.fromHist?editedHistoryRecord(entries[i]):newWorkoutRecord(day,prog);
-  if(!Object.keys(rec.ex).length)return false;
+  if(!rec||!Object.keys(rec.ex).length)return false;
   logs=entries;
   if(i>=0)logs[i]=rec;else logs.push(rec);
   logs.sort((a,b)=>a.date.localeCompare(b.date));
@@ -231,7 +268,7 @@ function checkHistoryTarget(){
 function trySaveWorkout(){
   if(!checkHistoryTarget())return false;
   if(commitDraft(DAY,cur))return true;
-  const noKg=Object.values(draft.ex||{}).some(rows=>rows.some(row=>row.ok&&row.kg===""));
+  const noKg=hasMissingWorkoutWeight(sessEx());
   toast(t(noKg?"เซ็ตที่ติ๊กยังไม่ได้ใส่น้ำหนัก":"ยังไม่ได้ติ๊กเซ็ตไหนเลย"));
   return false;
 }
@@ -333,7 +370,7 @@ function goEx(i){const nc=document.querySelectorAll("#exs>.ex").length||1;woIdx=
 (()=>{const box=document.getElementById("exs");let x0=null,y0=0;box.addEventListener("touchstart",e=>{if(!box.classList.contains("paged")||e.target.closest("input,textarea"))return;x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
   box.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)goEx(woIdx+(dx<0?1:-1))},{passive:true})})();
 
-Object.assign(EN,{"ใส่น้ำหนักก่อนติ๊ก":"Enter the weight first"});
+Object.assign(EN,{"ใส่น้ำหนักก่อนติ๊ก":"Enter the weight first","ล้างน้ำหนักและยกเลิกติ๊กเซ็ตนี้แล้ว":"Weight cleared and set unchecked"});
 Object.assign(EN,{"ยืนยันบันทึกเดิมไม่ได้":"Cannot verify the original workout","บันทึกเดิมมีการเปลี่ยนแปลง ย้ายวัน หรือลบแล้ว การแก้ไขยังอยู่ในหน้านี้":"The original workout was changed, moved or deleted. Your edits are still open.","ฉบับร่างเก่าไม่มีข้อมูลยืนยันต้นฉบับ ไปที่ประวัติ ตรวจสอบรายการ แล้วเลือกแก้เซ็ต":"This older draft has no saved source version. Review the workout in History and choose Edit sets to resume.","ทิ้งการแก้ไขและกลับประวัติ":"Discard edits and return to History","แก้ไขต่อ":"Keep editing","เก็บฉบับร่างและดูประวัติ":"Keep draft and review History","ใช้ฉบับร่างกับบันทึกนี้?":"Apply the older draft to this workout?","เมื่อบันทึก ฉบับร่างอาจเขียนทับเซ็ต โน้ต เมโม และสถานที่ตามรายการเปลี่ยนแปลงด้านล่าง":"When you save, the draft can overwrite this workout’s sets, note, memos and location. Review the changes below.","ทิ้งฉบับร่างที่เปิดอยู่?":"Discard the open workout draft?","ฉบับร่างที่เปิดอยู่":"Open draft","รายการที่เลือก":"Selected entry","โน้ตของการฝึก":"Workout note","ค่าที่บันทึก":"Saved value","หลังใช้ฉบับร่าง":"After applying draft","ค่าที่บันทึกเหมือนกับฉบับร่าง":"The saved workout and draft have the same values.","ใช้ฉบับร่างกับรายการนี้":"Apply draft to this entry","ทิ้งฉบับร่างและแก้รายการที่เลือก":"Discard draft and edit this entry"});
 
 // renderEx() rebuilds every card; re-apply the pager so the current exercise stays shown (+Set / −Set / Tick all)
