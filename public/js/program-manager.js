@@ -100,6 +100,10 @@ function pmEditOne(box,k){const p=PROGS[k];txBegin("pm",{onEnd:()=>{if(pmFromLis
   const c=document.createElement("div");c.className="ex";
   c.innerHTML=`<input data-f="name" value="${esc(p.name)}" aria-label="${t("ชื่อโปรแกรม")}" style="${pmFld};font-family:var(--f-display);font-size:var(--t-title)">
     <input data-f="sub" value="${esc(p.sub||"")}" placeholder="${t("คำอธิบาย (ไม่ใส่ก็ได้)")}" aria-label="${t("คำอธิบาย")}" style="${pmFld};font-size:var(--t-sm)">
+    ${(()=>{const sets=p.ex.reduce((x,e)=>x+(+e.s||0),0),mins=p.ex.length*6,last=logs.filter(l=>l.prog===k).slice(-1)[0],vol=last?Math.round(Object.values(last.ex||{}).flat().reduce((x,q)=>x+(+q.kg||0)*(+q.reps||0),0)):0;return `<div class="pm-stats"><div>KCAL<b>~${Math.round(mins*7)}</b></div><div>${t("เวลา")}<b>${mins} ${t("นาที")}</b></div><div>${t("วอลุ่ม")}<b>${vol?vol.toLocaleString()+" kg":sets+" "+t("เซ็ต")}</b></div></div>`})()}
+    <div class="pm-wu"><div class="pm-wuh"><b>${t("วอร์มอัพ")}</b><button type="button" class="pm-tg${p.warmOn!==false&&(p.warm||[]).length?" on":""}" data-wutg aria-pressed="${p.warmOn!==false}"></button></div>
+    ${(p.warm||[]).map((w,i)=>`<div class="pm-wur"><span class="pl-th">${licon("run")}</span><span class="pi-nm"><b>${esc(w.n)}</b><small>${esc(w.d||"")}</small></span><button type="button" class="ib del" data-wudel="${i}" aria-label="${t("ลบ")}">🗑</button></div>`).join("")}
+    <button type="button" class="pm-wuadd" data-wuadd>+ ${t("เพิ่มท่าวอร์มอัพ")}</button></div>
     <div class="label" style="margin:2px 0 0">${t("สถานที่")}</div><div class="chips pm-loc">${LOCS.filter(l=>hasType(l,"gym")).map(l=>`<button type="button" class="chip" data-ploc="${esc(l.id)}" aria-pressed="${locOf(p)===l.id}">${esc(l.icon||"📍")} ${esc(t(l.name))}</button>`).join("")}</div>
     <div class="label" style="margin:2px 0 0">${t("วันในตาราง")}</div>${dayChips(daysOf(k))}${todChips(p.tod)}
     <div class="stack pm-ex" style="gap:6px"></div>
@@ -109,6 +113,9 @@ function pmEditOne(box,k){const p=PROGS[k];txBegin("pm",{onEnd:()=>{if(pmFromLis
   c.querySelectorAll("[data-d]").forEach(x=>x.addEventListener("click",()=>{x.setAttribute("aria-pressed",x.getAttribute("aria-pressed")!=="true");p.days=readDays(c);saveProgs();renderGym()}));bindTod(c,p,()=>{saveProgs();renderGym()});
   on("[data-add]","click",()=>openLib({skip:new Set(p.ex.map(q=>q.id)),onPick:x=>{p.ex.push({...libPick(x),s:3,r:"5"});saveProgs();renderPM()}}));
   on('[data-f="name"]',"change",ev=>{p.name=ev.target.value.trim()||p.name;saveProgs();renderGym();document.getElementById("pm-title").textContent="✎ "+p.name});
+  c.querySelector("[data-wutg]").addEventListener("click",()=>{p.warmOn=p.warmOn===false;saveProgs();renderPM()});
+  c.querySelectorAll("[data-wudel]").forEach(x=>x.addEventListener("click",()=>{p.warm.splice(+x.dataset.wudel,1);saveProgs();renderPM()}));
+  c.querySelector("[data-wuadd]").addEventListener("click",()=>{const n=prompt(t("ชื่อท่าวอร์มอัพ (เช่น Cat-cow 3 นาที)"));if(!n||!n.trim())return;const m=n.trim().match(/^(.*?)(?:\s+(\d+\s*(?:นาที|min|×.*|x.*)))?$/i);p.warm=p.warm||[];p.warm.push({n:(m&&m[1]||n).trim(),d:(m&&m[2])||""});p.warmOn=true;saveProgs();renderPM()});
   c.querySelectorAll("[data-ploc]").forEach(x=>x.addEventListener("click",()=>{p.loc=x.dataset.ploc;c.querySelectorAll("[data-ploc]").forEach(y=>y.setAttribute("aria-pressed",y===x));saveProgs();renderGym()}));
   on('[data-f="sub"]',"change",ev=>{p.sub=ev.target.value.trim();saveProgs();renderGym()});
   box.appendChild(c)}
@@ -119,3 +126,5 @@ document.querySelectorAll("#pm-tabs .chip").forEach(c=>c.addEventListener("click
 Object.assign(EN,{"สถานที่":"Place","ครั้ง_pm":"reps","คำอธิบาย (ไม่ใส่ก็ได้)":"Note (optional)","เลื่อนขึ้น":"Move up","เลื่อนลง":"Move down"});
 
 Object.assign(EN,{"ดูท่าทั้งหมด":"View exercises","แก้ไขโปรแกรม":"Edit program"});
+
+Object.assign(EN,{"เพิ่มท่าวอร์มอัพ":"Add a warm-up exercise","ชื่อท่าวอร์มอัพ (เช่น Cat-cow 3 นาที)":"Warm-up name (e.g. Cat-cow 3 min)","วอลุ่ม":"Volume","เวลา":"Time"});

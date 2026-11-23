@@ -12,6 +12,7 @@ function startRest(e,i,rows){
   else if(ex[k+1]){next=`${t("ท่าถัดไป")} <b>${ex[k+1].n}</b>`;if(typeof goEx==="function"&&woIdx===k)setTimeout(()=>goEx(k+1),400)}
   else next=`<b>${t("ครบทุกท่าแล้ว")}</b>`;
   document.getElementById("rest-next").innerHTML=next;
+  {const nx=i+1<rows.length?null:ex[k+1];let c=document.getElementById("rest-up");if(!c){c=document.createElement("div");c.id="rest-up";document.querySelector("#rest .actions").after(c)}c.hidden=!nx;if(nx)c.innerHTML=`<span><small>${t("ถัดไป_n")}</small><b>${esc(nx.n)}</b></span><span class="ru-go">▶</span>`}
   {const up=i+1<rows.length?e:(ex[k+1]||e),g=document.getElementById("rest-gif");let src="";try{src=gifOf(EXLIB.find(q=>q.id===up.id)||up)}catch(_){}
    document.getElementById("rest").classList.toggle("photo",!src);
    if(g){g.hidden=false;const im=g.querySelector("img");let sv=g.querySelector(".rest-anim");
