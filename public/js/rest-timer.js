@@ -57,3 +57,12 @@ const REST_SVG=`<svg class="rest-anim" viewBox="0 0 240 170" role="img" aria-lab
 <circle class="ra-drop" cx="124" cy="60" r="2.6" fill="#2ee6ff"/>
 </svg>`;
 Object.assign(EN,{"หายใจลึกๆ ดื่มน้ำ":"Breathe, sip water"});
+/* tap the rest gif to pause/play: freeze = draw the current frame onto a canvas over it */
+(()=>{const g=document.getElementById("rest-gif");if(!g)return;g.insertAdjacentHTML("beforeend",`<span class="gif-pp" aria-hidden="true">❚❚</span>`);
+  g.setAttribute("role","button");g.setAttribute("aria-label",t("แตะเพื่อหยุด/เล่นภาพ"));
+  g.addEventListener("click",()=>{const im=g.querySelector("img");if(!im||im.hidden||!im.src)return;let cv=g.querySelector("canvas.gif-frz");
+    if(cv){cv.remove();g.classList.remove("paused");return}
+    cv=document.createElement("canvas");cv.className="gif-frz";cv.width=im.naturalWidth||im.width;cv.height=im.naturalHeight||im.height;
+    try{cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height)}catch(e){return}im.after(cv);g.classList.add("paused")});
+  const o=window.startRest;if(typeof o==="function")window.startRest=function(){g.querySelector("canvas.gif-frz")?.remove();g.classList.remove("paused");return o.apply(this,arguments)}})();
+Object.assign(EN,{"แตะเพื่อหยุด/เล่นภาพ":"Tap to pause / play"});

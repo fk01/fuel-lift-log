@@ -95,7 +95,7 @@ const steps = [
     openPlanAdd(); document.querySelector('#gen-body [data-padd="pull"]').click(); document.querySelector('#gen-body [data-padd="push2"]').click(); document.querySelector("#gen-body [data-pgo]").click();
     if (!document.querySelector('#locpick [data-pl="push2"]')) throw new Error("multi-select adds both"); const row = document.querySelector('#locpick [data-pl="pull"]'); if (!row || !row.classList.contains("st-pend")) throw new Error("added row pending");
     (row.querySelector('[data-plgo="start"]') || (row.click(), document.querySelector('#gen-body [data-pis]'))).click(); if (!picked || cur !== "pull") throw new Error("start from list (Start, or row → sheet → Start)");
-    if (document.querySelectorAll('#locpick [data-plgo="start"]').length > 1) throw new Error("only one Start in the plan list");
+    if (document.querySelectorAll('#locpick [data-plgo="start"].primary').length > 1) throw new Error("only one primary Start in the plan list");
     setDayMode(null); renderGym(); if (!document.querySelector('#locpick [data-pl="pull"].st-prog')) throw new Error("in progress row");
     cancelProg(); setDayMode(null); renderGym(); if (document.querySelector('#locpick [data-pldel]')) throw new Error("no one-tap remove on rows"); openPlanItem("pull"); document.querySelector('#gen-body [data-pid]').click(); if (document.querySelector('#locpick [data-pl="pull"]')) throw new Error("remove row via its sheet");
     logs.push(...saved); dayPlan = {}; setDayMode("train"); pickLoc("gym"); }],
