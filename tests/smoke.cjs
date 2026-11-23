@@ -17,6 +17,8 @@ await p.addInitScript(() => { const T0 = new Date("2026-11-19T10:00:00").getTime
   window.Date = D; localStorage.setItem("scheme", "4"); });
 await p.goto("http://localhost:8799/"); await p.waitForTimeout(800);
 await p.evaluate(() => (document.getElementById("login").hidden = true));
+const focused = process.argv.slice(2).filter(arg => ["--share-after-save", "--history-edit"].includes(arg));
+if (!focused.length || focused.includes("--share-after-save")) await require("./share-after-save.cjs")(b, p.url());
 const steps = [
   ["food", () => (location.hash = "food")], ["gym", () => (location.hash = "gym")],
   ["day-pick", () => { if (!document.querySelectorAll("#locpick [data-dm],#locpick [data-pl]").length) throw new Error("first screen should ask what today");
@@ -259,9 +261,11 @@ const steps = [
     d.click(); if (getComputedStyle(document.getElementById("step4")).display === "none") throw new Error("workout bar returns after Done"); cancelProg(); }],
   ["1rm", () => open1RM()], ["badges", () => openBadges()],
 ];
-await require("./history-edit.cjs")(b, p.url());
-console.log("ok history-edit");
-if (!process.argv.includes("--history-edit")) {
+if (!focused.length || focused.includes("--history-edit")) {
+  await require("./history-edit.cjs")(b, p.url());
+  console.log("ok history-edit");
+}
+if (!focused.length) {
   for (const [name, fn] of steps) { await p.evaluate(fn); await p.waitForTimeout(250); console.log("ok", name); }
 }
 await b.close(); srv.close();

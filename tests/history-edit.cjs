@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 module.exports = async function historyEdit(browser, url) {
   const page = await browser.newPage({ viewport: { width: 430, height: 932 } });
   page.setDefaultTimeout(5000);
+  await page.addLocatorHandler(page.locator("#share-modal"), () => page.locator("#share-close").click());
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
   const record = {
