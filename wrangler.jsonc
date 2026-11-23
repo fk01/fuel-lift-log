@@ -11,6 +11,12 @@
   "d1_databases": [
     { "binding": "DB", "database_name": "fuel-lift-log", "database_id": "67913da1-ae9a-43e1-b600-be92ab1d4c07" }
   ],
+  "previews": {
+    "d1_databases": [
+      { "binding": "DB", "database_name": "fuel-lift-log-preview", "database_id": "bdd37cd8-8eab-4634-be0a-b7d152991e1a" }
+    ],
+    "vars": { "GOOGLE_CLIENT_ID": "" }
+  },
   // ทุก 15 นาที (UTC) — โค้ดแปลงเป็นเวลาไทยแล้วเช็กมื้อที่ถึงเวลา
   "triggers": { "crons": ["*/15 * * * *"] },
   "observability": { "enabled": true },
