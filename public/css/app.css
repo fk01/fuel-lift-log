@@ -2001,4 +2001,5 @@ body{background:radial-gradient(120% 38% at 50% 0%,#3a1d0c,transparent 62%),line
 .mk-pill input{overflow:visible}
 .mk-pill input{-moz-appearance:textfield;appearance:textfield}
 .mk-pill input::-webkit-outer-spin-button,.mk-pill input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;display:none}
-.hq-hello2 .hq-hi b{white-space:nowrap;font-size:min(30px,7.2vw)}
+.hq-hello2 .hq-hi b{white-space:nowrap;font-size:min(28px,6.6vw)}.hq-hello2 .hq-hi{min-width:0;flex:1}
+.hq-hello2 .hq-hi b{display:block;overflow:hidden;text-overflow:ellipsis}.hq-hello2 .hq-hi b i{font-family:Georgia,"Times New Roman",serif!important;font-style:italic}.hq-hello2>.hq-flame{margin-left:auto}
