@@ -1879,3 +1879,9 @@ body{background:radial-gradient(120% 38% at 50% 0%,#3a1d0c,transparent 62%),line
 .md-ih{display:block;margin:6px 0}.md-ing{background:#15171b;border-radius:16px;overflow:hidden}.md-ing div{display:flex;justify-content:space-between;gap:10px;padding:12px;border-top:1px solid #23252a;font-size:14px}.md-ing div:first-child{border:0}.md-ing small{color:#9aa0a8;white-space:nowrap}
 .md-go{width:100%;height:54px;margin-top:14px;border-radius:28px!important;background:#f3f4f6!important;color:#0a0b0d!important;font-weight:700!important}
 #food-ring .tk-ic svg{position:static!important;width:20px!important;height:20px!important;transform:none!important;margin:0!important}#food-ring .tk-c{place-content:center}
+/* Eat tracker: fix skew */
+#food-ring .tk-ring>svg{width:100%!important;height:100%!important;margin:0!important}
+#food-ring{width:100%!important}
+#v-food #macro-bars{margin:10px 16px 6px!important;width:auto!important}
+#v-food .mp-open-row{display:grid!important;grid-template-columns:1fr auto;align-items:center;gap:10px}
+#v-food .mp-cur{display:grid!important;gap:2px}#v-food .mp-cur b{white-space:normal!important;line-height:1.25}
