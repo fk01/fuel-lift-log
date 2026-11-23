@@ -19,12 +19,15 @@ module.exports = async function historyEdit(browser, url) {
   };
   const legacy = { date: "2020-05-12", prog: "pull", ex: { "lat-pulldown": [{ kg: "18", reps: 4 }] } };
   const stored = () => page.evaluate(() => JSON.parse(localStorage.getItem("gymlog")));
-  const open = async index => {
+  const select = async index => {
     await page.locator("#tab-stats").click();
     await page.locator('#hist-mode [data-m="list"]').click();
     const row = page.locator("#sessions details").nth(index);
-    await row.locator("summary").click();
+    if (!await row.evaluate(el => el.open)) await row.locator("summary").click();
     await row.locator("[data-ed]").click();
+  };
+  const open = async index => {
+    await select(index);
     await page.locator("#v-gym").waitFor();
   };
   const reps = async (id, count) => {
@@ -39,7 +42,7 @@ module.exports = async function historyEdit(browser, url) {
   }, records);
   async function checkLegacyDraft() {
     const original = {
-      date: record.date, prog: "push", loc: "condo", at: record.at,
+      date: record.date, prog: "push", loc: "condo", at: record.at, note: "Original workout note",
       names: { retired: "Old press", removed: "Old row", twins: "Hold", curl: "Old curl", press: "Strict press" },
       memo: { retired: "Slow", removed: "Elastic" },
       ex: {
@@ -55,8 +58,9 @@ module.exports = async function historyEdit(browser, url) {
       // Old Edit sets stored checked rows, omitted a deleted exercise, and
       // had no source indices. The remaining identical set has no identity.
       const prior = { fromHist: 1, started: 1, day: log.date, prog: log.prog,
-        note: "Updated before upgrade",
-        ex: { retired: [{ kg: 7, reps: "9", ok: true }], twins: [{ kg: 0, reps: "5", ok: true }],
+        note: "Updated before upgrade", loc: "gym", memo: { retired: "Use bands" },
+        // 5×6 could be the 7×9 set edited after the 5×6 set was deleted.
+        ex: { retired: [{ kg: 5, reps: "6", ok: true }], twins: [{ kg: 0, reps: "5", ok: true }],
           curl: [{ kg: null, reps: "12", ok: true }], press: [{ kg: 7, reps: "10", ok: true, sourceIndex: 0 }] },
       };
       localStorage.setItem("gymdraft", JSON.stringify(prior));
@@ -67,16 +71,54 @@ module.exports = async function historyEdit(browser, url) {
     assert.match(await page.locator("#cf-sheet").innerText(), /older draft has no saved source version/i);
     assert.deepEqual(await stored(), [original], "an unbound older draft must require a verified target");
     await page.locator('#cf-sheet [data-cf="0"]').click();
-    const row = page.locator("#sessions details").first();
-    await row.locator("summary").click(); await row.locator("[data-ed]").click();
+    const old = await page.evaluate(() => JSON.parse(localStorage.getItem("gymdraft")));
+    await select(0);
+    const preview = page.locator("#gen-body");
+    const note = await preview.getByRole("row", { name: /Workout note/i }).innerText();
+    assert.match(note, /Original workout note/); assert.match(note, /Updated before upgrade/);
+    const memo = await preview.getByRole("row", { name: /Old press · Memo/i }).innerText();
+    assert.match(memo, /Slow/); assert.match(memo, /Use bands/);
+    const place = await preview.getByRole("row", { name: /Condo.*Gym/i }).innerText();
+    assert.match(place, /Condo/);
+    assert.match(await preview.innerText(), /tag="A"/);
+    await preview.locator("[data-gen-close]").last().click();
+    assert.deepEqual(await stored(), [original]);
+    assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem("gymdraft"))), old);
+    await select(0);
     await page.locator("[data-resume-edit]").click();
     assert.deepEqual(await page.locator("#exs .mk-t b").allTextContents(), ["Old press", "Hold", "Old curl", "Strict press"]);
     await finish();
-    assert.deepEqual(await stored(), [{ ...original, note: "Updated before upgrade",
-      names: { retired: "Old press", twins: "Hold", curl: "Old curl", press: "Strict press" }, memo: { retired: "Slow" },
-      ex: { retired: [original.ex.retired[1]], twins: [{ kg: 0, reps: 5 }], curl: [{ kg: null, reps: 12 }],
+    assert.deepEqual(await stored(), [{ ...original, note: "Updated before upgrade", loc: "gym",
+      names: { retired: "Old press", twins: "Hold", curl: "Old curl", press: "Strict press" }, memo: { retired: "Use bands" },
+      ex: { retired: [{ kg: 5, reps: 6 }], twins: [{ kg: 0, reps: 5 }], curl: [{ kg: null, reps: 12 }],
         press: [{ kg: 7, reps: 10 }] },
     }]);
+  }
+  async function checkDraftSwitch(unverified) {
+    await seed([legacy, record]); await open(0); await reps("chest-press", 14);
+    if (unverified) {
+      await page.evaluate(() => {
+        const prior = JSON.parse(localStorage.getItem("gymdraft"));
+        delete prior.historyVersion;
+        localStorage.setItem("gymdraft", JSON.stringify(prior));
+      });
+      await page.reload(); await page.locator("#login").waitFor();
+      await page.evaluate(() => { document.getElementById("login").hidden = true; });
+    }
+    const before = await page.evaluate(() => JSON.parse(localStorage.getItem("gymdraft")));
+    await select(1);
+    const prompt = page.locator("#gen-body");
+    assert.match(await prompt.innerText(), /Discard the open workout draft/i);
+    assert.equal(await prompt.locator("[data-resume-edit]").count(), 0);
+    await prompt.locator("[data-gen-close]").last().click();
+    assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem("gymdraft"))), before);
+    if (unverified) await page.locator("#tab-gym").click();
+    else await open(0); // selecting the very same version resumes its edits
+    assert.equal(await page.locator("#rp-chest-press-0").inputValue(), "14");
+    await select(1); await prompt.locator("[data-fresh-edit]").click();
+    await reps("lat-pulldown", 16); await finish();
+    const edited = structuredClone(legacy); edited.ex["lat-pulldown"][0].reps = 16;
+    assert.deepEqual(await stored(), [edited, record], "discard must affect only the open draft");
   }
   async function checkSetCount() {
     const entry = { ...record, names: { "chest-press": "Bench", "incline-db": "Incline" },
@@ -235,6 +277,8 @@ module.exports = async function historyEdit(browser, url) {
     assert.deepEqual(await stored(), [legacy, record], "legacy entry gained or lost unrelated fields");
 
     await checkLegacyDraft();
+    await checkDraftSwitch(false);
+    await checkDraftSwitch(true);
     await checkSetCount();
     await checkConflict("move");
     await checkConflict("delete");

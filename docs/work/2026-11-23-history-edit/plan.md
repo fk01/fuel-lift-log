@@ -9,8 +9,10 @@
 
 History offers Edit sets when the workout's program still exists. A deleted program remains viewable in the list.
 
-New drafts carry the selected log's complete version across reloads. An older draft without that version stays open for review. To resume it, select the intended History entry, inspect its saved sets and explicitly apply the draft. The editor then checks that version on Save.
+New drafts carry the selected log's complete version across reloads. Selecting that version again resumes the draft. Selecting another entry offers an explicit choice to discard the open draft or cancel. An older draft without a version stays open for review. Select the intended History entry, compare the saved and proposed sets, note, memos and location, then choose whether to apply the draft. Save checks the selected version again.
 
-Older drafts did not record a reliable set identity. After confirming the workout, an intact set sequence or a unique match on both weight and reps can retain set metadata. With an ambiguous duplicate or changed values such as 7 kg × 9 becoming 7 kg × 10, the edited weight and reps survive and unverified set metadata is omitted. New edits preserve metadata through their recorded source indices.
+Older drafts did not record a reliable set identity. A 5 kg × 6 row could be the original 5 kg × 6 set, or the 7 kg × 9 set after a deletion and rep/weight edit. Applying a legacy draft carries its entered weights and reps and omits unverifiable per-set fields. The comparison shows those fields before applying. New edits preserve them through their verified source indices.
 
 ![An exercise removed from the current program retains both recorded sets in the editor](removed-exercise.png)
+
+![Legacy draft confirmation compares saved values with the changes to apply](legacy-apply.png)

@@ -102,39 +102,54 @@ function detachHistoryDraft(log){
 }
 function openHistoryEdit(log){
   const source=historyVersion(log);
-  const open=prior=>{
-    DAY=log.date;cur=log.prog;editId=null;editing=false;picked=true;woIdx=0;
-    draft=historyDraft(log,prior);draft.historyVersion=source;delete draft.historyDetached;
+  const open=next=>{
+    draft=next;draft.historyVersion=source;delete draft.historyDetached;
+    DAY=log.date;cur=log.prog;editId=null;editing=false;picked=true;woIdx=draft.idx||0;
     save("gymdraft",draft);location.hash="gym";renderAll();scrollAppTop(true);toast(t("แก้แล้วกด Save"));
   };
-  if(!draft.fromHist||draft.historyVersion||draft.day!==log.date||draft.prog!==log.prog){open();return}
-  const label=thDate(log.date,{day:"numeric",month:"short",year:"numeric"})+" · "+(log.pn||progName(log.prog));
-  openGen(t("ใช้ฉบับร่างกับบันทึกนี้?"),`<p class="note"><b>${esc(label)}</b><br>${t("ตรวจสอบรายการที่เลือกแล้วใช้เซ็ตจากฉบับร่างแทนเซ็ตในรายการนี้")}</p>${historySetsTable(log)}
-    <button class="btn primary" data-resume-edit>${t("ใช้ฉบับร่างกับรายการนี้")}</button><button class="btn" data-fresh-edit>${t("ทิ้งฉบับร่างและแก้รายการที่เลือก")}</button><button class="btn" data-gen-close>${t("ยกเลิก")}</button>`,b=>{
-    b.querySelector("[data-resume-edit]").onclick=()=>{closeGen();open(draft)};
-    b.querySelector("[data-fresh-edit]").onclick=()=>{closeGen();open()};
+  if(!draft.fromHist){open(historyDraft(log));return}
+  const sameSlot=draft.day===log.date&&draft.prog===log.prog;
+  if(sameSlot&&!draft.historyDetached&&draft.historyVersion===source){open(draft);return}
+  const legacy=sameSlot&&!draft.historyVersion?historyDraft(log,draft):null;
+  const label=(day,name)=>esc(thDate(day,{day:"numeric",month:"short",year:"numeric"})+" · "+name);
+  const selected=label(log.date,log.pn||progName(log.prog));
+  const message=legacy
+    ?`<p class="note"><b>${selected}</b><br>${t("เมื่อบันทึก ฉบับร่างอาจเขียนทับเซ็ต โน้ต เมโม และสถานที่ตามรายการเปลี่ยนแปลงด้านล่าง")}</p>${historyChanges(log,editedHistoryRecord(log,legacy))}`
+    :`<p class="note">${t("ฉบับร่างที่เปิดอยู่")} · <b>${label(draft.day,progName(draft.prog))}</b><br>${t("รายการที่เลือก")} · <b>${selected}</b></p>`;
+  openGen(t(legacy?"ใช้ฉบับร่างกับบันทึกนี้?":"ทิ้งฉบับร่างที่เปิดอยู่?"),`${message}
+    ${legacy?`<button class="btn primary" data-resume-edit>${t("ใช้ฉบับร่างกับรายการนี้")}</button>`:""}<button class="btn" data-fresh-edit>${t("ทิ้งฉบับร่างและแก้รายการที่เลือก")}</button><button class="btn" data-gen-close>${t("ยกเลิก")}</button>`,b=>{
+    b.querySelector("[data-resume-edit]")?.addEventListener("click",()=>{closeGen();open(legacy)});
+    b.querySelector("[data-fresh-edit]").onclick=()=>{closeGen();open(historyDraft(log))};
   });
 }
-// Older drafts have editable values but no row IDs. Only reuse metadata when
-// the original sequence is intact or both sides have a unique matching set.
-function matchLegacySets(rows,original){
-  const same=(a,b)=>String(a.kg)===String(b.kg)&&String(a.reps)===String(b.reps);
-  const intact=rows.length===original.length&&rows.every((row,i)=>same(row,original[i]));
-  return rows.map((value,i)=>{
-    const row={...value};delete row.sourceIndex; // indices from an unverified draft cannot identify this version
-    if(intact)return {...row,sourceIndex:i};
-    const sourceIndex=original.findIndex(set=>same(row,set));
-    if(sourceIndex<0||original.some((set,j)=>j!==sourceIndex&&same(row,set))||
-       rows.some((other,j)=>i!==j&&same(row,other)))return row;
-    return {...row,sourceIndex};
-  });
+function historyChanges(saved,proposed){
+  const changes=[];
+  const compare=(field,before,after)=>{
+    if(before!==after)changes.push(`<tr><th scope="row">${esc(field)}</th><td>${esc(before||"—")}</td><td>${esc(after||"—")}</td></tr>`);
+  };
+  const place=id=>id?(t(locById(id)?.name||id)):"";
+  const setsText=sets=>(sets||[]).map(({kg,reps,...metadata})=>{
+    const extras=Object.entries(metadata).map(([key,value])=>key+"="+JSON.stringify(value));
+    return `${kg??"—"} kg × ${reps??"—"}`+(extras.length?" ("+extras.join(", ")+")":"");
+  }).join("\n");
+  compare(t("โน้ตของการฝึก"),saved.note,proposed.note);
+  compare(t("สถานที่"),place(saved.loc),place(proposed.loc));
+  for(const id of new Set([...Object.keys(saved.ex),...Object.keys(proposed.ex)])){
+    const name=exName(id,proposed.ex[id]?proposed:saved);
+    compare(name,setsText(saved.ex[id]),setsText(proposed.ex[id]));
+    compare(name+" · "+t("เมโม"),saved.memo?.[id],proposed.memo?.[id]);
+  }
+  if(!changes.length)return `<p class="note">${t("ค่าที่บันทึกเหมือนกับฉบับร่าง")}</p>`;
+  return `<table style="width:100%;table-layout:fixed;white-space:pre-wrap;overflow-wrap:anywhere"><thead><tr><th>${t("ข้อมูล")}</th><th>${t("ค่าที่บันทึก")}</th><th>${t("หลังใช้ฉบับร่าง")}</th></tr></thead><tbody>${changes.join("")}</tbody></table>`;
 }
 function historyDraft(log,prior){
   const historyExercises=[],ex={};
   // A pre-upgrade draft already contained every recorded exercise. Missing
   // entries were explicitly removed, and draft.extra owns any new exercises.
   for(const [id,sets] of Object.entries(prior?.ex||log.ex)){
-    ex[id]=prior?.ex?matchLegacySets(sets,log.ex[id]||[]):sets.map((s,sourceIndex)=>({kg:s.kg,reps:s.reps,ok:true,sourceIndex}));
+    // Any old row could have been edited to match another saved set. Only
+    // indices captured together with a verified source can carry metadata.
+    ex[id]=prior?.ex?sets.map(({kg,reps,ok})=>({kg,reps,ok})):sets.map((s,sourceIndex)=>({kg:s.kg,reps:s.reps,ok:true,sourceIndex}));
     if(prior?.extra?.some(e=>e.id===id))continue;
     if(!log.ex[id]&&!sets.some(row=>row.ok||row.reps!==""&&row.reps!=null))continue;
     const template=PROGS[log.prog]?.ex.find(e=>e.id===id)||EXLIB.find(e=>e.id===id)||{};
@@ -142,11 +157,11 @@ function historyDraft(log,prior){
   }
   return {...prior,fromHist:1,started:1,day:log.date,prog:log.prog,loc:prior?.loc??log.loc,note:prior?.note??log.note,memo:{...log.memo,...prior?.memo},historyExercises,ex};
 }
-function editedHistoryRecord(log){
+function editedHistoryRecord(log,edit=draft){
   const rec={...log,ex:{}},names={...log.names},memo={...log.memo};
-  for(const e of sessEx()){
+  for(const e of edit.historyExercises.concat(edit.extra||[])){
     const sets=[];
-    for(const row of draft.ex[e.id]||[]){
+    for(const row of edit.ex[e.id]||[]){
       if(!row.ok)continue;
       // The original index follows the row when another set is deleted.
       const original=log.ex[e.id]?.[row.sourceIndex];
@@ -164,7 +179,7 @@ function editedHistoryRecord(log){
     if(sets.length || log.ex[e.id]?.length===0){
       rec.ex[e.id]=sets;
       if(!log.ex[e.id])names[e.id]=e.n;
-      const text=draft.memo?.[e.id];
+      const text=edit.memo?.[e.id];
       if(text!==memo[e.id]){if(text?.trim())memo[e.id]=text.trim();else delete memo[e.id]}
     }
   }
@@ -173,8 +188,8 @@ function editedHistoryRecord(log){
   }
   if(log.names||Object.keys(names).length)rec.names=names;
   if(log.memo||Object.keys(memo).length)rec.memo=memo;
-  if(draft.note!==log.note){if(draft.note?.trim())rec.note=draft.note.trim();else delete rec.note}
-  if(draft.loc)rec.loc=draft.loc;
+  if(edit.note!==log.note){if(edit.note?.trim())rec.note=edit.note.trim();else delete rec.note}
+  if(edit.loc)rec.loc=edit.loc;
   return rec;
 }
 function newWorkoutRecord(day,prog){
@@ -319,7 +334,7 @@ function goEx(i){const nc=document.querySelectorAll("#exs>.ex").length||1;woIdx=
   box.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)goEx(woIdx+(dx<0?1:-1))},{passive:true})})();
 
 Object.assign(EN,{"ใส่น้ำหนักก่อนติ๊ก":"Enter the weight first"});
-Object.assign(EN,{"ยืนยันบันทึกเดิมไม่ได้":"Cannot verify the original workout","บันทึกเดิมมีการเปลี่ยนแปลง ย้ายวัน หรือลบแล้ว การแก้ไขยังอยู่ในหน้านี้":"The original workout was changed, moved or deleted. Your edits are still open.","ฉบับร่างเก่าไม่มีข้อมูลยืนยันต้นฉบับ ไปที่ประวัติ ตรวจสอบรายการ แล้วเลือกแก้เซ็ต":"This older draft has no saved source version. Review the workout in History and choose Edit sets to resume.","ทิ้งการแก้ไขและกลับประวัติ":"Discard edits and return to History","แก้ไขต่อ":"Keep editing","เก็บฉบับร่างและดูประวัติ":"Keep draft and review History","ใช้ฉบับร่างกับบันทึกนี้?":"Apply the older draft to this workout?","ตรวจสอบรายการที่เลือกแล้วใช้เซ็ตจากฉบับร่างแทนเซ็ตในรายการนี้":"Check the selected entry. Applying the draft replaces its sets when you save.","ใช้ฉบับร่างกับรายการนี้":"Apply draft to this entry","ทิ้งฉบับร่างและแก้รายการที่เลือก":"Discard draft and edit this entry"});
+Object.assign(EN,{"ยืนยันบันทึกเดิมไม่ได้":"Cannot verify the original workout","บันทึกเดิมมีการเปลี่ยนแปลง ย้ายวัน หรือลบแล้ว การแก้ไขยังอยู่ในหน้านี้":"The original workout was changed, moved or deleted. Your edits are still open.","ฉบับร่างเก่าไม่มีข้อมูลยืนยันต้นฉบับ ไปที่ประวัติ ตรวจสอบรายการ แล้วเลือกแก้เซ็ต":"This older draft has no saved source version. Review the workout in History and choose Edit sets to resume.","ทิ้งการแก้ไขและกลับประวัติ":"Discard edits and return to History","แก้ไขต่อ":"Keep editing","เก็บฉบับร่างและดูประวัติ":"Keep draft and review History","ใช้ฉบับร่างกับบันทึกนี้?":"Apply the older draft to this workout?","เมื่อบันทึก ฉบับร่างอาจเขียนทับเซ็ต โน้ต เมโม และสถานที่ตามรายการเปลี่ยนแปลงด้านล่าง":"When you save, the draft can overwrite this workout’s sets, note, memos and location. Review the changes below.","ทิ้งฉบับร่างที่เปิดอยู่?":"Discard the open workout draft?","ฉบับร่างที่เปิดอยู่":"Open draft","รายการที่เลือก":"Selected entry","โน้ตของการฝึก":"Workout note","ค่าที่บันทึก":"Saved value","หลังใช้ฉบับร่าง":"After applying draft","ค่าที่บันทึกเหมือนกับฉบับร่าง":"The saved workout and draft have the same values.","ใช้ฉบับร่างกับรายการนี้":"Apply draft to this entry","ทิ้งฉบับร่างและแก้รายการที่เลือก":"Discard draft and edit this entry"});
 
 // renderEx() rebuilds every card; re-apply the pager so the current exercise stays shown (+Set / −Set / Tick all)
 {const _renderEx=renderEx;renderEx=function(){const r=_renderEx.apply(this,arguments);try{applyPager()}catch(e){}return r}}
