@@ -1777,3 +1777,8 @@ body:has(#tx-bar:not([hidden])) :is(#pm-modal .modal-in,#gen-body,#lib-modal .mo
 #v-home .hq-plist .hq-pi .hq-pt{min-width:0}
 #v-home .hq-plist .hq-s{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #v-gym .hq-ps.ghost-start{background:none!important;border:1.5px solid color-mix(in srgb,var(--cyan) 60%,transparent)!important;color:var(--cyan)!important}
+#rest .rest-gif{position:relative;cursor:pointer}
+#rest .rest-gif canvas.gif-frz{position:absolute;left:14px;top:14px;width:calc(100% - 28px);max-height:32vh;object-fit:contain;background:#fff;border-radius:12px}
+#rest .rest-gif.paused img{visibility:hidden}
+.gif-pp{position:absolute;right:20px;top:20px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(15,20,29,.75);color:#fff;font-size:12px;letter-spacing:-1px;z-index:2}
+#rest .rest-gif.paused .gif-pp::before{content:"▶";font-size:14px;letter-spacing:0}#rest .rest-gif.paused .gif-pp{font-size:0}
