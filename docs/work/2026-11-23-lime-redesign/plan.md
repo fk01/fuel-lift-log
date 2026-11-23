@@ -1,0 +1,1 @@
+- Header unify: hqRight() Eat/Train, title 1 line, flame delegated click
