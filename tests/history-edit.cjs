@@ -20,13 +20,14 @@ module.exports = async function historyEdit(browser, url) {
   };
   const legacy = { date: "2020-05-12", prog: "pull", ex: { "lat-pulldown": [{ kg: "18", reps: 4 }] } };
   const stored = () => page.evaluate(() => JSON.parse(localStorage.getItem("gymlog")));
-  const select = async index => {
+  const historyRow = async index => {
     await page.locator("#tab-stats").click();
     await page.locator('#hist-mode [data-m="list"]').click();
     const row = page.locator("#sessions details").nth(index);
     if (!await row.evaluate(el => el.open)) await row.locator("summary").click();
-    await row.locator("[data-ed]").click();
+    return row;
   };
+  const select = async index => (await historyRow(index)).locator("[data-ed]").click();
   const open = async index => {
     await select(index);
     await page.locator("#v-gym").waitFor();
@@ -41,6 +42,65 @@ module.exports = async function historyEdit(browser, url) {
   const seed = records => page.evaluate(items => {
     logs = items; save("gymlog", logs); renderSessions();
   }, records);
+  async function checkDateMoves() {
+    const source = { ...record, ex: { "chest-press": [{ kg: 40, reps: 8, side: "both" }] } };
+    const destination = { ...source, date: "2020-05-16", pn: "Renamed push", loc: "gym",
+      ex: { "chest-press": [{ kg: 55, reps: 12 }] } };
+    const saved = [legacy, source, destination];
+    const reload = async () => {
+      await page.reload();
+      await page.locator("#login").waitFor();
+      await page.evaluate(() => { document.getElementById("login").hidden = true; });
+    };
+    await seed(saved);
+    await open(1);
+    await reps("chest-press", 14);
+    const pending = await page.evaluate(() => draft);
+
+    for (const stale of [false, true]) {
+      const displayed = stale ? [legacy, source] : saved;
+      await seed(displayed);
+      const input = (await historyRow(stale ? 0 : 1)).locator("[data-mv]");
+      // The second time, the destination was saved by another tab after rendering.
+      await page.evaluate(items => {
+        localStorage.setItem("gymlog", JSON.stringify(items));
+        window.dateMoveWrites = [];
+        const setItem = Storage.prototype.setItem;
+        Storage.prototype.setItem = function (key, value) {
+          window.dateMoveWrites.push(key);
+          return setItem.call(this, key, value);
+        };
+      }, saved);
+      await input.fill(destination.date);
+      assert.deepEqual(await page.evaluate(() => window.dateMoveWrites), [], "a rejected move wrote to storage");
+      assert.equal(await input.inputValue(), source.date);
+      assert.equal(await page.locator("#toast:visible").innerText(), "This program is already logged on that date.");
+      assert.deepEqual(await page.evaluate(() => logs), displayed);
+      assert.deepEqual(await page.evaluate(() => draft), pending);
+      await reload();
+      assert.deepEqual(await stored(), saved, "the two workouts must survive reload with their sets intact");
+      assert.deepEqual(await page.evaluate(() => logs), saved);
+      assert.deepEqual(await page.evaluate(() => draft), pending);
+    }
+    await page.locator("#tab-gym").click();
+    await finish();
+    const edited = structuredClone(source);
+    edited.ex["chest-press"][0].reps = 14;
+    assert.deepEqual(await stored(), [legacy, edited, destination], "the pending edit should still save to its source");
+
+    // A move must retain another tab's unrelated workout even when this list is stale.
+    await seed([edited, destination]);
+    let input = (await historyRow(1)).locator("[data-mv]");
+    await page.evaluate(items => localStorage.setItem("gymlog", JSON.stringify(items)), [legacy, edited, destination]);
+    await input.fill("2020-05-10");
+    edited.date = "2020-05-10";
+    assert.deepEqual(await stored(), [edited, legacy, destination]);
+    input = (await historyRow(2)).locator("[data-mv]");
+    await input.fill(legacy.date);
+    edited.date = legacy.date;
+    await reload();
+    assert.deepEqual(await stored(), [edited, legacy, destination], "different programs can share a date");
+  }
   async function checkLegacyDraft() {
     const original = {
       date: record.date, prog: "push", loc: "condo", at: record.at, note: "Original workout note",
@@ -278,6 +338,7 @@ module.exports = async function historyEdit(browser, url) {
     assert.deepEqual(await stored(), [legacy, record], "legacy entry gained or lost unrelated fields");
 
     await checkLegacyDraft();
+    await checkDateMoves();
     await checkDraftSwitch(false);
     await checkDraftSwitch(true);
     await checkSetCount();

@@ -116,10 +116,13 @@ function renderSessions(){
       ${historySetsTable(l)}
       <div class="actions" style="margin-top:8px;align-items:center"><label style="display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:2px 10px">📅<input type="date" data-mv value="${l.date}" max="${TODAY}" aria-label="${t("ย้ายวัน")}" style="background:none;color:var(--fg);border:0;min-width:9.5em;min-height:26px;font-family:var(--f-num);font-size:var(--t-meta)"></label>${PROGS[l.prog]?`<button class="btn sm" data-ed>✎ ${t("แก้เซ็ต")}</button>`:""}<button class="btn sm" data-sh>↗ ${t("แชร์")}</button><button class="btn sm ghost" data-rm>${t("ลบรายการนี้")}</button></div>`;
     d.querySelector("[data-sh]").addEventListener("click",()=>openShare(l));
-    d.querySelector("[data-mv]").addEventListener("change",ev=>{const v=ev.target.value;if(!v||v>TODAY||v===l.date)return;
-      detachHistoryDraft(l);
-      const clash=logs.findIndex(x=>x!==l&&x.date===v&&x.prog===l.prog);if(clash>=0){detachHistoryDraft(logs[clash]);logs.splice(clash,1)}
-      l.date=v;logs.sort((a,b)=>a.date.localeCompare(b.date));save("gymlog",logs);renderGym();toast(t("ย้ายวันแล้ว"))});
+    d.querySelector("[data-mv]").addEventListener("change",ev=>{
+      const input=ev.currentTarget,date=input.value;
+      if(!date||date>TODAY||date===l.date)return;
+      const error=moveHistoryDate(l,date);
+      if(error){input.value=l.date;toast(error);return}
+      renderGym();toast(t("ย้ายวันแล้ว"));
+    });
     d.querySelector("[data-ed]")?.addEventListener("click",()=>openHistoryEdit(l));
     d.querySelector("[data-rm]").addEventListener("click",ev=>{const b=ev.target;
       if(b.dataset.sure){detachHistoryDraft(l);logs.splice(idx,1);save("gymlog",logs);renderGym();toast(t("ลบแล้ว"))}else{b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน")}});
@@ -132,6 +135,19 @@ function renderSessions(){
 const historyVersion=log=>JSON.stringify(log,(_,value)=>
   value&&typeof value==="object"&&!Array.isArray(value)
     ?Object.fromEntries(Object.keys(value).sort().map(k=>[k,value[k]])):value);
+function moveHistoryDate(log,date){
+  // Another tab may have saved a workout since the History list was rendered.
+  const stored=load("gymlog",[]),entries=Array.isArray(stored)?stored:[];
+  const atDestination=entry=>entry.date===date&&entry.prog===log.prog;
+  if(logs.some(atDestination)||entries.some(atDestination))return t("วันที่เลือกมีบันทึกโปรแกรมนี้แล้ว");
+  const version=historyVersion(log);
+  const source=entries.find(entry=>entry.date===log.date&&entry.prog===log.prog&&historyVersion(entry)===version);
+  if(!source||!logs.includes(log))return t("ยืนยันบันทึกเดิมไม่ได้");
+  detachHistoryDraft(log);
+  source.date=date;
+  logs=entries.sort((a,b)=>a.date.localeCompare(b.date));
+  save("gymlog",logs);
+}
 function detachHistoryDraft(log){
   if(draft.fromHist&&draft.day===log.date&&draft.prog===log.prog&&draft.historyVersion===historyVersion(log)){
     draft.historyDetached=true;save("gymdraft",draft);
@@ -375,6 +391,7 @@ function goEx(i){const nc=document.querySelectorAll("#exs>.ex").length||1;woIdx=
 
 Object.assign(EN,{"ใส่น้ำหนักก่อนติ๊ก":"Enter the weight first","ล้างน้ำหนักและยกเลิกติ๊กเซ็ตนี้แล้ว":"Weight cleared and set unchecked"});
 Object.assign(EN,{"มีบันทึกโปรแกรมนี้ในวันที่ฝึกแล้ว ฉบับร่างยังอยู่":"This program is already saved for the workout date. Your draft is still open."});
+Object.assign(EN,{"วันที่เลือกมีบันทึกโปรแกรมนี้แล้ว":"This program is already logged on that date."});
 Object.assign(EN,{"ยืนยันบันทึกเดิมไม่ได้":"Cannot verify the original workout","บันทึกเดิมมีการเปลี่ยนแปลง ย้ายวัน หรือลบแล้ว การแก้ไขยังอยู่ในหน้านี้":"The original workout was changed, moved or deleted. Your edits are still open.","ฉบับร่างเก่าไม่มีข้อมูลยืนยันต้นฉบับ ไปที่ประวัติ ตรวจสอบรายการ แล้วเลือกแก้เซ็ต":"This older draft has no saved source version. Review the workout in History and choose Edit sets to resume.","ทิ้งการแก้ไขและกลับประวัติ":"Discard edits and return to History","แก้ไขต่อ":"Keep editing","เก็บฉบับร่างและดูประวัติ":"Keep draft and review History","ใช้ฉบับร่างกับบันทึกนี้?":"Apply the older draft to this workout?","เมื่อบันทึก ฉบับร่างอาจเขียนทับเซ็ต โน้ต เมโม และสถานที่ตามรายการเปลี่ยนแปลงด้านล่าง":"When you save, the draft can overwrite this workout’s sets, note, memos and location. Review the changes below.","ทิ้งฉบับร่างที่เปิดอยู่?":"Discard the open workout draft?","ฉบับร่างที่เปิดอยู่":"Open draft","รายการที่เลือก":"Selected entry","โน้ตของการฝึก":"Workout note","ค่าที่บันทึก":"Saved value","หลังใช้ฉบับร่าง":"After applying draft","ค่าที่บันทึกเหมือนกับฉบับร่าง":"The saved workout and draft have the same values.","ใช้ฉบับร่างกับรายการนี้":"Apply draft to this entry","ทิ้งฉบับร่างและแก้รายการที่เลือก":"Discard draft and edit this entry"});
 
 // renderEx() rebuilds every card; re-apply the pager so the current exercise stays shown (+Set / −Set / Tick all)
