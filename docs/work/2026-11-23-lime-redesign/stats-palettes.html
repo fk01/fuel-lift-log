@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0}body{background:#e9ebea;font-family:"IBM Plex Sans",Arial,sans-serif;display:flex;gap:30px;padding:44px 30px 30px;color:#fff}
+.w{position:relative}.lab{position:absolute;top:-30px;left:4px;color:#222;font-weight:700}
+.ph{width:360px;height:760px;border-radius:44px;border:9px solid #111;overflow:hidden;padding:46px 16px 0;background:radial-gradient(120% 45% at 50% 0%,var(--g),#0a0b0d 62%)}
+.h{display:flex;justify-content:space-between;align-items:center}.b{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.08);display:grid;place-items:center}
+.mo{text-align:center;color:#cfd3da;margin:12px 0 8px;font-size:14px}
+.days{display:flex;gap:6px;align-items:center}.d{flex:1;height:62px;border-radius:22px;background:rgba(255,255,255,.05);display:grid;place-items:center;font-size:12px;color:#aab}.d b{color:#fff;font-size:15px}
+.today{flex:2.4;height:50px;border-radius:26px;border:2px solid var(--a);display:grid;place-items:center;font-size:13px;color:#fff}
+.tw{margin:14px 0;height:62px;border-radius:20px;background:linear-gradient(90deg,#15171b,var(--g2));display:flex;align-items:center;gap:10px;padding:0 12px}.tw .i{width:38px;height:38px;border-radius:50%;background:#0a0b0d;display:grid;place-items:center}
+.tw small{color:#c8ccd3;font-size:11px}.tw b{display:block;font-size:17px}.up{margin-left:auto;background:var(--a);color:#0a0b0d;border-radius:16px;padding:7px 14px;font-weight:700;font-size:13px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.t{border-radius:20px;background:linear-gradient(180deg,#16181c,var(--g3));padding:12px;height:160px;position:relative}.t.s{height:100px}
+.t .n{display:flex;gap:8px;align-items:center;font-size:13px}.t .n i{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.08);display:grid;place-items:center;font-style:normal;font-size:13px}
+.t .v{position:absolute;left:12px;bottom:12px;font-size:24px}.t .v small{font-size:12px;color:#c8ccd3}
+svg{position:absolute;left:10px;right:10px;top:52px;width:calc(100% - 20px)}
+.pr{margin-top:10px;border-radius:20px;background:#15171b;padding:14px;height:150px}.pr b{color:var(--a);font-size:22px;display:block;margin-top:4px}
+.sw{display:flex;gap:6px;margin-top:10px}.sw span{width:26px;height:26px;border-radius:8px}
+</style></head><body>
+<script>
+const P=[["A · Electric Violet","#a78bfa","#2a1e52","#3b2a73","#2a2147","#7c3aed"],["B · Ember Orange","#ff8a3d","#3a1d0c","#5a2c10","#3a2416","#f97316"],["C · Ice Blue","#38bdf8","#0c2a3e","#103d5a","#14283a","#0ea5e9"]];
+document.body.innerHTML=P.map(([n,a,g,g2,g3,a2])=>`<div class="w" style="--a:${a};--g:${g};--g2:${g2};--g3:${g3}"><div class="lab">${n}</div><div class="ph">
+<div class="h"><span class="b">‹</span><b>My Progress</b><span class="b">⋮</span></div><div class="mo">‹ &nbsp; November (2026) &nbsp; ›</div>
+<div class="days"><div class="d">M<b>17</b></div><div class="d">T<b>18</b></div><div class="today">Today, 22 Nov</div><div class="d">M<b>23</b></div><div class="d">T<b>24</b></div></div>
+<div class="tw"><span class="i">🏋️</span><span><small>Target weight</small><b>75 kg</b></span><span class="up">Update</span></div>
+<div class="grid">
+<div class="t"><div class="n"><i>💪</i>Volume</div><svg viewBox="0 0 140 50"><path d="M0 35 L25 35 C35 35 35 10 45 10 C55 10 55 40 65 40 C75 40 75 18 85 18 L140 18" fill="none" stroke="${a}" stroke-width="3" stroke-linecap="round"/></svg><div class="v">1,684<small> kg</small></div></div>
+<div class="t"><div class="n"><i>🔥</i>Calories</div><svg viewBox="0 0 140 50"><path d="M0 30 C20 30 20 12 40 12 C60 12 60 32 80 32 C100 32 110 8 140 8 L140 50 L0 50Z" fill="${a}" opacity=".25"/><path d="M0 30 C20 30 20 12 40 12 C60 12 60 32 80 32 C100 32 110 8 140 8" fill="none" stroke="${a}" stroke-width="3"/></svg><div class="v">1,806<small> kcal</small></div></div>
+<div class="t s"><div class="n"><i>🥩</i>Protein</div><div class="v">162<small> g</small></div></div>
+<div class="t s"><div class="n"><i>📅</i>Trained</div><div class="v">3<small> days / wk</small></div></div></div>
+<div class="pr"><span>Body weight</span><b>80.6 kg</b><svg viewBox="0 0 300 60" style="position:static;width:100%;margin-top:8px"><path d="M0 50 C40 50 50 10 90 10 C130 10 130 45 170 45 C210 45 230 30 300 28" fill="none" stroke="${a}" stroke-width="3"/></svg></div>
+<div class="sw"><span style="background:${a}"></span><span style="background:${a2}"></span><span style="background:${g2}"></span><span style="background:#15171b"></span></div>
+</div></div>`).join("")
+</script></body></html>
