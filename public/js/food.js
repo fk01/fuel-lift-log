@@ -158,3 +158,33 @@ function mealChips(){const box=document.getElementById("meals");if(!box)return;l
 {const o=renderFood;renderFood=function(){const r=o.apply(this,arguments);try{mealChips()}catch(e){}return r}}
 document.addEventListener("change",e=>{if(e.target.closest&&e.target.closest("#meals .meal"))setTimeout(mealChips,0)});
 Object.assign(EN,{"ทั้งหมด_m":"All","ยังไม่กิน":"To eat","กินแล้ว_m":"Eaten"});
+/* ===== Eat "nourish" view: next meal hero, more-for-today grid, eaten rows, meal detail sheet ===== */
+const MEAL_SVG={cup:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10l-1.2 13a1 1 0 0 1-1 .9H9.2a1 1 0 0 1-1-.9z"/><path d="M6 7h12M13 7l2-4h3"/><path d="M7.6 12h8.8"/></svg>',fish:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c3-5 9-6 13-3l5-3-1.5 6L21 18l-5-3c-4 3-10 2-13-3z"/><circle cx="8" cy="11" r=".8" fill="currentColor"/></svg>',egg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c3.5 0 6 5 6 9a6 6 0 0 1-12 0c0-4 2.5-9 6-9z"/><circle cx="12" cy="13.5" r="2.5"/></svg>'};
+const mealEmo=m=>{const s=((m.name||"")+" "+(m.items||[]).join(" ")).toLowerCase();const ic=m.vit?licon("pill"):/shake|iso|whey|soy|mass|สกู๊ป|เวย์|smoothie|นม/.test(s)?MEAL_SVG.cup:/fish|ปลา|salmon/.test(s)?MEAL_SVG.fish:/egg|ไข่/.test(s)&&/เช้า|break/.test(s)?MEAL_SVG.egg:licon("bowl");return `<span class="nr-ic">${ic}</span>`};
+const mealDone=id=>!!((food[DAY]||{}).done||{})[id];
+function mealTick(id){const c=document.getElementById("c-"+id);if(c)c.click()}
+function eatPhase(){const g=(typeof PROFILE!=="undefined"&&PROFILE&&PROFILE.goal)||"bulk";return g==="cut"?["กินเพื่อ_e","ลีนลง"]:g==="keep"?["กินเพื่อ_e","คงความฟิต"]:["กินเพื่อ_e","ช่วงสร้างกล้าม"]}
+function renderNourish(){const box=document.getElementById("meals");if(!box)return;let v=document.getElementById("nourish");
+  if(!v){v=document.createElement("section");v.id="nourish";box.before(v)}
+  const ms=mealList().filter(m=>!m.vit||true),left=ms.filter(m=>!mealDone(m.id)),done=ms.filter(m=>mealDone(m.id)),nx=left[0];
+  let k=0,p=0;done.forEach(m=>{k+=+m.k||0;p+=+m.p||0});const [a,b]=eatPhase();
+  const mac=m=>`${m.k||0} kcal · P${m.p||0} · C${m.c??"–"} · F${m.f??"–"}`;
+  v.innerHTML=`<h2 class="nr-h">${t(a).replace(/_e$/,"")} <i>${t(b)}</i></h2><p class="nr-sub">${Math.max(0,K_GOAL-k).toLocaleString()} kcal ${t("เหลือ_kc").replace(/_kc$/,"")} · ${t("โปรตีน")} ${Math.max(0,P_TARGET-p)} g</p>
+   ${nx?`<div class="nr-hero" data-meal-open="${esc(nx.id)}"><div class="nr-img">${mealEmo(nx)}</div><span class="nr-tag">${t("ถัดไป_n")} · ${esc(t(nx.time||""))} ${esc(t(nx.name))}</span><b class="nr-nm">${esc(t((nx.items||[])[0]||nx.name))}</b><small>${mac(nx)}</small><button class="nr-ok" data-meal-tick="${esc(nx.id)}" aria-label="${t("กินมื้อนี้แล้ว")}">✓</button></div>`:`<div class="nr-hero nr-all"><div class="nr-img">🎉</div><b class="nr-nm">${t("ครบทุกมื้อแล้ว")}</b></div>`}
+   ${left.length>1?`<div class="nr-sec">${t("มื้อที่เหลือวันนี้")}</div><div class="nr-grid">${left.slice(1).map(m=>`<button class="nr-sm" data-meal-open="${esc(m.id)}"><div class="nr-img">${mealEmo(m)}</div><b>${esc(t(m.name))}</b><small>${esc(t(m.time||""))} · ${m.k||0} kcal</small></button>`).join("")}</div>`:""}
+   ${done.map(m=>`<div class="nr-row" data-meal-open="${esc(m.id)}"><div class="nr-img">${mealEmo(m)}</div><span><span class="nr-tag">${esc(t(m.name))} · ${t("กินแล้ว_m").replace(/_m$/,"")}</span><b>${esc(t((m.items||[])[0]||m.name))}</b><small>${m.k||0} kcal</small></span><button class="nr-ok on" data-meal-tick="${esc(m.id)}" aria-label="${t("ยกเลิก")}">✓</button></div>`).join("")}`;
+  v.querySelectorAll("[data-meal-tick]").forEach(x=>x.addEventListener("click",e=>{e.stopPropagation();mealTick(x.dataset.mealTick)}));
+  v.querySelectorAll("[data-meal-open]").forEach(x=>x.addEventListener("click",()=>openMeal(x.dataset.mealOpen)))}
+function openMeal(id){const m=mealList().find(q=>q.id===id);if(!m)return;const d=food[DAY]=food[DAY]||{done:{},tags:{}},it=(d.items=d.items||{})[id]=(d.items[id]||[]),on=mealDone(id);
+  const ring=(v,g,c,l)=>{const C=94.2,f=g?Math.min(1,v/g):0;return `<span class="nr-rg"><svg width="38" height="38" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" fill="none" stroke="#2a2c31" stroke-width="4"/><circle cx="18" cy="18" r="15" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${(f*C).toFixed(1)} ${C}" transform="rotate(-90 18 18)"/></svg><span><b>${v??"–"} g</b><small>${t(l)}</small></span></span>`};
+  const tip=+m.p>=30?"โปรตีนสูง ช่วยกล้ามฟื้นหลังเล่น":+m.c>=50?"คาร์บช่วยเติมพลังก่อน/หลังเล่น":m.vit?"กินพร้อมอาหารจะดูดซึมดีกว่า":"กินให้ตรงเวลาช่วยคุมพลังงานทั้งวัน";
+  openGen("",`<div class="nr-dhero">${mealEmo(m)}</div><span class="nr-tag">${esc(t(m.name))} · ${esc(t(m.time||""))}</span><h2 class="nr-dn">${esc(t((m.items||[])[0]||m.name))}</h2>
+    <div class="nr-meta"><span>🔥 ${m.k||0} kcal</span><span>🍽 ${(m.items||[]).length} ${t("รายการ_n")}</span></div>
+    <div class="nr-rings">${ring(m.p,P_TARGET/4,"#ff8a3d","โปรตีน")}${ring(m.c,((MP&&MP.c)||216)/4,"#facc15","คาร์บ")}${ring(m.f,((MP&&MP.f)||45)/4,"#fb7185","ไขมัน")}</div>
+    <div class="nr-tip">✦ ${t(tip)}</div>
+    <div class="nr-items">${(m.items||[]).map((x,i)=>`<label class="nr-it"><input type="checkbox" data-it="${i}" ${it.includes(i)?"checked":""}><span>${esc(t(x))}</span></label>`).join("")}</div>
+    <button class="btn primary nr-ate" data-ate>${on?"↺ "+t("ยังไม่ได้กิน"):"✓ "+t("กินมื้อนี้แล้ว")}</button>`,
+    b=>{b.querySelectorAll("[data-it]").forEach(c=>c.addEventListener("change",()=>{const i=+c.dataset.it,a=d.items[id];c.checked?a.includes(i)||a.push(i):a.splice(a.indexOf(i),1);save("mealcheck",food)}));
+      b.querySelector("[data-ate]").addEventListener("click",()=>{closeGen();mealTick(id)})})}
+{const o=renderFood;renderFood=function(){const r=o.apply(this,arguments);try{renderNourish()}catch(e){console.error(e)}return r}}
+Object.assign(EN,{"กินเพื่อ_e":"Eat for your","ช่วงสร้างกล้าม":"build phase","ลีนลง":"lean phase","คงความฟิต":"steady phase","ถัดไป_n":"Next","มื้อที่เหลือวันนี้":"More for today","รายการ_n":"items","ยังไม่ได้กิน":"Not eaten yet","โปรตีนสูง ช่วยกล้ามฟื้นหลังเล่น":"High protein — helps muscles recover after training","คาร์บช่วยเติมพลังก่อน/หลังเล่น":"Carbs refuel you around training","กินพร้อมอาหารจะดูดซึมดีกว่า":"Take with food for better absorption","กินให้ตรงเวลาช่วยคุมพลังงานทั้งวัน":"Eating on time keeps your energy steady"});
