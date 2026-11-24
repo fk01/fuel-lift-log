@@ -55,6 +55,7 @@ const LI={dumbbell:'<path d="M3 10v4M6 7v10M18 7v10M21 10v4M6 12h12"/>',moon:'<p
 const licon=(k,cls)=>`<svg class="licon ${cls||""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LI[k]||LI.dumbbell}</svg>`;
 // ---- no emoji: every pictographic emoji in the UI is swapped for a line icon ----
 Object.assign(LI,{
+  user:'<circle cx="12" cy="8" r="3"/><path d="M5 21a7 7 0 0 1 14 0"/>',search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',bookmark:'<path d="M6 4h12v17l-6-4-6 4z"/>',flag:'<path d="M5 21V4m0 0c4-3 7 3 14 0v10c-7 3-10-3-14 0"/>',swap:'<path d="M4 7h13M14 4l3 3-3 3M20 17H7m3-3-3 3 3 3"/>',tree:'<path d="M12 21V11M7 21h10M12 3 7 12h3l-3 5h10l-3-5h3z"/>',party:'<path d="m4 20 4-10 6 6zM8 10l-2-2M14 7l1-3M18 11l3-1"/>',user:'<circle cx="12" cy="8" r="3"/><path d="M5 21a7 7 0 0 1 14 0"/>',
   machine:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
   link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
   racket:'<ellipse cx="14" cy="9" rx="6" ry="6.5" transform="rotate(35 14 9)"/><path d="M9.5 13.5L3 20M11 6l6 6M9 9l6 6M14 4l5 5"/>',
@@ -71,7 +72,7 @@ Object.assign(LI,{
   sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',dot:'<circle cx="12" cy="12" r="4"/>',warn:'<path d="M12 3l10 18H2zM12 10v5M12 18v.5"/>'});
 const EMO={"🏋️":"dumbbell","🏋":"dumbbell","💪":"dumbbell","🔩":"machine","🔗":"link","🏃":"run","🤸":"body","📍":"pin","🏸":"racket","🔔":"bell","✅":"checkc","🔒":"lock","📅":"cal","🏆":"trophy","😴":"moon","🌙":"moon",
   "📋":"clip","📈":"chart","🎉":"spark","🏢":"building","🏠":"home","💊":"pill","🍽️":"bowl","🍽":"bowl","🗑":"trash","🗑️":"trash","🥇":"medal","🏅":"medal","👑":"star","💎":"star","⚡":"fire","🔥":"fire","☀️":"sun","☀":"sun",
-  "🌋":"fire","🧱":"star","🏔️":"star","🏔":"star","🚀":"spark","🧮":"calc","⚙":"gear","⚙️":"gear","📷":"camera","🏊":"swim","🚴":"bike","🙂":"dot","☕":"coffee","⚠":"warn","⚠️":"warn"};
+  "🌋":"fire","🧱":"star","🏔️":"star","🏔":"star","🚀":"spark","🧮":"calc","⚙":"gear","⚙️":"gear","📷":"camera","🏊":"swim","🚴":"bike","🙂":"dot","☕":"coffee","⚠":"warn","⚠️":"warn","👤":"user","🔍":"search","🔖":"bookmark","⚑":"flag","🌳":"tree","🎉":"party"};
 const EMO_RE=/(\p{Extended_Pictographic}(?:️)?(?:‍\p{Extended_Pictographic}️?)*)/u;
 const KEEP=/^[✓✕✎☰↗★▶◀⏱]/;   // text symbols, not emoji
 const hasEmo=v=>{const g=new RegExp(EMO_RE.source,"gu");let m;while((m=g.exec(v)))if(!KEEP.test(m[0]))return true;return false};
