@@ -55,7 +55,7 @@ let recSel=null;
 // all 16 muscles always shown, fixed anatomical order; state: 0 never · 1 just trained (≤1d) · 2 recovering (2d) · 3 ready (3–7d) · 4 neglected (>7d)
 const REC_ORDER=["chest","serr","delt","rear","neck","traps","lats","lowback","bi","tri","fore","abs","obl","glute","quad","ham","add","abd","calf"],NEGLECT=7;
 // recovery colour sets (never, <40%, recovering, ready, neglected=ready); picked in More › Settings, stored per device
-const REC_PALS={heat:["โมโน",["#374151","#9ca3af","#d1d5db","#ffffff"]],classic:["โมโน",["#374151","#9ca3af","#d1d5db","#ffffff"]],neon:["โมโน",["#374151","#9ca3af","#d1d5db","#ffffff"]],app:["โมโน",["#374151","#9ca3af","#d1d5db","#ffffff"]],mono:["โมโน",["#374151","#9ca3af","#d1d5db","#ffffff"]]};
+const REC_PALS={heat:["ความร้อน",["#3a4658","#ff5a4e","#ff9f43","#5ad1ff"]],classic:["ไฟจราจร",["#55606f","#e07a6a","#d9a46c","#7cc47a"]],neon:["นีออน",["#3a4658","#ff4f8b","#ffd23f","#ff8a3d"]],app:["โทนแอป",["#3a4658","#b46bff","#ff8a3d","#f97316"]],mono:["ฟ้าไล่ระดับ",["#3a4658","#1e5a8a","#2e9bd6","#7fe3ff"]]};
 let recPal=(()=>{try{return localStorage.getItem("recpal")||"heat"}catch(e){return "heat"}})();if(!REC_PALS[recPal])recPal="heat";
 const REC_C=[];function applyRecPal(){const c=REC_PALS[recPal][1];REC_C.length=0;REC_C.push(...c,c[3])}applyRecPal();
 Object.assign(EN,{"สีการฟื้นตัว":"Recovery colours","ความร้อน":"Heat","ไฟจราจร":"Traffic light","นีออน":"Neon","โทนแอป":"App tones","ฟ้าไล่ระดับ":"Blue scale"});
