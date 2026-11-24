@@ -1316,7 +1316,7 @@ body.on-home .wrap>header{display:none}
 #v-food .meal.done,#v-food .meal.mini{opacity:.85!important}
 /* Eat: "+ log food" is a full-width button under the list (never floats over a checkbox) */
 #v-food #food-add{position:static!important;width:100%!important;height:auto!important;min-height:48px;border-radius:14px!important;padding:0 16px!important;font-size:var(--t-body)!important;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:none!important}
-#v-food #food-add::before{font-size:var(--t-lg)}
+#v-food #food-add::before{font-size:var(--t-lg);color:#fff!important;position:static!important;line-height:1}
 #meals{padding-bottom:0}
 /* Eat calendar like Today's strip: no tile borders, round selected day, no grid behind */
 
