@@ -12,14 +12,14 @@
 <title>WeightGram</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Share+Tech+Mono&display=swap">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}*{-webkit-tap-highlight-color:transparent}body{margin:0;font-size:var(--t-sm);font-family:system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
-<link rel="stylesheet" href="/css/app.css?v=138722">
+<link rel="stylesheet" href="/css/app.css?v=138723">
 </head><body>
 
 <div class="wrap">
   <header>
-    <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><span style="display:flex;gap:10px;align-items:center;min-width:0"><h1 id="h1"></h1></span><span style="display:flex;gap:6px"><button class="btn sm" id="lang" hidden aria-label="Language">TH</button></span></div>
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:center"><span style="display:flex;gap:10px;align-items:center;min-width:0"><h1 id="h1"></h1></span></div>
   </header>
-  <section class="stepbox" id="step1"><div class="step"><span class="num" id="sn-1" hidden>1</span><div class="date" id="date"></div><span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;min-width:0"><button class="btn sm" id="fold-btn" aria-label="Show or hide calendar">📅 ▾</button><button class="btn sm" id="today-btn" hidden data-i="วันนี้">วันนี้</button><button class="btn sm primary" id="share-last" data-i="แชร์" data-pre="↗ ">↗ แชร์</button></span></div>
+  <section class="stepbox" id="step1"><div class="step"><span class="num" id="sn-1" hidden>1</span><div class="date" id="date"></div><span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;min-width:0"><button class="btn sm" id="fold-btn" aria-label="Show or hide calendar">📅 ▾</button><button class="btn sm" id="today-btn" hidden data-i="วันนี้">วันนี้</button><button class="btn sm ghost" id="share-last" data-i="แชร์" data-pre="↗ ">↗ แชร์</button></span></div>
     <input type="hidden" id="day">
     <div class="week" id="week"></div>
       <div class="cal" id="hdr-cal" hidden>
@@ -266,9 +266,9 @@
 <div class="modal" id="share-modal" hidden role="dialog" aria-modal="true" aria-label="Share">
   <div class="modal-in">
     <img id="share-img" alt="Workout summary card">
-    <div class="actions" style="justify-content:center"><button class="btn" id="share-story" style="background:var(--brand-ig);border:0;color:var(--white)">IG Story 9:16</button><button class="btn primary" id="share-save" data-i="บันทึกรูป">บันทึกรูป</button><button class="btn" id="share-close" data-i="ปิด">ปิด</button></div>
+    <div class="actions" style="justify-content:center"><button class="btn" id="share-story">IG Story 9:16</button><button class="btn primary" id="share-save" data-i="บันทึกรูป">บันทึกรูป</button><button class="btn" id="share-close" data-i="ปิด">ปิด</button></div>
     <p class="note" id="share-hint" style="text-align:center" hidden></p>
-    <a id="open-ig" hidden href="instagram://story-camera" class="btn" style="justify-self:center;text-decoration:none;background:var(--brand-ig);border:0;color:var(--white)">เปิด Instagram →</a>
+    <a id="open-ig" hidden href="instagram://story-camera" class="btn" style="justify-self:center;text-decoration:none">เปิด Instagram →</a>
     <a id="open-ig-web" hidden href="https://www.instagram.com/" target="_blank" rel="noopener" class="note" style="justify-self:center;color:var(--muted)">instagram.com</a>
   </div>
 </div>
@@ -283,10 +283,10 @@
   </div>
 </div>
 
-<script src="/js/core.js?v=138722"></script>
+<script src="/js/core.js?v=138723"></script>
 <script src="/js/food.js?v=138711"></script>
 <script src="/js/locations.js?v=138713"></script>
-<script src="/js/programs.js?v=138712"></script>
+<script src="/js/programs.js?v=138723"></script>
 <script src="/js/run.js?v=138711"></script>
 <script src="/js/workout.js?v=138721"></script>
 <script src="/js/exercise-edit.js?v=138713"></script>
@@ -313,7 +313,7 @@
 <script src="/js/share-card.js?v=138711"></script>
 <script src="/js/number-pad.js?v=138711"></script>
 <script src="/js/refresh.js?v=138711"></script>
-<script src="/js/app.js?v=138711"></script>
+<script src="/js/app.js?v=138723"></script>
 <script src="/js/stats-calm.js?v=138711"></script>
 <script src="/js/ai-coach.js?v=138711"></script>
 

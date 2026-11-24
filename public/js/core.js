@@ -28,7 +28,7 @@ Object.assign(EN,{"ยังไม่มีประวัติเวท":"No w
 const TH={"แท็บวันนี้":"วันนี้"};
 const t=k=>lang==="th"?(TH[k]??k):(EN[k]??k);
 const thDate=(s,o)=>new Date(s+"T12:00:00").toLocaleDateString(LOC(),o);
-function applyStatic(){document.documentElement.lang=lang==="th"?"th":"en";document.querySelectorAll("[data-i]").forEach(el=>el.textContent=(el.dataset.pre||"")+t(el.dataset.i));document.getElementById("lang").textContent=lang==="th"?"EN":"TH";document.documentElement.lang=lang}
+function applyStatic(){document.documentElement.lang=lang;document.querySelectorAll("[data-i]").forEach(el=>el.textContent=(el.dataset.pre||"")+t(el.dataset.i))}
 // the app scrolls inside .wrap (not the window)
 const appScroll=()=>document.querySelector(".wrap");
 let scrollReset=false;   // set when code deliberately scrolls to top, so closing a sheet does not undo it

@@ -80,7 +80,7 @@ function renderProgs(){
     b.classList.toggle("open",open);
     b.classList.add("row-card");b.innerHTML=`<span class="row-ic">${licon("dumbbell")}</span><span class="row-tx"><span class="pc-top"><b>${esc(p.name)}</b>${k===selProg()?`<span class="pill p-cyan">${t("วันนี้")}</span>`:""}</span>
       <small>${nU(p.ex.length,"ท่า")} · ${esc(groups)}</small>
-      <small class="pc-when">${t("เล่นล่าสุด:")} ${last?thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคย")}</small></span><span class="pc-act"><span class="pc-go" role="button" tabindex="0" data-go>▶ ${t("เริ่ม")}</span><span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span></span>
+      <small class="pc-when">${t("เล่นล่าสุด:")} ${last?thDate(last.date,{day:"numeric",month:"short"}):t("ยังไม่เคย")}</small></span><span class="pc-act"><span class="btn pc-go" role="button" tabindex="0" data-go>▶ ${t("เริ่ม")}</span><span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span></span>
       <ul class="prog-ex"${open?"":" hidden"}>${p.ex.map((e,n)=>`<li><b class="no">${n+1}</b><em class="nm">${e.z} ${esc(e.n)}</em><span class="ss">${e.s}×${e.r}</span><i class="mg">${groupName(groupOf(e))}</i></li>`).join("")}</ul>`;
     b.addEventListener("click",ev=>{if(ev.target.closest("[data-go]")){if(picked)return;try{chooseProg(k)}catch(e){}if(cur!==k)draft.ex={};cur=k;draft.prog=k;chosen=true;document.getElementById("start-w").click();return}if(ev.target.closest(".pc-more")){pmOnly=k;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false;return}
       if(!picked){openSheet(k);return}
@@ -88,7 +88,7 @@ function renderProgs(){
       if(cur===k){cancelProg();return}draft.ex={};cur=k;draft.prog=k;save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:smoothB(),block:"start"}),50)});box.appendChild(b)});
   if(hasType(L,"cardio")){if(hasType(L,"gym"))hd("คาร์ดิโอ");
     cardioHere().forEach(k=>{const p=PROGS[k],v=cxGet(k);const b=document.createElement("button");b.className="prog cardio";b.setAttribute("aria-pressed",!!v);
-      b.classList.add("row-card");b.innerHTML=`<span class="row-ic g">${esc(p.icon||"🏃")}</span><span class="row-tx"><span class="pc-top"><b>${esc(p.name)}</b>${k===pl&&!v?`<span class="pill p-cyan">${t("วันนี้")}</span>`:""}</span><small>${v?esc(cxTxt(k,v)):(p.goal?`${t("เป้า")} ${p.goal} km · `:"")+t(p.track==="dist"?"ใส่ระยะ / เวลา":"แตะเพื่อบันทึก")}</small></span><span class="pc-act">${v?"":`<span class="pc-go" role="button" tabindex="0" data-go>▶ ${t("เริ่ม")}</span>`}<span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span></span>`;
+      b.classList.add("row-card");b.innerHTML=`<span class="row-ic g">${esc(p.icon||"🏃")}</span><span class="row-tx"><span class="pc-top"><b>${esc(p.name)}</b>${k===pl&&!v?`<span class="pill p-cyan">${t("วันนี้")}</span>`:""}</span><small>${v?esc(cxTxt(k,v)):(p.goal?`${t("เป้า")} ${p.goal} km · `:"")+t(p.track==="dist"?"ใส่ระยะ / เวลา":"แตะเพื่อบันทึก")}</small></span><span class="pc-act">${v?"":`<span class="btn pc-go" role="button" tabindex="0" data-go>▶ ${t("เริ่ม")}</span>`}<span class="pc-more" role="button" tabindex="0" aria-label="${t("แก้โปรแกรม")} ${esc(p.name)}">•••</span></span>`;
       b.addEventListener("click",ev=>{if(ev.target.closest(".pc-more")&&!ev.target.closest("[data-go]")){openCardioEdit(k);return}openCardio(k)});box.appendChild(b)})}
   const ew=document.getElementById("empty-w");if(ew)ew.hidden=!hasType(L,"gym");
   const add=document.createElement("button");add.className="btn ghost sm prog-add";add.textContent="+ "+t("เพิ่มโปรแกรม");add.addEventListener("click",openAddProg);box.appendChild(add);
@@ -148,7 +148,10 @@ function renderToday(){const box=document.getElementById("today");if(!box)return
     else{title="😴 "+t("วันพัก");sub=t("พักให้กล้ามฟื้น")}}
   if(resting()){title="😴 "+t("พักวันนี้");sub=t("ให้กล้ามได้ฟื้น — กลับมาพรุ่งนี้");btn="";act="";warn=""}
   // nothing chosen yet today: the program chip in the breadcrumb is the call to action, so no card
-  box.hidden=act==="pick"||act==="resume";if(box.hidden)return;
+  box.hidden=act==="pick"||act==="resume";
+  const useRowPrimary=(box.hidden||!btn)&&document.getElementById("start-row").hidden;
+  document.querySelector("#progs .pc-go")?.classList.toggle("primary",useRowPrimary);
+  if(box.hidden)return;
   box.className="today"+(done.length||(pl&&isCardio(PROGS[pl])&&cxGet(pl))?" is-done":"")+(btn?" live":"");
   box.innerHTML=`<small class="td-l">${lbl}</small><b class="td-t">${esc(title)}</b>${sub?`<span class="td-s">${esc(sub)}</span>`:""}${warn?`<span class="td-w">${esc(warn)}</span>`:""}
     ${btn?`<button class="btn primary td-b" data-today="${act}">${esc(btn)}</button>`:""}${resting()?`<div class="td-rec">${weakest(3).map(([m,v])=>`<div class="row-head"><span>${t(MUS_NAME[m])}</span><small>${v}%</small></div><i class="rec-bar"><i style="width:${v}%;background:${REC_C[v<40?1:2]}"></i></i>`).join("")}</div><button class="btn text sm td-x" data-today="train">${t("เปลี่ยนใจ ออกกำลังกาย")}</button>`
