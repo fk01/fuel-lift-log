@@ -35,7 +35,18 @@ let scrollReset=false;   // set when code deliberately scrolls to top, so closin
 // smooth scrolling only for people who have not asked the OS to reduce motion
 const smoothB=()=>matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
 function scrollAppTop(smooth){if(smooth&&smoothB()==="auto")smooth=false;scrollReset=true;setTimeout(()=>scrollReset=false,200);const w=appScroll();if(w)w.scrollTo({top:0,behavior:smooth?"smooth":"auto"})}
-function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,1800)}
+function toast(m){
+  const el=document.getElementById("toast");
+  let workoutOffset=0;
+  for(const bar of document.querySelectorAll("#v-gym:not([hidden]) :is(.wo-bar,#wo-add)")){
+    const {position}=getComputedStyle(bar);
+    if(position!=="fixed"&&position!=="sticky")continue;
+    const {top,height}=bar.getBoundingClientRect();
+    if(height&&top>=0)workoutOffset=Math.max(workoutOffset,innerHeight-top);
+  }
+  el.style.setProperty("--toast-workout-offset",workoutOffset+"px");
+  el.textContent=m;el.hidden=false;clearTimeout(el._t);el._t=setTimeout(()=>el.hidden=true,1800)
+}
 
 // line icons (app-defined things use these; user-chosen emoji stay emoji)
 const LI={dumbbell:'<path d="M3 10v4M6 7v10M18 7v10M21 10v4M6 12h12"/>',moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',bowl:'<path d="M3 11h18a9 9 0 0 1-18 0zM8 7c0-2 2-2 2-4M13 7c0-2 2-2 2-4"/>',
