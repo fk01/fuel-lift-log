@@ -179,7 +179,7 @@ window.addEventListener("DOMContentLoaded",()=>{renderWeek=trainWeek;try{renderW
 Object.assign(EN,{"วันนี้ออกกำลังอะไร":"What do I train today?"});
 
 /* BMI — Asian cut-offs (WHO Asia-Pacific, used in Thailand) + trend chart */
-const BMI_Z=[[0,18.5,"ผอม","#60a5fa"],[18.5,23,"ปกติ","#4ade80"],[23,25,"ท้วม","#facc15"],[25,30,"อ้วน","#fb923c"],[30,99,"อ้วนมาก","#f87171"]];
+const BMI_Z=[[0,18.5,"ผอม","#9ca3af"],[18.5,23,"ปกติ","#ffffff"],[23,25,"ท้วม","#d1d5db"],[25,30,"อ้วน","#6b7280"],[30,99,"อ้วนมาก","#4b5563"]];
 const bmiOf=(kg,h)=>kg>0&&h>0?kg/((h/100)**2):0,bmiZ=b=>BMI_Z.find(z=>b>=z[0]&&b<z[1])||BMI_Z[0];
 function bmiHTML(){const h=+((typeof PROFILE!=="undefined"&&PROFILE&&PROFILE.h)||0);
   const L=(typeof BODY!=="undefined"?BODY:[]).filter(x=>x.kg>0).slice().sort((a,b)=>a.d.localeCompare(b.d));

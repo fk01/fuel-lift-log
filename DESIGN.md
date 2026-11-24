@@ -1,8 +1,8 @@
 ---
 name: WeightGram
-description: Weightgramming — body, eat, train, today. A dark night-gym console for people who lift on their own.
+description: Weightgramming — body, eat, train, today. A monochrome smoky-glass console for people who lift on their own.
 colors:
-  night-navy: "#141a24"
+  smoky-graphite: "#26292e"
   console-panel: "#1c2431"
   console-panel-raised: "#232d3c"
   card-top: "#1f2938"
@@ -10,11 +10,9 @@ colors:
   chalk: "#e8f1f7"
   steel-muted: "#a9bccf"
   rail: "#33475f"
-  signal-cyan: "#2ee6ff"
-  go-green: "#3dff8c"
-  on-signal: "#06121a"
-  amber-warn: "#ffb15c"
-  alarm-red: "#ff5d73"
+  pure-white: "#ffffff"
+  cool-grey: "#d0d5dd"
+  matte-black: "#141518"
 typography:
   display:
     fontFamily: "IBM Plex Sans Thai, system-ui, sans-serif"

@@ -23,7 +23,7 @@ const BACK=[["traps","poly","50,30 38,38 44,52 56,52 62,38"],["rear","ellipse",3
 const MUS_NAME={chest:"อก",serr:"ซี่โครงข้าง",neck:"คอ",delt:"ไหล่หน้า",rear:"ไหล่หลัง",traps:"บ่า",lats:"หลัง",lowback:"หลังล่าง",bi:"หน้าแขน",tri:"หลังแขน",fore:"แขนท่อนล่าง",abs:"หน้าท้อง",obl:"ข้างลำตัว",quad:"ต้นขาหน้า",ham:"ต้นขาหลัง",glute:"ก้น",calf:"น่อง",abd:"ขานอก",add:"ขาใน"};
 const MUS_KEYS=["chest","serr","delt","rear","neck","traps","lats","lowback","bi","tri","fore","abs","obl","quad","ham","glute","calf","abd","add"];
 function bodySVG(prim,sec,h=44,colFn){
-  const P=new Set(prim),S=new Set(sec),col=colFn||(m=>P.has(m)?"#e8a46a":S.has(m)?"#8a6040":null);
+  const P=new Set(prim),S=new Set(sec),col=colFn||(m=>P.has(m)?"#ffffff":S.has(m)?"#9ca3af":null);
   const w=Math.round(h*420/647);
   return `<span class="body-fig" style="width:${w}px;height:${h}px" aria-hidden="true"><img src="/img/mus-base.png" alt="">${MUS_KEYS.map(m=>{const c=col(m);return c&&c!=="#2f2e2b"?`<i style="background:${c};-webkit-mask-image:url(/img/mus/${m}.png);mask-image:url(/img/mus/${m}.png)"></i>`:""}).join("")}<img class="bf-lines" src="/img/mus-base.png" alt=""></span>`;
 }
