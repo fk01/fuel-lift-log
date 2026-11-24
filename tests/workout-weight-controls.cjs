@@ -36,8 +36,8 @@ after(async () => {
   server?.close();
 });
 
-async function workoutPage(t) {
-  const page = await browser.newPage({ viewport: { width: 430, height: 932 } });
+async function workoutPage(t, viewport = { width: 430, height: 932 }) {
+  const page = await browser.newPage({ viewport });
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
   t.after(async () => {
@@ -58,8 +58,8 @@ async function workoutPage(t) {
   return page;
 }
 
-async function workout(t, { bodyweight = false, priorWeight = false, legacy = false } = {}) {
-  const page = await workoutPage(t);
+async function workout(t, { bodyweight = false, priorWeight = false, legacy = false, viewport } = {}) {
+  const page = await workoutPage(t, viewport);
   await page.evaluate(({ prog, bodyweight, priorWeight, legacy }) => {
     document.getElementById("login").hidden = true;
     location.hash = "gym";
@@ -106,6 +106,69 @@ async function finish(page) {
 
 const savedSets = page => page.evaluate(({ day, prog }) => JSON.parse(localStorage.getItem("gymlog") || "[]")
   .find(log => log.date === day && log.prog === prog)?.ex, { day, prog });
+
+for (const viewport of [{ width: 390, height: 844 }, { width: 430, height: 932 }]) {
+  test(`mobile touch targets and typography meet their minimums at ${viewport.width}×${viewport.height}`, async t => {
+    const page = await workout(t, { viewport, priorWeight: true });
+    const assertTargets = async selector => {
+      const targets = await page.locator(selector).all();
+      assert.ok(targets.length, `Expected to find ${selector}`);
+      for (const target of targets) {
+        const box = await target.boundingBox();
+        assert.ok(box && box.width >= 44 && box.height >= 44, `${target}: ${JSON.stringify(box)}`);
+      }
+    };
+    const assertFontSize = async (selector, minimum) => {
+      const sizes = await page.locator(selector).evaluateAll(elements =>
+        elements.map(element => parseFloat(getComputedStyle(element).fontSize)));
+      assert.ok(sizes.length && sizes.every(size => size >= minimum), `${selector}: ${sizes.join(", ")}`);
+    };
+
+    await assertTargets(".tabbar .tab:visible, .ex.pg-on :is(.ls-add, .ls-del, .ls-n input, .mk-more)");
+    await assertFontSize(".ex.pg-on input[type=number]", 16);
+
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    const assertToastClearance = async selectors => {
+      const gaps = await page.evaluate(selectors => {
+        toast("A workout notification long enough to wrap on a narrow screen. The workout controls must remain visible.");
+        const message = document.getElementById("toast").getBoundingClientRect();
+        return selectors.map(selector => document.querySelector(selector).getBoundingClientRect().top - message.bottom);
+      }, selectors);
+      assert.ok(gaps.every(gap => gap >= 8), `${selectors.join(", ")} toast clearance: ${gaps.join(", ")}px`);
+    };
+    await assertToastClearance([".tabbar", "#wo-add"]);
+
+    // The current workout uses a header Finish button. Exercise the bottom bar layout as well.
+    await page.locator(".wo-bar").evaluate(bar => {
+      bar.style.setProperty("display", "flex", "important");
+      bar.style.setProperty("position", "fixed", "important");
+      bar.style.setProperty("bottom", "150px", "important");
+    });
+    await assertToastClearance([".wo-bar"]);
+
+    await page.locator("#tab-home").click();
+    await page.locator("#v-home .hq-day small").first().waitFor();
+    await assertToastClearance([".tabbar"]);
+    await assertFontSize("#v-home .hq-day small", 12);
+
+    await page.locator("#tab-stats").click();
+    await page.locator("#hist-plot svg text").first().waitFor();
+    await assertFontSize("#hist-plot svg text", 12);
+
+    await page.locator("#tab-more").click();
+    await page.locator("#lib-open").click();
+    await page.locator("#lib-list .how-btn").first().waitFor();
+    await assertTargets("#lib-list .how-btn:visible");
+    await page.locator("#lib-close").click();
+
+    await page.evaluate(() => {
+      pmOnly = "push";
+      renderPM();
+      document.getElementById("pm-modal").hidden = false;
+    });
+    await assertFontSize("#pm-body .pm-n input[type=number]", 16);
+  });
+}
 
 test("bodyweight with blank or cleared kg ticks and saves as zero load", async t => {
   const page = await workout(t, { bodyweight: true });
