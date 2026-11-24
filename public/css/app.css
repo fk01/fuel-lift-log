@@ -1947,6 +1947,7 @@ body{background:radial-gradient(120% 38% at 50% 0%,#3a1d0c,transparent 62%),line
 #rest.player #rest-minus{order:1!important}#rest.player #rest-skip{order:2!important}#rest.player #rest-plus{order:3!important}
 #rest.player #rest-skip{width:104px!important;height:104px!important;border-radius:50%!important;padding:0!important;font-size:0!important;background:#ff8a3d!important;box-shadow:0 0 32px rgba(255,138,61,.55)!important;position:relative}
 #rest.player #rest-skip::before{content:"";position:absolute;left:50%;top:50%;width:34px;height:40px;transform:translate(-50%,-50%);background:linear-gradient(90deg,#1a0d04 0 12px,transparent 12px 22px,#1a0d04 22px)}
+#rest #rest-plus,.prog-add,.pl-add,.lp-add,.pa-add,.empty-w,#wo-add{color:var(--cyan)!important;min-height:44px!important;min-width:44px!important}.pa-add{height:44px!important}
 #rest.player #rest-up{position:absolute;left:18px;right:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);z-index:3;margin:0!important;padding:16px 16px!important;border-radius:22px!important;cursor:pointer}
 #rest.player #rest-up b{font-size:18px}.ru-go{width:50px!important;height:50px!important}
 #rest.player.photo .rest-gif{background:#0a0b0d url(/img/rest-bg.jpg) center/cover!important}
