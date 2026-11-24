@@ -29,6 +29,9 @@ module.exports = async function shareAfterSave(browser, url) {
       const confirm = page.locator("#fin-ok");
       if (await confirm.isVisible()) await confirm.click();
       await page.locator("#share-modal").waitFor();
+      assert.deepEqual(await page.locator("#share-modal .btn.primary").evaluateAll(buttons => buttons.map(button => button.id)), ["share-save"]);
+      assert.equal(await page.locator("#share-story").evaluate(button => getComputedStyle(button).backgroundImage), "none");
+      assert.equal(await page.locator("#open-ig").evaluate(link => getComputedStyle(link).backgroundImage), "none");
       const result = await page.evaluate(async date => {
         await document.getElementById("share-img").decode();
         const saved = JSON.parse(localStorage.getItem("gymlog")).find(l => l.date === date && l.prog === "push");

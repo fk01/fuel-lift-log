@@ -27,7 +27,6 @@ function renderWeek(){const box=document.getElementById("week");if(!box)return;b
       return{sub:L.length?progName(L[0].prog):"",mark:"●",cls:"ok"}},
     pick:ds=>{if(ds===DAY){renderWeek();return}DAY=ds;draft.ex={};picked=false;renderAll()}})}
 function renderAll(){applyStatic();try{updMoreLang()}catch(e){}try{renderWeek()}catch(e){}document.getElementById("today-btn").hidden=DAY===TODAY;document.getElementById("save-day").textContent="→ "+new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{day:"numeric",month:"short",year:"numeric"});document.getElementById("date").textContent=new Date(DAY+"T12:00:00").toLocaleDateString(LOC(),{weekday:"short",day:"numeric",month:"long"})+(DAY===TODAY?"":" · "+(lang==="th"?"ย้อนหลัง":"Backfill"));updUnitBtn();renderFood();renderGym();show(viewOf())}
-document.getElementById("lang").addEventListener("click",()=>{lang=lang==="th"?"en":"th";try{localStorage.setItem("lang",lang)}catch(e){}renderAll()});
 /* ---------- lock page scroll while a full-screen modal is open (iOS scrolled the page behind it) ---------- */
 // iOS resets the page's scroll when overflow is locked/unlocked or the list re-renders: remember it and put it back on close
 let modalY=null;(()=>{const sync=()=>{const on=[...document.querySelectorAll(".modal:not(.pad)")].some(m=>!m.hidden),h=document.documentElement,w=appScroll();
@@ -48,7 +47,9 @@ document.querySelectorAll(".modal").forEach(m=>mo.observe(m,{attributes:true,att
     clearTimeout(tm);tm=setTimeout(()=>r.classList.remove("bar-hide"),350)},{passive:true})})();
 /* ---------- More tab is the one menu: tools, language, sync ---------- */
 ["v-more","v-stats"].forEach(v=>document.getElementById(v).addEventListener("click",ev=>{const r=ev.target.closest("button[data-act]");if(!r)return;const x=r.dataset.act;
-  if(x==="meal")openMealPlan();else if(x==="io"){const b=document.getElementById("io-blk");b.hidden=!b.hidden}else if(x==="pk"){if(ev.target.id!=="pk-add")document.getElementById("pk-add").click()}else if(x==="push"){if(ev.target.id!=="push-on")document.getElementById("push-on").click()}else if(x==="rm")open1RM();else if(x==="badges")openBadges();else if(x==="lang"){document.getElementById("lang").click();updMoreLang()}else if(x==="refresh")doRefresh()}));
+  if(x==="meal")openMealPlan();else if(x==="io"){const b=document.getElementById("io-blk");b.hidden=!b.hidden}else if(x==="pk"){if(ev.target.id!=="pk-add")document.getElementById("pk-add").click()}else if(x==="push"){if(ev.target.id!=="push-on")document.getElementById("push-on").click()}else if(x==="rm")open1RM();else if(x==="badges")openBadges();
+  else if(x==="lang"){lang=lang==="th"?"en":"th";try{localStorage.setItem("lang",lang)}catch(e){}renderAll()}
+  else if(x==="refresh")doRefresh()}));
 function updMoreLang(){const e=document.getElementById("more-lang");if(e)e.textContent=lang==="th"?"ไทย":"English"}
 /* ---------- Stats sub-tabs: Training | Body ---------- */
 let stTab="train";

@@ -65,6 +65,19 @@ const steps = [
     document.getElementById("loc-open").click(); if (!document.querySelector("#gen-body [data-pladd]")) throw new Error("places sheet"); closeGen();
     openHowTo("chest-press", "Chest Press Machine"); if (!document.querySelector("#gen-body .sh-x") || !document.querySelector("#gen-body .sticky-b")) throw new Error("how-to close"); closeGen();
     location.hash = "stats"; renderBody(); if (!document.querySelector("#body-card .card-h #bw-add.primary") || !document.querySelector("#body-card .segc")) throw new Error("body card"); }],
+  ["more-language", () => {
+    location.hash = "more";
+    const entries = document.querySelectorAll('[data-act="lang"]');
+    if (document.getElementById("lang") || entries.length !== 1 || !entries[0].closest("#v-more")) throw new Error("language has one entry in More");
+    const initial = document.documentElement.lang;
+    const check = (code, label) => {
+      if (document.documentElement.lang !== code || localStorage.getItem("lang") !== code || document.getElementById("more-lang").textContent !== label) throw new Error("language should update and persist as " + code);
+    };
+    entries[0].click();
+    check(initial === "en" ? "th" : "en", initial === "en" ? "ไทย" : "English");
+    entries[0].click();
+    check(initial, initial === "en" ? "English" : "ไทย");
+  }],
   ["food-log", () => { location.hash = "food"; const before = dayP(DAY) || 0; document.getElementById("food-add").click();
     const g = document.getElementById("gen-body"); g.querySelector("#fl-n").value = "ข้าวมันไก่"; g.querySelector("#fl-k").value = "600"; g.querySelector("#fl-p").value = "25";
     g.querySelector('[data-q="2"]').click(); g.querySelector('[data-s="m2"]').click(); g.querySelector("#fl-save").click();
@@ -93,9 +106,12 @@ const steps = [
     setDayMode("train"); pickLoc("gym"); logs.push(...saved); Object.assign(tg, keep); }],
   ["crumb-program", () => { location.hash = "gym"; setDayMode("train"); pickLoc("gym"); const saved = logs.filter(l => l.date === TODAY); logs = logs.filter(l => l.date !== TODAY); renderGym();
     renderToday(); if (!selProg() && !document.getElementById("today").hidden) throw new Error("no card before a program is picked");
+    if (document.querySelectorAll("#today:not([hidden]) .primary, #progs .pc-go.primary").length !== 1) throw new Error("one primary action before choosing a program");
     const chip = document.querySelector('#lochead [data-cr="prog"]'); if (!chip) throw new Error("program chip"); chip.click();
     const k = weightsHere()[1]; document.querySelector(`#gen-body [data-pp="${k}"]`).click(); renderToday();
     if (!document.querySelector("#lochead").textContent.includes(PROGS[k].name) || !document.querySelector('#today [data-today="start:' + k + '"]')) throw new Error("chosen program on chip + today");
+    const secondary = document.querySelectorAll("#progs .pc-go, #share-last");
+    if (secondary.length < 3 || [...secondary].some(b => getComputedStyle(b).backgroundImage !== "none")) throw new Error("program alternatives and Share use secondary styles");
     logs.push(...saved); }],
   ["no-emoji", () => { ["food", "gym", "stats", "more"].forEach(h => { location.hash = h; }); deEmoji(document.body);
     const txt = document.body.innerText; const m = txt.match(/\p{Extended_Pictographic}/u); if (m && !/[✓✕✎☰↗★⚠▶]/.test(m[0])) throw new Error("emoji left: " + m[0]);
