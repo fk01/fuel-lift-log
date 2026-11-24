@@ -43,7 +43,7 @@ document.getElementById("rest-x")?.addEventListener("click",()=>document.getElem
 
 /* fallback when the exercise has no gif: a figure sitting on a bench, breathing, sipping water */
 const REST_SVG=`<svg class="rest-anim" viewBox="0 0 240 170" role="img" aria-label="rest">
-<defs><linearGradient id="ra-g" x1="0" x2="1"><stop offset="0" stop-color="#ff8a3d"/><stop offset="1" stop-color="#f97316"/></linearGradient></defs>
+<defs><linearGradient id="ra-g" x1="0" x2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d1d5db"/></linearGradient></defs>
 <ellipse cx="120" cy="158" rx="90" ry="6" fill="#000" opacity=".35"/>
 <g stroke="#5b6b82" stroke-width="6" stroke-linecap="round"><path d="M50 128h140"/><path d="M62 128v28M178 128v28"/></g>
 <g class="ra-body" fill="none" stroke="#e8eef7" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
@@ -54,8 +54,8 @@ const REST_SVG=`<svg class="rest-anim" viewBox="0 0 240 170" role="img" aria-lab
 </g>
 <circle class="ra-head" cx="110" cy="68" r="13" fill="#e8eef7"/>
 <path class="ra-towel" d="M100 84 q12 8 24 0" fill="none" stroke="url(#ra-g)" stroke-width="5" stroke-linecap="round"/>
-<g class="ra-breath" fill="none" stroke="#ff8a3d" stroke-width="2.5" stroke-linecap="round"><path d="M84 66 q-8 -4 -14 0"/><path d="M82 74 q-10 -2 -18 2"/></g>
-<circle class="ra-drop" cx="124" cy="60" r="2.6" fill="#ff8a3d"/>
+<g class="ra-breath" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"><path d="M84 66 q-8 -4 -14 0"/><path d="M82 74 q-10 -2 -18 2"/></g>
+<circle class="ra-drop" cx="124" cy="60" r="2.6" fill="#ffffff"/>
 </svg>`;
 Object.assign(EN,{"หายใจลึกๆ ดื่มน้ำ":"Breathe, sip water"});
 /* tap the rest gif to pause/play: freeze = draw the current frame onto a canvas over it */
