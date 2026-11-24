@@ -2012,3 +2012,18 @@ body{background:radial-gradient(120% 38% at 50% 0%,#3a1d0c,transparent 62%),line
 .mk-pill input::-webkit-outer-spin-button,.mk-pill input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;display:none}
 .hq-hello2 .hq-hi b{white-space:nowrap;font-size:min(28px,6.6vw)}.hq-hello2 .hq-hi{min-width:0;flex:1}
 .hq-hello2 .hq-hi b{display:block;overflow:hidden;text-overflow:ellipsis}.hq-hello2 .hq-hi b i{font-family:Georgia,"Times New Roman",serif!important;font-style:italic}.hq-hello2>.hq-flame{margin-left:auto}
+
+/* Stats header parity: Night Gym Console tokens shared by Today / Eat / Train. */
+body.on-stats{background:radial-gradient(120% 38% at 50% 0%,color-mix(in srgb,var(--cyan) 10%,transparent),transparent 62%),linear-gradient(#ffffff05 1px,transparent 1px) 0 0/32px 32px,linear-gradient(90deg,#ffffff05 1px,transparent 1px) 0 0/32px 32px,var(--bg)!important}
+#v-stats #st-head{gap:0;margin:0 0 14px;padding:0}
+#v-stats #st-head .hq-hello{padding:4px 2px 14px}
+#v-stats #st-head .hq-week{margin-inline:-8px;min-height:64px}
+#v-stats #st-head .hq-day{min-height:64px;padding:4px 0;gap:6px}
+#v-stats #st-head .hq-dot{background:var(--surface-2);color:var(--fg)}
+#v-stats #st-head .hq-day.ok .hq-dot{background:var(--fg);color:var(--on-accent)}
+#v-stats #st-head .hq-day.today .hq-dot{box-shadow:0 0 0 2px var(--cyan)}
+#v-stats #st-head .hq-day.today:not(.ok) .hq-dot::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px color-mix(in srgb,var(--cyan) 55%,transparent)}
+#v-stats #st-head .hq-day.sel small:last-child{color:var(--cyan);font-weight:700}
+#v-stats #st-head .hq-streak{margin-top:8px;color:var(--muted)}
+#v-stats .st-ai,#v-stats .ai-btn{min-height:48px;box-sizing:border-box;padding:10px 14px!important;border-radius:var(--r-lg)!important;background:linear-gradient(var(--surface),var(--surface)) padding-box,var(--grad) border-box!important;border:1.5px solid transparent!important;color:var(--fg)!important;box-shadow:none!important}
+#v-stats .st-ai small{color:var(--muted);font-weight:400;font-size:13px}
