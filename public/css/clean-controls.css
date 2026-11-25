@@ -1,0 +1,147 @@
+/* clean-controls.css — buttons as clean labels, minimal chrome */
+
+/* Base buttons: text only */
+.btn,
+.btn.sm,
+.btn.ghost {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border-radius: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 6px 4px !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  gap: 4px !important;
+}
+.btn:active,
+.btn.sm:active,
+.btn.ghost:active {
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+  opacity: 0.85;
+}
+
+/* Primary = slightly stronger text, still no box */
+.btn.primary {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+}
+.btn.primary:active {
+  opacity: 0.8;
+}
+
+/* Warn = red text only */
+.btn.warn,
+.btn.ghost.warn {
+  background: transparent !important;
+  border: 0 !important;
+  color: rgba(248, 113, 113, 0.95) !important;
+  box-shadow: none !important;
+}
+
+/* Chips: no pill frame; pressed = brighter text */
+.chip {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  min-height: 0 !important;
+  padding: 6px 8px !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  font-weight: 500 !important;
+}
+.chip[aria-pressed="true"],
+.chip.on {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Segmented chip groups: no tray background */
+.chips.seg {
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  gap: 4px !important;
+}
+.chips.seg .chip {
+  border: 0 !important;
+  background: transparent !important;
+}
+
+/* Menu chevrons / secondary controls stay light */
+.menu-row {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.menu {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Tabbar stays as nav chrome; only soften inner tabs if needed */
+.tabbar .tab {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Icon-only circles that must stay tappable targets */
+.wt-fin,
+#v-gym #wo-top .wt-fin,
+.mk-more,
+.day-gear {
+  /* keep small hit targets readable but still soft */
+  border: 0 !important;
+  box-shadow: none !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Run / share modal actions already themed — reinforce label look */
+#run-modal .actions .btn,
+#share-modal .actions .btn {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  min-height: 40px !important;
+  height: auto !important;
+  padding: 8px 6px !important;
+}
+#run-modal #run-save,
+#share-modal #share-save,
+#run-modal .btn.primary,
+#share-modal .btn.primary {
+  color: #fff !important;
+  font-weight: 700 !important;
+}
+#run-modal #run-share {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Form file/photo pickers as labels */
+label.btn,
+label.btn.sm {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  padding: 6px 0 !important;
+}
