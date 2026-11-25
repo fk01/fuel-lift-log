@@ -1,14 +1,24 @@
-/* clean-controls.css — buttons as clean labels, no frames */
+/* clean-controls.css — consistent label-style controls, no frames */
 
-/* Base buttons: text only */
+/* ========== global buttons ========== */
 .btn,
 .btn.sm,
 .btn.ghost,
+.btn.text,
 button.btn,
 #mp-open,
 #food-add,
 #reset,
 .pl-add,
+.lp-add,
+.prog-add,
+.empty-w,
+.pc-go,
+.mc-btn,
+.td-rest,
+.td-x,
+.td-b,
+[data-today],
 .mp-open-row .btn {
   background: transparent !important;
   border: 0 !important;
@@ -27,74 +37,20 @@ button.btn,
 }
 .btn:active,
 .btn.sm:active,
-.btn.ghost:active,
-#mp-open:active,
-#food-add:active {
+.pc-go:active,
+.mc-btn:active,
+[data-today]:active {
   background: transparent !important;
-  color: rgba(255, 255, 255, 0.95) !important;
+  color: #fff !important;
   opacity: 0.85;
 }
 
-/* Manage plan — pure text, right-aligned */
-#mp-open,
-.mp-open-row #mp-open {
+/* Primary text stronger */
+.btn.primary,
+.td-b.btn.primary {
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
-  border-radius: 0 !important;
-  padding: 4px 0 !important;
-  min-height: 0 !important;
-  color: rgba(255, 255, 255, 0.55) !important;
-  font-size: 13px !important;
-  font-weight: 500 !important;
-}
-.mp-open-row {
-  border: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-/* + / บันทึกอาหาร at bottom of meal list */
-#food-add,
-#v-food #food-add {
-  display: block !important;
-  width: auto !important;
-  max-width: none !important;
-  margin: 8px 0 4px !important;
-  padding: 8px 0 !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  color: rgba(255, 255, 255, 0.45) !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  text-align: left !important;
-  justify-content: flex-start !important;
-}
-#food-add:active {
-  color: rgba(255, 255, 255, 0.8) !important;
-}
-
-/* Add meal in plan editor */
-.pl-add,
-button.pl-add {
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  color: rgba(255, 255, 255, 0.55) !important;
-  padding: 8px 0 !important;
-  min-height: 0 !important;
-  justify-content: flex-start !important;
-}
-
-/* Primary = stronger text only */
-.btn.primary {
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
   color: #fff !important;
   font-weight: 600 !important;
 }
@@ -107,15 +63,68 @@ button.pl-add {
   box-shadow: none !important;
 }
 
-/* Chips: no pill */
-.chip {
+/* ========== Train: + today / Rest today / Save ========== */
+.pl-row .pc-act .btn,
+.pl-row .pc-go,
+.pl-row button,
+#v-gym .pl-row .btn,
+#v-gym [data-today],
+#v-gym .td-rest,
+#v-gym .empty-w {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 4px 2px !important;
+  min-height: 0 !important;
+  color: rgba(255, 255, 255, 0.65) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  white-space: nowrap;
+}
+#v-gym .pl-row .pc-go,
+#v-gym .pl-row button.btn {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+/* dashed empty / rest bars → plain text */
+#v-gym .empty-w,
+#v-gym .td-rest,
+button.td-rest {
+  border: 0 !important;
+  border-style: none !important;
+  background: transparent !important;
+  justify-content: flex-start !important;
+  width: auto !important;
+  padding: 8px 0 !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ========== More: Settings / Turn on (mc-btn) ========== */
+.mc-btn,
+.menu-row .mc-btn,
+#v-more .mc-btn {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 4px 0 !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+
+/* ========== Stats chips Chart / items / Top weight ========== */
+.chip,
+#hist-mode .chip,
+#v-stats .chip,
+.chips .chip {
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
   border-radius: 0 !important;
   min-height: 0 !important;
   padding: 6px 8px !important;
-  color: rgba(255, 255, 255, 0.55) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
   font-weight: 500 !important;
 }
 .chip[aria-pressed="true"],
@@ -136,19 +145,64 @@ button.pl-add {
   gap: 4px !important;
 }
 
+/* ========== AI / Ask cards — soft, no heavy border frame on CTA ========== */
+.st-ai,
+.ai-btn,
+#v-stats .st-ai,
+#v-stats .ai-btn,
+#v-food #eat-cal .st-ai {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* ========== Eat ========== */
+#mp-open,
+.mp-open-row #mp-open {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 4px 0 !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  font-size: 13px !important;
+}
+#food-add,
+#v-food #food-add {
+  display: block !important;
+  width: auto !important;
+  margin: 8px 0 4px !important;
+  padding: 8px 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+  text-align: left !important;
+  justify-content: flex-start !important;
+}
+.pl-add,
+button.pl-add {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  padding: 8px 0 !important;
+  justify-content: flex-start !important;
+}
+
+/* ========== menus ========== */
 .menu-row,
 .menu {
   border: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
 }
-
 .tabbar .tab {
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
 }
 
+/* keep small circular hit targets soft */
 .wt-fin,
 #v-gym #wo-top .wt-fin,
 .mk-more,
@@ -158,6 +212,7 @@ button.pl-add {
   background: rgba(255, 255, 255, 0.08) !important;
 }
 
+/* modal actions */
 #run-modal .actions .btn,
 #share-modal .actions .btn {
   background: transparent !important;
@@ -165,8 +220,6 @@ button.pl-add {
   box-shadow: none !important;
   border-radius: 0 !important;
   color: rgba(255, 255, 255, 0.75) !important;
-  min-height: 40px !important;
-  height: auto !important;
   padding: 8px 6px !important;
 }
 #run-modal #run-save,
@@ -186,13 +239,14 @@ label.btn.sm {
   padding: 6px 0 !important;
 }
 
-/* Kill residual outline from glass theme on any control */
+/* residual glass borders on any btn */
 #v-food .btn,
-#v-food button,
+#v-food button.btn,
 #v-home .btn,
 #v-gym .btn:not(.wt-fin),
 #v-stats .btn,
-#v-more .btn {
+#v-more .btn,
+#v-more .mc-btn {
   border-color: transparent !important;
   box-shadow: none !important;
 }
