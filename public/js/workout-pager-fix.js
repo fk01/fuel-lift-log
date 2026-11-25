@@ -1,4 +1,4 @@
-/* workout-pager-fix.js — blank screen, pager, scroll-jump, Add exercise as label */
+/* workout-pager-fix.js — active workout UI polish */
 (function () {
   function injectCSS() {
     var st = document.getElementById("wo-pager-fix");
@@ -8,40 +8,71 @@
       document.head.appendChild(st);
     }
     st.textContent = [
-      /* show pager */
+      /* 1) Comic as LARGE full-page background while training */
+      "body.wo-focus #v-gym #step3{position:relative;overflow-x:hidden;overflow-y:visible}",
+      "body.wo-focus #v-gym #step3::before{",
+      "content:\"\"!important;position:fixed!important;inset:0!important;",
+      "background:url(/img/comic-active.jpg) center 20%/cover no-repeat!important;",
+      "filter:invert(1) grayscale(1) contrast(1.15)!important;",
+      "mix-blend-mode:screen!important;opacity:.14!important;",
+      "-webkit-mask-image:none!important;mask-image:none!important;",
+      "pointer-events:none!important;z-index:0!important;",
+      "}",
+      "body.wo-focus #v-gym #step3::after{display:none!important}",
+      "body.wo-focus #v-gym #step3>*{position:relative;z-index:1}",
+      /* hide tiny comic bleed inside pager mid */
+      "#v-gym #exs.paged .wo-pager .pg-mid{background:transparent!important}",
+
+      /* 2) Remove Weights highlight chip */
+      "#v-gym .ex .mk-t em,.mk-t em{",
+      "background:transparent!important;border:0!important;box-shadow:none!important;",
+      "color:rgba(255,255,255,.55)!important;font-style:normal!important;",
+      "padding:0!important;border-radius:0!important;",
+      "}",
+
+      /* 3) Weight pills: same size, no bounce / no first-row pop */
+      "#v-gym .ex .mk-pill{",
+      "height:46px!important;min-width:0!important;",
+      "transform:none!important;animation:none!important;",
+      "}",
+      "#v-gym .ex .mk-pill input{",
+      "width:3.2ch!important;min-width:3.2ch!important;max-width:4.5ch!important;",
+      "font:600 17px/1 var(--f-body,system-ui)!important;",
+      "transform:none!important;animation:none!important;",
+      "color:#fff!important;",
+      "}",
+      "#v-gym .ex .mk-pill.dim input,#v-gym .ex .mk-pill.dim i{",
+      "color:#fff!important;opacity:.85!important;",
+      "}",
+      "#v-gym .ex .mk-pill input:focus,#v-gym .ex .mk-pill:active{",
+      "transform:none!important;animation:none!important;",
+      "}",
+
+      /* pager */
       "#v-gym .wo-pager{display:flex!important}",
       "#v-gym #exs.paged .wo-pager{display:flex!important;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;padding:8px 4px;position:relative;z-index:2}",
-      "#v-gym #exs.paged .wo-pager .btn{min-width:48px;min-height:44px;border-radius:14px;background:rgba(255,255,255,.10)!important;border:1px solid rgba(255,255,255,.18)!important;color:#fff!important;font-size:22px;font-weight:700}",
-      "#v-gym #exs.paged .wo-pager .pg-mid{color:rgba(255,255,255,.75);text-align:center}",
+      "#v-gym #exs.paged .wo-pager .btn{min-width:48px;min-height:44px;border-radius:14px;background:rgba(255,255,255,.10)!important;border:1px solid rgba(255,255,255,.16)!important;color:#fff!important;font-size:22px;font-weight:700}",
+      "#v-gym #exs.paged .wo-pager .pg-mid{color:rgba(255,255,255,.7);text-align:center}",
       "#v-gym #exs.paged .wo-pager .pg-dots{display:flex;gap:5px;justify-content:center;margin-top:4px}",
       "#v-gym #exs.paged .wo-pager .pg-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.25);display:inline-block}",
       "#v-gym #exs.paged .wo-pager .pg-dots i.cur{background:#fff}",
       "#v-gym #exs.paged .wo-pager .pg-dots i.ok{background:rgba(255,255,255,.55)}",
-      /* one visible card */
       "#exs.paged>.ex.pg-on{display:block!important}",
       "#exs.paged>.ex:not(.pg-on){display:none!important}",
-      "#v-gym #step3{overflow-x:hidden;overflow-y:visible}",
-      /* Next teaser under current card */
-      "#exs.paged .ls-next{display:flex!important;order:99;margin-top:12px!important;position:relative;z-index:2}",
       "#exs.paged{display:flex;flex-direction:column}",
       "#exs.paged>.wo-pager{order:0}",
       "#exs.paged>.ex.pg-on{order:1}",
       "#exs.paged>.ex:not(.pg-on){order:2}",
-      "#exs.paged>.ls-next{order:3}",
-      /* + Add exercise: plain text label only (still tappable) */
+      "#exs.paged>.ls-next{order:3;display:flex!important;margin-top:12px!important}",
+
+      /* Add exercise = plain label under Next */
       "#v-gym #wo-add,body.wo-focus #v-gym #wo-add{",
-      "position:static!important;left:auto!important;right:auto!important;bottom:auto!important;z-index:auto!important;",
-      "display:block!important;width:auto!important;max-width:100%!important;",
-      "margin:10px 4px 18px!important;padding:8px 4px!important;",
-      "height:auto!important;min-height:0!important;",
-      "background:transparent!important;border:0!important;border-radius:0!important;",
-      "box-shadow:none!important;outline:none!important;",
-      "color:rgba(255,255,255,.55)!important;font-size:14px!important;font-weight:500!important;",
-      "text-align:left!important;cursor:pointer;",
-      "}",
-      "#v-gym #wo-add:active{color:rgba(255,255,255,.85)!important}",
-      /* reduce comic clutter while training */
-      "body.wo-focus #v-gym #step3::before,body.wo-focus #v-gym #step3::after{opacity:.12!important;max-height:40%!important}"
+      "position:static!important;left:auto!important;right:auto!important;bottom:auto!important;",
+      "display:block!important;width:auto!important;margin:10px 4px 18px!important;padding:8px 4px!important;",
+      "height:auto!important;min-height:0!important;background:transparent!important;border:0!important;",
+      "border-radius:0!important;box-shadow:none!important;color:rgba(255,255,255,.55)!important;",
+      "font-size:14px!important;font-weight:500!important;text-align:left!important;cursor:pointer;",
+      "}"
     ].join("");
   }
 
@@ -84,6 +115,15 @@
     try { cur.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" }); } catch (e) {}
   }
 
+  function equalizePills() {
+    // kill dynamic width that makes first value look "bouncy"
+    document.querySelectorAll("#exs .mk-pill input").forEach(function (inp) {
+      inp.style.width = "3.2ch";
+      inp.style.minWidth = "3.2ch";
+      inp.style.transform = "none";
+    });
+  }
+
   function patchApplyPager() {
     if (typeof applyPager !== "function") return false;
     if (applyPager.__wgFixed) return true;
@@ -93,6 +133,7 @@
       forceVisibleCard();
       syncTopPos();
       pinAddExercise();
+      equalizePills();
       var box = document.getElementById("exs");
       if (!box || !box.classList.contains("paged")) return;
       var mid = box.querySelector(".wo-pager .pg-mid small");
@@ -144,6 +185,7 @@
       forceVisibleCard();
       syncTopPos();
       pinAddExercise();
+      equalizePills();
       setTimeout(softScrollToCurrent, 30);
     };
     window.goEx.__wgFixed = true;
@@ -167,6 +209,7 @@
     patchRenderGym();
     forceVisibleCard();
     pinAddExercise();
+    equalizePills();
     syncTopPos();
     if (typeof applyPager === "function") {
       try { applyPager(); } catch (e) {}
@@ -175,6 +218,7 @@
       try { mockTop(); } catch (e) {}
     }
     pinAddExercise();
+    equalizePills();
     syncTopPos();
   }
 
