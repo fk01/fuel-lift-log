@@ -1,13 +1,19 @@
-/* clean-controls.css — buttons as clean labels, minimal chrome */
+/* clean-controls.css — buttons as clean labels, no frames */
 
 /* Base buttons: text only */
 .btn,
 .btn.sm,
-.btn.ghost {
+.btn.ghost,
+button.btn,
+#mp-open,
+#food-add,
+#reset,
+.pl-add,
+.mp-open-row .btn {
   background: transparent !important;
   border: 0 !important;
-  box-shadow: none !important;
   outline: none !important;
+  box-shadow: none !important;
   border-radius: 0 !important;
   min-height: 0 !important;
   height: auto !important;
@@ -16,16 +22,74 @@
   font-weight: 500 !important;
   font-size: 14px !important;
   gap: 4px !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
 }
 .btn:active,
 .btn.sm:active,
-.btn.ghost:active {
+.btn.ghost:active,
+#mp-open:active,
+#food-add:active {
   background: transparent !important;
   color: rgba(255, 255, 255, 0.95) !important;
   opacity: 0.85;
 }
 
-/* Primary = slightly stronger text, still no box */
+/* Manage plan — pure text, right-aligned */
+#mp-open,
+.mp-open-row #mp-open {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 4px 0 !important;
+  min-height: 0 !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+.mp-open-row {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* + / บันทึกอาหาร at bottom of meal list */
+#food-add,
+#v-food #food-add {
+  display: block !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 8px 0 4px !important;
+  padding: 8px 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  text-align: left !important;
+  justify-content: flex-start !important;
+}
+#food-add:active {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Add meal in plan editor */
+.pl-add,
+button.pl-add {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  padding: 8px 0 !important;
+  min-height: 0 !important;
+  justify-content: flex-start !important;
+}
+
+/* Primary = stronger text only */
 .btn.primary {
   background: transparent !important;
   border: 0 !important;
@@ -33,13 +97,8 @@
   border-radius: 0 !important;
   color: #fff !important;
   font-weight: 600 !important;
-  text-decoration: none !important;
-}
-.btn.primary:active {
-  opacity: 0.8;
 }
 
-/* Warn = red text only */
 .btn.warn,
 .btn.ghost.warn {
   background: transparent !important;
@@ -48,7 +107,7 @@
   box-shadow: none !important;
 }
 
-/* Chips: no pill frame; pressed = brighter text */
+/* Chips: no pill */
 .chip {
   background: transparent !important;
   border: 0 !important;
@@ -70,50 +129,35 @@
   text-underline-offset: 4px;
   text-decoration-color: rgba(255, 255, 255, 0.35);
 }
-
-/* Segmented chip groups: no tray background */
 .chips.seg {
   background: transparent !important;
   border: 0 !important;
   padding: 0 !important;
   gap: 4px !important;
 }
-.chips.seg .chip {
-  border: 0 !important;
-  background: transparent !important;
-}
 
-/* Menu chevrons / secondary controls stay light */
-.menu-row {
-  border: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
+.menu-row,
 .menu {
   border: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
 }
 
-/* Tabbar stays as nav chrome; only soften inner tabs if needed */
 .tabbar .tab {
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
 }
 
-/* Icon-only circles that must stay tappable targets */
 .wt-fin,
 #v-gym #wo-top .wt-fin,
 .mk-more,
 .day-gear {
-  /* keep small hit targets readable but still soft */
   border: 0 !important;
   box-shadow: none !important;
   background: rgba(255, 255, 255, 0.08) !important;
 }
 
-/* Run / share modal actions already themed — reinforce label look */
 #run-modal .actions .btn,
 #share-modal .actions .btn {
   background: transparent !important;
@@ -132,11 +176,7 @@
   color: #fff !important;
   font-weight: 700 !important;
 }
-#run-modal #run-share {
-  color: rgba(255, 255, 255, 0.85) !important;
-}
 
-/* Form file/photo pickers as labels */
 label.btn,
 label.btn.sm {
   background: transparent !important;
@@ -144,4 +184,15 @@ label.btn.sm {
   box-shadow: none !important;
   color: rgba(255, 255, 255, 0.7) !important;
   padding: 6px 0 !important;
+}
+
+/* Kill residual outline from glass theme on any control */
+#v-food .btn,
+#v-food button,
+#v-home .btn,
+#v-gym .btn:not(.wt-fin),
+#v-stats .btn,
+#v-more .btn {
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
