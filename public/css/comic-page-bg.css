@@ -1,7 +1,6 @@
-/* comic-page-bg.css — full-page comic BG, not inside cards/buttons */
+/* comic-page-bg.css — page BG + select card art (no duplicate art) */
 
-/* 1) Kill in-card / in-button comic watermarks */
-#v-home .hq-pi.lead::before,
+/* 1) Kill in-card comics EXCEPT the Today train lead card */
 #v-home .hq-card.hq-main::before,
 #v-gym .pl-row.lead::after,
 #v-gym #today::after,
@@ -17,8 +16,7 @@
   opacity: 0 !important;
 }
 
-/* cards stay solid glass without art peeking through */
-#v-home .hq-pi.lead,
+/* solid glass cards (default) */
 #v-gym .pl-row.lead,
 #v-gym #today,
 #v-gym #progs .prog:first-child,
@@ -27,6 +25,32 @@
 #v-more #acct-menu {
   background: linear-gradient(145deg, rgba(255,255,255,.13), rgba(255,255,255,.06)) !important;
   overflow: hidden;
+}
+
+/* Today train card — use comic-train (NOT comic-today page BG) */
+#v-home .hq-pi.lead {
+  position: relative !important;
+  overflow: hidden !important;
+  min-height: 140px !important;
+  background: linear-gradient(145deg, rgba(255,255,255,.13), rgba(255,255,255,.06)) !important;
+}
+#v-home .hq-pi.lead::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: url(/img/comic-train.jpg) right 6% center / auto 115% no-repeat !important;
+  filter: invert(1) grayscale(1) contrast(1.15) !important;
+  mix-blend-mode: screen !important;
+  opacity: 0.28 !important;
+  -webkit-mask-image: radial-gradient(ellipse at 78% 50%, #000 28%, rgba(0,0,0,.45) 58%, transparent 92%) !important;
+  mask-image: radial-gradient(ellipse at 78% 50%, #000 28%, rgba(0,0,0,.45) 58%, transparent 92%) !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+#v-home .hq-pi.lead > * {
+  position: relative !important;
+  z-index: 1 !important;
 }
 
 /* 2) Full-viewport page backgrounds */
@@ -53,55 +77,48 @@
   z-index: 0;
   filter: invert(1) grayscale(1) contrast(1.12);
   mix-blend-mode: screen;
-  opacity: 0.16;
+  opacity: 0.14;
   background-repeat: no-repeat;
   background-position: center 30%;
-  background-size: cover; /* full bleed */
+  background-size: cover;
   -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 35%, #000 20%, rgba(0,0,0,.55) 55%, transparent 100%);
   mask-image: radial-gradient(ellipse 90% 80% at 50% 35%, #000 20%, rgba(0,0,0,.55) 55%, transparent 100%);
 }
 
-/* Today */
+/* Today page BG = comic-today (different from card's comic-train) */
 #v-home:not([hidden])::before {
   background-image: url(/img/comic-today.jpg);
   background-position: center 22%;
 }
 
-/* Eat */
 #v-food:not([hidden])::before {
   background-image: url(/img/comic-eat.jpg);
   background-position: center 28%;
 }
 
-/* Train */
+/* Train page BG = comic-active so list cards can stay clean */
 #v-gym:not([hidden])::before {
-  background-image: url(/img/comic-train.jpg);
+  background-image: url(/img/comic-active.jpg);
   background-position: center 24%;
 }
 
-/* Active workout */
 body.wo-focus #v-gym:not([hidden])::before {
   background-image: url(/img/comic-active.jpg);
   background-position: center 20%;
   background-size: cover;
   opacity: 0.18;
-  -webkit-mask-image: radial-gradient(ellipse 95% 85% at 50% 40%, #000 25%, rgba(0,0,0,.5) 60%, transparent 100%);
-  mask-image: radial-gradient(ellipse 95% 85% at 50% 40%, #000 25%, rgba(0,0,0,.5) 60%, transparent 100%);
 }
 
-/* Stats */
 #v-stats:not([hidden])::before {
   background-image: url(/img/comic-stats.jpg);
   background-position: center 18%;
 }
 
-/* More */
 #v-more:not([hidden])::before {
   background-image: url(/img/comic-more.jpg);
   background-position: center 16%;
 }
 
-/* Content above art */
 #v-home:not([hidden]) > *,
 #v-food:not([hidden]) > *,
 #v-gym:not([hidden]) > *,
@@ -111,7 +128,6 @@ body.wo-focus #v-gym:not([hidden])::before {
   z-index: 1;
 }
 
-/* Don't double-stack old step3 watermark */
 body.wo-focus #v-gym #step3::before,
 body.wo-focus #v-gym #step3::after {
   display: none !important;
