@@ -20,7 +20,6 @@
       "}",
       "body.wo-focus #v-gym #step3::after{display:none!important}",
       "body.wo-focus #v-gym #step3>*{position:relative;z-index:1}",
-      /* hide tiny comic bleed inside pager mid */
       "#v-gym #exs.paged .wo-pager .pg-mid{background:transparent!important}",
 
       /* 2) Remove Weights highlight chip */
@@ -30,23 +29,11 @@
       "padding:0!important;border-radius:0!important;",
       "}",
 
-      /* 3) Weight pills: same size, no bounce / no first-row pop */
-      "#v-gym .ex .mk-pill{",
-      "height:46px!important;min-width:0!important;",
-      "transform:none!important;animation:none!important;",
-      "}",
-      "#v-gym .ex .mk-pill input{",
-      "width:3.2ch!important;min-width:3.2ch!important;max-width:4.5ch!important;",
-      "font:600 17px/1 var(--f-body,system-ui)!important;",
-      "transform:none!important;animation:none!important;",
-      "color:#fff!important;",
-      "}",
-      "#v-gym .ex .mk-pill.dim input,#v-gym .ex .mk-pill.dim i{",
-      "color:#fff!important;opacity:.85!important;",
-      "}",
-      "#v-gym .ex .mk-pill input:focus,#v-gym .ex .mk-pill:active{",
-      "transform:none!important;animation:none!important;",
-      "}",
+      /* 3) Weight pills equal */
+      "#v-gym .ex .mk-pill{height:46px!important;min-width:0!important;transform:none!important;animation:none!important}",
+      "#v-gym .ex .mk-pill input{width:3.2ch!important;min-width:3.2ch!important;max-width:4.5ch!important;font:600 17px/1 var(--f-body,system-ui)!important;transform:none!important;animation:none!important;color:#fff!important}",
+      "#v-gym .ex .mk-pill.dim input,#v-gym .ex .mk-pill.dim i{color:#fff!important;opacity:.85!important}",
+      "#v-gym .ex .mk-pill input:focus,#v-gym .ex .mk-pill:active{transform:none!important;animation:none!important}",
 
       /* pager */
       "#v-gym .wo-pager{display:flex!important}",
@@ -63,12 +50,17 @@
       "#exs.paged>.wo-pager{order:0}",
       "#exs.paged>.ex.pg-on{order:1}",
       "#exs.paged>.ex:not(.pg-on){order:2}",
-      "#exs.paged>.ls-next{order:3;display:flex!important;margin-top:12px!important}",
+      "#exs.paged>.ls-next{order:3;display:flex!important;margin:12px 0 0!important}",
 
-      /* Add exercise = plain label under Next */
+      /* kill old reserved space for floating Add button */
+      "#v-gym #exs{padding-bottom:0!important;margin-bottom:0!important}",
+      "#v-gym #step3{padding-bottom:calc(var(--tabh,84px) + 12px)!important}",
+
+      /* Add exercise: plain label, tight under Next */
       "#v-gym #wo-add,body.wo-focus #v-gym #wo-add{",
       "position:static!important;left:auto!important;right:auto!important;bottom:auto!important;",
-      "display:block!important;width:auto!important;margin:10px 4px 18px!important;padding:8px 4px!important;",
+      "display:block!important;width:auto!important;",
+      "margin:6px 4px 8px!important;padding:4px 4px!important;",
       "height:auto!important;min-height:0!important;background:transparent!important;border:0!important;",
       "border-radius:0!important;box-shadow:none!important;color:rgba(255,255,255,.55)!important;",
       "font-size:14px!important;font-weight:500!important;text-align:left!important;cursor:pointer;",
@@ -80,7 +72,13 @@
     var btn = document.getElementById("wo-add");
     var box = document.getElementById("exs");
     if (!btn || !box) return;
-    if (btn.previousElementSibling !== box) box.after(btn);
+    // Prefer right after the Next teaser so gap is minimal
+    var next = box.querySelector(".ls-next");
+    if (next) {
+      if (btn.previousElementSibling !== next) next.after(btn);
+    } else if (btn.previousElementSibling !== box) {
+      box.after(btn);
+    }
   }
 
   function forceVisibleCard() {
@@ -116,7 +114,6 @@
   }
 
   function equalizePills() {
-    // kill dynamic width that makes first value look "bouncy"
     document.querySelectorAll("#exs .mk-pill input").forEach(function (inp) {
       inp.style.width = "3.2ch";
       inp.style.minWidth = "3.2ch";
