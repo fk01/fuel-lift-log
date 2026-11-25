@@ -1,0 +1,10 @@
+/* PO #309: Eat Tracker comic-eat.jpg must not clip at card edges */
+#v-food .tk::after{
+  inset:12px 16px 14px !important;
+  background-position:center 42% !important;
+  background-size:contain !important;
+  background-repeat:no-repeat !important;
+  opacity:.17 !important;
+  -webkit-mask-image:radial-gradient(ellipse at 50% 48%,#000 22%,rgba(0,0,0,.55) 60%,transparent 96%) !important;
+  mask-image:radial-gradient(ellipse at 50% 48%,#000 22%,rgba(0,0,0,.55) 60%,transparent 96%) !important;
+}
