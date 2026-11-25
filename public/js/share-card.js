@@ -11,8 +11,9 @@ async function drawCard(l){
   const fit=Math.min(1,avail/rowRaw.reduce((a,b)=>a+b,0));const rowH=rowRaw.map(r=>r*fit);
   const c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
   const sans='"IBM Plex Sans Thai",system-ui,sans-serif',mono='"IBM Plex Mono",monospace',serif=sans;
-  const BLUE="#3d7dff",GREEN="#2ad19a",FG="#f2f0ec",MUTED="#8a8780";
-  x.fillStyle="#000";x.fillRect(0,0,W,H);
+  const BLUE="#ffffff",GREEN="#d0d5dd",FG="#f3f4f6",MUTED="#9ca3af";
+  x.fillStyle="#121418";x.fillRect(0,0,W,H);
+  const bg=new Image();await new Promise(r=>{bg.onload=r;bg.onerror=r;bg.src="/img/comic-share.jpg"});if(bg.naturalWidth){x.save();x.filter="invert(1) grayscale(1) contrast(1.2)";x.globalAlpha=.16;x.globalCompositeOperation="screen";const s=Math.max(W/bg.width,H/bg.height);x.drawImage(bg,(W-bg.width*s)/2,(H-bg.height*s)/2,bg.width*s,bg.height*s);x.restore();const vg=x.createLinearGradient(0,0,0,H);vg.addColorStop(0,"rgba(18,20,24,.35)");vg.addColorStop(1,"rgba(18,20,24,.88)");x.fillStyle=vg;x.fillRect(0,0,W,H)}
   x.strokeStyle="#262625";x.lineWidth=3;x.beginPath();x.roundRect?x.roundRect(30,30,W-60,H-60,48):x.rect(30,30,W-60,H-60);x.stroke();
   // header
   x.fillStyle=FG;x.font=`700 40px ${mono}`;x.fillText("WEIGHTGRAM",P,P+70);
