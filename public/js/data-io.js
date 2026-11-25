@@ -20,7 +20,7 @@ document.getElementById("export").addEventListener("click",async()=>{
   const files = [
     ["/css/comic-page-bg.css?v=3", "data-comic-page-bg"],
     ["/css/modal-theme.css?v=1", "data-modal-theme"],
-    ["/css/clean-controls.css?v=1", "data-clean-controls"]
+    ["/css/clean-controls.css?v=2", "data-clean-controls"]
   ];
   files.forEach(([href, attr]) => {
     if (document.querySelector(`link[${attr}]`)) return;
