@@ -1,23 +1,36 @@
-/* workout-pager-fix.js — hard fix for blank active workout + hidden pager */
+/* workout-pager-fix.js — blank screen, pager, and scroll-jump fixes */
 (function () {
   function injectCSS() {
-    if (document.getElementById("wo-pager-fix")) return;
-    var st = document.createElement("style");
-    st.id = "wo-pager-fix";
+    var st = document.getElementById("wo-pager-fix");
+    if (!st) {
+      st = document.createElement("style");
+      st.id = "wo-pager-fix";
+      document.head.appendChild(st);
+    }
     st.textContent = [
+      /* show pager */
       "#v-gym .wo-pager{display:flex!important}",
-      "#v-gym #exs.paged .wo-pager{display:flex!important;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;padding:8px 4px}",
+      "#v-gym #exs.paged .wo-pager{display:flex!important;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;padding:8px 4px;position:relative;z-index:2}",
       "#v-gym #exs.paged .wo-pager .btn{min-width:48px;min-height:44px;border-radius:14px;background:rgba(255,255,255,.10)!important;border:1px solid rgba(255,255,255,.18)!important;color:#fff!important;font-size:22px;font-weight:700}",
       "#v-gym #exs.paged .wo-pager .pg-mid{color:rgba(255,255,255,.75);text-align:center}",
       "#v-gym #exs.paged .wo-pager .pg-dots{display:flex;gap:5px;justify-content:center;margin-top:4px}",
       "#v-gym #exs.paged .wo-pager .pg-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.25);display:inline-block}",
       "#v-gym #exs.paged .wo-pager .pg-dots i.cur{background:#fff}",
       "#v-gym #exs.paged .wo-pager .pg-dots i.ok{background:rgba(255,255,255,.55)}",
+      /* one visible card */
       "#exs.paged>.ex.pg-on{display:block!important}",
       "#exs.paged>.ex:not(.pg-on){display:none!important}",
-      "#v-gym #step3{overflow-x:hidden;overflow-y:visible}"
+      "#v-gym #step3{overflow-x:hidden;overflow-y:visible}",
+      /* Next teaser always under current card, never floating up */
+      "#exs.paged .ls-next{display:flex!important;order:99;margin-top:12px!important;position:relative;z-index:2}",
+      "#exs.paged{display:flex;flex-direction:column}",
+      "#exs.paged>.wo-pager{order:0}",
+      "#exs.paged>.ex.pg-on{order:1}",
+      "#exs.paged>.ex:not(.pg-on){order:2}",
+      "#exs.paged>.ls-next{order:3}",
+      /* reduce comic eating vertical space under top bar while training */
+      "body.wo-focus #v-gym #step3::before,body.wo-focus #v-gym #step3::after{opacity:.12!important;max-height:40%!important}"
     ].join("");
-    document.head.appendChild(st);
   }
 
   function forceVisibleCard() {
@@ -34,6 +47,26 @@
     } else {
       cards.forEach(function (c) { c.classList.add("pg-on"); });
     }
+    // Keep Next button after the visible card
+    var cur = cards[woIdx];
+    var nextBtn = box.querySelector(".ls-next");
+    if (cur && nextBtn && nextBtn.previousElementSibling !== cur) {
+      cur.after(nextBtn);
+    }
+  }
+
+  function syncTopPos() {
+    var p = document.getElementById("wt-pos");
+    var n = document.querySelectorAll("#exs > .ex").length;
+    if (p && n) p.textContent = " · " + ((+woIdx || 0) + 1) + "/" + n;
+  }
+
+  function softScrollToCurrent() {
+    var cur = document.querySelector("#exs > .ex.pg-on");
+    if (!cur) return;
+    try {
+      cur.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
+    } catch (e) {}
   }
 
   function patchApplyPager() {
@@ -43,10 +76,14 @@
     window.applyPager = function () {
       try { original.apply(this, arguments); } catch (e) { console.error(e); }
       forceVisibleCard();
+      syncTopPos();
       var box = document.getElementById("exs");
       if (!box || !box.classList.contains("paged")) return;
-      if (box.querySelector(".wo-pager")) return;
+      // refresh pager label if present
+      var mid = box.querySelector(".wo-pager .pg-mid small");
       var cards = [].slice.call(box.querySelectorAll(":scope > .ex"));
+      if (mid && cards.length) mid.textContent = ((+woIdx || 0) + 1) + "/" + cards.length;
+      if (box.querySelector(".wo-pager")) return;
       if (cards.length < 2) return;
       var ex = typeof sessEx === "function" ? sessEx() : [];
       var done = function (r) {
@@ -74,6 +111,30 @@
     return true;
   }
 
+  function patchGoEx() {
+    if (typeof goEx !== "function" || goEx.__wgFixed) return;
+    var orig = goEx;
+    window.goEx = function (i) {
+      var nc = document.querySelectorAll("#exs > .ex").length || 1;
+      woIdx = ((i % nc) + nc) % nc;
+      try {
+        if (typeof draft !== "undefined") {
+          draft.idx = woIdx;
+          localStorage.setItem("gymdraft", JSON.stringify(draft));
+        }
+      } catch (_) {}
+      if (typeof applyPager === "function") applyPager();
+      if (typeof decorateSets === "function") {
+        try { decorateSets(); } catch (e) {}
+      }
+      forceVisibleCard();
+      syncTopPos();
+      // Do NOT scroll page to top — only nudge current card into view if clipped
+      setTimeout(softScrollToCurrent, 30);
+    };
+    window.goEx.__wgFixed = true;
+  }
+
   function patchRenderGym() {
     if (typeof renderGym !== "function" || renderGym.__wgFixed) return;
     var orig = renderGym;
@@ -88,14 +149,17 @@
   function run() {
     injectCSS();
     patchApplyPager();
+    patchGoEx();
     patchRenderGym();
     forceVisibleCard();
+    syncTopPos();
     if (typeof applyPager === "function") {
       try { applyPager(); } catch (e) {}
     }
     if (typeof mockTop === "function") {
       try { mockTop(); } catch (e) {}
     }
+    syncTopPos();
   }
 
   run();
