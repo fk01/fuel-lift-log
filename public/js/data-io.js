@@ -15,12 +15,18 @@ document.getElementById("export").addEventListener("click",async()=>{
   try{await navigator.clipboard.writeText(data);toast(t("คัดลอก JSON แล้ว"))}catch(e){toast("Copy from the box")}
 });
 
-/* Comic art as page backgrounds (not inside cards/buttons) */
+/* UI theme extras: page comic BG + glass modals */
 (() => {
-  if (document.querySelector('link[data-comic-page-bg]')) return;
-  const l = document.createElement("link");
-  l.rel = "stylesheet";
-  l.href = "/css/comic-page-bg.css?v=1";
-  l.setAttribute("data-comic-page-bg", "1");
-  document.head.appendChild(l);
+  const files = [
+    ["/css/comic-page-bg.css?v=1", "data-comic-page-bg"],
+    ["/css/modal-theme.css?v=1", "data-modal-theme"]
+  ];
+  files.forEach(([href, attr]) => {
+    if (document.querySelector(`link[${attr}]`)) return;
+    const l = document.createElement("link");
+    l.rel = "stylesheet";
+    l.href = href;
+    l.setAttribute(attr, "1");
+    document.head.appendChild(l);
+  });
 })();
