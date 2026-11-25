@@ -15,11 +15,12 @@ document.getElementById("export").addEventListener("click",async()=>{
   try{await navigator.clipboard.writeText(data);toast(t("คัดลอก JSON แล้ว"))}catch(e){toast("Copy from the box")}
 });
 
-/* UI theme extras: page comic BG + glass modals */
+/* UI theme extras */
 (() => {
   const files = [
     ["/css/comic-page-bg.css?v=2", "data-comic-page-bg"],
-    ["/css/modal-theme.css?v=1", "data-modal-theme"]
+    ["/css/modal-theme.css?v=1", "data-modal-theme"],
+    ["/css/clean-controls.css?v=1", "data-clean-controls"]
   ];
   files.forEach(([href, attr]) => {
     if (document.querySelector(`link[${attr}]`)) return;
