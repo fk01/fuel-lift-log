@@ -1,4 +1,4 @@
-/* workout-pager-fix.js — blank screen, pager, and scroll-jump fixes */
+/* workout-pager-fix.js — blank screen, pager, scroll-jump, Add exercise position */
 (function () {
   function injectCSS() {
     var st = document.getElementById("wo-pager-fix");
@@ -21,16 +21,31 @@
       "#exs.paged>.ex.pg-on{display:block!important}",
       "#exs.paged>.ex:not(.pg-on){display:none!important}",
       "#v-gym #step3{overflow-x:hidden;overflow-y:visible}",
-      /* Next teaser always under current card, never floating up */
+      /* Next teaser under current card */
       "#exs.paged .ls-next{display:flex!important;order:99;margin-top:12px!important;position:relative;z-index:2}",
       "#exs.paged{display:flex;flex-direction:column}",
       "#exs.paged>.wo-pager{order:0}",
       "#exs.paged>.ex.pg-on{order:1}",
       "#exs.paged>.ex:not(.pg-on){order:2}",
       "#exs.paged>.ls-next{order:3}",
-      /* reduce comic eating vertical space under top bar while training */
+      /* + Add exercise: NOT floating — in document flow under Next */
+      "#v-gym #wo-add{position:static!important;left:auto!important;right:auto!important;bottom:auto!important;z-index:auto!important;width:100%!important;max-width:100%!important;margin:12px 0 20px!important;height:52px!important;border-radius:28px!important;box-shadow:none!important;display:block!important}",
+      "body.wo-focus #v-gym #wo-add{position:static!important}",
+      /* reduce comic clutter while training */
       "body.wo-focus #v-gym #step3::before,body.wo-focus #v-gym #step3::after{opacity:.12!important;max-height:40%!important}"
     ].join("");
+  }
+
+  /** Move + Add exercise to sit right under the exercise list / Next card */
+  function pinAddExercise() {
+    var btn = document.getElementById("wo-add");
+    var box = document.getElementById("exs");
+    var step3 = document.getElementById("step3");
+    if (!btn || !box || !step3) return;
+    // Place after #exs so it follows: current card → Next → + Add exercise
+    if (btn.previousElementSibling !== box) {
+      box.after(btn);
+    }
   }
 
   function forceVisibleCard() {
@@ -47,12 +62,12 @@
     } else {
       cards.forEach(function (c) { c.classList.add("pg-on"); });
     }
-    // Keep Next button after the visible card
     var cur = cards[woIdx];
     var nextBtn = box.querySelector(".ls-next");
     if (cur && nextBtn && nextBtn.previousElementSibling !== cur) {
       cur.after(nextBtn);
     }
+    pinAddExercise();
   }
 
   function syncTopPos() {
@@ -77,9 +92,9 @@
       try { original.apply(this, arguments); } catch (e) { console.error(e); }
       forceVisibleCard();
       syncTopPos();
+      pinAddExercise();
       var box = document.getElementById("exs");
       if (!box || !box.classList.contains("paged")) return;
-      // refresh pager label if present
       var mid = box.querySelector(".wo-pager .pg-mid small");
       var cards = [].slice.call(box.querySelectorAll(":scope > .ex"));
       if (mid && cards.length) mid.textContent = ((+woIdx || 0) + 1) + "/" + cards.length;
@@ -113,7 +128,6 @@
 
   function patchGoEx() {
     if (typeof goEx !== "function" || goEx.__wgFixed) return;
-    var orig = goEx;
     window.goEx = function (i) {
       var nc = document.querySelectorAll("#exs > .ex").length || 1;
       woIdx = ((i % nc) + nc) % nc;
@@ -129,7 +143,7 @@
       }
       forceVisibleCard();
       syncTopPos();
-      // Do NOT scroll page to top — only nudge current card into view if clipped
+      pinAddExercise();
       setTimeout(softScrollToCurrent, 30);
     };
     window.goEx.__wgFixed = true;
@@ -152,6 +166,7 @@
     patchGoEx();
     patchRenderGym();
     forceVisibleCard();
+    pinAddExercise();
     syncTopPos();
     if (typeof applyPager === "function") {
       try { applyPager(); } catch (e) {}
@@ -159,6 +174,7 @@
     if (typeof mockTop === "function") {
       try { mockTop(); } catch (e) {}
     }
+    pinAddExercise();
     syncTopPos();
   }
 
