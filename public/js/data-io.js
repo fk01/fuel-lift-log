@@ -18,7 +18,7 @@ document.getElementById("export").addEventListener("click",async()=>{
 /* UI theme extras */
 (() => {
   const files = [
-    ["/css/comic-page-bg.css?v=2", "data-comic-page-bg"],
+    ["/css/comic-page-bg.css?v=3", "data-comic-page-bg"],
     ["/css/modal-theme.css?v=1", "data-modal-theme"],
     ["/css/clean-controls.css?v=1", "data-clean-controls"]
   ];
