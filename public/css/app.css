@@ -1678,7 +1678,6 @@ body.on-stats .wrap>header{display:none}
 #macro-bars .mb-n{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 #macro-bars .mb-v b{font-size:22px;font-weight:700;color:var(--text)}#macro-bars .mb-v small{color:var(--muted);font-size:12px}
 #macro-bars .mb>i{width:100%}
-#v-stats #st-head .hq-streak{display:block;text-align:center;margin-top:8px}#st-head{display:flex;flex-direction:column}
 /* ===== one type scale for Today / Eat / Train / Stats (same position = same size) ===== */
 :is(#v-home,#v-food,#v-gym,#v-stats) :is(.hq-num,.fr-big,.fr-mid,.mb-v b,.hq-pc,.time,.macro,.hq-day small,.stat b,.hq-bw b,.hq-st b){font-family:var(--f-body)!important;font-variant-numeric:tabular-nums;letter-spacing:0!important}
 :is(#v-home,#v-food,#v-gym,#v-stats) .hq-streak{font-size:13px!important}
@@ -2020,16 +2019,7 @@ body{background:radial-gradient(120% 38% at 50% 0%,#3a1d0c,transparent 62%),line
 
 /* Stats header parity: Night Gym Console tokens shared by Today / Eat / Train. */
 body.on-stats{background:radial-gradient(120% 38% at 50% 0%,color-mix(in srgb,var(--cyan) 10%,transparent),transparent 62%),linear-gradient(#ffffff05 1px,transparent 1px) 0 0/32px 32px,linear-gradient(90deg,#ffffff05 1px,transparent 1px) 0 0/32px 32px,var(--bg)!important}
-#v-stats #st-head{gap:0;margin:0 0 14px;padding:0}
-#v-stats #st-head .hq-hello{padding:4px 2px 14px}
-#v-stats #st-head .hq-week{margin-inline:-8px;min-height:64px}
-#v-stats #st-head .hq-day{min-height:64px;padding:4px 0;gap:6px}
-#v-stats #st-head .hq-dot{background:var(--surface-2);color:var(--fg)}
-#v-stats #st-head .hq-day.ok .hq-dot{background:var(--fg);color:var(--on-accent)}
-#v-stats #st-head .hq-day.today .hq-dot{box-shadow:0 0 0 2px var(--cyan)}
-#v-stats #st-head .hq-day.today:not(.ok) .hq-dot::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px color-mix(in srgb,var(--cyan) 55%,transparent)}
-#v-stats #st-head .hq-day.sel small:last-child{color:var(--cyan);font-weight:700}
-#v-stats #st-head .hq-streak{margin-top:8px;color:var(--muted)}
+
 #v-stats .st-ai,#v-stats .ai-btn{min-height:48px;box-sizing:border-box;padding:10px 14px!important;border-radius:var(--r-lg)!important;background:linear-gradient(var(--surface),var(--surface)) padding-box,var(--grad) border-box!important;border:1.5px solid transparent!important;color:var(--fg)!important;box-shadow:none!important}
 #v-stats .st-ai small{color:var(--muted);font-weight:400;font-size:13px}
 
@@ -2065,6 +2055,7 @@ body{background:radial-gradient(120% 60% at 50% 0%,#525760 0%,#363a40 48%,#22252
 .md-cols .mc,.md-cols .mc.k,.md-cols .mc.p,.md-cols .mc.f,.md-cols .mc.c{background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.08))!important;border:1px solid rgba(255,255,255,.22)!important}.menu-row .mc{background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-radius:0!important;padding:0!important;margin-left:auto!important;display:inline-flex!important;align-items:center!important;justify-content:flex-end!important;color:var(--muted)!important;font-size:18px!important;line-height:1!important}.menu-row .mc:empty{display:none!important}.menu-row .mc-btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:36px!important;padding:6px 14px!important;border-radius:999px!important;background:#141518!important;border:1px solid rgba(255,255,255,.24)!important;color:#fff!important;font:600 13px/1.2 var(--f-body)!important;box-shadow:none!important}
 .bt[aria-pressed="true"]{border-color:#fff!important}.pl-row.in-progress,.card.in-progress,[data-status="in-progress"],.pl-row.done,.card.done,[data-status="done"]{border-color:rgba(255,255,255,.38)!important;box-shadow:none!important}#v-food .meal.next{box-shadow:0 0 0 1px rgba(255,255,255,.45) inset!important}#v-food #eat-cal .ec-d.on{background:#141518!important;box-shadow:0 0 0 2px #fff inset!important}.btn.danger{background:#141518!important;color:#fff!important;border:1px solid rgba(255,255,255,.35)!important}#macro-bars{box-shadow:none!important;border-color:rgba(255,255,255,.22)!important}.nr-it input{accent-color:#141518!important}.field-err,.mp-del,.pm-ic .ib.del{color:#fff!important;border-color:rgba(255,255,255,.35)!important}
 #v-gym #wo-top:not([hidden])>.wt-fin,.wt-fin,#rest #rest-minus,#rest #rest-plus{box-shadow:0 6px 18px rgba(0,0,0,.35)!important}
+#v-stats #st-head{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;gap:0!important}.hq-wnav{min-height:44px!important}#v-stats #st-head .hq-streak{display:block;text-align:center;margin-top:8px}
 #v-food #eat-cal,#v-food .totals,#v-home .hq-calc,#v-home .hq-card.hq-main:not(.hq-win),#v-home .hq-card.hq-weekc,#v-gym #week,#v-gym .cal-slot #step1,#v-stats #st-head{background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding-inline:0!important}#v-food .totals{position:static!important;padding:0!important;border-radius:0!important}#v-food #macro-bars{margin:10px 0 6px!important}
 
 /* Comic line-art visual refresh: inverted, softly masked monochrome watermarks. */
