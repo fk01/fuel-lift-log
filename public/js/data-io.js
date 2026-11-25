@@ -14,3 +14,13 @@ document.getElementById("export").addEventListener("click",async()=>{
   const box=document.getElementById("export-box");box.hidden=false;box.value=data;box.select();
   try{await navigator.clipboard.writeText(data);toast(t("คัดลอก JSON แล้ว"))}catch(e){toast("Copy from the box")}
 });
+
+
+/* PO #309: prevent Eat Tracker comic-eat clipping */
+(() => {
+  const css = `#v-food .tk::after{inset:12px 16px 14px!important;background-position:center 42%!important;background-size:contain!important;background-repeat:no-repeat!important;opacity:.17!important;-webkit-mask-image:radial-gradient(ellipse at 50% 48%,#000 22%,rgba(0,0,0,.55) 60%,transparent 96%)!important;mask-image:radial-gradient(ellipse at 50% 48%,#000 22%,rgba(0,0,0,.55) 60%,transparent 96%)!important}`;
+  const s = document.createElement("style");
+  s.setAttribute("data-fix", "309-eat-comic");
+  s.textContent = css;
+  document.head.appendChild(s);
+})();
