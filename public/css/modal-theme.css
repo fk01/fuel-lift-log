@@ -1,0 +1,214 @@
+/* modal-theme.css — WeightGram glass modals (run / share / forms) */
+
+/* Backdrop */
+.modal:not(.sheet):not(.drawer):not(.pad) {
+  background: rgba(10, 11, 13, 0.72) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* Panel */
+.modal-in,
+.sheet-in,
+.drawer-in,
+.pad-in {
+  background: rgba(28, 30, 34, 0.94) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55) !important;
+  color: #fff !important;
+  padding: 18px 16px 16px !important;
+  gap: 14px !important;
+}
+
+/* Run log modal */
+#run-modal .run-in {
+  display: grid;
+  gap: 14px;
+}
+#run-modal .run-in > .label {
+  margin: 0 !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+#run-modal .run-in > .label::before {
+  content: none !important;
+}
+
+#run-modal .run-f {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+#run-modal .run-f label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  min-width: 0;
+}
+#run-modal .run-f input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+#run-modal .run-f input:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+/* Photo picker as soft chip, not heavy button */
+#run-modal label.btn.sm {
+  justify-self: start;
+  margin: 0 !important;
+  padding: 10px 14px !important;
+  height: auto !important;
+  min-height: 40px !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 0 !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+}
+#run-modal #run-photo-n {
+  color: rgba(255, 255, 255, 0.4) !important;
+  margin-top: -6px !important;
+  font-size: 12px;
+}
+
+/* Pace row */
+#run-modal .run-pace {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 2px;
+  padding: 12px 2px 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-bottom: 0 !important;
+}
+#run-modal .run-pace small {
+  color: rgba(255, 255, 255, 0.45) !important;
+  font-size: 13px;
+}
+#run-modal .run-pace b,
+#run-modal #run-pace {
+  color: #fff !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+}
+
+/* Action rows */
+#run-modal .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+}
+#run-modal .actions .btn {
+  flex: 1 1 auto;
+  min-height: 44px !important;
+  height: 44px !important;
+  border-radius: 12px !important;
+  border: 0 !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+}
+#run-modal #run-save {
+  background: #fff !important;
+  color: #0a0b0d !important;
+}
+#run-modal #run-share {
+  background: rgba(255, 255, 255, 0.14) !important;
+  color: #fff !important;
+}
+#run-modal #run-overlay {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+#run-modal #run-close,
+#run-modal #run-del {
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  min-height: 40px !important;
+  height: 40px !important;
+}
+#run-modal #run-del {
+  color: rgba(248, 113, 113, 0.9) !important;
+}
+
+/* Share preview modal */
+#share-modal .modal-in {
+  gap: 14px !important;
+}
+#share-modal .modal-in img {
+  border: 0 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+#share-modal .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: stretch;
+}
+#share-modal .actions .btn {
+  flex: 1 1 auto;
+  min-height: 44px !important;
+  border-radius: 12px !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+}
+#share-modal #share-save {
+  background: #fff !important;
+  color: #0a0b0d !important;
+}
+#share-modal #share-close {
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+/* Generic form controls inside any modal */
+.modal-in input:not([type=checkbox]):not([type=radio]):not([type=file]),
+.modal-in select,
+.modal-in textarea,
+.sheet-in input:not([type=checkbox]):not([type=radio]):not([type=file]),
+.sheet-in select,
+.sheet-in textarea {
+  border: 0 !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+.modal-in .btn:not(.primary),
+.sheet-in .btn:not(.primary) {
+  border-color: transparent !important;
+}
+.modal-in .btn.primary,
+.sheet-in .btn.primary {
+  background: #fff !important;
+  color: #0a0b0d !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Sheets already glass — keep edges soft */
+.modal.sheet .sheet-in {
+  border-radius: 22px 22px 0 0 !important;
+  border-bottom: 0 !important;
+}
