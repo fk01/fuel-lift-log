@@ -15,7 +15,7 @@ function decorateStats(){try{renderStatsHead()}catch(e){console.error(e)}
 document.addEventListener("click",e=>{if(e.target.closest("[data-go-food]"))location.hash="food";else if(e.target.closest("[data-go-gym]"))location.hash="gym"});
 window.addEventListener("DOMContentLoaded",()=>{const _ra=renderAll;renderAll=function(){const r=_ra.apply(this,arguments);try{decorateStats()}catch(e){}return r};
   const _show=show;show=function(v){document.body.classList.toggle("on-stats",v==="stats"||v==="body");const r=_show.apply(this,arguments);if(v==="stats"||v==="body"){decorateStats()}return r};setTimeout(decorateStats,0)});
-Object.assign(EN,{"ฉันก้าวหน้าแค่ไหน":"How am I progressing?","ไปติ๊กมื้อ":"Tick meals","ไปเริ่มเล่น":"Start a workout","น้ำหนักตัว · BMI":"Body weight · BMI","ดูในหน้า Today":"On the Today tab"});
+Object.assign(EN,{"ฉันก้าวหน้า_s":"How am I","แค่ไหนแล้ว":"progressing?","ฉันก้าวหน้าแค่ไหน":"How am I progressing?","ไปติ๊กมื้อ":"Tick meals","ไปเริ่มเล่น":"Start a workout","น้ำหนักตัว · BMI":"Body weight · BMI","ดูในหน้า Today":"On the Today tab"});
 /* ---- "Copy for AI": a markdown report the user pastes into any chatbot ---- */
 function aiReport(){const L=[],d0=new Date(TODAY+"T12:00:00"),ago=n=>{const d=new Date(d0);d.setDate(d.getDate()-n);return dkey(d)},r1=x=>Math.round(x*10)/10;
   const P=(typeof PROFILE!=="undefined"&&PROFILE)||{},goal={cut:"lose fat",bulk:"build muscle",keep:"maintain"}[P.goal]||P.goal||"-";
@@ -45,11 +45,11 @@ async function copyAI(){const md=aiReport();let ok=false;try{await navigator.cli
     b=>{const ta=b.querySelector(".ai-md");b.querySelector("[data-aicopy]").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(md);toast("✓ "+t("คัดลอกแล้ว"))}catch(e){ta.focus();ta.select();try{document.execCommand("copy");toast("✓ "+t("คัดลอกแล้ว"))}catch(_){}}})})}
 function placeAIButton(){const h=document.getElementById("st-head");if(!h||h.querySelector("[data-ai]"))return;h.insertAdjacentHTML("beforeend",`<button class="btn st-ai" data-ai><span aria-hidden="true">✦</span> ${t("ให้ AI วิเคราะห์ข้อมูล")}<small>${t("คัดลอกสถิติไปวางในแชทบอท")}</small></button>`);h.querySelector("[data-ai]").addEventListener("click",()=>openAICoach("analyse"))}
 {const _d=decorateStats;decorateStats=function(){_d();try{placeAIButton()}catch(e){}}}
-Object.assign(EN,{"ส่งให้ AI วิเคราะห์":"Send to AI","คัดลอกแล้ว — ไปวางในแชท ChatGPT / Claude / Gemini ได้เลย":"Copied — paste it into ChatGPT / Claude / Gemini","กดค้างที่ข้อความ เลือกทั้งหมด แล้วคัดลอก":"Press and hold the text, Select All, then Copy","คัดลอกอีกครั้ง":"Copy again","คัดลอกแล้ว":"Copied","ส่งข้อมูลให้ AI วิเคราะห์":"Ask AI to analyse my data","คัดลอกเป็น Markdown ไปวางในแชทบอท":"Copies a Markdown summary to paste in any chatbot"});
+Object.assign(EN,{"ฉันก้าวหน้า_s":"How am I","แค่ไหนแล้ว":"progressing?","ส่งให้ AI วิเคราะห์":"Send to AI","คัดลอกแล้ว — ไปวางในแชท ChatGPT / Claude / Gemini ได้เลย":"Copied — paste it into ChatGPT / Claude / Gemini","กดค้างที่ข้อความ เลือกทั้งหมด แล้วคัดลอก":"Press and hold the text, Select All, then Copy","คัดลอกอีกครั้ง":"Copy again","คัดลอกแล้ว":"Copied","ส่งข้อมูลให้ AI วิเคราะห์":"Ask AI to analyse my data","คัดลอกเป็น Markdown ไปวางในแชทบอท":"Copies a Markdown summary to paste in any chatbot"});
 
-Object.assign(EN,{"วิเคราะห์สถิติ · จัดโปรแกรมท่า · จัดตารางอาหาร":"Analyse stats · build programs · plan meals"});
+Object.assign(EN,{"ฉันก้าวหน้า_s":"How am I","แค่ไหนแล้ว":"progressing?","วิเคราะห์สถิติ · จัดโปรแกรมท่า · จัดตารางอาหาร":"Analyse stats · build programs · plan meals"});
 
-Object.assign(EN,{"ให้ AI วิเคราะห์ข้อมูล":"Ask AI to analyse my data","คัดลอกสถิติไปวางในแชทบอท":"Copy your stats to paste into a chatbot"});
+Object.assign(EN,{"ฉันก้าวหน้า_s":"How am I","แค่ไหนแล้ว":"progressing?","ให้ AI วิเคราะห์ข้อมูล":"Ask AI to analyse my data","คัดลอกสถิติไปวางในแชทบอท":"Copy your stats to paste into a chatbot"});
 /* first load straight into a tab (#food, #gym…): set the tab class too, so the old big title stays hidden */
 window.addEventListener("load",()=>{const v=(typeof curView!=="undefined"&&curView)||location.hash.slice(1)||"home";document.body.classList.toggle("on-home",v==="home");document.body.classList.toggle("on-food",v==="food");document.body.classList.toggle("on-gym",v==="gym");document.body.classList.toggle("on-stats",v==="stats"||v==="body")});
 /* Ask AI card sits right under the week strip on Eat and Train too (same spot as Stats) */
