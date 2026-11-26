@@ -58,7 +58,7 @@ function pmExRows(box,k){const list=PROGS[k].ex;box.innerHTML="";
     // option A: one-line row — the ↑ ↓ ⇄ 🗑 buttons move into a ⋯ menu (they stay in the DOM, hidden, and the menu clicks them)
     {const ic=q(".pm-ic"),mb=document.createElement("button");mb.type="button";mb.className="pm-more2";mb.textContent="⋯";mb.setAttribute("aria-label",t("ตัวเลือก")+" "+e.n);ic.after(mb);
      mb.addEventListener("click",()=>{const it=[["up","↑","เลื่อนขึ้น"],["down","↓","เลื่อนลง"],["swap","⇄","เปลี่ยนท่า"],["rm","🗑","ลบท่า"]].filter(([a])=>{const b=q(`[data-${a}]`);return b&&!b.disabled});
-       openGen(esc(e.n),`<div class="pm-menu">${it.map(([a,i2,l2])=>`<button class="menu-row${a==="rm"?" warn":""}" data-pmx="${a}"><span class="mi">${i2}</span><span class="mt"><b>${t(l2)}</b></span></button>`).join("")}</div>`,
+       openGen(esc(e.n),`<div class="pm-menu pm-acts">${it.map(([a,i2,l2])=>`<button class="menu-row${a==="rm"?" warn":""}" data-pmx="${a}"><span class="mi">${i2}</span><span class="mt"><b>${t(l2)}</b></span></button>`).join("")}</div>`,
          g=>g.querySelectorAll("[data-pmx]").forEach(x=>x.addEventListener("click",()=>{const a=x.dataset.pmx;closeGen();setTimeout(()=>q(`[data-${a}]`)?.click(),0)})))})}
     box.appendChild(r)})}
 function renderPM(){
