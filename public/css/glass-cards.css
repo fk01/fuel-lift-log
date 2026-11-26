@@ -961,11 +961,6 @@ html body #v-home.hq-f > .hq-main, html body #v-home.hq-f > section.hq-card:not(
 html body #v-home.hq-f.hq-f-week > .hq-main { display: block !important; }
 html body #v-home.hq-f .hq-chal { display: none !important; }
 html body #v-home .hq-quest { display: grid; gap: 10px; }
-html body #v-home .hqq-bars { display: grid; gap: 6px; }
-html body #v-home .hqq-b { display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 10px; background: none; border: 0; padding: 2px 0; color: #fff; text-align: left; font: 700 12px "IBM Plex Mono", ui-monospace, monospace; }
-html body #v-home .hqq-t { height: 9px; border-radius: 5px; background: rgba(255,255,255,.12); overflow: hidden; }
-html body #v-home .hqq-t i { display: block; height: 100%; background: #fff; border-radius: 5px; transition: width .3s; }
-html body #v-home .hqq-v { color: rgba(255,255,255,.75); font-weight: 600; min-width: 84px; text-align: right; }
 html body #v-home .hqq-h { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-top: 6px; }
 html body #v-home .hqq-tl { position: relative; padding-left: 20px; }
 html body #v-home .hqq-tl::before { content: ""; position: absolute; left: 5px; top: 14px; bottom: 14px; width: 1px; background: rgba(255,255,255,.2); }
@@ -989,3 +984,14 @@ html body #v-home .hqq-other { justify-self: start; background: none; border: 0;
 /* body card: no box, no icon — reads as the REC line */
 html body #v-home.hq-f > .hq-body { background: none !important; background-image: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
 html body #v-home.hq-f > .hq-body .hq-q svg { display: none !important; }
+
+/* Today — P4 (user choice, replaces the HP/SP/EXP bars): TRAIN group + EAT group + My body */
+html body #v-home .hqq-h { display: flex; justify-content: space-between; align-items: baseline; }
+html body #v-home .hqq-kc { letter-spacing: 0; text-transform: none; font: 600 12px "IBM Plex Mono", ui-monospace, monospace; color: rgba(255,255,255,.7); cursor: pointer; }
+html body #v-home .hqq-train { display: grid; }
+html body #v-home .hqq-tr { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid rgba(255,255,255,.1); }
+html body #v-home .hqq-tr:first-child { border-top: 0; padding-top: 2px; }
+html body #v-home .hqq-tr .hqq-mid b { font-size: 18px; font-weight: 700; }
+html body #v-home .hqq-tr .hqq-at { font-size: 14px; color: rgba(255,255,255,.75); }
+html body #v-home .hqq-tr.done .hqq-mid b { color: rgba(255,255,255,.45); }
+html body #v-home.hq-f > .hq-body .hq-q { font-size: 11px !important; font-weight: 600 !important; letter-spacing: .1em !important; text-transform: uppercase !important; color: rgba(255,255,255,.55) !important; }
