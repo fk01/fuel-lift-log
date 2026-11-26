@@ -753,3 +753,92 @@ html body .win-acts .btn, html body .win-acts a, html body .win-acts button { ba
 
 /* page greeting date: same size on every tab (Train's #week rule shrank it to 12px) */
 html body .hq-hello .hq-hi small, html body #week .hq-hello .hq-hi small { font-size: 14px !important; font-weight: 400 !important; color: rgb(201,204,210) !important; letter-spacing: normal !important; text-transform: none !important; }
+
+/* ===================== More tab and its sheets (approved mockups 1–8) ===================== */
+/* sheet lists everywhere: bare rows with hairlines, no outer box, icons (if any) without tiles */
+html body .pm-menu { background: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+html body .pm-menu > .menu-row { padding-left: 0 !important; padding-right: 0 !important; border-top: 1px solid rgba(255,255,255,.09) !important; border-bottom: 0 !important; }
+html body .pm-menu > .menu-row:first-child { border-top: 0 !important; }
+html body .pm-menu .mi { background: none !important; border: 0 !important; box-shadow: none !important; }
+
+/* 1 · More: no icon tiles, small group headers, hairline rows; account row keeps its avatar */
+html body #v-more .menu { background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; }
+html body #v-more .grp-h { font: 600 11px var(--f-body) !important; letter-spacing: .1em !important; text-transform: uppercase !important; color: rgba(255,255,255,.5) !important; margin: 8px 0 -10px !important; border: 0 !important; padding: 0 !important; }
+html body #v-more .grp-h::after, html body #v-more .grp-h::before { content: none !important; display: none !important; }
+html body #v-more .menu-row { padding: 12px 0 !important; border-top: 1px solid rgba(255,255,255,.09) !important; border-bottom: 0 !important; background: none !important; }
+html body #v-more .menu > .menu-row:first-child { border-top: 0 !important; }
+html body #v-more .menu-row .mi { display: none !important; }
+html body #v-more #acct-menu > .menu-row:first-child .mi { display: grid !important; width: 44px !important; height: 44px !important; flex: none; border: 0 !important; }
+html body #v-more .menu-row .mt b { font-weight: 500 !important; font-size: 16px !important; }
+html body #v-more .menu-row .mt small { color: rgba(255,255,255,.55) !important; }
+html body #v-more .menu-row .mc { color: rgba(255,255,255,.4) !important; }
+html body #v-more .menu-row.warn .mt b { color: rgba(255,255,255,.55) !important; }
+html body #v-more #io-blk .btn { background: none !important; border: 0 !important; color: #fff !important; padding: 6px 0 !important; margin-right: 16px; }
+
+/* 2 · Manage programs: bare rows grouped by place, "+ Add program" as a label */
+html body #pm-body .pick-h { font: 600 11px var(--f-body) !important; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.5) !important; margin-top: 8px; }
+html body #pm-body .pm-li { background: none !important; border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.09) !important; border-radius: 0 !important; box-shadow: none !important; padding: 8px 0 !important; }
+html body #pm-body .pm-li .pm-open b { font-weight: 500 !important; font-size: 16px !important; }
+html body #pm-body .pm-li .pm-more { background: none !important; border: 0 !important; color: rgba(255,255,255,.6) !important; }
+html body #pm-body > .btn.primary { background: none !important; color: #fff !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; justify-self: start; padding: 10px 0 !important; font-weight: 700 !important; width: auto !important; }
+
+/* 3 · Exercise library: underline search, label categories, no thumbnails, "+ Create" label */
+html body #lib-modal #lib-new { background: none !important; color: #fff !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; justify-self: start; width: auto !important; padding: 6px 0 !important; font-weight: 700 !important; }
+html body #lib-modal #lib-q { background: none !important; border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.22) !important; border-radius: 0 !important; padding: 8px 0 !important; }
+html body #lib-modal #lib-groups { gap: 14px !important; }
+html body #lib-modal #lib-groups .chip { background: none !important; border: 0 !important; padding: 4px 0 !important; color: rgba(255,255,255,.55) !important; min-height: 36px; }
+html body #lib-modal #lib-groups .chip[aria-pressed="true"] { color: #fff !important; font-weight: 600 !important; text-decoration: underline; text-underline-offset: 5px; }
+html body #lib-modal #lib-ftog { background: none !important; border: 0 !important; color: rgba(255,255,255,.65) !important; padding: 4px 0 !important; }
+html body #lib-modal .lib-row { background: none !important; border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.09) !important; border-radius: 0 !important; box-shadow: none !important; padding: 10px 0 !important; grid-template-columns: minmax(0,1fr) auto !important; }
+html body #lib-modal .lib-row .sx-mini { display: none !important; }
+html body #lib-modal .lib-row .how-btn { background: none !important; border: 0 !important; color: rgba(255,255,255,.6) !important; }
+html body #lib-modal #lib-list .pick-h { font: 600 11px var(--f-body) !important; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.5) !important; margin-top: 10px; }
+
+/* 4 · Places: no icon tiles, "+ Add place" label */
+html body .pm-menu.pl-places .mi { display: none !important; }
+html body #gen-body > .btn.primary:not([data-gen-close]) { background: none !important; color: #fff !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; justify-self: start; width: auto !important; padding: 8px 0 !important; font-weight: 700 !important; }
+
+/* 5 · Meal plan: no nested cards, small section labels, underline inputs, label actions */
+html body .mp-body .mp-card { background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; }
+html body .mp-body .mp-card > b { font: 600 11px var(--f-body) !important; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.5) !important; }
+html body .mp-body .mp-li { background: none !important; border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.09) !important; border-radius: 0 !important; padding: 10px 0 !important; }
+html body .mp-body .mp-li.on .mp-li-t { text-decoration: underline; text-underline-offset: 5px; font-weight: 600; }
+html body .mp-body input:not([type="checkbox"]) { background: none !important; border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.22) !important; border-radius: 0 !important; box-shadow: none !important; padding: 6px 0 !important; color: #fff !important; }
+html body .mp-body .mp-num input { font: 700 17px var(--f-num, ui-monospace, monospace) !important; }
+html body .mp-body .btn { background: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; color: #fff !important; }
+html body .mp-body .mp-acts .btn { padding: 6px 0 !important; margin-right: 14px; justify-content: flex-start; }
+html body .mp-body .mp-row { background: none !important; border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.09) !important; border-radius: 0 !important; padding: 10px 0 !important; }
+html body .mp-body .mp-row .btn { color: rgba(255,255,255,.65) !important; min-width: 36px; }
+
+/* 6 · Profile: underline inputs, label choices, suggestion as a line, checkbox → switch */
+html body #gen-body .pf .le-in { background: none !important; border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.22) !important; border-radius: 0 !important; box-shadow: none !important; padding: 8px 0 !important; }
+html body #gen-body .pf .onb-3 .le-in { font: 700 17px var(--f-num, ui-monospace, monospace) !important; }
+html body #gen-body .pf .chips { gap: 16px !important; }
+html body #gen-body .pf .chip { background: none !important; border: 0 !important; padding: 4px 0 !important; color: rgba(255,255,255,.55) !important; min-height: 36px; text-decoration: none !important; }
+html body #gen-body .pf .chip.on, html body #gen-body .pf .chip[aria-pressed="true"] { color: #fff !important; font-weight: 600 !important; text-decoration: underline !important; text-underline-offset: 5px; }
+html body #gen-body .pf .pa-step { font: 600 11px var(--f-body) !important; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.5) !important; }
+html body #gen-body .pf > .card { background: none !important; border: 0 !important; border-top: 1px solid rgba(255,255,255,.12) !important; border-radius: 0 !important; box-shadow: none !important; padding: 12px 0 0 !important; }
+html body #gen-body .pf .mp-vit { display: flex !important; justify-content: space-between; align-items: center; flex-direction: row-reverse; gap: 12px; }
+html body #gen-body .pf #pf-apply { -webkit-appearance: none; appearance: none; width: 40px; height: 24px; border-radius: 12px; background: rgba(255,255,255,.18); position: relative; margin: 0; flex: none; cursor: pointer; border: 0; }
+html body #gen-body .pf #pf-apply::after { content: ""; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: left .15s; }
+html body #gen-body .pf #pf-apply:checked { background: #fff; }
+html body #gen-body .pf #pf-apply:checked::after { left: 19px; background: #141518; }
+
+/* 7 · Privacy and 8 · Recovery colours: covered by the bare .pm-menu rules above; switch on = white track */
+html body .pv .sw.on { background: #fff !important; }
+html body .pv .sw.on i { background: #141518 !important; }
+/* specificity fixes: beat modal-theme's `.sheet-in input:not()…` and comic-page-bg's `#v-more #acct-menu` */
+html body .sheet-in .mp-body input:not([type="checkbox"]):not([type="radio"]):not([type="file"]) {
+  background: none !important; border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.22) !important; border-radius: 0 !important; box-shadow: none !important; padding: 6px 0 !important;
+}
+html body .sheet-in .pf input.le-in:not([type="checkbox"]):not([type="radio"]):not([type="file"]) {
+  background: none !important; border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.22) !important; border-radius: 0 !important; box-shadow: none !important;
+}
+html body #v-more #acct-menu.menu { background: none !important; background-image: none !important; border: 0 !important; box-shadow: none !important; }
+html body #gen-body .sh-x:focus:not(:focus-visible), html body #gen-body .sh-x:focus { outline: none !important; box-shadow: none !important; }
+html body #gen-body > .btn.primary:not([data-gen-close]) { align-self: flex-start !important; }
+/* Manage programs / Exercise library: sticky title row translucent (was near-solid dark), AI prompt as a bare label */
+html body #pm-modal .modal-in > .row-head, html body #lib-modal .modal-in > .row-head {
+  background: rgba(20,21,24,.28) !important; -webkit-backdrop-filter: blur(14px) !important; backdrop-filter: blur(14px) !important; box-shadow: none !important; border-bottom: 1px solid rgba(255,255,255,.12) !important;
+}
+html body #lib-modal .btn.st-ai.lib-ai { background: none !important; background-image: none !important; border: 0 !important; box-shadow: none !important; padding: 8px 0 !important; text-align: left !important; align-items: flex-start !important; }
