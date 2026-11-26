@@ -725,3 +725,5 @@ html body #pm-modal .pm-n small { display: none !important; }
 html body #pm-modal .pm-n input { border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.3) !important; box-shadow: none !important; outline: 0; }
 html body #pm-modal .pm-more2 { width: 36px; height: 44px; background: none; border: 0; color: rgba(255,255,255,.7); font-size: 18px; cursor: pointer; padding: 0; }
 html body #pm-modal #pm-body > .ex > .btn:not(.primary), html body #pm-modal #pm-body .pm-ex + .btn { justify-self: start !important; text-align: left !important; }
+/* bare-label buttons must never blur what is behind them (showed as a dim box behind "+ Add a warm-up exercise") */
+html body #pm-modal .pm-wuadd, html body .pm-wuadd { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; box-shadow: none !important; }
