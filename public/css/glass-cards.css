@@ -644,3 +644,63 @@ html body #share-modal .sh-bar .btn { background: none !important; border: 0 !im
 html body #share-modal .sh-bar #share-close { color: rgba(255,255,255,.75) !important; font-weight: 500 !important; }
 html body #share-modal .sh-bar #share-save { color: #fff !important; font-weight: 700 !important; font-size: 16px !important; }
 html body #share-modal .sh-bar #share-save, html body #share-modal .sh-bar #share-close { background: none !important; border: 0 !important; box-shadow: none !important; width: auto !important; flex: none !important; }
+
+/* ===== Edit program (option A): bare form — underlined inputs, label choices, white-ring day, timeline rows ===== */
+html body #pm-modal #pm-body > .ex { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; display: grid !important; gap: 14px !important; }
+/* name / description: underline only */
+html body #pm-modal #pm-body input[data-f] {
+  background: none !important; border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.18) !important; border-radius: 0 !important;
+  box-shadow: none !important; padding: 8px 0 !important; color: #fff !important;
+}
+html body #pm-modal #pm-body input[data-f="name"] { font: 700 22px var(--f-body) !important; }
+html body #pm-modal #pm-body input[data-f="sub"] { color: rgba(255,255,255,.7) !important; font-size: 14px !important; }
+/* stats: left aligned, mono, no dividers */
+html body #pm-modal .pm-stats { display: flex !important; justify-content: flex-start !important; gap: 26px !important; background: none !important; border: 0 !important; padding: 0 !important; }
+html body #pm-modal .pm-stats > div { border: 0 !important; padding: 0 !important; text-align: left !important; font-size: 11px !important; letter-spacing: .06em; color: rgba(255,255,255,.6) !important; text-transform: uppercase; }
+html body #pm-modal .pm-stats b { display: block; font: 700 20px var(--f-num, ui-monospace, monospace) !important; color: #fff !important; letter-spacing: 0; text-transform: none; }
+/* warm-up: plain row + white switch, bare "+ Add" */
+html body #pm-modal .pm-wu { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; display: grid; gap: 8px; }
+html body #pm-modal .pm-wuh b { font-weight: 500 !important; font-size: 16px !important; }
+html body #pm-modal .pm-tg { background: rgba(255,255,255,.18) !important; border: 0 !important; }
+html body #pm-modal .pm-tg.on, html body #pm-modal .pm-tg[aria-pressed="true"].on { background: #fff !important; }
+html body #pm-modal .pm-tg.on::after { background: #141518 !important; }
+html body #pm-modal .pm-wuadd { background: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; color: #fff !important; text-align: left !important; padding: 4px 0 !important; font: 500 14px var(--f-body) !important; width: auto !important; justify-self: start; }
+html body #pm-modal .pm-wur .pl-th { display: none !important; }
+/* labels */
+html body #pm-modal #pm-body .label { font: 500 13px var(--f-body) !important; color: rgba(255,255,255,.6) !important; letter-spacing: 0 !important; text-transform: none !important; margin: 0 0 -6px !important; }
+html body #pm-modal #pm-body .label::before { content: none !important; }
+/* place + time of day: bare labels, selected underlined */
+html body #pm-modal :is(.pm-loc, [data-todc]) .chip { background: none !important; border: 0 !important; box-shadow: none !important; color: rgba(255,255,255,.55) !important; padding: 6px 2px !important; min-height: 40px; }
+html body #pm-modal :is(.pm-loc, [data-todc]) .chip[aria-pressed="true"] { color: #fff !important; font-weight: 600 !important; text-decoration: underline; text-underline-offset: 5px; }
+html body #pm-modal :is(.pm-loc, [data-todc]) { gap: 16px !important; }
+/* days: bare letters, selected = white disc */
+html body #pm-modal .chips.days { display: flex !important; justify-content: space-between !important; gap: 0 !important; }
+html body #pm-modal .chips.days .chip { width: 40px !important; height: 40px !important; min-height: 0 !important; padding: 0 !important; border-radius: 50% !important;
+  background: none !important; border: 0 !important; box-shadow: none !important; color: rgba(255,255,255,.55) !important; text-decoration: none !important; }
+html body #pm-modal .chips.days .chip[aria-pressed="true"] { background: #fff !important; color: #141518 !important; font-weight: 700 !important; }
+/* exercises: timeline rows */
+html body #pm-modal .pm-ex { gap: 0 !important; border-top: 1px solid rgba(255,255,255,.12); padding-top: 4px; }
+html body #pm-modal .pm-row { background: none !important; border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.08) !important; border-radius: 0 !important; box-shadow: none !important; padding: 12px 0 !important; display: grid; gap: 8px; }
+html body #pm-modal .pm-row .pi-no { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(255,255,255,.35) !important; background: none !important; color: #fff !important; display: grid; place-items: center; font: 600 12px var(--f-num, ui-monospace, monospace) !important; flex: none; }
+html body #pm-modal .pm-row .mg { background: none !important; border: 0 !important; color: rgba(255,255,255,.6) !important; padding: 0 !important; font-size: 13px !important; }
+html body #pm-modal .pm-ctl { display: flex !important; align-items: center; gap: 8px; padding-left: 36px; }
+html body #pm-modal .pm-n { display: inline-flex !important; align-items: baseline; gap: 4px; background: none !important; border: 0 !important; padding: 0 !important; min-width: 0 !important; width: auto !important; }
+html body #pm-modal .pm-n input { width: 3.2ch !important; min-width: 0 !important; background: none !important; border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.25) !important; border-radius: 0 !important;
+  padding: 2px 0 !important; height: auto !important; min-height: 0 !important; text-align: center !important; color: #fff !important; font: 700 18px var(--f-num, ui-monospace, monospace) !important; }
+html body #pm-modal .pm-n input[data-pad="rng"] { width: 4.6ch !important; }
+html body #pm-modal .pm-n small { font-size: 12px; color: rgba(255,255,255,.55); }
+html body #pm-modal .pm-x { color: rgba(255,255,255,.5); }
+html body #pm-modal .pm-ic { margin-left: auto; display: flex !important; gap: 0 !important; }
+html body #pm-modal .pm-ic .ib { width: 38px !important; height: 40px !important; min-width: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; color: rgba(255,255,255,.7) !important; font-size: 16px !important; }
+html body #pm-modal .pm-ic .ib:disabled { opacity: .25; }
+/* "+ Add exercise" etc. inside the editor: bare label */
+html body #pm-modal #pm-body > .ex .btn.sm:not(.primary), html body #pm-modal #pm-body [data-add] { background: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; color: #fff !important; padding: 6px 0 !important; justify-self: start; }
+/* editor Cancel | Save bar (edit-tx): Save is a white bold label; dim only while there is nothing to save */
+html body #tx-bar { background: linear-gradient(transparent, rgba(20,21,24,.85) 35%) !important; border-top: 1px solid rgba(255,255,255,.12) !important; box-shadow: none !important; }
+html body #tx-bar .btn { background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; }
+html body #tx-bar .btn.primary { color: #fff !important; font-weight: 700 !important; font-size: 16px !important; }
+html body #tx-bar .btn.primary:disabled { color: rgba(255,255,255,.3) !important; }
+html body #tx-bar .btn:not(.primary) { color: rgba(255,255,255,.75) !important; }
+html body #tx-bar { background: rgba(20,21,24,.92) !important; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+html body #tx-bar .tx-btns { display: flex !important; justify-content: space-between !important; }
+html body #tx-bar .tx-btns .btn { flex: none !important; width: auto !important; }
