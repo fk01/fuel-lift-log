@@ -1,4 +1,4 @@
-// Today, option F: HP/SP/EXP bars + quests timeline. Ticking a meal adds to HP/SP; Start opens the workout.
+// Today, option P4: TRAIN group + EAT timeline + My body (no game bars). Ticking a meal counts it; Start opens the workout.
 // Run: node tests/home-quest.cjs
 const { chromium } = require("playwright");
 const http = require("node:http"), fs = require("node:fs"), path = require("node:path");
@@ -27,30 +27,31 @@ const srv = http.createServer((q, r) => {
   const tc = async (name, fn) => { const w = await fresh(); try { await fn(w); if (w.errs.length) throw new Error("page errors: " + w.errs.join(" | ")); console.log("ok", name); }
     catch (e) { fails.push(name); console.log("FAIL", name, "→", e.message.split("\n")[0]); } finally { await w.ctx.close(); } };
 
-  await tc("bars + one row per meal and planned workout, old cards hidden", async ({ p }) => {
-    const s = await p.evaluate(() => ({ bars: [...document.querySelectorAll("#v-home .hqq-b .hqq-k")].map(x => x.textContent),
-      meals: document.querySelectorAll("#v-home .hqq-r.q-meal").length, n: mealList().length,
-      train: document.querySelectorAll("#v-home .hqq-r.q-train").length, plan: planList().length,
+  await tc("train group + one row per meal (vitamins folded), old cards hidden, body kept", async ({ p }) => {
+    const s = await p.evaluate(() => ({ bars: document.querySelectorAll("#v-home .hqq-b").length,
+      meals: document.querySelectorAll("#v-home .hqq-r.q-meal").length, n: mealList().filter(m => !m.vit).length, all: mealList().length,
+      train: document.querySelectorAll("#v-home .hqq-tr [data-hqp]").length, plan: planList().filter(q => PROGS[q]).length,
       oldEat: getComputedStyle(document.querySelector("#v-home [data-other]").closest("section")).display,
+      body: getComputedStyle(document.querySelector("#v-home .hq-body")).display,
       now: !!document.querySelector("#v-home .hqq-now") }));
-    assert.deepEqual(s.bars.slice(0, 2), ["HP", "SP"]);
-    assert.equal(s.meals, s.n, "every meal is a quest");
-    assert.equal(s.train, s.plan, "every planned workout is a quest");
+    assert.equal(s.bars, 0, "no HP/SP/EXP bars");
+    assert.ok(s.meals <= s.all && s.meals >= s.n, "one row per meal");
+    assert.equal(s.train, s.plan, "every planned workout is in Train");
     assert.equal(s.oldEat, "none", "old Eat card hidden");
+    assert.notEqual(s.body, "none", "My body stays");
     assert.ok(s.now, "NOW marker today");
   });
 
-  await tc("ticking a meal fills HP and counts the quest", async ({ p }) => {
-    const m = await p.evaluate(() => mealList().find(x => +x.k > 0));
-    const hp0 = await p.locator('#v-home [data-hqq="hp"] .hqq-v').innerText();
-    await p.locator(`#v-home .hqq-ck[data-hqm="${m.id}"]`).click();
+  await tc("ticking a meal counts it, adds kcal and ticks its vitamins", async ({ p }) => {
+    const ids = await p.evaluate(() => document.querySelector("#v-home .hqq-ck").dataset.hqm.split(","));
+    const k = await p.evaluate(id => +mealList().find(m => m.id === id).k, ids[0]);
+    await p.locator("#v-home .hqq-ck").first().click();
     await p.waitForTimeout(200);
-    const hp1 = await p.locator('#v-home [data-hqq="hp"] .hqq-v').innerText();
-    assert.notEqual(hp1, hp0, "HP changed");
-    assert.ok(hp1.startsWith((+m.k).toLocaleString()), `HP shows ${m.k} (got ${hp1})`);
-    assert.equal(await p.locator(`#v-home .hqq-ck[data-hqm="${m.id}"]`).getAttribute("aria-pressed"), "true");
-    assert.match(await p.locator("#v-home .hqq-h").innerText(), /1\/\d+/i);
-    assert.ok(await p.evaluate(id => !!JSON.parse(localStorage.getItem("mealcheck"))["2026-11-26"].done[id], m.id), "saved");
+    assert.equal(await p.locator("#v-home .hqq-ck").first().getAttribute("aria-pressed"), "true");
+    assert.match(await p.locator("#v-home .hqq-h").nth(1).innerText(), /·\s*1\/\d+/);
+    assert.ok((await p.locator("#v-home .hqq-kc").innerText()).startsWith(k.toLocaleString()), "kcal total");
+    const saved = await p.evaluate(() => JSON.parse(localStorage.getItem("mealcheck"))["2026-11-26"].done);
+    ids.forEach(id => assert.ok(saved[id], "saved " + id));
   });
 
   await tc("Start opens the workout on Train", async ({ p }) => {
