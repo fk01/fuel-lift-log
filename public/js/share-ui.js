@@ -47,6 +47,49 @@
     return new Promise((r, no) => c.toBlob(b => b ? r(b) : no(new Error("toBlob")), jpg ? "image/jpeg" : "image/png", .9));
   };
 
+  /* ---- workout card, option A2: comic art, big total volume, sets · time, top set per exercise ---- */
+  window.drawCard = async function (l) {
+    try { await document.fonts.ready; } catch (e) {}
+    const W = 1080, H = 1920, P = 84, ids = Object.keys(l.ex || {});
+    const c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
+    x.fillStyle = "#121418"; x.fillRect(0, 0, W, H);
+    const bg = await comicImg();
+    if (bg) { x.save(); x.filter = "invert(1) grayscale(1) contrast(1.15)"; x.globalAlpha = .38; const sc = Math.max(W / bg.width, H / bg.height); x.drawImage(bg, (W - bg.width * sc) / 2, (H - bg.height * sc) / 2, bg.width * sc, bg.height * sc); x.restore(); }
+    const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(.25, "rgba(0,0,0,.2)"); g.addColorStop(.55, "rgba(0,0,0,.9)"); g.addColorStop(1, "rgba(0,0,0,.92)");
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+    // top set per exercise (heaviest, then most reps)
+    const rows = ids.map(id => { const u = uOf(id), best = (l.ex[id] || []).reduce((b, q) => !b || (+q.kg || 0) > (+b.kg || 0) || ((+q.kg || 0) === (+b.kg || 0) && (+q.reps || 0) > (+b.reps || 0)) ? q : b, null);
+      return { n: exName(id, l), v: best ? `${(+best.kg || 0) > 0 ? toDisp(+best.kg, u) : "BW"} × ${best.reps}` : "" }; });
+    const MAX = 6, shown = rows.slice(0, MAX), more = rows.length - shown.length;
+    const sets = Object.values(l.ex || {}).flat().length, vol = Math.round(volOf(l));
+    const dur = +l.dur > 0 ? fmtDur(+l.dur) : null;
+    x.textAlign = "left";
+    // bottom-up layout
+    let y = H - P - 30;
+    x.fillStyle = "#fff"; x.font = `800 italic 40px ${sans}`; x.fillText("WEIGHTGRAM", P, y);
+    y -= 90;
+    const lineH = 58;
+    if (more > 0) { x.fillStyle = "rgba(255,255,255,.6)"; x.font = `500 36px ${sans}`; x.fillText(`+${more} ${L("ท่า", "more")}`, P, y); y -= lineH; }
+    for (let i = shown.length - 1; i >= 0; i--) {
+      const r = shown[i]; x.font = `500 38px ${sans}`; x.fillStyle = "#fff";
+      let nm = r.n; const maxW = W - P * 2 - 260; while (x.measureText(nm).width > maxW && nm.length > 4) nm = nm.slice(0, -2); if (nm !== r.n) nm += "…";
+      x.fillText(nm, P, y);
+      x.textAlign = "right"; x.fillStyle = "rgba(255,255,255,.85)"; x.font = `500 38px ${mono}`; x.fillText(r.v, W - P, y); x.textAlign = "left";
+      y -= lineH;
+    }
+    y -= 6; x.fillStyle = "rgba(255,255,255,.22)"; x.fillRect(P, y, W - P * 2, 2); y -= 60;
+    const col = (lab, val, cx) => { x.fillStyle = "rgba(255,255,255,.65)"; x.font = `500 28px ${sans}`; x.fillText(lab.toUpperCase(), cx, y - 56); x.fillStyle = "#fff"; x.font = `700 56px ${mono}`; x.fillText(val, cx, y); };
+    col(L("เซ็ต", "Sets"), String(sets), P);
+    col(dur ? L("เวลา", "Time") : L("ท่า", "Exercises"), dur || String(ids.length), P + 300);
+    y -= 120;
+    x.fillStyle = "#fff"; x.font = `700 150px ${mono}`; const vs = vol.toLocaleString(); x.fillText(vs, P, y);
+    const vw = x.measureText(vs).width; x.font = `600 52px ${mono}`; x.fillText("kg", P + vw + 18, y);
+    y -= 180;
+    const date = new Date(l.date + "T12:00:00").toLocaleDateString(LOC(), { day: "numeric", month: "short", year: "numeric" });
+    x.fillStyle = "rgba(255,255,255,.7)"; x.font = `500 32px ${sans}`; x.fillText(`${String(progName(l.prog) || l.prog || "").toUpperCase()} · ${date.toUpperCase()}`, P, y);
+    return new Promise(r => c.toBlob(b => r(b), "image/png"));
+  };
+
   /* ---- share sheet chrome: formats row + Close | Save image bar ---- */
   const modal = document.getElementById("share-modal"); if (!modal) return;
   const inn = modal.querySelector(".modal-in"), acts = inn.querySelector(".actions");
@@ -66,8 +109,7 @@
       show(await drawRun(ctx.d, cur === "clear", cur));
       shareName = `run-${DAY}${cur === "clear" ? "-overlay" : cur === "square" ? "-square" : ""}.${runPhoto && cur !== "clear" ? "jpg" : "png"}`;
     } else if (ctx.kind === "wk") {
-      if (cur === "story") { shareBlob = ctx.blob; show(await storyBlob()); shareName = ctx.name.replace(/\.png$/, "-story.png"); }
-      else { show(ctx.blob); shareName = ctx.name; }
+      show(ctx.blob); shareName = ctx.name;
     }
   });
 
