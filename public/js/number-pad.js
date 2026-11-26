@@ -35,3 +35,6 @@ document.getElementById("pad-steps").addEventListener("click",ev=>{const b=ev.ta
 document.getElementById("pad-clear").addEventListener("click",()=>{if(!pad)return;pad.v=null;pad.dirty=true;padClose()});
 document.getElementById("pad-done").addEventListener("click",padClose);
 document.getElementById("pad").addEventListener("click",ev=>{if(ev.target.id==="pad")padClose()});
+
+// Done label: set directly (the "เสร็จ" i18n key is overridden elsewhere)
+{const d=document.getElementById("pad-done");if(d)d.textContent=typeof lang!=="undefined"&&lang==="th"?"เสร็จ":"Done"}
