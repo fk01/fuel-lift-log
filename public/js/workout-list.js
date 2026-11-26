@@ -19,7 +19,15 @@
     return same ? `${toDisp(r[0].kg, e.u)}×${r[0].reps} ×${r.length}` : r.map(x => `${toDisp(x.kg, e.u)}×${x.reps}`).join(" · ");
   }
 
+  // top bar: plain text labels "‹ Back" / "Finish" instead of icon buttons
+  function topLabels() {
+    const bk = document.getElementById("wo-back"), fin = document.querySelector("#wo-top .wt-fin");
+    if (bk && !bk.dataset.lbl) { bk.dataset.lbl = 1; bk.textContent = "‹ " + L("กลับ", "Back"); }
+    if (fin && !fin.dataset.lbl) { fin.dataset.lbl = 1; fin.textContent = L("จบ", "Finish"); }
+  }
+
   function listify() {
+    try { topLabels(); } catch (_) {}
     const b = box(); if (!b) return;
     const cards = [...b.querySelectorAll(":scope>.ex")];
     const on = picked && !editing && cards.length > 1;
