@@ -305,3 +305,14 @@ html body .sheet-act .btn.btn.btn.primary, html body .sheet-act .btn.btn.btn.dan
 }
 html body .sheet-act [data-pstart]::before { content: "▶ "; }
 html body #cf-sheet .sheet-act .btn.danger, html body #cf-sheet .sheet-act .btn.primary { background: none !important; border: 0 !important; border-radius: 0 !important; color: #fff !important; }
+
+/* iOS Safari sizes date inputs by their own intrinsic width and ignores width:100% → overflow.
+   Drop native appearance so the box obeys its container. */
+input[type="date"], input[type="time"], input[type="datetime-local"] {
+  -webkit-appearance: none; appearance: none;
+  display: block; width: 100% !important; max-width: 100%; min-width: 0 !important; box-sizing: border-box !important;
+}
+input[type="date"]::-webkit-date-and-time-value { text-align: center; }
+.rm-in label { min-width: 0; }
+[data-mv][type="date"] { width: auto !important; display: inline-block; }
+.rm-in input[type="date"] { border-radius: 16px !important; background: rgba(255,255,255,.08) !important; border: 1px solid rgba(255,255,255,.12) !important; min-height: 48px; color: #fff; }
