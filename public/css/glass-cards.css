@@ -955,3 +955,37 @@ html body .toast {
   color: #fff !important; border: 0 !important; border-radius: 14px !important;
   box-shadow: 0 8px 28px rgba(0,0,0,.45) !important; padding: 10px 18px !important; font-weight: 600 !important;
 }
+
+/* ===== Today — option F (user choice): HP/SP/EXP bars + today's quests timeline (home-quest.js) ===== */
+html body #v-home.hq-f > .hq-main, html body #v-home.hq-f > section.hq-card:not(.hq-body):not(.hq-main) { display: none !important; }
+html body #v-home.hq-f.hq-f-week > .hq-main { display: block !important; }
+html body #v-home.hq-f .hq-chal { display: none !important; }
+html body #v-home .hq-quest { display: grid; gap: 10px; }
+html body #v-home .hqq-bars { display: grid; gap: 6px; }
+html body #v-home .hqq-b { display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 10px; background: none; border: 0; padding: 2px 0; color: #fff; text-align: left; font: 700 12px "IBM Plex Mono", ui-monospace, monospace; }
+html body #v-home .hqq-t { height: 9px; border-radius: 5px; background: rgba(255,255,255,.12); overflow: hidden; }
+html body #v-home .hqq-t i { display: block; height: 100%; background: #fff; border-radius: 5px; transition: width .3s; }
+html body #v-home .hqq-v { color: rgba(255,255,255,.75); font-weight: 600; min-width: 84px; text-align: right; }
+html body #v-home .hqq-h { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-top: 6px; }
+html body #v-home .hqq-tl { position: relative; padding-left: 20px; }
+html body #v-home .hqq-tl::before { content: ""; position: absolute; left: 5px; top: 14px; bottom: 14px; width: 1px; background: rgba(255,255,255,.2); }
+html body #v-home .hqq-r { position: relative; display: grid; grid-template-columns: 46px minmax(0,1fr) auto; align-items: center; gap: 8px; min-height: 48px; padding: 4px 0; }
+html body #v-home .hqq-r::before { content: ""; position: absolute; left: -19px; top: 50%; margin-top: -5px; width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.6); background: #26292e; box-sizing: border-box; }
+html body #v-home .hqq-r.done::before { background: #fff; border-color: #fff; }
+html body #v-home .hqq-r.next::before { width: 11px; height: 11px; margin-top: -6px; left: -20px; background: #fff; border-color: #fff; box-shadow: 0 0 0 4px rgba(255,255,255,.2); }
+html body #v-home .hqq-tm { font: 600 12px "IBM Plex Mono", ui-monospace, monospace; color: rgba(255,255,255,.55); }
+html body #v-home .hqq-mid { display: grid; gap: 1px; min-width: 0; cursor: pointer; }
+html body #v-home .hqq-mid b { font-size: 15px; font-weight: 500; overflow-wrap: anywhere; }
+html body #v-home .hqq-r.next .hqq-mid b, html body #v-home .hqq-r.q-train .hqq-mid b { font-weight: 700; }
+html body #v-home .hqq-mid small { font-size: 12px; color: rgba(255,255,255,.55); }
+html body #v-home .hqq-r.done .hqq-mid b { color: rgba(255,255,255,.45); }
+html body #v-home .hqq-ck { width: 22px; height: 22px; margin: 0 2px 0 10px; border-radius: 6px; border: 1.5px solid rgba(255,255,255,.6); background: none; padding: 0; position: relative; }
+html body #v-home .hqq-ck[aria-pressed="true"] { background: #fff; border-color: #fff; }
+html body #v-home .hqq-ck[aria-pressed="true"]::after { content: ""; position: absolute; left: 7px; top: 3px; width: 5px; height: 10px; border: solid #141518; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+html body #v-home .hqq-go { background: none; border: 0; padding: 8px 0 8px 10px; color: #fff; font-weight: 700; font-size: 15px; white-space: nowrap; }
+html body #v-home .hqq-ok { font-weight: 700; padding-right: 4px; }
+html body #v-home .hqq-now { margin: 2px 0 2px -20px; font: 700 10px "IBM Plex Mono", ui-monospace, monospace; letter-spacing: .1em; color: #fff; }
+html body #v-home .hqq-other { justify-self: start; background: none; border: 0; padding: 6px 0; color: rgba(255,255,255,.75); font-weight: 600; font-size: 14px; }
+/* body card: no box, no icon — reads as the REC line */
+html body #v-home.hq-f > .hq-body { background: none !important; background-image: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+html body #v-home.hq-f > .hq-body .hq-q svg { display: none !important; }
