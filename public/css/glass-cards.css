@@ -1,4 +1,4 @@
-/* glass-cards.css — every box uses the Today "train" card look: translucent white gradient + blur,
+/* glass-cards.css — every box uses the Today "train" card look: translucent white gradient (no blur — the art must stay sharp),
    so the page's comic background shows through. One recipe, no solid dark boxes. */
 :root {
   --glass-bg: linear-gradient(145deg, rgba(255,255,255,.13), rgba(255,255,255,.06));
@@ -14,8 +14,8 @@
 #v-gym .ex,
 #v-gym .ex.pg-on {
   background: var(--glass-bg) !important;
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
   border: 1px solid var(--glass-line) !important;
   box-shadow: var(--glass-shadow) !important;
 }
@@ -29,9 +29,9 @@
 
 /* modal / sheet panels: same glass over a darker base so text stays readable */
 .modal-in, .sheet-in, .drawer-in, .pad-in {
-  background: var(--glass-bg), rgba(20,21,24,.62) !important;
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
+  background: var(--glass-bg), rgba(20,21,24,.42) !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
   border: 1px solid var(--glass-line) !important;
 }
 
@@ -40,7 +40,14 @@
 #lib-modal .modal-in > .row-head:first-child,
 #prog-sheet .sheet-act {
   background: rgba(24,26,30,.22) !important;
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 #lib-modal .modal-in > .row-head:first-child { box-shadow: none !important; }
+
+/* no blur anywhere on boxes: the comic background stays sharp through them (like the Today train card) */
+:is(#v-home, #v-food, #v-gym, #v-stats, #v-more, #lib-modal, #pm-modal, .sheet-in, .modal-in)
+  :is(.card, .tk, .stat, .mtl, .dm, .pl-row, .pl-ai-wrap, .st-ai, .menu, .hq-mc, .hq-pi, .ls-next, .wo-top, .prog, .lib-row, .row-head) {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
