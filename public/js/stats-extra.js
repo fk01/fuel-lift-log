@@ -55,10 +55,10 @@ let recSel=null;
 // all 16 muscles always shown, fixed anatomical order; state: 0 never · 1 just trained (≤1d) · 2 recovering (2d) · 3 ready (3–7d) · 4 neglected (>7d)
 const REC_ORDER=["chest","serr","delt","rear","neck","traps","lats","lowback","bi","tri","fore","abs","obl","glute","quad","ham","add","abd","calf"],NEGLECT=7;
 // recovery colour sets (never, <40%, recovering, ready, neglected=ready); picked in More › Settings, stored per device
-const REC_PALS={heat:["ความร้อน",["#3a4658","#ff5a4e","#ff9f43","#5ad1ff"]],classic:["ไฟจราจร",["#55606f","#e07a6a","#d9a46c","#7cc47a"]],neon:["นีออน",["#3a4658","#ff4f8b","#ffd23f","#ff8a3d"]],app:["โทนแอป",["#3a4658","#b46bff","#ff8a3d","#f97316"]],mono:["ฟ้าไล่ระดับ",["#3a4658","#1e5a8a","#2e9bd6","#7fe3ff"]]};
-let recPal=(()=>{try{return localStorage.getItem("recpal")||"heat"}catch(e){return "heat"}})();if(!REC_PALS[recPal])recPal="heat";
+const REC_PALS={grey:["ขาวเทา",["#3d4046","#8b9098","#c4c8ce","#ffffff"]],heat:["ความร้อน",["#3a4658","#ff5a4e","#ff9f43","#5ad1ff"]],classic:["ไฟจราจร",["#55606f","#e07a6a","#d9a46c","#7cc47a"]],neon:["นีออน",["#3a4658","#ff4f8b","#ffd23f","#ff8a3d"]],app:["โทนแอป",["#3a4658","#b46bff","#ff8a3d","#f97316"]],mono:["ฟ้าไล่ระดับ",["#3a4658","#1e5a8a","#2e9bd6","#7fe3ff"]]};
+let recPal=(()=>{try{return localStorage.getItem("recpal")||"grey"}catch(e){return "grey"}})();if(!REC_PALS[recPal])recPal="grey";
 const REC_C=[];function applyRecPal(){const c=REC_PALS[recPal][1];REC_C.length=0;REC_C.push(...c,c[3])}applyRecPal();
-Object.assign(EN,{"สีการฟื้นตัว":"Recovery colours","ความร้อน":"Heat","ไฟจราจร":"Traffic light","นีออน":"Neon","โทนแอป":"App tones","ฟ้าไล่ระดับ":"Blue scale"});
+Object.assign(EN,{"ขาวเทา":"Greyscale","สีการฟื้นตัว":"Recovery colours","ความร้อน":"Heat","ไฟจราจร":"Traffic light","นีออน":"Neon","โทนแอป":"App tones","ฟ้าไล่ระดับ":"Blue scale"});
 function openRecPal(){openGen(t("สีการฟื้นตัว"),`<div class="pm-menu">${Object.entries(REC_PALS).map(([k,[n,c]])=>`<button class="menu-row" data-pal="${k}"><span class="pal-dots">${c.map(x=>`<i style="background:${x}"></i>`).join("")}</span><span class="mt"><b>${t(n)}</b><small>${[t("ยังไม่เคยเล่น"),"< 40%",t("กำลังฟื้น"),t("พร้อม")].join(" · ")}</small></span><span class="mc">${k===recPal?"✓":""}</span></button>`).join("")}</div>`,
   b=>b.querySelectorAll("[data-pal]").forEach(r=>r.addEventListener("click",()=>{recPal=r.dataset.pal;try{localStorage.setItem("recpal",recPal)}catch(e){}applyRecPal();openRecPal();try{renderGym();renderStatsExtra();updPalSum()}catch(e){}})))}
 function updPalSum(){const e=document.getElementById("pal-sum");if(e)e.textContent=t(REC_PALS[recPal][0])}
