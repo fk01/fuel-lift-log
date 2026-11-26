@@ -109,3 +109,14 @@
   box-shadow: none !important;
   outline: 1.5px solid #fff !important;
 }
+
+/* ---- Eat: calories tile matches the macro tiles; AI boxes rounded, no avatar ---- */
+#food-ring { margin: 4px 0 12px; }
+#food-ring .mtl.cal { width: 100%; box-sizing: border-box; }
+[id^="v-"] .st-ai, [id^="v-"] .ai-btn, #v-food #eat-cal .st-ai, .st-ai, .ai-btn {
+  border-radius: 18px !important;           /* same radius as the .mtl tiles */
+  border: 1px solid var(--glass-line) !important;
+  background: var(--glass-bg) !important;
+}
+.st-ai::after, .ai-btn::after { content: none !important; display: none !important; }
+#food-ring .mtl-h svg { display: inline-block !important; width: 14px !important; height: 14px !important; margin: 0 !important; }
