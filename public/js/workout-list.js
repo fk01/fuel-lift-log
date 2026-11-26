@@ -7,8 +7,10 @@
   const box = () => document.getElementById("exs");
   const done = e => { const r = (draft.ex || {})[e.id] || []; return r.length > 0 && r.every(x => x.ok); };
   const ticked = e => ((draft.ex || {})[e.id] || []).some(x => x.ok);
-  const canReplace = () => !draft.fromHist && !editing && PROGS[cur];
+  const hist = () => !!(draft.fromHist && draft.historyExercises);
+  const canReplace = () => !editing && (hist() || !draft.fromHist && PROGS[cur]);
   const origOf = e => { const m = swapMap(); return Object.keys(m).find(k => m[k] && m[k].id === e.id) || null; };
+  const wasName = e => hist() ? (draft.histSwap || {})[e.id] || null : (() => { const o = origOf(e); return o ? (PROGS[cur].ex.find(x => x.id === o) || {}).n || o : null; })();
 
   function summary(e) {
     const r = ((draft.ex || {})[e.id] || []).filter(x => x.ok);
@@ -38,7 +40,7 @@
       row.setAttribute("role", "button"); row.tabIndex = 0;
       row.innerHTML = `<span class="wl-n">${d ? "✓ " : ""}${esc(e.n)}</span>` +
         (d ? `<span class="wl-s">${esc(summary(e))}</span>`
-           : `<span class="wl-r">${canReplace() && !ticked(e) ? `<button type="button" class="wl-sw" aria-label="${L("เปลี่ยนท่า", "Replace")} ${esc(e.n)}">⇄</button>` : ""}<span class="wl-s">${e.s} ${L("เซ็ต", "sets")} ›</span></span>`);
+           : `<span class="wl-r">${canReplace() && (hist() || !ticked(e)) ? `<button type="button" class="wl-sw" aria-label="${L("เปลี่ยนท่า", "Replace")} ${esc(e.n)}">⇄</button>` : ""}<span class="wl-s">${e.s} ${L("เซ็ต", "sets")} ›</span></span>`);
       row.addEventListener("click", ev => { if (ev.target.closest(".wl-sw")) { ev.stopPropagation(); openReplace(e); return; } goEx(i); });
       row.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); goEx(i); } });
       c.prepend(row);
@@ -54,11 +56,8 @@
       bt.addEventListener("click", () => openReplace(e));
       hd.querySelector(".mk-more")?.before(bt);
     }
-    const o = origOf(e);
-    if (o) {
-      const was = (PROGS[cur].ex.find(x => x.id === o) || {}).n || o;
-      hd.querySelector(".mk-t small")?.insertAdjacentHTML("beforebegin", `<small class="wl-was">⇄ ${L("แทน", "replaced")} ${esc(was)} · ${L("เฉพาะวันนี้", "today only")}</small>`);
-    }
+    const was = wasName(e);
+    if (was) hd.querySelector(".mk-t small")?.insertAdjacentHTML("beforebegin", `<small class="wl-was">⇄ ${L("แทน", "replaced")} ${esc(was)} · ${hist() ? L("เฉพาะ workout นี้", "this workout") : L("เฉพาะวันนี้", "today only")}</small>`);
   }
 
   /* ---- Replace sheet ---- */
@@ -88,7 +87,7 @@
       b.querySelectorAll("[data-rp]").forEach(o => o.addEventListener("click", () => pick(e, EXLIB.find(x => x.id === o.dataset.rp))));
     };
     openGen(`${L("เปลี่ยน", "Replace")} ${esc(e.n)}`,
-      `<small class="note rp-sub">${L("เปลี่ยนเฉพาะวันนี้ โปรแกรมยังเป็นท่าเดิม", "Today only — your program keeps the original")}</small>
+      `<small class="note rp-sub">${hist() ? L("แก้เฉพาะ workout นี้ — เซ็ตที่บันทึกย้ายไปท่าใหม่", "This workout only — its logged sets move to the new exercise") : L("เปลี่ยนเฉพาะวันนี้ โปรแกรมยังเป็นท่าเดิม", "Today only — your program keeps the original")}</small>
        <input class="le-in rp-q" type="search" placeholder="${L("ค้นหาท่า", "Search exercises")}" aria-label="${L("ค้นหาท่า", "Search exercises")}">
        <div class="chips rp-chips"><button type="button" class="chip" data-rm="mus">${L("กล้ามเดียวกัน", "Same muscle")}</button><button type="button" class="chip" data-rm="eq">${L("อุปกรณ์เดียวกัน", "Same equipment")}</button><button type="button" class="chip" data-rm="all">${L("ทั้งหมด", "All")}</button></div>
        <div class="rp-list"></div>
@@ -104,7 +103,19 @@
     if (!x) return;
     const prevRaw = JSON.stringify(draft);
     const orig = origOf(e) || e.id;
-    if (!(PROGS[cur].ex || []).some(p => p.id === orig)) {   // an added (extra) exercise: replace it in place
+    if (hist()) {   // editing a past workout: fix the exercise in this log; its sets move to the new exercise
+      const nx = { ...libPick(x), s: e.s, r: e.r };
+      const list = draft.historyExercises.some(p => p.id === e.id) ? draft.historyExercises : (draft.extra || []);
+      const i = list.findIndex(p => p.id === e.id); if (i < 0) return;
+      list[i] = nx;
+      draft.ex = draft.ex || {};
+      draft.ex[x.id] = (draft.ex[e.id] || []).map(({ kg, reps, ok }) => ({ kg, reps, ok }));
+      delete draft.ex[e.id];
+      if (draft.memo && draft.memo[e.id] != null) { draft.memo[x.id] = draft.memo[e.id]; delete draft.memo[e.id]; }
+      draft.histSwap = draft.histSwap || {};
+      const first = draft.histSwap[e.id] || e.n; delete draft.histSwap[e.id];
+      if (first !== x.n) draft.histSwap[x.id] = first;
+    } else if (!(PROGS[cur].ex || []).some(p => p.id === orig)) {   // an added (extra) exercise: replace it in place
       const i = (draft.extra || []).findIndex(p => p.id === e.id);
       if (i >= 0) draft.extra[i] = { ...libPick(x), s: e.s, r: e.r };
     } else {
@@ -112,7 +123,7 @@
       if (x.id === orig) delete draft.swap.map[orig];           // swapped back to the program's own exercise
       else draft.swap.map[orig] = { ...libPick(x), s: e.s, r: e.r, ...(e.main ? { main: 1 } : {}) };
     }
-    if (draft.ex && !ticked(e)) delete draft.ex[e.id];
+    if (!hist() && draft.ex && !ticked(e)) delete draft.ex[e.id];
     closeGen();
     save("gymdraft", draft);
     // Undo bar: hand the pre-replace draft to undo.js directly (its auto-capture skips edits made while a sheet is open)
