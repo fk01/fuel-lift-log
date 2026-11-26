@@ -940,3 +940,10 @@ body.tx-open:has(#cf-sheet:not([hidden])) #tx-bar { display: none !important; }
 body.tx-open:not(.tx-gen) #gen-sheet.modal.sheet, body.tx-open #cf-sheet.modal { padding-bottom: 0 !important; }
 html body #tx-bar { background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.04)), rgba(20,21,24,.6) !important; -webkit-backdrop-filter: blur(24px) !important; backdrop-filter: blur(24px) !important; }
 html body #tx-bar .tx-dot { color: rgba(255,255,255,.6) !important; }
+
+/* program editor: drag the number circle to reorder (pm-drag.js) */
+html body #pm-modal .pm-row .pi-no.pm-handle { touch-action: none !important; cursor: grab; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+html body #pm-modal .pm-row.pm-drag { position: relative; z-index: 5; background: linear-gradient(145deg, rgba(255,255,255,.16), rgba(255,255,255,.08)), rgba(28,30,34,.96) !important; -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border-radius: 14px !important; box-shadow: 0 10px 30px rgba(0,0,0,.45) !important; padding-left: 8px !important; padding-right: 8px !important; }
+html body #pm-modal .pm-row.pm-drag .pi-no { background: #fff !important; color: #141518 !important; cursor: grabbing; }
+html body #pm-modal .pm-dragging { -webkit-user-select: none; user-select: none; }
+html body #pm-modal .pm-hint { display: block; font-size: 12px; color: rgba(255,255,255,.5); margin: 2px 0 -2px; }
