@@ -206,11 +206,12 @@ renderNourish=function(){const box=document.getElementById("meals");if(!box)retu
   try{macroTiles()}catch(e){}
   const ms=mealList(),nx=ms.find(m=>!mealDone(m.id)&&!m.vit);
   const fa=document.getElementById("food-add");if(fa)document.getElementById("v-food").append(fa);   // park it: innerHTML below would destroy it
-  v.innerHTML=`<div class="dm-h"><b>${t("มื้ออาหารวันนี้")}</b><small>${ms.filter(m=>mealDone(m.id)).length}/${ms.length}</small><span class="dm-slot"></span></div>`+ms.map(m=>{const on=mealDone(m.id),sub=(m.items||[])[0]||"";
-    return `<div class="dm${on?" on":""}${nx&&nx.id===m.id?" nx":""}" data-meal-open="${esc(m.id)}"><span class="dm-ic">${mealEmo(m)}</span><span class="dm-t"><b>${esc(t(m.name))}</b><small>${esc(t(m.time||""))}${m.k?` · ${m.k} kcal`:""} · ${esc(t(sub))}</small></span><button class="dm-add${on?" on":""}" data-meal-tick="${esc(m.id)}" aria-label="${t(on?"ยังไม่ได้กิน":"กินมื้อนี้แล้ว")}">${on?"✓":"+"}</button></div>`}).join("");
+  // each meal shows its full food list right in the row (no detail modal)
+  v.innerHTML=`<div class="dm-h"><b>${t("มื้ออาหารวันนี้")}</b><small>${ms.filter(m=>mealDone(m.id)).length}/${ms.length}</small><span class="dm-slot"></span></div>`+ms.map(m=>{const on=mealDone(m.id),its=(m.items||[]).filter(Boolean);
+    const mac=[+m.k>0?`${m.k} kcal`:"",+m.p>0?`P ${m.p}g`:"",+m.c>0?`C ${m.c}g`:"",+m.f>0?`F ${m.f}g`:""].filter(Boolean).join(" · ");
+    return `<div class="dm${on?" on":""}${nx&&nx.id===m.id?" nx":""}" data-meal="${esc(m.id)}"><span class="dm-t"><b>${esc(t(m.name))}</b><small>${esc(t(m.time||""))}${mac?` · ${mac}`:""}</small>${its.length?`<ul class="dm-items">${its.map(x=>`<li>${esc(t(x))}</li>`).join("")}</ul>`:""}</span><button class="dm-add${on?" on":""}" data-meal-tick="${esc(m.id)}" aria-label="${t(on?"ยังไม่ได้กิน":"กินมื้อนี้แล้ว")}">${on?"✓":"+"}</button></div>`}).join("");
   if(fa)v.querySelector(".dm-slot").append(fa);   // "+ log food" lives in the Daily meals header
-  v.querySelectorAll("[data-meal-tick]").forEach(x=>x.addEventListener("click",e=>{e.stopPropagation();mealTick(x.dataset.mealTick)}));
-  v.querySelectorAll("[data-meal-open]").forEach(x=>x.addEventListener("click",()=>openMeal(x.dataset.mealOpen)))};
+  v.querySelectorAll("[data-meal-tick]").forEach(x=>x.addEventListener("click",e=>{e.stopPropagation();mealTick(x.dataset.mealTick)}))};
 openMeal=function(id){const m=mealList().find(q=>q.id===id);if(!m)return;const on=mealDone(id);
   const col=(cls,l,v,u)=>`<span class="mc ${cls}"><i class="mc-o"></i><small>${t(l)}</small><b>${v??"–"}${u}</b></span>`;
   openGen("",`<div class="md-hero">${mealEmo(m)}</div><div class="md-cols">${col("k","kcal",m.k||0,"")}${col("p","โปรตีน",m.p,"g")}${col("f","ไขมัน",m.f,"g")}${col("c","คาร์บ",m.c,"g")}</div>
