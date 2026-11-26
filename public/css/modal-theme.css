@@ -212,3 +212,14 @@
   border-radius: 22px 22px 0 0 !important;
   border-bottom: 0 !important;
 }
+
+/* ---- one panel colour: sticky bars must match the glass panel, not pure black / surface grey ---- */
+:root { --panel-solid: #1c1e22; }
+.modal:not(.sheet) > .modal-in > .row-head:first-child,
+#lib-modal .modal-in > .row-head:first-child {
+  background: var(--panel-solid) !important;
+}
+#lib-modal .modal-in > .row-head:first-child { box-shadow: 0 -40px 0 var(--panel-solid) !important; }
+#prog-sheet .sheet-act { background: var(--panel-solid) !important; }
+/* program sheet: rows run full width (no phantom 4th column), play button hugs the right edge */
+#prog-sheet .sx-row { grid-template-columns: 44px minmax(0, 1fr) 44px !important; }

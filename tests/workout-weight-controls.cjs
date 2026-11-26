@@ -132,7 +132,9 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 430, height: 932 }
       const gaps = await page.evaluate(selectors => {
         toast("A workout notification long enough to wrap on a narrow screen. The workout controls must remain visible.");
         const message = document.getElementById("toast").getBoundingClientRect();
-        return selectors.map(selector => document.querySelector(selector).getBoundingClientRect().top - message.bottom);
+        // only bars pinned to the viewport can sit under the toast; an inline #wo-add scrolls with the page
+        return selectors.flatMap(selector => { const el = document.querySelector(selector);
+          return /fixed|sticky/.test(getComputedStyle(el).position) ? [el.getBoundingClientRect().top - message.bottom] : []; });
       }, selectors);
       assert.ok(gaps.every(gap => gap >= 8), `${selectors.join(", ")} toast clearance: ${gaps.join(", ")}px`);
     };
