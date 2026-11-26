@@ -856,3 +856,57 @@ html body #pm-modal #pm-title, html body #lib-modal #lib-title {
   font-size: 20px !important; font-weight: 700 !important; color: #fff !important; letter-spacing: 0 !important; text-transform: none !important;
   padding-bottom: 8px !important; background: linear-gradient(#fff,#fff) left bottom / 28px 2px no-repeat !important;
 }
+
+/* ===== Stats tab — option A "Clean glass" (user choice): same layout, boxes/pills removed,
+   glass box only around charts (volume + progress chart) ===== */
+html body #v-stats .sec-t { font-size: 11px !important; font-weight: 600 !important; letter-spacing: .1em !important; text-transform: uppercase !important; color: rgba(255,255,255,.55) !important; }
+html body #st-head .hq-hi b { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; font-size: 24px !important; line-height: 1.15 !important; }
+/* overview + progress numbers: one row, hairline dividers, no boxes */
+html body #v-stats .stats { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0 !important; }
+html body #v-stats #stats.stats > .stat.stat, html body #v-stats #hist-stats.stats > .stat.stat { background: none !important; background-image: none !important; border: 0 !important; border-left: 1px solid rgba(255,255,255,.14) !important; border-radius: 0 !important; box-shadow: none !important; padding: 2px 10px !important; min-height: 0 !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+html body #v-stats #stats.stats > .stat.stat:first-child, html body #v-stats #hist-stats.stats > .stat.stat:first-child { border-left: 0 !important; padding-left: 0 !important; }
+html body #v-stats #stats.stats > .stat.stat b, html body #v-stats #hist-stats.stats > .stat.stat b { font-family: "IBM Plex Mono", ui-monospace, monospace !important; font-size: 26px !important; }
+html body #v-stats :is(#stats,#hist-stats).stats > .stat.stat :is(span,i) { font-size: 11px !important; color: rgba(255,255,255,.6) !important; font-style: normal !important; }
+/* every chip on Stats = bare label; selected = white + underline */
+html body #v-stats .chips .chip.chip { background: none !important; background-image: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important; padding: 4px 0 !important; min-height: 0 !important; color: rgba(255,255,255,.5) !important; font-weight: 500 !important; text-decoration: none !important; }
+html body #v-stats .chips .chip.chip[aria-pressed="true"] { color: #fff !important; font-weight: 600 !important; text-decoration: underline !important; text-underline-offset: 5px !important; text-decoration-thickness: 1.5px !important; }
+html body #v-stats .chips.chips { display: flex !important; flex-wrap: wrap !important; gap: 16px !important; background: none !important; border: 0 !important; padding: 0 !important; }
+/* sets per muscle, 1RM, nutrition: no card */
+html body #v-stats #mset-card, html body #v-stats #pr-card, html body #v-stats #food-hist, html body #v-stats #rec-card:empty {
+  background: none !important; background-image: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+}
+html body #v-stats .msb-list { display: grid; gap: 8px; }
+html body #v-stats .msb { display: grid; grid-template-columns: 84px 1fr 48px; align-items: center; gap: 10px; font-size: 13px; }
+html body #v-stats .msb-t { height: 5px; border-radius: 3px; background: rgba(255,255,255,.12); overflow: hidden; }
+html body #v-stats .msb-t i { display: block; height: 100%; background: #fff; border-radius: 3px; }
+html body #v-stats .msb-v { text-align: right; font-family: "IBM Plex Mono", ui-monospace, monospace; color: rgba(255,255,255,.6); font-size: 12px; }
+html body #v-stats .msb.done .msb-v { color: #fff; font-weight: 700; }
+html body #v-stats #pr-card { gap: 0 !important; }
+html body #v-stats #pr-card .sx-row { grid-template-columns: minmax(0,1fr) auto auto !important; border-top: 1px solid rgba(255,255,255,.09) !important; padding: 10px 0 !important; background: none !important; }
+html body #v-stats #pr-card .sx-row:first-child { border-top: 0 !important; }
+html body #v-stats #pr-card .sx-mini { display: none !important; }
+html body #v-stats #pr-card .how-btn { background: none !important; border: 0 !important; box-shadow: none !important; width: auto !important; height: auto !important; padding: 4px 8px !important; opacity: .55; }
+html body #v-stats #pr-card .pr-v { font-family: "IBM Plex Mono", ui-monospace, monospace !important; }
+html body #v-stats #food-hist .empty { display: flex !important; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; text-align: left !important; padding: 0 !important; min-height: 0 !important; }
+html body #v-stats #food-hist .empty > svg { display: none !important; }
+html body #v-stats #food-hist .empty b { font-size: 14px !important; }
+html body #v-stats #food-hist .empty small { font-size: 12px !important; color: rgba(255,255,255,.55) !important; }
+html body #v-stats #food-hist .empty .btn { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; min-height: 0 !important; color: #fff !important; font-weight: 600 !important; }
+/* progress: exercise picker = underline, white chevron */
+html body #v-stats #hist-ex { -webkit-appearance: none !important; appearance: none !important; background: none !important; border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.22) !important; border-radius: 0 !important; padding: 8px 22px 8px 0 !important; color: #fff !important; font-weight: 600 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23fff' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") !important; background-repeat: no-repeat !important; background-position: right 2px center !important; }
+html body #v-stats .st-pick small { color: rgba(255,255,255,.55) !important; }
+/* bottom links: rows with hairlines, no icon tiles */
+html body #v-stats .stats-tools { background: none !important; background-image: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
+html body #v-stats .stats-tools .mi { display: none !important; }
+html body #v-stats .stats-tools .menu-row { background: none !important; border: 0 !important; border-top: 1px solid rgba(255,255,255,.09) !important; border-radius: 0 !important; padding: 12px 0 !important; box-shadow: none !important; }
+html body #v-stats .stats-tools .menu-row:first-child { border-top: 0 !important; }
+html body #v-stats #pr-card .sx-row > span:not(.how-btn):not(.sx-mini) { text-align: left !important; justify-self: start !important; }
+html body #v-stats #pr-card .sx-row > * { grid-column: auto !important; grid-row: auto !important; }
+/* Progress → items: sessions as bare rows with hairlines (no box per session); date = underline, sized to its text */
+html body #v-stats #sessions details.ex.log { background: none !important; background-image: none !important; border: 0 !important; border-top: 1px solid rgba(255,255,255,.1) !important; border-radius: 0 !important; box-shadow: none !important; padding: 12px 0 !important; margin: 0 !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+html body #v-stats #sessions details.ex.log:first-child { border-top: 0 !important; }
+html body #v-stats #sessions { gap: 0 !important; }
+html body #v-stats #sessions .actions label { flex: none !important; border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.22) !important; border-radius: 0 !important; padding: 2px 0 !important; }
+html body #v-stats #sessions .actions input[data-mv] { -webkit-appearance: none !important; appearance: none !important; min-width: 0 !important; width: 8.8em !important; flex: none !important; padding: 0 !important; }
+html body #v-stats #sessions .actions input[data-mv]::-webkit-calendar-picker-indicator { display: none; }
