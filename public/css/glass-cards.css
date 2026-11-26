@@ -258,3 +258,17 @@
   background: transparent !important; color: #fff !important; border: 0 !important; box-shadow: none !important;
   font-weight: 600 !important;
 }
+
+/* Ask-AI boxes: one look everywhere (Eat is the reference) — Train (#week), Stats (#st-head), Library */
+html body .st-ai, html body #week .st-ai, html body #v-stats .st-ai, html body #st-head .st-ai,
+html body #v-food #eat-cal .st-ai, html body .st-ai.pl-ai, html body .st-ai.lib-ai {
+  border-radius: 18px !important;
+  border: 1px solid var(--glass-line) !important;
+  background: var(--glass-bg) !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  width: 100%; box-sizing: border-box;
+}
+html body .st-ai::after { content: none !important; display: none !important; }
+html body .st-ai { opacity: 1 !important; filter: none !important; font: 600 15px/1.3 var(--f-body) !important; }
+html body .st-ai small { font: 400 13px/1.3 var(--f-body) !important; color: rgba(255,255,255,.72) !important; }
