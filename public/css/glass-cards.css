@@ -430,3 +430,16 @@ html body #run-modal .sheet-act #run-save { background: none !important; color: 
 #run-modal .cw .chip:not([aria-pressed="true"]) { background: none !important; border: 0 !important; color: rgba(255,255,255,.6) !important; }
 #run-modal .cw .label { margin: 0 !important; font: 600 13px var(--f-body) !important; color: rgba(255,255,255,.6) !important; text-transform: none !important; letter-spacing: 0 !important; }
 #run-modal .cw .label::before { content: none !important; }
+
+/* ---- number pad: glass keys, bare Clear, readable "✓ Done" (bar style B) ---- */
+html body #pad .pad-g button, html body #pad .pad-g .btn {
+  background: rgba(255,255,255,.08) !important; border: 1px solid rgba(255,255,255,.10) !important; box-shadow: none !important;
+  color: #fff !important; border-radius: 14px !important;
+}
+html body #pad .pad-g button[aria-pressed="true"], html body #pad .pad-g .on {
+  background: rgba(255,255,255,.20) !important; border-color: rgba(255,255,255,.55) !important;
+}
+html body #pad .sheet-act { margin-top: 4px !important; }
+html body #pad #pad-clear { background: none !important; border: 0 !important; border-radius: 0 !important; outline: 0 !important; color: rgba(255,255,255,.75) !important; }
+html body #pad #pad-done { flex: none !important; background: none !important; border: 0 !important; color: #fff !important; font-weight: 700 !important; font-size: 16px !important; }
+html body #pad #pad-done::before { content: "✓ "; }
