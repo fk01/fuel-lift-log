@@ -482,3 +482,17 @@ html body #v-gym #exs.wo-list > .ex.wl-mini > *:not(.wl-row) { display: none !im
 html body .undo-bar.with-undo [data-undo] { display: inline-flex !important; background: none !important; border: 0 !important; color: #fff !important; font-weight: 700 !important; }
 /* Replace sheet filter chips: bare labels */
 html body .rp-chips .chip:not([aria-pressed="true"]) { background: none !important; border: 0 !important; color: rgba(255,255,255,.6) !important; }
+
+/* workout top bar: "‹ Back" and "Finish" as bare labels (no circles / pills) */
+html body #v-gym #wo-top:not([hidden]) > .wt-fin, html body #v-gym #wo-top .wt-fin, html body .wt-fin {
+  width: auto !important; height: 44px !important; min-width: 44px; padding: 0 4px !important; border-radius: 0 !important;
+  background: none !important; border: 0 !important; box-shadow: none !important; display: flex !important; align-items: center;
+  color: #fff !important; font: 700 16px var(--f-body) !important;
+}
+html body #v-gym #wo-top .wo-back, html body .wo-back {
+  width: auto !important; min-width: 44px; height: 44px !important; padding: 0 4px !important; border-radius: 0 !important;
+  background: none !important; border: 0 !important; box-shadow: none !important;
+  color: rgba(255,255,255,.8) !important; font: 500 16px var(--f-body) !important; display: flex !important; align-items: center;
+}
+html body .wo-back > *, html body .wo-back span { display: none !important; }
+html body .wo-back::before, html body .wo-back::after { content: none !important; display: none !important; }
