@@ -47,10 +47,11 @@
       "#exs.paged>.ex.pg-on{display:block!important}",
       "#exs.paged>.ex:not(.pg-on){display:none!important}",
       "#exs.paged{display:flex;flex-direction:column}",
+      /* everything that does not grow sits ABOVE the current exercise; the card is last so it can grow downward */
       "#exs.paged>.wo-pager{order:0}",
-      "#exs.paged>.ex.pg-on{order:1}",
-      "#exs.paged>.ex:not(.pg-on){order:2}",
-      "#exs.paged>.ls-next{order:3;display:flex!important;margin:12px 0 0!important}",
+      "#exs.paged>.ls-next{order:1;display:flex!important;margin:0 0 12px!important}",
+      "#exs.paged>.ex.pg-on{order:2}",
+      "#exs.paged>.ex:not(.pg-on){order:3}",
 
       /* kill old reserved space for floating Add button */
       "#v-gym #exs{padding-bottom:0!important;margin-bottom:0!important}",
@@ -73,7 +74,7 @@
     var box = document.getElementById("exs");
     if (!btn || !box) return;
     // Keep the button OUTSIDE #exs: renderGym rewrites #exs, which would destroy it and crash the next render.
-    if (btn.previousElementSibling !== box) box.after(btn);
+    if (btn.nextElementSibling !== box) box.before(btn);   // above the pager: only the exercise card grows downward
   }
 
   function forceVisibleCard() {
