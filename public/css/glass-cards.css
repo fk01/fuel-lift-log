@@ -364,3 +364,5 @@ html body .bst, html body .bstep .bst {
 html body .sh-x { background: none !important; border: 0 !important; box-shadow: none !important; }
 html body .bstep-row { padding: 14px 0 12px !important; gap: 8px !important; }
 html body .bstep-row > .row-head { margin: 0 !important; line-height: 1.35; }
+/* bar never clips its labels against the sheet edge */
+html body .sheet-act { box-sizing: border-box !important; width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; padding: 12px 6px 0 !important; overflow: visible !important; }
