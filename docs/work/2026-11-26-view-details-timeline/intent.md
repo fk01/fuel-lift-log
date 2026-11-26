@@ -3,3 +3,6 @@
 - ไม่มีกล่อง/บล็อกรอบแถว, ตัดป้าย "Part N" และ thumbnail
 - Train: แตะแถวยังเปิด How-to (data-pihow คงเดิม); warm-up เป็นวงเส้นประ
 - ไฟล์: locations.js, home.js, glass-cards.css v=54 (ลบ CSS แบบบล็อกรอบก่อน)
+
+## รอบ 2
+บรรทัดสรุปเหลือบรรทัดเดียว: ตัด "N exercises" (pi-top) ออกสำหรับ weights, ย้าย "· Last <date>" ไปต่อท้ายบรรทัดสรุป; cardio ยังมีบรรทัด "Cardio · Last …"
