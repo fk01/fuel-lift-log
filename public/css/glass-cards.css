@@ -623,3 +623,12 @@ html body #v-gym #locpick.resting-b > .rb-plan { display: flex !important; }
 html body #v-gym #locpick.resting-b.rb-open > .rb-plan ~ .pl-row { display: grid !important; }
 html body #v-gym #locpick.resting-b.rb-open > .rb-plan ~ :is(h2, .pl-acts, .pl-allh, .pl-all) { display: revert !important; }
 html body .resting-b.rb-open .rb-plan span:last-child::after { content: ""; }
+
+/* ---- program sheet actions (option B): a row of round icon buttons + faint Delete link ---- */
+.pi-acts { display: flex; justify-content: space-around; gap: 4px; padding: 14px 0; margin-top: 6px;
+  border-top: 1px solid rgba(255,255,255,.10); border-bottom: 1px solid rgba(255,255,255,.10); }
+.pi-acts button { flex: 1 1 0; min-width: 0; display: grid; justify-items: center; gap: 6px; background: none; border: 0; padding: 0;
+  color: rgba(255,255,255,.75); font: 500 11.5px/1.2 var(--f-body); cursor: pointer; text-align: center; }
+.pi-acts button span { width: 46px; height: 46px; border-radius: 50%; background: rgba(255,255,255,.10); display: grid; place-items: center;
+  color: #fff; font-size: 18px; }
+.pi-del { display: block; margin: 8px auto 0; background: none; border: 0; color: rgba(255,255,255,.5); font: 14px var(--f-body); min-height: 44px; padding: 0 12px; cursor: pointer; }
