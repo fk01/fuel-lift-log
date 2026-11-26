@@ -995,3 +995,37 @@ html body #v-home .hqq-tr .hqq-mid b { font-size: 18px; font-weight: 700; }
 html body #v-home .hqq-tr .hqq-at { font-size: 14px; color: rgba(255,255,255,.75); }
 html body #v-home .hqq-tr.done .hqq-mid b { color: rgba(255,255,255,.45); }
 html body #v-home.hq-f > .hq-body .hq-q { font-size: 11px !important; font-weight: 600 !important; letter-spacing: .1em !important; text-transform: uppercase !important; color: rgba(255,255,255,.55) !important; }
+
+/* ===== Eat — option B (user choice): next meal = one glass card, the rest one line each (eat-next.js) ===== */
+html body #v-food .hp .hp-l i { display: none !important; }
+html body #v-food.eat-b #meal-chips { display: none !important; }
+html body #v-food .en-hero { display: grid; gap: 4px; padding: 16px; border-radius: 18px; background: linear-gradient(145deg, rgba(255,255,255,.13), rgba(255,255,255,.06)); border: 1px solid rgba(255,255,255,.18); }
+html body #v-food .en-tag { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.6); }
+html body #v-food .en-nm { font-size: 26px; font-weight: 700; line-height: 1.15; }
+html body #v-food .en-mac { font-size: 12px; color: rgba(255,255,255,.6); }
+html body #v-food .en-items { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 3px; }
+html body #v-food .en-items li { position: relative; padding-left: 12px; font-size: 14px; color: rgba(255,255,255,.88); overflow-wrap: anywhere; }
+html body #v-food .en-items li::before { content: ""; position: absolute; left: 0; top: .6em; width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.5); }
+html body #v-food .en-act { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,.12); }
+html body #v-food .en-chg { font: inherit; background: none; border: 0; padding: 8px 0; color: rgba(255,255,255,.7); font-size: 14px; }
+html body #v-food .en-ok { font: inherit; background: none; border: 0; padding: 8px 0; color: #fff; font-weight: 700; font-size: 16px; }
+html body #v-food .en-ok.sm { font-size: 14px; justify-self: end; }
+html body #v-food .en-all .en-nm { font-size: 20px; }
+html body #v-food .en-h { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+html body #v-food .en-h .dm-slot #food-add { letter-spacing: 0; text-transform: none; }
+html body #v-food .en-row { border-top: 1px solid rgba(255,255,255,.09); }
+html body #v-food .en-h + .en-row { border-top: 0; }
+html body #v-food .en-line { font: inherit; width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 10px; background: none; border: 0; padding: 11px 0; color: #fff; text-align: left; }
+html body #v-food .en-t { display: grid; gap: 2px; min-width: 0; }
+html body #v-food .en-t b { font-size: 15px; font-weight: 500; }
+html body #v-food .en-t small { font-size: 12px; color: rgba(255,255,255,.55); }
+html body #v-food .en-row.done .en-t b { color: rgba(255,255,255,.55); }
+html body #v-food .en-chev { color: rgba(255,255,255,.45); transition: transform .2s; }
+html body #v-food .en-row.open .en-chev { transform: rotate(180deg); }
+html body #v-food .en-more { display: grid; gap: 4px; padding: 0 0 10px; }
+/* plan line under the list: one line, label button */
+html body #v-food .mp-open-row { display: flex !important; justify-content: space-between !important; align-items: center !important; background: none !important; border: 0 !important; padding: 4px 0 !important; }
+html body #v-food .mp-open-row .mp-cur.mp-cur { display: flex !important; flex-direction: row !important; gap: 6px; align-items: baseline; font-size: 13px; }
+html body #v-food .mp-open-row .mp-cur small, html body #v-food .mp-open-row .mp-cur b { font-size: 13px !important; margin: 0 !important; }
+html body #v-food .mp-open-row .mp-cur small { color: rgba(255,255,255,.55) !important; }
+html body #v-food .mp-open-row #mp-open { background: none !important; border: 0 !important; box-shadow: none !important; padding: 6px 0 !important; color: rgba(255,255,255,.7) !important; font-size: 13px !important; }
