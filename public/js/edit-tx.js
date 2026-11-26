@@ -31,7 +31,7 @@ function txBar(){let b=document.getElementById("tx-bar");
     const a=document.createElement("div");a.id="tx-ask";a.className="tx-ask";a.hidden=true;
     a.innerHTML=`<div class="tx-ask-in"><b>${t("ทิ้งการแก้ไข?")}</b><small>${t("สิ่งที่แก้ยังไม่ได้บันทึกจะหายไป")}</small><div class="tx-btns"><button class="btn" data-keep>${t("แก้ต่อ")}</button><button class="btn warn" data-drop>${t("ทิ้ง")}</button></div></div>`;
     document.body.appendChild(a)}
-  const on=TXS.length>0;b.hidden=!on;document.body.classList.toggle("tx-open",on);if(!on)return;
+  const on=TXS.length>0;b.hidden=!on;document.body.classList.toggle("tx-open",on);document.body.classList.toggle("tx-gen",on&&txTop().id==="gen");if(!on)return;
   b.querySelector("[data-tx-cancel]").textContent=t("ยกเลิก");
   const s=b.querySelector("[data-tx-save]");s.textContent="✓ "+t("บันทึก");s.disabled=!txDirty();
   b.querySelector(".tx-dot").textContent=txDirty()?"● "+t("ยังไม่บันทึก"):""}

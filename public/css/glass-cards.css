@@ -927,3 +927,16 @@ html body #tx-ask .tx-btns { display: flex !important; justify-content: space-be
 html body #tx-ask .tx-btns .btn.btn { flex: none !important; width: auto !important; min-height: 44px !important; padding: 0 4px !important; background: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
 html body #tx-ask .tx-btns [data-keep] { color: rgba(255,255,255,.75) !important; font-weight: 500 !important; }
 html body #tx-ask .tx-btns [data-drop] { color: #fff !important; font-weight: 700 !important; font-size: 16px !important; }
+
+/* Program editor ⋯ menu + its Delete confirm (device feedback):
+   - menu rows are text only (no ↑ ⇄ 🗑 icons)
+   - a menu/confirm sheet opened over an editor is not that editor → hide the Unsaved/Cancel/Save bar
+     while it is up and let the sheet sit at the very bottom (no dark band under it)
+   - the bar itself is frosted glass instead of a near-solid dark strip */
+html body .pm-menu.pm-acts .mi { display: none !important; }
+html body .pm-menu.pm-acts .menu-row { padding: 14px 2px !important; }
+body.tx-open:not(.tx-gen):has(#gen-sheet:not([hidden])) #tx-bar,
+body.tx-open:has(#cf-sheet:not([hidden])) #tx-bar { display: none !important; }
+body.tx-open:not(.tx-gen) #gen-sheet.modal.sheet, body.tx-open #cf-sheet.modal { padding-bottom: 0 !important; }
+html body #tx-bar { background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.04)), rgba(20,21,24,.6) !important; -webkit-backdrop-filter: blur(24px) !important; backdrop-filter: blur(24px) !important; }
+html body #tx-bar .tx-dot { color: rgba(255,255,255,.6) !important; }
