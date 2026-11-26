@@ -18,22 +18,19 @@
     if (!btn) return;
     const bar = document.createElement("div");
     bar.className = "actions sheet-act";
-    const no = document.createElement("button");
-    no.className = "btn"; no.type = "button"; no.setAttribute("data-gen-close", "");
-    no.textContent = typeof t === "function" ? t("ยกเลิก") : "Cancel";
-    bar.append(no);
+    const closeWords = new Set(["ยกเลิก", "Cancel", "ปิด", "Close", cancelText].map(x => x.trim()));
+    const olds = [...body.querySelectorAll("button.btn")].filter(b =>
+      !b.classList.contains("sh-x") && b !== btn && (b.hasAttribute("data-gen-close") || closeWords.has(b.textContent.trim())));
+    let no = olds.shift();                 // reuse the sheet's own Cancel/Close (keeps its handler)
+    if (!no) { no = document.createElement("button"); no.className = "btn"; no.type = "button"; no.setAttribute("data-gen-close", ""); no.textContent = cancelText; }
+    no.classList.remove("primary", "ghost", "sticky-b", "sm"); no.removeAttribute("style"); no.textContent = cancelText;
     const after = btn.nextElementSibling;   // keep anything after Save (e.g. Delete) below the bar
-    btn.replaceWith(bar); bar.append(btn);
+    btn.replaceWith(bar); bar.append(no, btn);
     btn.classList.remove("sticky-b");
-    if (after && after.parentElement === bar.parentElement) bar.after(after);
-    // one label style for every save: "✓ Save"
+    if (after && after !== no && after.parentElement === bar.parentElement) bar.after(after);
     if (!/^\s*✓/.test(btn.textContent)) btn.insertAdjacentText("afterbegin", "✓ ");
-    // the bar's Cancel replaces any old stand-alone Close / Cancel button
-    const closeWords = new Set([no.textContent, "ปิด", "Close", "ยกเลิก", "Cancel"].map(x => x.trim()));
-    body.querySelectorAll("button.btn").forEach(b => {
-      if (b.closest(".sheet-act") || b.classList.contains("sh-x")) return;
-      if (closeWords.has(b.textContent.trim())) b.hidden = true;
-    });
+    // leftover plain Close/Cancel buttons duplicate the bar; hide them (never one that carries its own close hook)
+    olds.forEach(b => { if (!b.hasAttribute("data-gen-close") && closeWords.has(b.textContent.trim())) b.hidden = true; });
   }
   function hook() {
     if (typeof openGen !== "function" || openGen.__paired) return;

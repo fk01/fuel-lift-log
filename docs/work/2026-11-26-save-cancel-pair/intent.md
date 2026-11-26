@@ -6,3 +6,6 @@
   - ซ่อนปุ่ม Close/Cancel เดี่ยวเดิมที่ซ้ำ, ใส่ ✓ หน้า Save ถ้ายังไม่มี
 - แถบไม่ตัดตัวอักษรชิดขอบ (glass-cards.css v=50)
 - ไม่ครอบคลุม: modal ที่ไม่ใช่ openGen (run-modal, share-modal, pm-modal)
+
+## แก้ระหว่างทาง
+เทส history-edit พัง: ซ่อนปุ่ม Cancel เดิมที่มี data-gen-close → เปลี่ยนเป็นย้ายปุ่ม Cancel/Close เดิมเข้าแถบ (เก็บ handler เดิม), ซ่อนเฉพาะปุ่มซ้ำที่ไม่มี data-gen-close
