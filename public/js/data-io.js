@@ -21,7 +21,7 @@ document.getElementById("export").addEventListener("click",async()=>{
     ["/css/comic-page-bg.css?v=4", "data-comic-page-bg"],
     ["/css/modal-theme.css?v=2", "data-modal-theme"],
     ["/css/clean-controls.css?v=3", "data-clean-controls"],
-    ["/css/glass-cards.css?v=5", "data-glass-cards"]
+    ["/css/glass-cards.css?v=8", "data-glass-cards"]
   ];
   files.forEach(([href, attr]) => {
     if (document.querySelector(`link[${attr}]`)) return;

@@ -51,3 +51,18 @@
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
 }
+
+/* no icon / thumbnail tiles in list rows: they compete with the background art */
+#v-home .hq-pi .hq-th,
+#v-food .dm .dm-ic,
+#v-food .meal .row-ic,
+#v-gym .pl-row .pl-th,
+#v-gym .pl-row .hq-th,
+#v-gym .pa-ic,
+#v-gym .pl-ai-row .pa-ic,
+#v-gym .pl-row .row-ic,
+#v-gym .prog .row-ic,
+#v-gym .ex .ls-th,
+#v-gym .ls-next .ls-th {
+  display: none !important;
+}
