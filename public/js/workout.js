@@ -1,7 +1,9 @@
 // workout.js — set logging, session history, saving a workout
 // Classic script: shares globals with the other files in /js (load order is set in index.html).
 // History owns its exercise list. A new workout starts with the current program.
-const sessEx=()=>(draft.historyExercises||PROGS[cur]?.ex||[]).concat(draft.extra||[]);
+// today-only replacements: draft.swap={prog, map:{originalId: exercise}} (the program itself is untouched)
+const swapMap=()=>draft.swap&&draft.swap.prog===cur&&!draft.fromHist?draft.swap.map||{}:{};
+const sessEx=()=>(draft.historyExercises||(PROGS[cur]?.ex||[]).map(e=>swapMap()[e.id]||e)).concat(draft.extra||[]);
 const isBlankWorkoutWeight=kg=>kg==null||kg==="";
 const allowsBlankWorkoutWeight=e=>eqOf(e).every(eq=>eq==="body"||eq==="bench"||eq==="bar");
 const hasMissingWorkoutWeight=exercises=>exercises.some(e=>!allowsBlankWorkoutWeight(e)&&
@@ -24,7 +26,7 @@ function renderEx(){
     let lastTxt=last?`${t("ล่าสุด")} ${thDate(last.date,{day:"numeric",month:"short"})}: ${last.sets.map(s=>`${toDisp(s.kg,u)}×${s.reps}`).join(" · ")} ${u}`:t("ครั้งแรก — เลือกน้ำหนักที่ยกได้ประมาณ 12 ครั้งสบายๆ");
     if(hitAll)lastTxt+=` <span class="up">↑ ${t("ลอง")} ${u==="kg"?"+2.5 kg":"+5 lb"}</span>`;
     const th=gifOf(e),e1=last?Math.round(Math.max(...last.sets.map(q=>(+q.kg||0)*(1+(+q.reps||0)/30)))*(u==="lb"?LB:1)):0;
-    card.innerHTML=`<div class="row-head"><span class="ex-name" data-fold role="button" tabindex="0" aria-label="${t("ย่อ/ขยาย")} ${esc(e.n)}" style="display:flex;gap:8px;align-items:center;cursor:pointer"><span class="fold-i"></span>${howBtn(e)}<span>${e.z} ${esc(e.n)}${e.swap?` <i class="swap-tag">${t("แปลงแล้ว")}${e.swapN?" · "+t("แทน")+" "+esc(e.swapN):""}</i>`:""}${safeUrl(e.link)?` <a href="${esc(safeUrl(e.link))}" target="_blank" rel="noopener" style="color:var(--up);font-size:var(--t-meta);white-space:nowrap">▶ ${t("ดูวิธีเล่น")}</a>`:""}</span></span><span style="display:flex;gap:8px;align-items:center"><span class="macro">${e.s} ${t("เซ็ต")} × ${e.r} ${t("ครั้ง")}${HEAVY.includes(e.id)?` · ${t("วอม")}`:""} · <b style="color:var(--fg)">${u}</b></span>${e.alt&&altName(e.alt)?`<button class="btn sm" data-alt>⇄ ${esc(altName(e.alt))}</button>`:""}<button class="btn sm" data-edit aria-label="${t("แก้ไข")} ${esc(e.n)}">✎ ${t("แก้ไข")}</button></span></div>
+    card.innerHTML=`<div class="row-head"><span class="ex-name" data-fold role="button" tabindex="0" aria-label="${t("ย่อ/ขยาย")} ${esc(e.n)}" style="display:flex;gap:8px;align-items:center;cursor:pointer"><span class="fold-i"></span>${howBtn(e)}<span>${e.z} ${esc(e.n)}${e.swap?` <i class="swap-tag">${t("แปลงแล้ว")}${e.swapN?" · "+t("แทน")+" "+esc(e.swapN):""}</i>`:""}${safeUrl(e.link)?` <a href="${esc(safeUrl(e.link))}" target="_blank" rel="noopener" style="color:var(--up);font-size:var(--t-meta);white-space:nowrap">▶ ${t("ดูวิธีเล่น")}</a>`:""}</span></span><span style="display:flex;gap:8px;align-items:center"><span class="macro">${e.s} ${t("เซ็ต")} × ${e.r} ${t("ครั้ง")}${HEAVY.includes(e.id)?` · ${t("วอม")}`:""} · <b style="color:var(--fg)">${u}</b></span><button class="btn sm" data-edit aria-label="${t("แก้ไข")} ${esc(e.n)}">✎ ${t("แก้ไข")}</button></span></div>
       <div class="last fold-sum"></div>
       <div class="row-head"><div class="last">${lastTxt}</div><div class="restset">⏱ <button data-rm-rest aria-label="− ${esc(e.n)}">−</button><b>${fmt(restFor(e))}</b><button data-add-rest aria-label="+ ${esc(e.n)}">+</button></div></div>
       ${HEAVY.includes(e.id)?(()=>{const w=+(last&&last.sets[0]&&last.sets[0].kg)||0,r=v=>toDisp(Math.max(0,Math.round(v/2.5)*2.5),u);return `<div class="zone">${t("วอร์มก่อน")}: ${w?`${r(w*.5)}${u} × 8 → ${r(w*.75)}${u} × 3`:t("เบาๆ 8 ครั้ง แล้วหนักขึ้น 3 ครั้ง")}</div>`})():""}
@@ -84,9 +86,6 @@ function renderEx(){
       save("gymdraft",draft);renderEx();updWoBar();try{renderHero()}catch(_){}
     });
     const setRest=d=>{restCfg[e.id]=Math.max(15,Math.min(600,restFor(e)+d));save("restcfg",restCfg);card.querySelector(".restset b").textContent=fmt(restCfg[e.id])};
-    card.querySelector("[data-alt]")?.addEventListener("click",()=>{   // swap this slot with its alternate (e.g. Chest Press ⇄ Peck Deck Fly)
-      const list=PROGS[cur].ex,i=list.indexOf(e),x=EXLIB.find(q=>q.id===e.alt)||{id:e.alt,n:exName(e.alt),z:"🔩"};if(i<0)return;
-      const n={...libPick(x),s:e.s,r:e.r,alt:e.id};if(e.main)n.main=1;list[i]=n;if(draft.ex)delete draft.ex[e.id];saveProgs();save("gymdraft",draft);renderGym();toast("⇄ "+n.n)});
     card.querySelector("[data-edit]").addEventListener("click",()=>{editId=e.id;renderEx()});
     card.querySelector("[data-unit]").addEventListener("click",()=>{const next=u==="kg"?"lb":"kg";if(draft.fromHist){e.u=next;save("gymdraft",draft)}else libUpdate(e.id,{u:next});renderEx()});
     card.querySelector("[data-rm-rest]").addEventListener("click",()=>setRest(-15));
@@ -247,7 +246,9 @@ function editedHistoryRecord(log,edit=draft){
 }
 function newWorkoutRecord(day,prog){
   const P=PROGS[prog];
-  const all=P.ex.concat(draft.extra||[]),ex={};
+  const sw=draft.swap&&draft.swap.prog===prog?draft.swap.map||{}:{};
+  // a replaced exercise keeps its already-ticked sets in the record next to the replacement
+  const all=P.ex.flatMap(e=>{const r=sw[e.id];if(!r)return [e];return (draft.ex[e.id]||[]).some(x=>x.ok)?[e,r]:[r]}).concat(draft.extra||[]),ex={};
   if(hasMissingWorkoutWeight(all))return null;
   all.forEach(e=>{const s=(draft.ex[e.id]||[]).filter(r=>r.ok&&r.reps!=="").map(r=>({kg:+(r.kg??0),reps:+r.reps}));if(s.length)ex[e.id]=s});
   const names={};all.forEach(e=>{if(ex[e.id])names[e.id]=e.n});

@@ -58,7 +58,7 @@ async function show(p, id) {
     const want = id.match(/^(?:kg|rp|ok)-(.+)-\d+$/)[1];
     if (await p.evaluate(w => sessEx().map(e => e.id).indexOf(w) < woIdx, want))
       throw new Error(`card for ${id} is behind the shown card; the visible UI only moves forward`);
-    await p.click("#exs .ls-next");
+    await p.click("#exs .wl-next");   // next exercise row (one-page list)
   }
   throw new Error(`card for ${id} never became visible`);
 }

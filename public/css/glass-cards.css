@@ -443,3 +443,42 @@ html body #pad .sheet-act { margin-top: 4px !important; }
 html body #pad #pad-clear { background: none !important; border: 0 !important; border-radius: 0 !important; outline: 0 !important; color: rgba(255,255,255,.75) !important; }
 html body #pad #pad-done { flex: none !important; background: none !important; border: 0 !important; color: #fff !important; font-weight: 700 !important; font-size: 16px !important; }
 html body #pad #pad-done::before { content: "✓ "; }
+
+/* ---- active workout: every exercise on one page (option A) ---- */
+html body #v-gym #exs.wo-list { display: flex !important; flex-direction: column; gap: 0 !important; }
+html body #v-gym #exs.wo-list > .ex { display: block !important; order: 0 !important; }
+html body #v-gym #exs.wo-list .wo-pager, html body #v-gym #exs.wo-list > .ls-next { display: none !important; }
+html body #v-gym #exs.wo-list > .ex.pg-on { margin: 8px 0 10px !important; }
+/* collapsed rows */
+html body #v-gym #exs.wo-list > .ex.wl-mini {
+  background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important;
+  padding: 0 !important; margin: 0 !important; border-top: 1px solid rgba(255,255,255,.10) !important; opacity: 1 !important;
+}
+html body #v-gym #exs.wo-list > .ex.wl-mini > *:not(.wl-row) { display: none !important; }
+.wl-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 48px; padding: 4px 2px; cursor: pointer; color: #fff; font-size: 15px; }
+.wl-row .wl-n { min-width: 0; overflow-wrap: anywhere; }
+.wl-row .wl-r { display: flex; align-items: center; gap: 6px; flex: none; }
+.wl-row .wl-s { color: rgba(255,255,255,.55); font-size: 13px; white-space: nowrap; }
+.wl-row.wl-done .wl-n { color: rgba(255,255,255,.55); }
+.wl-sw { width: 40px; height: 40px; background: none !important; border: 0 !important; color: #fff !important; font-size: 17px; cursor: pointer; padding: 0; }
+/* list header: name · n/m done · progress bar */
+.wl-head { display: grid; grid-template-columns: 1fr auto; gap: 6px 10px; align-items: baseline; padding: 0 2px 8px; }
+.wl-head span { font-weight: 700; font-size: 15px; }
+.wl-head small { color: rgba(255,255,255,.6); font-size: 13px; }
+.wl-head i { grid-column: 1 / -1; height: 4px; border-radius: 2px; background: linear-gradient(90deg, #fff var(--p), rgba(255,255,255,.15) var(--p)); }
+/* current card: Replace + "replaced …" tag */
+.wl-rep { flex: none; background: none !important; border: 0 !important; color: #fff !important; font: 600 14px var(--f-body); padding: 0 6px; min-height: 44px; cursor: pointer; white-space: nowrap; }
+.wl-was { display: block; color: rgba(255,255,255,.6); font-size: 12px; margin-bottom: 2px; }
+/* Replace sheet */
+.rp-sub { display: block; margin-top: -4px; }
+.rp-list { display: grid; }
+.rp-opt { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 11px 2px;
+  background: none !important; border: 0 !important; border-top: 1px solid rgba(255,255,255,.08) !important; color: #fff; font: inherit; cursor: pointer; }
+.rp-opt span { display: grid; gap: 2px; min-width: 0; }
+.rp-opt b { font-size: 15px; }
+.rp-opt small { font-size: 12px; color: rgba(255,255,255,.55); }
+.rp-opt i { font-style: normal; color: rgba(255,255,255,.4); }
+/* Undo stays hidden app-wide (user request) — except right after Replace exercise */
+html body .undo-bar.with-undo [data-undo] { display: inline-flex !important; background: none !important; border: 0 !important; color: #fff !important; font-weight: 700 !important; }
+/* Replace sheet filter chips: bare labels */
+html body .rp-chips .chip:not([aria-pressed="true"]) { background: none !important; border: 0 !important; color: rgba(255,255,255,.6) !important; }
