@@ -115,7 +115,7 @@ function openFoodLog(id){const L=(fs().log=fs().log||[]),cur0=id?L.find(x=>x.id=
     <input class="le-in" id="fl-n" placeholder="${t("ชื่ออาหาร")}" aria-label="${t("ชื่ออาหาร")}" value="${esc(x.n)}">
     <div class="le-row"><label class="fl-num"><input class="le-in" id="fl-k" type="number" inputmode="decimal" min="0" value="${x.k}"><span>kcal</span></label><label class="fl-num"><input class="le-in" id="fl-p" type="number" inputmode="decimal" min="0" value="${x.p}"><span>${t("โปรตีน (g)")}</span></label></div>
     <div class="label" style="margin:0">${t("จำนวน")}</div><div class="segc">${[0.5,1,1.5,2].map(q=>`<button class="chip" data-q="${q}">×${q}</button>`).join("")}</div><small class="note" id="fl-sum"></small>
-    <div class="label" style="margin:0">${t("มื้อ")}</div><div class="chips">${SLOTS.map(([k,n])=>`<button class="chip" data-s="${k}">${t(n)}</button>`).join("")}</div>
+    <div class="label" style="margin:0">${lang==="th"?"มื้อ":"Meal"}</div><div class="chips">${SLOTS.map(([k,n])=>`<button class="chip" data-s="${k}">${t(n)}</button>`).join("")}</div>
     <button class="btn primary sticky-b" id="fl-save">${t("บันทึก")}</button>${id?`<button class="btn ghost warn" id="fl-del">${t("ลบ")}</button>`:""}</div>`,b=>{
     const $=s=>b.querySelector(s);
     const draw=()=>{b.querySelectorAll("[data-q]").forEach(c=>c.setAttribute("aria-pressed",+c.dataset.q===+x.q));b.querySelectorAll("[data-s]").forEach(c=>c.setAttribute("aria-pressed",c.dataset.s===x.slot));
