@@ -173,3 +173,15 @@
   background: rgba(255,255,255,.10) !important;
   color: #fff !important;
 }
+
+/* ---- confirm / action sheets: no solid bar, Cancel is a plain label, destructive is tinted glass ---- */
+.sheet-act { background: transparent !important; }
+.sheet-act .btn:not(.primary):not(.danger) {
+  background: none !important; border: 0 !important; box-shadow: none !important; color: rgba(255,255,255,.75) !important;
+}
+.sheet-act .btn.danger, #cf-sheet .btn.danger {
+  background: rgba(239,68,68,.16) !important;
+  border: 1px solid rgba(248,113,113,.55) !important;
+  color: #fecaca !important; box-shadow: none !important; border-radius: 999px !important;
+}
+.sheet-act .btn.primary { background: #fff !important; color: #141518 !important; border: 0 !important; }
