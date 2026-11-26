@@ -53,10 +53,15 @@ function pmExRows(box,k){const list=PROGS[k].ex;box.innerHTML="";
     if(!lock){q("[data-swap]").addEventListener("click",()=>openLib({skip:new Set(list.map(x=>x.id)),onPick:x=>{const n={...libPick(x),s:e.s,r:e.r};if(e.main)n.main=1;list[i]=n;if(draft.ex)delete draft.ex[e.id];saveProgs();renderPM()}}));
       q("[data-rm]").addEventListener("click",async()=>{if(!await cfm(`${t("ลบท่า")}?<br>${esc(e.n)}`,"",t("ลบท่า"),1))return;
         list.splice(i,1);if(draft.ex)delete draft.ex[e.id];saveProgs();pmExRows(box,k);renderGym()})}
+    // option A: one-line row — the ↑ ↓ ⇄ 🗑 buttons move into a ⋯ menu (they stay in the DOM, hidden, and the menu clicks them)
+    {const ic=q(".pm-ic"),mb=document.createElement("button");mb.type="button";mb.className="pm-more2";mb.textContent="⋯";mb.setAttribute("aria-label",t("ตัวเลือก")+" "+e.n);ic.after(mb);
+     mb.addEventListener("click",()=>{const it=[["up","↑","เลื่อนขึ้น"],["down","↓","เลื่อนลง"],["swap","⇄","เปลี่ยนท่า"],["rm","🗑","ลบท่า"]].filter(([a])=>{const b=q(`[data-${a}]`);return b&&!b.disabled});
+       openGen(esc(e.n),`<div class="pm-menu">${it.map(([a,i2,l2])=>`<button class="menu-row${a==="rm"?" warn":""}" data-pmx="${a}"><span class="mi">${i2}</span><span class="mt"><b>${t(l2)}</b></span></button>`).join("")}</div>`,
+         g=>g.querySelectorAll("[data-pmx]").forEach(x=>x.addEventListener("click",()=>{const a=x.dataset.pmx;closeGen();setTimeout(()=>q(`[data-${a}]`)?.click(),0)})))})}
     box.appendChild(r)})}
 function renderPM(){
   if(pmOnly&&!PROGS[pmOnly])pmOnly=null;if(pmOnly)pmTab="ui";
-  document.getElementById("pm-tabs").hidden=pmTab!=="json"||!!pmOnly;document.getElementById("pm-title").textContent=pmOnly?`✎ ${PROGS[pmOnly].name}`:t("จัดการโปรแกรม");
+  document.getElementById("pm-tabs").hidden=pmTab!=="json"||!!pmOnly;document.getElementById("pm-title").textContent=pmOnly?(lang==="th"?"แก้โปรแกรม":"Edit program"):t("จัดการโปรแกรม");{const c=document.getElementById("pm-close");if(c){c.textContent=pmOnly?"✕":t("ปิด");c.setAttribute("aria-label",t("ปิด"))}}
   document.querySelectorAll("#pm-tabs .chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.tab===pmTab));
   const box=document.getElementById("pm-body");box.innerHTML="";
   if(pmTab==="json"){
