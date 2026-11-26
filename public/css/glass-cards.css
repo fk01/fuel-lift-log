@@ -1029,3 +1029,21 @@ html body #v-food .mp-open-row .mp-cur.mp-cur { display: flex !important; flex-d
 html body #v-food .mp-open-row .mp-cur small, html body #v-food .mp-open-row .mp-cur b { font-size: 13px !important; margin: 0 !important; }
 html body #v-food .mp-open-row .mp-cur small { color: rgba(255,255,255,.55) !important; }
 html body #v-food .mp-open-row #mp-open { background: none !important; border: 0 !important; box-shadow: none !important; padding: 6px 0 !important; color: rgba(255,255,255,.7) !important; font-size: 13px !important; }
+
+/* Ask AI card on Eat / Train / Stats: one size everywhere (Train had no border, Stats was taller) */
+html body :is(#v-food, #v-gym, #v-stats, #week, #st-head) .btn.st-ai {
+  box-sizing: border-box !important; width: 100% !important; min-height: 0 !important; height: auto !important;
+  padding: 12px 14px !important; margin: 0 !important; gap: 2px !important;
+  border: 1px solid rgba(255,255,255,.18) !important; border-radius: 18px !important;
+  background: linear-gradient(145deg, rgba(255,255,255,.13), rgba(255,255,255,.06)) !important;
+  display: grid !important; justify-items: center !important; align-content: center !important; text-align: center !important;
+  font-size: 15px !important; line-height: 1.3 !important;
+}
+html body :is(#v-food, #v-gym, #v-stats, #week, #st-head) .btn.st-ai > small { max-width: 100% !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }
+/* page titles (Today / Eat / Train / Stats): one size on every tab, scaled to the phone width so the longest
+   ("How am I progressing?") fits next to the streak + avatar on a 390 pt iPhone instead of being cut */
+html body :is(#v-home, #v-food, #v-gym, #v-stats, #st-head, #eat-cal, #week) .hq-hi b,
+html body #st-head .hq-hi b {
+  font-size: clamp(20px, 5.9vw, 28px) !important; line-height: 1.15 !important;
+  white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important;
+}
