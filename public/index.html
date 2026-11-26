@@ -254,13 +254,14 @@
 </div>
 <div class="modal" id="run-modal" hidden role="dialog" aria-modal="true" aria-label="Run">
   <div class="modal-in run-in">
-    <div class="label" style="margin:0">🏃 <span data-i="บันทึกการวิ่ง">บันทึกการวิ่ง</span></div>
-    <div class="run-f"><label><span data-i="ระยะ (km)">ระยะ (km)</span><input id="run-km" type="text" readonly inputmode="none" data-pad="km" placeholder="10.00"></label>
-    <label><span data-i="เวลา (ชม:นาที:วิ)">เวลา (ชม:นาที:วิ)</span><input id="run-time" type="text" readonly inputmode="none" data-pad="time" placeholder="58:30"></label></div>
-    <label class="btn sm" style="justify-self:start;cursor:pointer">📷 <span data-i="เลือกรูปพื้นหลัง">เลือกรูปพื้นหลัง</span><input id="run-photo" type="file" accept="image/*" hidden></label><small id="run-photo-n" style="color:var(--muted);margin-top:-8px"></small>
-    <div class="run-pace"><small>Pace</small><b id="run-pace">– /km</b></div>
-    <div class="actions"><button class="btn primary" id="run-save" data-i="เซฟ">เซฟ</button><button class="btn" id="run-share" style="background:var(--brand-strava);border:0;color:var(--white)" data-i="แชร์การ์ด">แชร์การ์ด</button><button class="btn" id="run-overlay" data-i="แบบพื้นใส">แบบพื้นใส</button></div>
-    <div class="actions"><button class="btn ghost sm" id="run-del" data-i="ลบ">ลบ</button><button class="btn sm" id="run-close" data-i="ปิด">ปิด</button></div>
+    <div class="grab" aria-hidden="true"></div>
+    <div class="sheet-h run-h"><b class="label">🏃 <span data-i="บันทึกการวิ่ง">บันทึกการวิ่ง</span></b>
+      <span class="run-ico"><label class="ri" title="Background photo" aria-label="Background photo">📷<input id="run-photo" type="file" accept="image/*" hidden></label><button type="button" class="ri" id="run-share" aria-label="Share card"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></button><button type="button" class="ri" id="run-overlay" aria-label="Transparent PNG"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2.5" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/></svg></button><button type="button" class="ri" id="run-close" aria-label="Close">✕</button></span></div>
+    <small id="run-photo-n" class="run-pn"></small>
+    <div class="run-f"><label><input id="run-km" type="text" readonly inputmode="none" data-pad="km" placeholder="10.00"><span data-i="ระยะ (km)">ระยะ (km)</span></label>
+    <label><input id="run-time" type="text" readonly inputmode="none" data-pad="time" placeholder="58:30"><span data-i="เวลา (ชม:นาที:วิ)">เวลา (ชม:นาที:วิ)</span></label></div>
+    <div class="run-pace"><b id="run-pace">– /km</b><small>pace</small></div>
+    <div class="actions sheet-act"><button type="button" class="btn" id="run-cancel" data-i="ยกเลิก">ยกเลิก</button><button type="button" class="btn ghost" id="run-del" data-i="ลบ">ลบ</button><button type="button" class="btn primary" id="run-save">✓ <span data-i="เซฟ">เซฟ</span></button></div>
   </div>
 </div>
 <div class="modal" id="share-modal" hidden role="dialog" aria-modal="true" aria-label="Share">
@@ -287,7 +288,7 @@
 <script src="/js/food.js?v=138771"></script>
 <script src="/js/locations.js?v=138721"></script>
 <script src="/js/programs.js?v=138723"></script>
-<script src="/js/run.js?v=138711"></script>
+<script src="/js/run.js?v=138720"></script>
 <script src="/js/workout.js?v=138740"></script>
 <script src="/js/workout-pager-fix.js?v=2830"></script>
 <script src="/js/exercise-edit.js?v=138713"></script>

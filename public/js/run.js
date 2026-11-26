@@ -8,7 +8,7 @@ function runPrev(){const km=+document.getElementById("run-km").value,sec=parseDu
   document.getElementById("run-pace").textContent=km>0&&sec>0?fmtPace(sec/km)+" /km":"– /km";return{km,sec}}
 let runK=null;   // cardio program being logged (distance + time)
 const runProgK=()=>runK&&PROGS[runK]?runK:Object.keys(PROGS).find(k=>PROGS[k].tag==="run");
-function openRun(){const k=runProgK();const rd=(k?cxGet(k):fs().tags.runData)||{};const h=document.querySelector("#run-modal .run-in>.label");if(h&&k)h.textContent=`${PROGS[k].icon||"🏃"} ${PROGS[k].name}`;document.getElementById("run-km").value=rd.km||"";document.getElementById("run-time").value=rd.sec?fmtDur(rd.sec):"";
+function openRun(){const k=runProgK();const rd=(k?cxGet(k):fs().tags.runData)||{};const h=document.querySelector("#run-modal .run-h .label");if(h&&k)h.textContent=`${PROGS[k].icon||"🏃"} ${PROGS[k].name}`;document.getElementById("run-km").value=rd.km||"";document.getElementById("run-time").value=rd.sec?fmtDur(rd.sec):"";
   document.getElementById("run-del").hidden=!(k?cxGet(k):fs().tags.run);runPrev();document.getElementById("run-modal").hidden=false}
 function saveRun(){const {km,sec}=runPrev(),k=runProgK(),d=km>0&&sec>0?{km,sec}:null;if(k)cxSet(k,d||{});else{const tg=fs().tags;tg.run=true;tg.runData=d;save("mealcheck",food)}try{renderFood()}catch(e){}renderGym();return d}
 let runPhoto=null;
@@ -42,4 +42,4 @@ document.getElementById("run-save").addEventListener("click",()=>{saveRun();docu
 document.getElementById("run-share").addEventListener("click",()=>shareRun(false));
 document.getElementById("run-overlay").addEventListener("click",()=>shareRun(true));
 document.getElementById("run-del").addEventListener("click",()=>{const k=runProgK();if(k)cxSet(k,null);else{const tg=fs().tags;tg.run=false;delete tg.runData;save("mealcheck",food)}try{renderFood()}catch(e){}renderGym();document.getElementById("run-modal").hidden=true;toast(t("ยกเลิกแล้ว"))});
-document.getElementById("run-close").addEventListener("click",()=>document.getElementById("run-modal").hidden=true);
+["run-close","run-cancel"].forEach(id=>document.getElementById(id).addEventListener("click",()=>document.getElementById("run-modal").hidden=true));
