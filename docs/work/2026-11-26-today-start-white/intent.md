@@ -1,0 +1,3 @@
+# intent — ปุ่ม Start หน้า Today เป็นสีขาว
+- เดิม: `.btn.primary` ใน app.css บรรทัด 2039 เป็นดำ #141518 (บางเครื่องเห็นเป็น label เปล่าจาก clean-controls)
+- แก้: `#v-home` primary Start = pill ขาว ตัวอักษรเข้ม (glass-cards.css v=33)

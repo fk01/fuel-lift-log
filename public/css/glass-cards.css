@@ -252,3 +252,9 @@
 /* muscle sheet status: white, not orange */
 .msh-st, .msh-st i { color: #fff !important; }
 .msh-st i { background: #fff !important; }
+
+/* Today: Start is a solid white pill with dark text (never black, never a bare label) */
+#v-home .hq-ps.primary, #v-home .hq-go.primary, #v-home .btn.primary[data-start], #v-home [data-pstart].btn.primary {
+  background: #fff !important; color: #141518 !important; border: 0 !important; box-shadow: none !important;
+  border-radius: 999px !important; font-weight: 700 !important;
+}
