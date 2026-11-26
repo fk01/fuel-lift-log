@@ -37,11 +37,12 @@
     cards.forEach(c => { c.classList.remove("wl-mini"); c.querySelector(":scope>.wl-row")?.remove(); });
     if (!on) return;
     const ex = sessEx(), nDone = ex.filter(done).length;
-    b.insertAdjacentHTML("afterbegin", `<div class="wl-head"><span>${esc(PROGS[cur]?.name || "")}</span><small>${nDone}/${ex.length} ${L("ท่าเสร็จ", "done")}</small><i style="--p:${ex.length ? nDone / ex.length * 100 : 0}%"></i></div>`);
+    b.insertAdjacentHTML("afterbegin", `<div class="wl-head"><span><b>${esc(PROGS[cur]?.name || "")}</b> <small>· ${nDone}/${ex.length}</small></span><button type="button" class="wl-add">+ ${L("เพิ่มท่า", "Add exercise")}</button><i style="--p:${ex.length ? nDone / ex.length * 100 : 0}%"></i></div>`);
+    b.querySelector(".wl-add").addEventListener("click", () => document.getElementById("wo-add")?.click());
     const curIdx = cards.findIndex(c => c.classList.contains("pg-on"));
     cards.forEach((c, i) => {
       const e = ex[i]; if (!e) return;
-      if (i === curIdx) { headerExtras(c, e); return; }
+      if (i === curIdx) { headerExtras(c, e); steppers(c, e); return; }
       c.classList.add("wl-mini");
       const d = done(e), row = document.createElement("div");
       row.className = "wl-row" + (d ? " wl-done" : "") + (i === curIdx + 1 ? " wl-next" : "");
@@ -60,12 +61,41 @@
     hd.querySelector(".wl-rep")?.remove(); card.querySelector(".wl-was")?.remove();
     if (canReplace()) {
       const bt = document.createElement("button");
-      bt.type = "button"; bt.className = "wl-rep"; bt.textContent = "⇄ " + L("เปลี่ยนท่า", "Replace");
+      bt.type = "button"; bt.className = "wl-rep"; bt.textContent = "⇄"; bt.setAttribute("aria-label", L("เปลี่ยนท่า", "Replace exercise"));
       bt.addEventListener("click", () => openReplace(e));
       hd.querySelector(".mk-more")?.before(bt);
     }
     const was = wasName(e);
     if (was) hd.querySelector(".mk-t small")?.insertAdjacentHTML("beforebegin", `<small class="wl-was">⇄ ${L("แทน", "replaced")} ${esc(was)} · ${hist() ? L("เฉพาะ workout นี้", "this workout") : L("เฉพาะวันนี้", "today only")}</small>`);
+  }
+
+  /* ---- option D: − / + right in each kg / reps pill, plain set number on the left, tick on the right ---- */
+  function steppers(card, e) {
+    const sets = card.querySelector(".sets.ls"); if (!sets) return;
+    sets.classList.add("st-d");
+    sets.querySelectorAll(".mk-pill").forEach(pill => {
+      const inp = pill.querySelector("input[data-pad]"); if (!inp || pill.dataset.st) return; pill.dataset.st = 1;
+      const kind = inp.dataset.pad, step = kind === "kg" ? 2.5 : 1;
+      const btn = (sign, txt) => { const b = document.createElement("button"); b.type = "button"; b.className = "st-pm"; b.textContent = txt;
+        b.setAttribute("aria-label", `${sign < 0 ? "−" : "+"}${step} ${inp.getAttribute("aria-label") || kind}`);
+        b.addEventListener("click", ev => { ev.preventDefault(); ev.stopPropagation(); bump(inp, sign * step, kind); }); return b; };
+      if (!/\d/.test(inp.placeholder || "")) inp.placeholder = "–";   // no suggestion: a dash, not "kg kg"
+      pill.prepend(btn(-1, "−")); pill.append(btn(1, "+"));
+      if (kind === "kg") { const row = inp.id.split("-").pop(); const n = document.createElement("span"); n.className = "st-num"; n.textContent = (+row + 1); pill.before(n); }
+    });
+  }
+  // blank box: first tap fills the suggestion (kg = last weight; reps = top of range for +, bottom for −); then ± step
+  function bump(inp, d, kind) {
+    const nums = (String(inp.placeholder || "").match(/\d+(?:\.\d+)?/g) || []).map(Number);
+    let v;
+    if (inp.value === "" || !isFinite(+inp.value)) {
+      if (kind === "kg") v = nums[0] > 0 ? nums[0] : Math.max(0, d);
+      else v = nums.length ? (d > 0 ? nums[nums.length - 1] : nums[0]) : Math.max(0, d);
+    } else v = +inp.value + d;
+    v = Math.max(0, Math.round(v * 100) / 100);
+    inp.value = String(v);
+    inp.dispatchEvent(new Event("input", { bubbles: true }));
+    inp.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   /* ---- Replace sheet ---- */
