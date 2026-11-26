@@ -179,9 +179,14 @@
 .sheet-act .btn:not(.primary):not(.danger) {
   background: none !important; border: 0 !important; box-shadow: none !important; color: rgba(255,255,255,.75) !important;
 }
-.sheet-act .btn.danger, #cf-sheet .btn.danger {
-  background: rgba(239,68,68,.16) !important;
-  border: 1px solid rgba(248,113,113,.55) !important;
-  color: #fecaca !important; box-shadow: none !important; border-radius: 999px !important;
-}
+.sheet-act .btn.danger, #cf-sheet .btn.danger { }
 .sheet-act .btn.primary { background: #fff !important; color: #141518 !important; border: 0 !important; }
+
+/* ---- no red anywhere: destructive / warning = neutral grey glass ---- */
+:root { --red: rgba(255,255,255,.85); --red-soft: rgba(255,255,255,.10); }
+.btn.danger, .sheet-act .btn.danger, #cf-sheet .btn.danger {
+  background: rgba(255,255,255,.14) !important;
+  border: 1px solid rgba(255,255,255,.35) !important;
+  color: #fff !important; box-shadow: none !important; border-radius: 999px !important;
+}
+#v-gym .ex .ls-del { background: rgba(255,255,255,.10) !important; color: #fff !important; }
