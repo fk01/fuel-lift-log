@@ -62,10 +62,10 @@ async function show(p, id) {
   }
   throw new Error(`card for ${id} never became visible`);
 }
-// a valid tick starts the rest timer, which covers the card; end it with its "Next" card (#rest-up) like a user would
+// a valid tick starts the rest timer, which covers the card; end it with Skip (#rv-skip) like a user would
 async function closeRest(p) {
   await p.waitForTimeout(500);   // rest timer may auto-advance to the next card after 400 ms
-  if (await p.locator("#rest").isVisible()) { await p.click("#rest-up"); await p.waitForSelector("#rest", { state: "hidden" }); }
+  if (await p.locator("#rest").isVisible()) { await p.click("#rv-skip"); await p.waitForSelector("#rest", { state: "hidden" }); }
 }
 async function tickBox(p, id) { await show(p, id); await p.click(`#${id}`); await closeRest(p); }
 // card menu ⋯ → "Tick all sets" (the visible way to reach the card's ✓✓ action)
