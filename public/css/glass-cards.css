@@ -214,3 +214,37 @@
   padding: 0 6px !important; min-width: 0 !important; border-radius: 0 !important;
   color: #fff !important; font: 600 14px var(--f-body) !important;
 }
+
+/* ---- exercise demo images (white-background GIFs): dark-theme them so they don't glare ---- */
+.how-gif, .rest-gif img, #rest .rest-gif img {
+  background: transparent !important;
+  filter: invert(1) hue-rotate(180deg) brightness(.95) contrast(1.05);
+  mix-blend-mode: screen;
+  border-radius: 14px;
+}
+#rest .rest-gif { background: transparent !important; box-shadow: none !important; }
+/* Run modal: share-card is a plain glass pill, pace row has no rule line */
+#run-share { background: rgba(255,255,255,.14) !important; color: #fff !important; border: 0 !important; }
+.run-pace { border-top: 0 !important; }
+/* primary (white) buttons always carry dark text */
+.btn.primary, #run-modal #run-save, #share-modal #share-save, #run-modal .btn.primary, #share-modal .btn.primary { color: #141518 !important; }
+/* rest timer demo image: no white card, no gradient plate */
+#rest .rest-gif, #rest.player .rest-gif, #rest .rest-gif::before, #rest .rest-gif::after {
+  background: none !important; background-image: none !important; box-shadow: none !important;
+}
+#rest .rest-gif img, #rest.player .rest-gif img {
+  background: transparent !important;
+  filter: invert(1) hue-rotate(180deg) brightness(.95) contrast(1.05) !important;
+  mix-blend-mode: screen;
+}
+#rest .rest-gif img, #rest.player .rest-gif img { mix-blend-mode: normal !important; background: #000 !important; border-radius: 18px !important; }
+#rest .rest-title, #rest h2, #rest .rest-ex, #rest .rest-set, #rest.player > *:not(.rest-gif) { color: #fff; }
+#rest .rest-gif canvas.gif-frz, #rest.player .rest-gif canvas {
+  background: #000 !important; border-radius: 18px !important;
+  filter: invert(1) hue-rotate(180deg) brightness(.95) contrast(1.05) !important;
+}
+#rest.player .rest-gif { background: #000 !important; }
+/* rest timer round 3: filters invert backgrounds too, so plates are white → render black */
+#rest .rest-gif img, #rest.player .rest-gif img { background: #fff !important; }
+#rest .rest-gif canvas.gif-frz, #rest.player .rest-gif canvas { background: #fff !important; }
+#rest #rest-ttl, #rest #rest-ttl * { color: #fff !important; }
