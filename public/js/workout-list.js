@@ -22,7 +22,7 @@
   // top bar: plain text labels "‹ Back" / "Finish" instead of icon buttons
   function topLabels() {
     const bk = document.getElementById("wo-back"), fin = document.querySelector("#wo-top .wt-fin");
-    if (bk && !bk.dataset.lbl) { bk.dataset.lbl = 1; bk.textContent = "‹ " + L("กลับ", "Back"); }
+    if (bk && !bk.dataset.lbl) { bk.dataset.lbl = 1; bk.textContent = L("กลับ", "Back"); }
     if (fin && !fin.dataset.lbl) { fin.dataset.lbl = 1; fin.textContent = L("จบ", "Finish"); }
   }
 
