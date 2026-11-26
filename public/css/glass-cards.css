@@ -846,3 +846,13 @@ html body #lib-modal .btn.st-ai.lib-ai { background: none !important; background
 html body #lib-modal.adding #lib-new { border: 0 !important; color: #fff !important; font-weight: 700 !important; }
 html body #lib-modal #lib-q { -webkit-appearance: none !important; appearance: none !important; outline: none !important; box-shadow: none !important; }
 html body #lib-modal #lib-q::-webkit-search-decoration { -webkit-appearance: none; }
+/* Exercise library / Manage programs header (device feedback): no bar at all — not sticky, no fill/blur/line,
+   title like other sheet titles (big, bold, short rule under it) */
+html body #pm-modal .modal-in > .row-head:first-child, html body #lib-modal .modal-in > .row-head:first-child {
+  position: static !important; background: none !important; background-image: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+  box-shadow: none !important; border: 0 !important;
+}
+html body #pm-modal #pm-title, html body #lib-modal #lib-title {
+  font-size: 20px !important; font-weight: 700 !important; color: #fff !important; letter-spacing: 0 !important; text-transform: none !important;
+  padding-bottom: 8px !important; background: linear-gradient(#fff,#fff) left bottom / 28px 2px no-repeat !important;
+}
