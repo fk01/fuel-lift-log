@@ -325,3 +325,22 @@ input[type="date"]::-webkit-date-and-time-value { text-align: center; }
 #rec-card .rec-t, .rec-grid .rec-t, #v-home .hq-rec .rec-t {
   background: rgba(255,255,255,.08) !important; border: 1px solid rgba(255,255,255,.12) !important; box-shadow: none !important;
 }
+
+/* ---- Log food & other forms (.le): segmented control + chips + save, in the glass language ---- */
+html body .segc {
+  background: var(--glass-bg) !important; border: 1px solid var(--glass-line) !important;
+  border-radius: 16px !important; padding: 3px !important; gap: 3px !important; overflow: hidden;
+}
+html body .segc .chip { background: none !important; border: 0 !important; border-radius: 12px !important; color: rgba(255,255,255,.6) !important; }
+html body .segc .chip[aria-pressed="true"] { background: rgba(255,255,255,.16) !important; color: #fff !important; text-decoration: none !important; }
+/* choice chips inside forms: bare labels, selected = white + underline (same as elsewhere) */
+html body .le .chips .chip:not([aria-pressed="true"]) { background: none !important; border: 0 !important; color: rgba(255,255,255,.6) !important; }
+/* form save: not floating, style B (hairline + bare bold label on the right) */
+html body .le .btn.primary.sticky-b {
+  position: static !important; box-shadow: none !important; background: none !important; border: 0 !important; border-radius: 0 !important;
+  color: #fff !important; font-weight: 700 !important; font-size: 16px !important;
+  justify-self: end; align-self: flex-end; margin-left: auto; width: auto !important; min-height: 44px; padding: 0 4px !important;
+}
+html body .le .btn.primary.sticky-b::before { content: "✓ "; }
+html body .le .btn.primary.sticky-b:disabled { background: none !important; color: rgba(255,255,255,.35) !important; filter: none !important; }
+html body .le > .btn.primary.sticky-b { border-top: 0 !important; }
