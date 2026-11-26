@@ -376,3 +376,17 @@ html body .sheet-act { box-sizing: border-box !important; width: 100% !important
 #nourish .dm-items li::before { content: ""; position: absolute; left: 0; top: .6em; width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.5); }
 #nourish .dm.on .dm-items li { color: rgba(255,255,255,.55); }
 #nourish .dm .dm-add { align-self: flex-start; margin-top: 2px; }
+
+/* Train › View details (openPlanItem): same look as Today's View details — no dark thumbs, no black labels */
+#gen-body .pi-ex .pl-th, #gen-body .pl-wu .pl-th { display: none !important; }
+#gen-body .pl-pt { background: none !important; color: rgba(255,255,255,.55) !important; padding: 0 !important; font-weight: 500 !important; border-radius: 0 !important; }
+#gen-body .pi-ex.pl-card, #gen-body .pl-card.pl-wu {
+  background: var(--glass-bg) !important; border: 1px solid var(--glass-line) !important; border-radius: 18px !important; box-shadow: none !important;
+  padding: 12px 14px !important; gap: 10px !important;
+}
+#gen-body .pi-ex .pi-how { color: rgba(255,255,255,.6) !important; }
+/* join the exercise rows into one list (like Today's View details) */
+#gen-body .pi-ex.pl-card { border-radius: 0 !important; }
+#gen-body .pi-ex.pl-card + .pi-ex.pl-card { margin-top: -13px !important; border-top-color: rgba(255,255,255,.08) !important; }
+#gen-body .pi-ex.pl-card:not(.pi-ex + .pi-ex) { border-top-left-radius: 18px !important; border-top-right-radius: 18px !important; }
+#gen-body .pi-ex.pl-card:not(:has(+ .pi-ex)) { border-bottom-left-radius: 18px !important; border-bottom-right-radius: 18px !important; }
