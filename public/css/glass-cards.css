@@ -539,3 +539,56 @@ html body #v-gym .ex .sets.st-d .mk-pill:has(input[data-pad="reps"]) i { display
 html body #v-gym .ex .sets.st-d .mk-pill:has(input[data-pad="kg"]) i { font-size: 12px !important; margin-left: 0 !important; }
 html body #v-gym .ex .sets.st-d .mk-pill { justify-content: space-between !important; }
 .st-pm { width: 28px !important; }
+
+/* ---- rest screen (B with demo image, A without) ---- */
+html body #rest.rv-on { background: #1d1f23 !important; }
+html body #rest.rv-on .rest-in > *:not(.rv):not(#rest-gif) { display: none !important; }
+html body #rest.rv-on .rest-in { position: relative; height: 100%; padding: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important; }
+#rest .rv { display: none; }
+html body #rest.rv-on .rv {
+  display: flex; flex-direction: column; gap: 14px; position: absolute; left: 0; right: 0; bottom: 0; top: 0;
+  padding: calc(24px + env(safe-area-inset-top, 0px)) max(22px, env(safe-area-inset-right, 0px)) calc(28px + env(safe-area-inset-bottom, 0px)) max(22px, env(safe-area-inset-left, 0px));
+  box-sizing: border-box; color: #fff; z-index: 2;
+}
+.rv-next { font-size: 15px; font-weight: 700; }
+.rv-next small { font-size: 13px; font-weight: 400; color: rgba(255,255,255,.6); margin-right: 4px; }
+.rv-t { font: 700 72px/1 var(--f-num, ui-monospace, monospace); letter-spacing: -3px; }
+.rv-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,.15); overflow: hidden; }
+.rv-bar i { display: block; height: 100%; width: 0; background: #fff; border-radius: 2px; }
+.rv-ctl { display: flex; justify-content: space-between; align-items: center; }
+.rv-ctl button { background: none; border: 0; color: rgba(255,255,255,.7); font: 500 17px var(--f-body); min-height: 48px; padding: 0 6px; cursor: pointer; }
+.rv-ctl #rv-skip { color: #fff; font-weight: 700; }
+.rv-up { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; border-top: 1px solid rgba(255,255,255,.12); padding-top: 14px; }
+.rv-up .mut { color: rgba(255,255,255,.6); }
+.rv-ring { display: none; }
+/* B: demo image fills the screen, numbers at the bottom */
+html body #rest.rv-b #rest-gif {
+  display: block !important; position: absolute !important; inset: 0 0 34% 0 !important; margin: 0 !important; padding: 0 !important;
+  background: none !important; border: 0 !important; box-shadow: none !important; opacity: .6; z-index: 1;
+}
+html body #rest.rv-b #rest-gif img, html body #rest.rv-b #rest-gif canvas { width: 100% !important; height: 100% !important; max-height: none !important; object-fit: contain !important; }
+html body #rest.rv-b #rest-gif figcaption, html body #rest.rv-b #rest-gif .gif-pp { display: none !important; }
+html body #rest.rv-b .rv-next { margin-top: auto; }
+html body #rest.rv-b .rv-up { display: none; }
+html body #rest.rv-b .rv::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 52%; background: linear-gradient(transparent, #1d1f23 38%); z-index: -1; }
+/* A: no image — big ring in the middle */
+html body #rest.rv-a #rest-gif { display: none !important; }
+html body #rest.rv-a .rv { justify-content: center; text-align: center; gap: 22px; }
+html body #rest.rv-a .rv-big, html body #rest.rv-a .rv-bar { display: none; }
+html body #rest.rv-a .rv-ring { display: block; position: relative; width: min(70vw, 260px); aspect-ratio: 1; margin: 0 auto; }
+.rv-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.rv-ring .rv-in { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+.rv-ring .rv-t { font-size: 60px; }
+.rv-ring small { color: rgba(255,255,255,.6); font-size: 13px; margin-top: 6px; }
+html body #rest.rv-a .rv-up { text-align: left; }
+html body #rest.rv-b #rest-gif { opacity: 1 !important; mix-blend-mode: lighten; }
+html body #rest.rv-b #rest-gif img, html body #rest.rv-b #rest-gif canvas { mix-blend-mode: lighten !important; opacity: .75; border-radius: 0 !important; }
+/* B: plain black stage so the (black-background) demo image has no visible box */
+html body #rest.rest.rv-b { background: #000 !important; }
+html body #rest.rv-b::before, html body #rest.rv-b::after, html body #rest.rv-b .rest-in::before { display: none !important; content: none !important; }
+html body #rest.rv-b #rest-gif, html body #rest.rv-b #rest-gif img, html body #rest.rv-b #rest-gif canvas { mix-blend-mode: normal !important; }
+html body #rest.rv-b .rv::before { background: linear-gradient(transparent, #000 38%) !important; }
+/* A: plain dark stage too (the old comic layer did not cover the whole screen) */
+html body #rest.rest.rv-a { background: #141518 !important; }
+html body #rest.rv-a::before, html body #rest.rv-a::after { display: none !important; content: none !important; }
+html body #rest.rv-a .rv-next { display: none !important; }

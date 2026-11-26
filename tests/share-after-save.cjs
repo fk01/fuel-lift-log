@@ -59,7 +59,7 @@ module.exports = async function shareAfterSave(browser, url) {
     await repInput.click();
     await page.locator('#pad-chips [data-v="9"]').click();
     await page.locator("#exs .pg-on .ls-n").first().click();
-    await page.locator("#rest-up").click();
+    await page.locator("#rv-skip").click();   // end rest with Skip
     await checkShare(today, 9);
     console.log("ok share-after-save second program today");
     assert.deepEqual(errors, []);

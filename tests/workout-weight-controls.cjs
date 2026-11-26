@@ -84,7 +84,7 @@ async function workout(t, { bodyweight = false, priorWeight = false, legacy = fa
 
 async function tick(page, id) {
   await page.click(`#ok-${id}`);
-  const rest = page.locator("#rest:not([hidden]) #rest-up");
+  const rest = page.locator("#rest:not([hidden]) #rv-skip");
   if (await rest.isVisible()) await rest.click();
 }
 
