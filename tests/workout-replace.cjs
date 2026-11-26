@@ -91,6 +91,34 @@ const srv = http.createServer((q, r) => {
     assert.ok(rec.ex[picked], "replacement saved");
   });
 
+  await tc("replace while editing a past workout moves its sets", async ({ p }) => {
+    await p.evaluate(() => { cancelProg(); logs = [{ date: "2026-11-12", prog: "push", loc: "gym", ex: { "chest-press": [{ kg: 40, reps: 8 }, { kg: 40, reps: 7 }], "incline-db": [{ kg: 12, reps: 8 }] } }]; save("gymlog", logs); renderSessions(); });
+    await p.locator("#tab-stats").click();
+    await p.locator('#hist-mode [data-m="list"]').click();
+    const row = p.locator("#sessions details").first();
+    if (!await row.evaluate(el => el.open)) await row.locator("summary").click();
+    await row.locator("[data-ed]").click();
+    await p.waitForTimeout(600);
+    const first = await p.evaluate(() => sessEx()[woIdx].id);
+    assert.equal(first, "chest-press");
+    assert.ok(await p.locator("#exs .pg-on .wl-rep").isVisible(), "Replace offered in history edit");
+    await p.click("#exs .pg-on .wl-rep");
+    await p.waitForSelector("#gen-sheet:not([hidden]) .rp-opt");
+    const picked = await p.evaluate(() => document.querySelector("#gen-sheet .rp-opt").dataset.rp);
+    await p.click("#gen-sheet .rp-opt");
+    await p.waitForTimeout(300);
+    assert.ok(await p.evaluate(() => !!document.querySelector("#exs .pg-on .wl-was")), "replaced tag");
+    await p.locator(".wt-fin").click();
+    const ok = p.locator('#gen-sheet:not([hidden]) #fin-ok, #cf-sheet:not([hidden]) [data-cf="1"]').first();
+    if (await ok.isVisible().catch(() => false)) await ok.click();
+    await p.waitForTimeout(400);
+    const log = await p.evaluate(() => JSON.parse(localStorage.getItem("gymlog")).find(l => l.date === "2026-11-12"));
+    assert.ok(log, "log still there");
+    assert.ok(!log.ex["chest-press"], "old exercise gone from the log");
+    assert.deepEqual(log.ex[picked].map(x => [x.kg, x.reps]), [[40, 8], [40, 7]], "sets moved to the new exercise");
+    assert.ok(log.ex["incline-db"], "other exercises untouched");
+  });
+
   await b.close(); srv.close();
   if (fails.length) { console.log(fails.length + " failing"); process.exit(1); }
 })();
