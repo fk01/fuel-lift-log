@@ -736,3 +736,17 @@ html body #pm-modal .pm-n input, html body #pm-modal .pm-n input[data-pad="rng"]
 }
 html body #pm-modal .pm-n:has(input[data-pad="rng"]) { width: 66px !important; }
 html body #pm-modal .pm-n { width: 40px !important; }
+
+/* ---- Today › "Workout complete" card: glass like every other card (was orange/brown) ---- */
+html body #v-home .hq-win, html body #v-home .hq-card.hq-win {
+  background: var(--glass-bg) !important; border: 1px solid var(--glass-line) !important; box-shadow: none !important; border-radius: 18px !important;
+}
+html body .win-badge { background: #fff !important; box-shadow: none !important; }
+html body .win-badge svg path { stroke: #141518 !important; }
+html body .win-t small { color: rgba(255,255,255,.65) !important; }
+html body .win-stats { gap: 0 !important; border-top: 1px solid rgba(255,255,255,.12); padding-top: 12px; }
+html body .win-stats span { background: none !important; border-radius: 0 !important; padding: 2px 4px !important; justify-items: start !important; }
+html body .win-stats span + span { border-left: 1px solid rgba(255,255,255,.12); padding-left: 14px !important; }
+html body .win-stats b { font: 700 22px var(--f-num, ui-monospace, monospace) !important; }
+html body .win-stats small { text-align: left !important; color: rgba(255,255,255,.6) !important; }
+html body .win-acts .btn, html body .win-acts a, html body .win-acts button { background: none !important; border: 0 !important; color: #fff !important; box-shadow: none !important; }
