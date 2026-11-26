@@ -603,3 +603,23 @@ html body #rest.rv-b .rv::before { background: linear-gradient(transparent, rgba
 html body #rest.rest.rv-a { background: #141518 !important; }
 html body #rest.rv-a::before { display: block !important; content: "" !important; }
 html body #rest.rv-on::before { inset: 0 !important; height: auto !important; background-size: cover !important; background-position: center !important; -webkit-mask-image: none !important; mask-image: none !important; }
+
+/* ---- Train › rest day (option B): big centred moon, plan hidden behind "Today's plan ›" ---- */
+html body #v-gym .rest-card.rest-b {
+  background: none !important; border: 0 !important; box-shadow: none !important;
+  display: grid !important; justify-items: center !important; text-align: center; gap: 6px !important; padding: 26px 0 14px !important;
+}
+.rest-b .rb-m { color: #fff; }
+.rest-b .rb-m svg { width: 46px !important; height: 46px !important; stroke-width: 1.4; }
+.rest-b > b { font-size: 22px; font-weight: 700; display: block !important; }
+.rest-b > small.note { font-size: 14px; color: rgba(255,255,255,.65) !important; margin: 0 0 8px; }
+html body #v-gym .rest-b [data-unrest] { background: none !important; border: 0 !important; box-shadow: none !important; color: #fff !important; font: 700 16px var(--f-body) !important; min-height: 44px; }
+.rb-plan { display: flex; justify-content: space-between; gap: 12px; width: 100%; padding: 14px 2px; background: none; border: 0;
+  border-top: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.65); font: 14px var(--f-body); cursor: pointer; text-align: left; }
+.rb-plan span:last-child { text-align: right; min-width: 0; overflow-wrap: anywhere; }
+/* hide everything after the plan line on a rest day, until it is opened */
+html body #v-gym #locpick.resting-b:not(.rb-open) > .rb-plan ~ * { display: none !important; }
+html body #v-gym #locpick.resting-b > .rb-plan { display: flex !important; }
+html body #v-gym #locpick.resting-b.rb-open > .rb-plan ~ .pl-row { display: grid !important; }
+html body #v-gym #locpick.resting-b.rb-open > .rb-plan ~ :is(h2, .pl-acts, .pl-allh, .pl-all) { display: revert !important; }
+html body .resting-b.rb-open .rb-plan span:last-child::after { content: ""; }
