@@ -344,3 +344,9 @@ html body .le .btn.primary.sticky-b {
 html body .le .btn.primary.sticky-b::before { content: "✓ "; }
 html body .le .btn.primary.sticky-b:disabled { background: none !important; color: rgba(255,255,255,.35) !important; filter: none !important; }
 html body .le > .btn.primary.sticky-b { border-top: 0 !important; }
+/* Log food save: full-width row with hairline on top, label right-aligned (matches sheet bars) */
+html body .le .btn.primary.sticky-b {
+  width: 100% !important; justify-self: stretch; align-self: stretch; margin-left: 0;
+  display: flex !important; justify-content: flex-end; align-items: center;
+  border-top: 1px solid rgba(255,255,255,.12) !important; padding: 12px 4px 0 !important; margin-top: 4px !important;
+}
