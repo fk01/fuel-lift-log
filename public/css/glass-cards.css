@@ -366,3 +366,13 @@ html body .bstep-row { padding: 14px 0 12px !important; gap: 8px !important; }
 html body .bstep-row > .row-head { margin: 0 !important; line-height: 1.35; }
 /* bar never clips its labels against the sheet edge */
 html body .sheet-act { box-sizing: border-box !important; width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; padding: 12px 6px 0 !important; overflow: visible !important; }
+
+/* Eat › Daily meals: food list shown inline in each row (no detail modal) */
+#nourish .dm { align-items: flex-start !important; cursor: default; }
+#nourish .dm .dm-t { min-width: 0; flex: 1; }
+#nourish .dm .dm-t small { display: block; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
+#nourish .dm-items { list-style: none; margin: 8px 0 0; padding: 8px 0 0; border-top: 1px solid rgba(255,255,255,.10); display: grid; gap: 4px; }
+#nourish .dm-items li { font-size: 14px; line-height: 1.35; color: rgba(255,255,255,.85); padding-left: 12px; position: relative; overflow-wrap: anywhere; }
+#nourish .dm-items li::before { content: ""; position: absolute; left: 0; top: .6em; width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,.5); }
+#nourish .dm.on .dm-items li { color: rgba(255,255,255,.55); }
+#nourish .dm .dm-add { align-self: flex-start; margin-top: 2px; }
