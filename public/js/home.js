@@ -94,7 +94,7 @@ function renderHome(){const box=document.getElementById("v-home");if(!box)return
   box.querySelector("[data-moremeals]")?.addEventListener("click",()=>{mealsOpen=!mealsOpen;renderHome();box.querySelector("[data-moremeals]")?.focus()});
   box.querySelector("[data-other]")?.addEventListener("click",()=>{location.hash="food";setTimeout(()=>{try{openFoodLog(null)}catch(e){}},80)});
   box.querySelectorAll("[data-prev]").forEach(b=>b.addEventListener("click",()=>{const P=PROGS[b.dataset.prev];if(!P)return;
-    openGen(esc(P.name),`<div class="pm-menu">${P.ex.map(e=>{const x=exOf(e.id),ms=musOf(x)[0].slice(0,2).map(m=>t(MUS_NAME[m])).join(", ");return `<div class="menu-row"><span class="mt"><b>${esc(x.n||e.id)}</b><small>${e.s||3} × ${e.r||"8-12"}${ms?" · "+ms:""}</small></span></div>`}).join("")}</div>
+    openGen(esc(P.name),`<div class="tl">${P.ex.map((e,i)=>{const x=exOf(e.id),ms=musOf(x)[0].slice(0,2).map(m=>t(MUS_NAME[m])).join(", ");return `<div class="tl-r"><span class="tl-n">${i+1}</span><span class="tl-t"><b>${esc(x.n||e.id)}</b><small>${e.s||3}×${e.r||"8-12"}${ms?" · "+ms:""}</small></span></div>`}).join("")}</div>
       <div class="actions sheet-act"><button class="btn" data-gen-close>${t("ปิด")}</button><button class="btn primary" data-pstart style="flex:1">${t("เริ่ม")} ${esc(P.name)} ›</button></div>`,g=>{g.querySelector("[data-pstart]").addEventListener("click",()=>{closeGen();location.hash="gym";try{startPlanItem(b.dataset.prev,true)}catch(e){}})})}));
   box.querySelectorAll(".hq-plist .hq-pi").forEach(r=>r.addEventListener("click",e=>{if(e.target.closest("button"))return;location.hash="gym"}));
   box.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{location.hash=b.dataset.go}));
