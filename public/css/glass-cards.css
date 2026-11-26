@@ -727,3 +727,12 @@ html body #pm-modal .pm-more2 { width: 36px; height: 44px; background: none; bor
 html body #pm-modal #pm-body > .ex > .btn:not(.primary), html body #pm-modal #pm-body .pm-ex + .btn { justify-self: start !important; text-align: left !important; }
 /* bare-label buttons must never blur what is behind them (showed as a dim box behind "+ Add a warm-up exercise") */
 html body #pm-modal .pm-wuadd, html body .pm-wuadd { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; box-shadow: none !important; }
+/* Edit program set × reps: underline lives on the label, the input is content-sized and centred inside it */
+html body #pm-modal .pm-n { justify-content: center !important; align-items: center !important; width: 46px !important; border-bottom: 1px solid rgba(255,255,255,.3) !important; padding: 2px 0 !important; }
+html body #pm-modal .pm-n:has(input[data-pad="rng"]) { width: 62px !important; }
+html body #pm-modal .pm-n input, html body #pm-modal .pm-n input[data-pad="rng"] {
+  -webkit-appearance: none; appearance: none; border: 0 !important; border-bottom: 0 !important; padding: 0 !important; margin: 0 !important;
+  min-width: 0 !important; max-width: 100%; text-align: center !important; text-align-last: center; flex: none !important;
+}
+html body #pm-modal .pm-n:has(input[data-pad="rng"]) { width: 66px !important; }
+html body #pm-modal .pm-n { width: 40px !important; }

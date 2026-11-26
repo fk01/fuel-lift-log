@@ -17,3 +17,6 @@
 
 ## รอบ 3
 ไฮไลท์หลัง "+ Add a warm-up exercise" = backdrop-filter blur(16px) จากกฎ glass เก่า (app.css:2028) → none. สแกนทุกหน้า: ไม่เหลือปุ่มพื้นใสที่ติด blur (glass-cards.css v=84)
+
+## รอบ 4
+ตัวเลขเซ็ต×ครั้งไม่อยู่กลาง (Safari iOS ไม่สน text-align ใน input number) → เส้นใต้ย้ายไปที่ label (กว้างคงที่, justify center), input กว้างเท่าความยาวค่า (em ต่อหลัก, set ผ่าน JS) — ไม่พึ่ง text-align
