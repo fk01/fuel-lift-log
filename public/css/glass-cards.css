@@ -592,3 +592,14 @@ html body #rest.rv-b .rv::before { background: linear-gradient(transparent, #000
 html body #rest.rest.rv-a { background: #141518 !important; }
 html body #rest.rv-a::before, html body #rest.rv-a::after { display: none !important; content: none !important; }
 html body #rest.rv-a .rv-next { display: none !important; }
+/* B, round 2: keep the comic background visible — the demo image's black ground is screened away */
+html body #rest.rest.rv-b { background: #141518 !important; }
+html body #rest.rv-b::before { display: block !important; content: "" !important; }
+html body #rest.rv-on .rest-in { z-index: auto !important; }              /* don't isolate: let the image blend with #rest::before */
+html body #rest.rv-b #rest-gif { mix-blend-mode: screen !important; opacity: 1 !important; }
+html body #rest.rv-b #rest-gif img, html body #rest.rv-b #rest-gif canvas { mix-blend-mode: normal !important; opacity: .85 !important; }
+html body #rest.rv-b .rv::before { background: linear-gradient(transparent, rgba(20,21,24,.75) 45%) !important; }
+/* A: comic background back as well */
+html body #rest.rest.rv-a { background: #141518 !important; }
+html body #rest.rv-a::before { display: block !important; content: "" !important; }
+html body #rest.rv-on::before { inset: 0 !important; height: auto !important; background-size: cover !important; background-position: center !important; -webkit-mask-image: none !important; mask-image: none !important; }
