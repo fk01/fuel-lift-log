@@ -207,3 +207,10 @@
 .btn.danger, .sheet-act .btn.danger, #cf-sheet .btn.danger { border: 0 !important; background: rgba(255,255,255,.16) !important; }
 /* ghost / label buttons stay bare */
 .btn.ghost, .sheet-act .btn:not(.primary):not(.danger), #v-food .dm-h #food-add { background: none !important; border: 0 !important; }
+
+/* "+ today": plain label, same as "✓ today" — no pill, no fill, no ring */
+.pa-add {
+  background: none !important; border: 0 !important; box-shadow: none !important;
+  padding: 0 6px !important; min-width: 0 !important; border-radius: 0 !important;
+  color: #fff !important; font: 600 14px var(--f-body) !important;
+}
