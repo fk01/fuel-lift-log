@@ -143,8 +143,8 @@
 
 /* "+ log food" sits in the Daily meals header */
 .dm-h { align-items: center; gap: 10px; }
-.dm-h b { margin-right: auto; }
-.dm-slot { display: contents; }
+.dm-h b { margin-right: 0; }
+.dm-slot { margin-left: auto; display: flex; }
 #v-food .dm-h #food-add {
   position: static !important; width: auto !important; height: auto !important; min-height: 0 !important;
   padding: 4px 0 !important; margin: 0 !important; border-radius: 0 !important;
