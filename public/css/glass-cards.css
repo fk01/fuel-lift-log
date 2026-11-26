@@ -316,3 +316,12 @@ input[type="date"]::-webkit-date-and-time-value { text-align: center; }
 .rm-in label { min-width: 0; }
 [data-mv][type="date"] { width: auto !important; display: inline-block; }
 .rm-in input[type="date"] { border-radius: 16px !important; background: rgba(255,255,255,.08) !important; border: 1px solid rgba(255,255,255,.12) !important; min-height: 48px; color: #fff; }
+
+/* Today › How's my body: the recovery block is already inside the card — no second frame */
+#v-home .hq-rec #rec-body, #v-home .hq-rec .card {
+  background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important;
+}
+/* recovery muscle tiles: glass, not dark slabs */
+#rec-card .rec-t, .rec-grid .rec-t, #v-home .hq-rec .rec-t {
+  background: rgba(255,255,255,.08) !important; border: 1px solid rgba(255,255,255,.12) !important; box-shadow: none !important;
+}
