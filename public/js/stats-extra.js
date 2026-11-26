@@ -23,8 +23,9 @@ function renderVolume(){const box=document.getElementById("vol-card");if(!box)re
   box.querySelectorAll("[data-vr]").forEach(c=>c.addEventListener("click",()=>{volRange=c.dataset.vr;renderVolume()}))}
 function renderMuscleSets(){const box=document.getElementById("mset-card");if(!box)return;const today=ds2d(TODAY),mon=dkey(addD(today,-((today.getDay()+6)%7)));const n={};
   logs.filter(l=>l.date>=mon&&l.date<=TODAY).forEach(l=>Object.entries(l.ex).forEach(([id,s])=>{const g=groupOf(exOf(id,l));n[g]=(n[g]||0)+s.length}));
-  box.innerHTML=`<div class="rings">${Object.entries(SET_TARGET).map(([g,tg])=>{const v=n[g]||0,f=Math.min(1,v/tg),r=26,C=2*Math.PI*r;
-    return `<div class="ring"><svg viewBox="0 0 64 64" width="64" height="64"><circle cx="32" cy="32" r="${r}" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="32" cy="32" r="${r}" fill="none" stroke="${v>=tg?"var(--up)":"var(--series,#ffffff)"}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(C*f).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 32 32)"/></svg><span class="ring-fig">${bodySVG(GROUP_MUS[g]||[],[],36)}</span><b>${groupName(g)}</b><small>${v} / ${nU(tg,"เซ็ต")}</small></div>`}).join("")}</div>`}
+  // option A (user choice): one thin bar per muscle group, most-trained first
+  const rows=Object.entries(SET_TARGET).map(([g,tg])=>({g,tg,v:n[g]||0})).sort((a,b)=>b.v/b.tg-a.v/a.tg);
+  box.innerHTML=`<div class="msb-list">${rows.map(({g,tg,v})=>`<div class="msb${v>=tg?" done":""}"><span class="msb-n">${groupName(g)}</span><span class="msb-t"><i style="width:${(Math.min(1,v/tg)*100).toFixed(0)}%"></i></span><span class="msb-v">${v}/${tg}</span></div>`).join("")}</div>`}
 function renderPRs(){const box=document.getElementById("pr-card");if(!box)return;const e1=s=>Math.max(...s.map(q=>(+q.kg||0)*(1+(+q.reps||0)/30)));
   const cut=dkey(addD(ds2d(TODAY),-30)),rows=[];
   HEAVY.forEach(id=>{const h=logs.filter(l=>l.ex[id]&&l.ex[id].length&&logLoc(l)===curLoc);if(!h.length)return;const recent=h.filter(l=>l.date>=cut),old=h.filter(l=>l.date<cut);

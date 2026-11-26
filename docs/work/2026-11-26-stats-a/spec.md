@@ -1,0 +1,12 @@
+# Spec (option A)
+- Section titles: small uppercase grey.
+- Overview: 3 numbers in one row, hairline dividers, no boxes. Same for Progress numbers (#hist-stats).
+- All Stats chips (range, Chart/items, Top weight/Est. 1RM/Volume, 1M/3M/All): bare labels, selected = white underline.
+- Volume + Progress chart keep the glass box.
+- Sets per muscle: thin bar per group (most-trained first), `v/target` right; replaces ring + body figures.
+- 1RM highlights: rows with hairlines, no body figure, ▸ bare.
+- Nutrition empty: one line "No meals logged yet · Tick meals ›".
+- Exercise picker: underline select, white chevron (was dark box + cyan).
+- Bottom links: rows, no icon tiles.
+- Items list: sessions as rows with hairlines; date = underline, sized to its text (was cut off).
+- Header "How am I progressing?" wraps instead of being cut.
