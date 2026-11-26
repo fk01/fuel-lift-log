@@ -289,3 +289,19 @@ html body .st-ai small { font: 400 13px/1.3 var(--f-body) !important; color: rgb
   background: transparent !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
   margin-top: 4px !important; padding: 8px 0 0 !important;
 }
+
+/* ---- sheet action bar, style B: hairline on top, bare labels — secondary left, primary right ---- */
+html body .sheet-act {
+  display: flex !important; justify-content: space-between !important; align-items: center !important; gap: 12px !important;
+  border-top: 1px solid rgba(255,255,255,.12) !important; padding: 12px 2px 0 !important; margin-top: 8px !important;
+}
+html body .sheet-act .btn.btn.btn {
+  flex: none !important; width: auto !important; min-height: 44px !important; padding: 0 4px !important;
+  background: none !important; border: 0 !important; box-shadow: none !important; border-radius: 0 !important;
+}
+html body .sheet-act .btn.btn.btn:not(.primary):not(.danger) { color: rgba(255,255,255,.75) !important; font-weight: 500 !important; }
+html body .sheet-act .btn.btn.btn.primary, html body .sheet-act .btn.btn.btn.danger, html body #run-modal .sheet-act .btn.primary {
+  margin-left: auto; color: #fff !important; font-weight: 700 !important; font-size: 16px !important; text-align: right;
+}
+html body .sheet-act [data-pstart]::before { content: "▶ "; }
+html body #cf-sheet .sheet-act .btn.danger, html body #cf-sheet .sheet-act .btn.primary { background: none !important; border: 0 !important; border-radius: 0 !important; color: #fff !important; }
