@@ -296,7 +296,9 @@ module.exports = async function historyEdit(browser, url) {
     assert.deepEqual(await page.locator("#exs .mk-t b").allTextContents(), Object.values(record.names));
     await page.locator("#exs .wl-next").click();
     const card = page.locator("#exs .pg-on");
-    await card.locator(".ls-del").first().click();
+    await card.locator(".mk-more").click();                       // remove set 1 via ⋯ → Remove a set…
+    await page.locator('[data-mk="dels"]').click();
+    await page.locator('#gen-body [data-ds="0"]').click();
     await page.locator('[data-cf="1"]').click();
     await card.locator(".mk-more").click();
     page.once("dialog", async dialog => {
@@ -321,7 +323,9 @@ module.exports = async function historyEdit(browser, url) {
     await open(0);
     await page.locator("#exs .wl-next").click();
     await page.locator("#exs .wl-next").click();
-    await card.locator(".ls-del").click();
+    await card.locator(".mk-more").click();
+    await page.locator('[data-mk="dels"]').click();
+    await page.locator('#gen-body [data-ds="0"]').click();
     await page.locator('[data-cf="1"]').click();
     await finish();
     await page.locator("#fin-ok").click();
