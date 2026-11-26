@@ -190,3 +190,20 @@
   color: #fff !important; box-shadow: none !important; border-radius: 999px !important;
 }
 #v-gym .ex .ls-del { background: rgba(255,255,255,.10) !important; color: #fff !important; }
+
+/* ---- no outlined buttons: action buttons are soft fills, never rings ----
+   (cards that happen to be <button>s keep their glass edge; the selected day keeps its ring) */
+.hq-flame, .hq-day:not(.sel), .hq-mc, .tabbar .tab, .tab, .pa-add,
+.chip:not([aria-pressed="true"]), .wo-back, .wt-fin, #v-gym #exs.paged .wo-pager .btn,
+.btn:not(.primary):not(.st-ai):not(.prog):not(.ghost):not(.danger), .ls-add {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.hq-flame, .pa-add, .wo-back, .wt-fin,
+.chip:not([aria-pressed="true"]), .hq-mc, #v-gym #exs.paged .wo-pager .btn, .tabbar .tab:not([aria-selected="true"]) {
+  background: rgba(255,255,255,.10) !important;
+}
+/* destructive keeps a soft fill too (no ring) */
+.btn.danger, .sheet-act .btn.danger, #cf-sheet .btn.danger { border: 0 !important; background: rgba(255,255,255,.16) !important; }
+/* ghost / label buttons stay bare */
+.btn.ghost, .sheet-act .btn:not(.primary):not(.danger), #v-food .dm-h #food-add { background: none !important; border: 0 !important; }
