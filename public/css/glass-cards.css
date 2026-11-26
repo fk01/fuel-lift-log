@@ -750,3 +750,6 @@ html body .win-stats span + span { border-left: 1px solid rgba(255,255,255,.12);
 html body .win-stats b { font: 700 22px var(--f-num, ui-monospace, monospace) !important; }
 html body .win-stats small { text-align: left !important; color: rgba(255,255,255,.6) !important; }
 html body .win-acts .btn, html body .win-acts a, html body .win-acts button { background: none !important; border: 0 !important; color: #fff !important; box-shadow: none !important; }
+
+/* page greeting date: same size on every tab (Train's #week rule shrank it to 12px) */
+html body .hq-hello .hq-hi small, html body #week .hq-hello .hq-hi small { font-size: 14px !important; font-weight: 400 !important; color: rgb(201,204,210) !important; letter-spacing: normal !important; text-transform: none !important; }
