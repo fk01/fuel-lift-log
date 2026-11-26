@@ -1,0 +1,46 @@
+/* glass-cards.css — every box uses the Today "train" card look: translucent white gradient + blur,
+   so the page's comic background shows through. One recipe, no solid dark boxes. */
+:root {
+  --glass-bg: linear-gradient(145deg, rgba(255,255,255,.13), rgba(255,255,255,.06));
+  --glass-line: rgba(255,255,255,.18);
+  --glass-shadow: 0 8px 24px rgba(0,0,0,.22);
+}
+
+/* page boxes (Today) */
+#v-home .hq-card,
+#v-home .hq-card.hq-body,
+#v-home .hq-chal,
+/* active workout */
+#v-gym .ex,
+#v-gym .ex.pg-on {
+  background: var(--glass-bg) !important;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-line) !important;
+  box-shadow: var(--glass-shadow) !important;
+}
+
+/* small controls inside glass boxes: lighter tint, no extra blur */
+#v-gym .ex .mk-pill,
+#v-gym .ex .mk-pill.dim {
+  background: rgba(255,255,255,.08) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+}
+
+/* modal / sheet panels: same glass over a darker base so text stays readable */
+.modal-in, .sheet-in, .drawer-in, .pad-in {
+  background: var(--glass-bg), rgba(20,21,24,.62) !important;
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-line) !important;
+}
+
+/* sticky bars inside panels: translucent + blur so content scrolling underneath stays legible */
+.modal:not(.sheet) > .modal-in > .row-head:first-child,
+#lib-modal .modal-in > .row-head:first-child,
+#prog-sheet .sheet-act {
+  background: rgba(24,26,30,.22) !important;
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+#lib-modal .modal-in > .row-head:first-child { box-shadow: none !important; }
