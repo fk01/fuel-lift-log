@@ -910,3 +910,20 @@ html body #v-stats #sessions { gap: 0 !important; }
 html body #v-stats #sessions .actions label { flex: none !important; border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.22) !important; border-radius: 0 !important; padding: 2px 0 !important; }
 html body #v-stats #sessions .actions input[data-mv] { -webkit-appearance: none !important; appearance: none !important; min-width: 0 !important; width: 8.8em !important; flex: none !important; padding: 0 !important; }
 html body #v-stats #sessions .actions input[data-mv]::-webkit-calendar-picker-indicator { display: none; }
+
+/* "Discard changes?" (#tx-ask) — same language as the confirm sheet: bottom sheet, frosted so the page behind
+   can't bleed through the text, bar = Keep editing | Discard as bare labels over a hairline, no red */
+html body #tx-ask.tx-ask { place-items: end stretch !important; padding: 0 !important; background: rgba(0,0,0,.45) !important; -webkit-backdrop-filter: blur(6px) !important; backdrop-filter: blur(6px) !important; }
+html body #tx-ask .tx-ask-in {
+  max-width: none !important; width: 100% !important; box-sizing: border-box !important; gap: 6px !important;
+  border-radius: 22px 22px 0 0 !important; border: 1px solid rgba(255,255,255,.18) !important; border-bottom: 0 !important;
+  background: linear-gradient(145deg, rgba(255,255,255,.13), rgba(255,255,255,.06)), rgba(20,21,24,.72) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.1) !important; backdrop-filter: blur(24px) saturate(1.1) !important; box-shadow: none !important;
+  padding: 20px 18px calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+}
+html body #tx-ask .tx-ask-in > b { font-size: 18px !important; }
+html body #tx-ask .tx-ask-in > small { color: rgba(255,255,255,.65) !important; font-size: 14px !important; }
+html body #tx-ask .tx-btns { display: flex !important; justify-content: space-between !important; align-items: center !important; border-top: 1px solid rgba(255,255,255,.12) !important; padding-top: 10px !important; margin-top: 10px !important; }
+html body #tx-ask .tx-btns .btn.btn { flex: none !important; width: auto !important; min-height: 44px !important; padding: 0 4px !important; background: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+html body #tx-ask .tx-btns [data-keep] { color: rgba(255,255,255,.75) !important; font-weight: 500 !important; }
+html body #tx-ask .tx-btns [data-drop] { color: #fff !important; font-weight: 700 !important; font-size: 16px !important; }
