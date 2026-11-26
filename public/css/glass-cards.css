@@ -96,3 +96,16 @@
   background: rgba(255,255,255,.10) !important;
 }
 #v-gym .ex .ls-add { border-top-color: rgba(255,255,255,.12) !important; }
+
+/* selected day in the week/month calendar: clear glass + white ring (no dark fill) */
+[id^="v-"] .ec-d.on,
+#v-food #eat-cal .ec-d.on {
+  background: rgba(255,255,255,.06) !important;
+  box-shadow: 0 0 0 2px #fff inset !important;
+}
+/* Today / Train / Eat week strip (.hq-day): same — clear glass, white ring only */
+[id^="v-"] .hq-day.sel {
+  background: rgba(255,255,255,.06) !important;
+  box-shadow: none !important;
+  outline: 1.5px solid #fff !important;
+}
