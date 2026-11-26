@@ -111,12 +111,47 @@
 }
 
 /* ---- Eat: calories tile matches the macro tiles; AI boxes rounded, no avatar ---- */
-#food-ring { margin: 4px 0 12px; }
-#food-ring .mtl.cal { width: 100%; box-sizing: border-box; }
 [id^="v-"] .st-ai, [id^="v-"] .ai-btn, #v-food #eat-cal .st-ai, .st-ai, .ai-btn {
   border-radius: 18px !important;           /* same radius as the .mtl tiles */
   border: 1px solid var(--glass-line) !important;
   background: var(--glass-bg) !important;
 }
 .st-ai::after, .ai-btn::after { content: none !important; display: none !important; }
-#food-ring .mtl-h svg { display: inline-block !important; width: 14px !important; height: 14px !important; margin: 0 !important; }
+
+/* ---- Eat: one HP/SP-style status card (calories + protein / carbs / fat) ---- */
+#food-ring { margin: 4px 0 12px; }
+.hp {
+  display: grid; gap: 12px; padding: 14px 14px 12px; border-radius: 18px;
+  background: var(--glass-bg); border: 1px solid var(--glass-line); box-shadow: var(--glass-shadow);
+}
+.hp-r { display: grid; grid-template-columns: 92px minmax(0, 1fr) 100px; align-items: center; column-gap: 10px; }
+.hp-l { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 13px; color: #fff; white-space: nowrap; }
+.hp-l i { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,.14); display: grid; place-items: center; flex: none; }
+.hp-l svg { display: block !important; width: 13px !important; height: 13px !important; margin: 0 !important; }
+.hp-b { height: 10px; border-radius: 999px; background: rgba(255,255,255,.10); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); overflow: hidden; }
+.hp-b > i { display: block; height: 100%; border-radius: 999px; background: var(--hp, #fff); transition: width .3s; }
+.hp-r.ka { --hp: #ffffff; }
+.hp-r.p   { --hp: #fdba74; }
+.hp-r.c   { --hp: #a7f3d0; }
+.hp-r.f   { --hp: #a5f3fc; }
+.hp-v { font-size: 12px; color: rgba(255,255,255,.7); font-variant-numeric: tabular-nums; min-width: 96px; text-align: right; }
+.hp-v b { color: #fff; font-size: 14px; }
+
+/* meal rows: no ring around the + button */
+.dm-add { border: 0 !important; background: none !important; }
+.dm-add.on { background: #fff !important; }
+
+/* "+ log food" sits in the Daily meals header */
+.dm-h { align-items: center; gap: 10px; }
+.dm-h b { margin-right: auto; }
+.dm-slot { display: contents; }
+#v-food .dm-h #food-add {
+  position: static !important; width: auto !important; height: 34px !important; min-height: 0 !important;
+  padding: 0 14px !important; margin: 0 !important; border-radius: 999px !important;
+  display: inline-flex !important; align-items: center; gap: 6px;
+  background: var(--glass-bg) !important; border: 1px solid var(--glass-line) !important; box-shadow: none !important;
+  color: #fff !important; font-size: 13px !important; font-weight: 600; line-height: 1;
+}
+#v-food .dm-h #food-add::before { content: "+"; position: static !important; font-size: 18px !important; color: #fff !important; line-height: 1; }
+#v-food .dm-h #food-add > *, #v-food .dm-h #food-add span { display: inline !important; }
+#macro-bars:empty { display: none !important; }
