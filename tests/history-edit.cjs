@@ -294,7 +294,7 @@ module.exports = async function historyEdit(browser, url) {
     assert.match(await page.locator("#wo-loc").textContent(), /Condo/);
     assert.equal(await page.locator(".note-in").inputValue(), record.note);
     assert.deepEqual(await page.locator("#exs .mk-t b").allTextContents(), Object.values(record.names));
-    await page.locator(".ls-next").click();
+    await page.locator("#exs .wl-next").click();
     const card = page.locator("#exs .pg-on");
     await card.locator(".ls-del").first().click();
     await page.locator('[data-cf="1"]').click();
@@ -319,8 +319,8 @@ module.exports = async function historyEdit(browser, url) {
 
     const program = await page.evaluate(() => PROGS.push);
     await open(0);
-    await page.locator(".ls-next").click();
-    await page.locator(".ls-next").click();
+    await page.locator("#exs .wl-next").click();
+    await page.locator("#exs .wl-next").click();
     await card.locator(".ls-del").click();
     await page.locator('[data-cf="1"]').click();
     await finish();
