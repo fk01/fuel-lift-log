@@ -14,3 +14,6 @@
 - ช่องเซ็ต/ครั้ง: เส้นใต้อย่างเดียว ไม่มีกรอบข้าง, ตัด Set/reps
 - "+ Add a warm-up exercise" ไม่มีพื้น
 - program-manager.js, glass-cards.css v=83
+
+## รอบ 3
+ไฮไลท์หลัง "+ Add a warm-up exercise" = backdrop-filter blur(16px) จากกฎ glass เก่า (app.css:2028) → none. สแกนทุกหน้า: ไม่เหลือปุ่มพื้นใสที่ติด blur (glass-cards.css v=84)
