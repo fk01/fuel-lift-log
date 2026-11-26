@@ -253,8 +253,8 @@
 .msh-st, .msh-st i { color: #fff !important; }
 .msh-st i { background: #fff !important; }
 
-/* Today: Start is a solid white pill with dark text (never black, never a bare label) */
+/* Today: Start looks exactly like Train's Start — a bare white label (no pill, no fill, no ring) */
 #v-home .hq-ps.primary, #v-home .hq-go.primary, #v-home .btn.primary[data-start], #v-home [data-pstart].btn.primary {
-  background: #fff !important; color: #141518 !important; border: 0 !important; box-shadow: none !important;
-  border-radius: 999px !important; font-weight: 700 !important;
+  background: transparent !important; color: #fff !important; border: 0 !important; box-shadow: none !important;
+  font-weight: 600 !important;
 }
