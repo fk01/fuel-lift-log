@@ -158,3 +158,18 @@
 
 /* Eat: drop the "Protein left … Next …" status line */
 #v-food #status { display: none !important; }
+
+/* ---- active workout, round 2: no dark solids ---- */
+/* finish ✓ in the top bar */
+#v-gym #wo-top:not([hidden]) > .wt-fin,
+.wt-fin {
+  background: var(--glass-bg) !important;
+  border: 1.5px solid #fff !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+/* − (remove set) */
+#v-gym .ex .ls-del {
+  background: rgba(255,255,255,.10) !important;
+  color: #fff !important;
+}
