@@ -947,3 +947,11 @@ html body #pm-modal .pm-row.pm-drag { position: relative; z-index: 5; background
 html body #pm-modal .pm-row.pm-drag .pi-no { background: #fff !important; color: #141518 !important; cursor: grabbing; }
 html body #pm-modal .pm-dragging { -webkit-user-select: none; user-select: none; }
 html body #pm-modal .pm-hint { display: block; font-size: 12px; color: rgba(255,255,255,.5); margin: 2px 0 -2px; }
+
+/* toast ("✓ Saved" …): frosted, opaque enough that the text behind never shows through; no outline pill */
+html body .toast {
+  background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.05)), rgba(28,30,34,.94) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(1.1) !important; backdrop-filter: blur(20px) saturate(1.1) !important;
+  color: #fff !important; border: 0 !important; border-radius: 14px !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,.45) !important; padding: 10px 18px !important; font-weight: 600 !important;
+}
