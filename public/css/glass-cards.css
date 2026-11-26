@@ -66,3 +66,33 @@
 #v-gym .ls-next .ls-th {
   display: none !important;
 }
+
+/* ---- active workout: same glass language as the rest of the app ---- */
+/* exercise card: stronger selector than the legacy solid #15171b rule */
+#v-gym #exs .ex,
+#v-gym #exs .ex.pg-on {
+  /* data-entry card: a thin dark base keeps the numbers readable while the art still shows */
+  background: var(--glass-bg), rgba(10,11,14,.5) !important;
+  border: 1px solid var(--glass-line) !important;
+  box-shadow: var(--glass-shadow) !important;
+}
+/* pager ‹ › : round, like every other control (were square boxes) */
+#v-gym #exs.paged .wo-pager .btn {
+  width: 44px; min-width: 44px; height: 44px; min-height: 44px; padding: 0;
+  border-radius: 50% !important;
+  display: grid; place-items: center;
+}
+/* kg / reps pills: the number field must not draw its own dark blob inside the pill */
+#v-gym .ex .sets.ls .mk-pill input[data-pad],
+#v-gym .ex .mk-pill input {
+  background: transparent !important;
+  border: 0 !important;
+}
+/* solid dark chips inside the card → light glass tint */
+#v-gym .ex .ls-n span,
+#v-gym .ex .ls-add i,
+#v-gym .ex .mk-more,
+#v-gym .ex .memo {
+  background: rgba(255,255,255,.10) !important;
+}
+#v-gym .ex .ls-add { border-top-color: rgba(255,255,255,.12) !important; }
