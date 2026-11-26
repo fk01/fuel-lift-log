@@ -124,7 +124,7 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 430, height: 932 }
       assert.ok(sizes.length && sizes.every(size => size >= minimum), `${selector}: ${sizes.join(", ")}`);
     };
 
-    await assertTargets(".tabbar .tab:visible, .ex.pg-on :is(.ls-add, .ls-del, .ls-n input, .mk-more)");
+    await assertTargets(".tabbar .tab:visible, .ex.pg-on :is(.ls-add, .ls-n input, .mk-more)");
     await assertFontSize(".ex.pg-on input[type=number]", 16);
 
     await page.emulateMedia({ reducedMotion: "reduce" });

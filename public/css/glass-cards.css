@@ -496,3 +496,46 @@ html body #v-gym #wo-top .wo-back, html body .wo-back {
 }
 html body .wo-back > *, html body .wo-back span { display: none !important; }
 html body .wo-back::before, html body .wo-back::after { content: none !important; display: none !important; }
+
+/* ---- workout option D ---- */
+/* list head: "Push A · 0/9" + "+ Add exercise" on one line; the standalone Add button above is hidden */
+.wl-head { grid-template-columns: 1fr auto !important; align-items: center !important; }
+.wl-head span { font-weight: 400 !important; }
+.wl-head span b { font-weight: 700; }
+.wl-head span small { color: rgba(255,255,255,.6); }
+.wl-add { background: none !important; border: 0 !important; color: #fff !important; font: 500 14px var(--f-body); padding: 0 2px; min-height: 40px; cursor: pointer; }
+html body #v-gym #wo-add:has(+ #exs.wo-list) { display: none !important; }
+html body .wl-rep { font-size: 18px !important; padding: 0 10px !important; }
+/* set rows: [n] [− 12 kg +] [− 8 +] [tick] */
+html body #v-gym .ex .sets.ls.st-d { grid-template-columns: 18px minmax(0,1fr) minmax(0,1fr) 44px !important; grid-auto-flow: row dense !important; gap: 10px 8px !important; }
+html body #v-gym .ex .sets.st-d .st-num { grid-column: 1; font: 13px var(--f-num, ui-monospace, monospace); color: rgba(255,255,255,.55); text-align: center; }
+html body #v-gym .ex .sets.st-d .mk-pill:has(input[data-pad="kg"]) { grid-column: 2; }
+html body #v-gym .ex .sets.st-d .mk-pill:has(input[data-pad="reps"]) { grid-column: 3; }
+html body #v-gym .ex .sets.st-d .ls-n { grid-column: 4; }
+html body #v-gym .ex .sets.st-d .ls-x, html body #v-gym .ex .sets.st-d .ls-del { display: none !important; }
+html body #v-gym .ex .sets.st-d .mk-pill {
+  display: flex !important; align-items: center; justify-content: space-between; gap: 2px; padding: 0 2px !important;
+  height: 46px; border-radius: 14px !important; min-width: 0; box-sizing: border-box;
+}
+html body #v-gym .ex .sets.st-d .mk-pill input { flex: 1 1 auto; min-width: 0 !important; width: auto !important; text-align: right !important; }
+html body #v-gym .ex .sets.st-d .mk-pill i { flex: none; margin-right: 2px; }
+.st-pm { flex: none; width: 32px; height: 44px; background: none; border: 0; color: rgba(255,255,255,.75); font: 500 20px/1 var(--f-body); cursor: pointer; padding: 0; position: relative; }
+.st-pm::before { content: ""; position: absolute; inset: 0 -4px; }
+/* tick on the right: plain ring, white when done */
+html body #v-gym .ex .sets.st-d .ls-n span { background: none !important; border: 1.5px solid rgba(255,255,255,.45) !important; font-size: 0 !important; }
+html body #v-gym .ex .sets.st-d .ls-n input:checked + span { background: #fff !important; border-color: #fff !important; color: #141518 !important; }
+html body #v-gym .ex .sets.st-d .ls-n input:checked + span::after { content: "✓"; font-size: 18px; }
+/* Add set + History on one line */
+html body #v-gym #exs .ex.pg-on { display: flex !important; flex-wrap: wrap; align-items: center; column-gap: 12px; }
+html body #v-gym #exs .ex.pg-on > * { flex: 1 1 100%; min-width: 0; }
+html body #v-gym #exs .ex.pg-on > .ls-add { flex: 1 1 auto; width: auto !important; border-top: 0 !important; }
+html body #v-gym #exs .ex.pg-on > .ls-add i { display: none !important; }
+html body #v-gym #exs .ex.pg-on > .ls-add span::before { content: "+ "; }
+html body #v-gym #exs .ex.pg-on > details.log:not([open]) { flex: 0 0 auto; }
+html body #v-gym .ex .sets.st-d .mk-pill i { margin-left: 4px !important; }
+html body #v-gym .ex .sets.st-d .mk-pill input { padding-right: 0 !important; }
+html body #v-gym .ex .sets.st-d .mk-pill input { flex: 0 1 4.2ch !important; min-width: 2.6ch !important; width: 4.2ch !important; text-align: center !important; }
+html body #v-gym .ex .sets.st-d .mk-pill:has(input[data-pad="reps"]) i { display: none !important; }
+html body #v-gym .ex .sets.st-d .mk-pill:has(input[data-pad="kg"]) i { font-size: 12px !important; margin-left: 0 !important; }
+html body #v-gym .ex .sets.st-d .mk-pill { justify-content: space-between !important; }
+.st-pm { width: 28px !important; }
