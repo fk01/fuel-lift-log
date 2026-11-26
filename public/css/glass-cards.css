@@ -146,12 +146,15 @@
 .dm-h b { margin-right: auto; }
 .dm-slot { display: contents; }
 #v-food .dm-h #food-add {
-  position: static !important; width: auto !important; height: 34px !important; min-height: 0 !important;
-  padding: 0 14px !important; margin: 0 !important; border-radius: 999px !important;
-  display: inline-flex !important; align-items: center; gap: 6px;
-  background: var(--glass-bg) !important; border: 1px solid var(--glass-line) !important; box-shadow: none !important;
-  color: #fff !important; font-size: 13px !important; font-weight: 600; line-height: 1;
+  position: static !important; width: auto !important; height: auto !important; min-height: 0 !important;
+  padding: 4px 0 !important; margin: 0 !important; border-radius: 0 !important;
+  display: inline-flex !important; align-items: center; gap: 4px;
+  background: none !important; border: 0 !important; box-shadow: none !important;
+  color: #fff !important; font-size: 14px !important; font-weight: 600; line-height: 1;
 }
 #v-food .dm-h #food-add::before { content: "+"; position: static !important; font-size: 18px !important; color: #fff !important; line-height: 1; }
 #v-food .dm-h #food-add > *, #v-food .dm-h #food-add span { display: inline !important; }
 #macro-bars:empty { display: none !important; }
+
+/* Eat: drop the "Protein left … Next …" status line */
+#v-food #status { display: none !important; }
