@@ -72,13 +72,8 @@
     var btn = document.getElementById("wo-add");
     var box = document.getElementById("exs");
     if (!btn || !box) return;
-    // Prefer right after the Next teaser so gap is minimal
-    var next = box.querySelector(".ls-next");
-    if (next) {
-      if (btn.previousElementSibling !== next) next.after(btn);
-    } else if (btn.previousElementSibling !== box) {
-      box.after(btn);
-    }
+    // Keep the button OUTSIDE #exs: renderGym rewrites #exs, which would destroy it and crash the next render.
+    if (btn.previousElementSibling !== box) box.after(btn);
   }
 
   function forceVisibleCard() {
@@ -93,7 +88,9 @@
       cards.forEach(function (c) { c.classList.remove("pg-on"); });
       cards[woIdx].classList.add("pg-on");
     } else {
-      cards.forEach(function (c) { c.classList.add("pg-on"); });
+      // no active workout: nothing is "on screen" (the list is hidden), so don't mark cards as current
+      var live = typeof picked !== "undefined" && picked;
+      cards.forEach(function (c) { c.classList.toggle("pg-on", live); });
     }
     var cur = cards[woIdx];
     var nextBtn = box.querySelector(".ls-next");

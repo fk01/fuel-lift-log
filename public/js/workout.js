@@ -1,3 +1,445 @@
-/* workout.js — load last good core, then local hard fixes */
-document.write('<script src="https://cdn.jsdelivr.net/gh/fk01/fuel-lift-log@89ac7cbcdd31e8804eb99ebdcbcfe6d883b114a2/public/js/workout.js"><\/script>');
-document.write('<script src="/js/workout-pager-fix.js?v=2826"><\/script>');
+// workout.js — set logging, session history, saving a workout
+// Classic script: shares globals with the other files in /js (load order is set in index.html).
+// History owns its exercise list. A new workout starts with the current program.
+const sessEx=()=>(draft.historyExercises||PROGS[cur]?.ex||[]).concat(draft.extra||[]);
+const isBlankWorkoutWeight=kg=>kg==null||kg==="";
+const allowsBlankWorkoutWeight=e=>eqOf(e).every(eq=>eq==="body"||eq==="bench"||eq==="bar");
+const hasMissingWorkoutWeight=exercises=>exercises.some(e=>!allowsBlankWorkoutWeight(e)&&
+  (draft.ex?.[e.id]||[]).some(r=>r.ok&&isBlankWorkoutWeight(r.kg)));
+let foldPref={};   // manual fold/unfold per exercise id; without one, a card folds once every set is ticked
+const altName=id=>(EXLIB.find(q=>q.id===id)||{}).n||(exName(id)!==id?exName(id):"");
+function renderEx(){
+  const box=document.getElementById("exs");box.innerHTML="";
+  if(editing){renderEdit(box);return}
+  draft.ex=draft.ex||{};
+  if(picked&&!editing){const n=document.createElement("input");n.className="note-in";n.placeholder="✎ "+t("โน้ตวันนี้…");n.value=draft.note||"";n.addEventListener("input",()=>{draft.note=n.value;save("gymdraft",draft)});box.appendChild(n)}
+  (editing?PROGS[cur].ex:sessEx()).forEach((e,ei)=>{if(e.id===editId){editCard(box,e,ei);return}
+    const last=lastFor(e.id),u=e.u||"kg",id=CSS.escape(e.id);
+    const allowsBlank=!draft.fromHist&&allowsBlankWorkoutWeight(e);
+    // Imported History rows can retain null or omitted kg. The keypad writes "" when cleared.
+    const needsWeight=kg=>draft.fromHist?kg==="":!allowsBlank&&isBlankWorkoutWeight(kg);
+    const rows=draft.ex[e.id]||(draft.ex[e.id]=Array.from({length:e.s},(_,i)=>({kg:last?.sets[i]?.kg??"",reps:"",ok:false})));
+    const hitAll=last&&last.sets.length>=e.s&&last.sets.every(s=>+s.reps>=+(e.r.split("-")[1]||e.r));
+    const card=document.createElement("div");card.className="ex";
+    let lastTxt=last?`${t("ล่าสุด")} ${thDate(last.date,{day:"numeric",month:"short"})}: ${last.sets.map(s=>`${toDisp(s.kg,u)}×${s.reps}`).join(" · ")} ${u}`:t("ครั้งแรก — เลือกน้ำหนักที่ยกได้ประมาณ 12 ครั้งสบายๆ");
+    if(hitAll)lastTxt+=` <span class="up">↑ ${t("ลอง")} ${u==="kg"?"+2.5 kg":"+5 lb"}</span>`;
+    const th=gifOf(e),e1=last?Math.round(Math.max(...last.sets.map(q=>(+q.kg||0)*(1+(+q.reps||0)/30)))*(u==="lb"?LB:1)):0;
+    card.innerHTML=`<div class="row-head"><span class="ex-name" data-fold role="button" tabindex="0" aria-label="${t("ย่อ/ขยาย")} ${esc(e.n)}" style="display:flex;gap:8px;align-items:center;cursor:pointer"><span class="fold-i"></span>${howBtn(e)}<span>${e.z} ${esc(e.n)}${e.swap?` <i class="swap-tag">${t("แปลงแล้ว")}${e.swapN?" · "+t("แทน")+" "+esc(e.swapN):""}</i>`:""}${safeUrl(e.link)?` <a href="${esc(safeUrl(e.link))}" target="_blank" rel="noopener" style="color:var(--up);font-size:var(--t-meta);white-space:nowrap">▶ ${t("ดูวิธีเล่น")}</a>`:""}</span></span><span style="display:flex;gap:8px;align-items:center"><span class="macro">${e.s} ${t("เซ็ต")} × ${e.r} ${t("ครั้ง")}${HEAVY.includes(e.id)?` · ${t("วอม")}`:""} · <b style="color:var(--fg)">${u}</b></span>${e.alt&&altName(e.alt)?`<button class="btn sm" data-alt>⇄ ${esc(altName(e.alt))}</button>`:""}<button class="btn sm" data-edit aria-label="${t("แก้ไข")} ${esc(e.n)}">✎ ${t("แก้ไข")}</button></span></div>
+      <div class="last fold-sum"></div>
+      <div class="row-head"><div class="last">${lastTxt}</div><div class="restset">⏱ <button data-rm-rest aria-label="− ${esc(e.n)}">−</button><b>${fmt(restFor(e))}</b><button data-add-rest aria-label="+ ${esc(e.n)}">+</button></div></div>
+      ${HEAVY.includes(e.id)?(()=>{const w=+(last&&last.sets[0]&&last.sets[0].kg)||0,r=v=>toDisp(Math.max(0,Math.round(v/2.5)*2.5),u);return `<div class="zone">${t("วอร์มก่อน")}: ${w?`${r(w*.5)}${u} × 8 → ${r(w*.75)}${u} × 3`:t("เบาๆ 8 ครั้ง แล้วหนักขึ้น 3 ครั้ง")}</div>`})():""}
+      <div class="sets"><span class="h">${t("เซ็ต")}</span><button class="h" data-unit aria-label="${t("หน่วย")} ${esc(e.n)}" style="border:1px solid var(--line);background:none;color:var(--fg);border-radius:999px;font-family:var(--f-num);font-size:var(--t-label);cursor:pointer;padding:2px 0">${u} ⇄</button><span class="h">${t("ครั้ง")}</span><span class="h">✓</span>
+      ${rows.map((r,i)=>`<span class="n">${i+1}</span><input type="number" readonly inputmode="none" data-pad="kg" id="kg-${esc(e.id)}-${i}" value="${toDisp(r.kg,u)}" placeholder="${last&&last.sets[i]&&+last.sets[i].kg?toDisp(last.sets[i].kg,u):last&&last.sets[0]&&+last.sets[0].kg?toDisp(last.sets[0].kg,u):u}" aria-label="${esc(e.n)} ${i+1} weight"><input type="number" readonly inputmode="none" data-pad="reps" id="rp-${esc(e.id)}-${i}" value="${esc(r.reps??"")}" placeholder="${e.r}" aria-label="${esc(e.n)} ${i+1} reps"><input type="checkbox" id="ok-${esc(e.id)}-${i}" ${r.ok?"checked":""} aria-label="${i+1} done">`).join("")}
+      </div>
+      <input class="memo" data-memo placeholder="${t("เมโม…")}" value="${esc((draft.memo||{})[e.id]||"")}">
+      <div class="actions"><button class="btn sm" data-add>+ ${t("เซ็ต")}</button>${(draft.extra||[]).includes(e)?`<button class="btn sm ghost" data-unextra>✕ ${t("เอาท่าออก")}</button>`:""}${last?`<button class="btn sm" data-load>↺ ${t("ใช้ค่าครั้งก่อน")}</button>`:""}<button class="btn sm" data-all>✓✓ ${t("ติ๊กทั้งหมด")}</button>${e1?`<span class="macro" style="margin-left:auto;align-self:center">e1RM ${e1} ${u}</span>`:""}${rows.length>1?`<button class="btn sm ghost" data-del>− ${t("เซ็ต")}</button>`:""}</div>
+      ${exHistory(e.id)}`;
+    const allOk=()=>rows.length>0&&rows.every(r=>r.ok);
+    const foldCard=()=>{const f=foldPref[e.id]??allOk();card.classList.toggle("folded",f);card.querySelector("[data-fold]").setAttribute("aria-expanded",!f);
+      const done=rows.filter(r=>r.ok);card.querySelector(".fold-sum").innerHTML=`<span class="${allOk()?"up":""}">✓ ${done.length}/${rows.length}</span>${done.length?" · "+done.map(r=>`${toDisp(r.kg,u)}×${r.reps}`).join(" · ")+" "+u:""}${allOk()?` <span class="fold-edit">· ✎ ${t("แตะเพื่อแก้")}</span>`:""}`};
+    card.querySelector("[data-fold]").addEventListener("click",ev=>{if(ev.target.closest("a"))return;foldPref[e.id]=!card.classList.contains("folded");foldCard()});
+    card.querySelector(".fold-sum").addEventListener("click",()=>{if(!card.classList.contains("folded"))return;foldPref[e.id]=false;foldCard()});
+    foldCard();
+    rows.forEach((r,i)=>{
+      const kgBox=card.querySelector(`#kg-${id}-${i}`),okBox=card.querySelector(`#ok-${id}-${i}`);
+      kgBox.addEventListener("input",ev=>{
+        r.kg=fromDisp(ev.target.value,u);
+        if(r.ok&&needsWeight(r.kg)){
+          r.ok=okBox.checked=false;
+          delete foldPref[e.id];foldCard();updWoBar();try{renderHero()}catch(_){}
+          toast(t("ล้างน้ำหนักและยกเลิกติ๊กเซ็ตนี้แล้ว"));
+        }
+        save("gymdraft",draft);
+      });
+      card.querySelector(`#rp-${id}-${i}`).addEventListener("input",ev=>{r.reps=ev.target.value;save("gymdraft",draft)});
+      okBox.addEventListener("change",()=>{
+        if(okBox.checked){
+          const first=rows.findIndex(q=>!q.ok);
+          if(first>=0&&first<i){okBox.checked=false;card.querySelector(`#ok-${id}-${first}`)?.click();return}
+          if(needsWeight(r.kg)){
+            const previous=rows.slice(0,i).reverse().find(q=>+q.kg>0);
+            if(!previous){okBox.checked=false;toast(t("ใส่น้ำหนักก่อนติ๊ก"));openPad(kgBox);return}
+            r.kg=previous.kg;kgBox.value=toDisp(r.kg,u);
+          }
+        }
+        r.ok=okBox.checked;try{navigator.vibrate&&navigator.vibrate(r.ok?15:0)}catch(_){}updWoBar();
+        if(r.ok&&!r.reps){r.reps=e.r.split("-")[0];card.querySelector(`#rp-${id}-${i}`).value=r.reps}save("gymdraft",draft);
+        delete foldPref[e.id];foldCard();try{renderHero()}catch(_){}if(r.ok)startRest(e,i,rows)});
+    });
+    card.querySelector("[data-load]")?.addEventListener("click",()=>{   // copy last session's weights and reps into this session
+      last.sets.forEach((q,i)=>{if(!rows[i])rows.push({kg:"",reps:"",ok:false});rows[i].kg=q.kg;rows[i].reps=String(q.reps)});save("gymdraft",draft);renderEx();toast("↺ "+e.n)});
+    card.querySelector("[data-memo]").addEventListener("input",ev=>{draft.memo=draft.memo||{};draft.memo[e.id]=ev.target.value;save("gymdraft",draft)});
+    card.querySelector("[data-unextra]")?.addEventListener("click",async()=>{if(!await cfm(`${t("เอาท่านี้ออก?")}<br>${esc(e.n)}`,t("เซ็ตที่บันทึกในท่านี้จะหายด้วย"),t("เอาออก_cf").replace(/_cf$/,""),1))return;draft.extra=draft.extra.filter(x=>x!==e);if(draft.ex)delete draft.ex[e.id];save("gymdraft",draft);renderEx();updWoBar()});
+    card.querySelector("[data-all]").addEventListener("click",()=>{
+      const fill=rows.filter(r=>!r.ok);if(!fill.length)return;
+      const lastWeight=last?.sets[0]?.kg;
+      for(const r of fill){
+        if(needsWeight(r.kg)){
+          if(isBlankWorkoutWeight(lastWeight))continue;
+          r.kg=lastWeight;
+        }
+        r.ok=true;if(!r.reps)r.reps=e.r.split("-")[0];
+      }
+      if(fill.some(r=>!r.ok))toast(t("ใส่น้ำหนักก่อนติ๊ก"));
+      save("gymdraft",draft);renderEx();updWoBar();try{renderHero()}catch(_){}
+    });
+    const setRest=d=>{restCfg[e.id]=Math.max(15,Math.min(600,restFor(e)+d));save("restcfg",restCfg);card.querySelector(".restset b").textContent=fmt(restCfg[e.id])};
+    card.querySelector("[data-alt]")?.addEventListener("click",()=>{   // swap this slot with its alternate (e.g. Chest Press ⇄ Peck Deck Fly)
+      const list=PROGS[cur].ex,i=list.indexOf(e),x=EXLIB.find(q=>q.id===e.alt)||{id:e.alt,n:exName(e.alt),z:"🔩"};if(i<0)return;
+      const n={...libPick(x),s:e.s,r:e.r,alt:e.id};if(e.main)n.main=1;list[i]=n;if(draft.ex)delete draft.ex[e.id];saveProgs();save("gymdraft",draft);renderGym();toast("⇄ "+n.n)});
+    card.querySelector("[data-edit]").addEventListener("click",()=>{editId=e.id;renderEx()});
+    card.querySelector("[data-unit]").addEventListener("click",()=>{const next=u==="kg"?"lb":"kg";if(draft.fromHist){e.u=next;save("gymdraft",draft)}else libUpdate(e.id,{u:next});renderEx()});
+    card.querySelector("[data-rm-rest]").addEventListener("click",()=>setRest(-15));
+    card.querySelector("[data-add-rest]").addEventListener("click",()=>setRest(15));
+    card.querySelector("[data-add]").addEventListener("click",()=>{const l=rows[rows.length-1];rows.push({kg:l?.kg??"",reps:"",ok:false});save("gymdraft",draft);renderEx()});
+    card.querySelector("[data-del]")?.addEventListener("click",async()=>{if(!await cfm(`${t("ลบเซ็ตสุดท้าย?")}`,esc(e.n)+" · "+t("เซ็ต")+" "+rows.length,t("ลบเซ็ต_cf").replace(/_cf$/,""),1))return;rows.pop();save("gymdraft",draft);renderEx()});
+    box.appendChild(card);
+  });
+}
+function exHistory(id){const u=uOf(id);
+  const all=logs.filter(l=>l.ex[id]&&l.ex[id].length&&logLoc(l)===workoutLoc()),h=all.slice(-1);   // latest only; the rest lives in the chart
+  if(!h.length)return"";
+  return `<details class="log"><summary>${t("ประวัติ")} (${all.length})</summary><button class="btn sm" data-chart="${id}" style="margin-top:6px">📈 ${t("ดูกราฟ")}</button><table>${h.map(l=>`<tr><td>${thDate(l.date,{day:"numeric",month:"short"})}</td><td>${l.ex[id].map(s=>`${toDisp(s.kg,u)}×${s.reps}`).join(" · ")} ${u}</td><td>${t("สูงสุด")} ${toDisp(best(l.ex[id]),u)}</td></tr>`).join("")}</table></details>`;
+}
+function historySetsTable(log){
+  return `<table>${Object.entries(log.ex).map(([id,sets])=>`<tr><td>${esc(exName(id,log))}</td><td>${sets.map(s=>`${toDisp(s.kg,uOf(id))}×${esc(s.reps??"")}`).join(" · ")} ${uOf(id)}</td></tr>`).join("")}</table>`;
+}
+function renderSessions(){
+  if(typeof renderHistChart==="function")renderHistChart();
+  const box=document.getElementById("sessions");box.innerHTML="";
+  if(!logs.length){box.innerHTML=emptyBox('bar','ยังไม่มีประวัติเวท','เริ่มจากการ์ดวันนี้ในหน้าเวท');return}
+  [...logs].reverse().slice(0,10).forEach((l,ri)=>{
+    const idx=logs.length-1-ri;const name=l.pn||progName(l.prog);
+    const d=document.createElement("details");d.className="ex log";
+    const vol=Object.values(l.ex).flat().reduce((a,s)=>a+(+s.kg||0)*(+s.reps||0),0);
+    d.innerHTML=`<summary><b>${thDate(l.date,{weekday:"short",day:"numeric",month:"short"})}</b> · ${esc(name)} · ${nU(Object.keys(l.ex).length,"ท่า")} · ${t("วอลุ่ม")} ${Math.round(vol).toLocaleString()} kg</summary>
+      ${historySetsTable(l)}
+      <div class="actions" style="margin-top:8px;align-items:center"><label style="display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:2px 10px">📅<input type="date" data-mv value="${l.date}" max="${TODAY}" aria-label="${t("ย้ายวัน")}" style="background:none;color:var(--fg);border:0;min-width:9.5em;min-height:26px;font-family:var(--f-num);font-size:var(--t-meta)"></label>${PROGS[l.prog]?`<button class="btn sm" data-ed>✎ ${t("แก้เซ็ต")}</button>`:""}<button class="btn sm" data-sh>↗ ${t("แชร์")}</button><button class="btn sm ghost" data-rm>${t("ลบรายการนี้")}</button></div>`;
+    d.querySelector("[data-sh]").addEventListener("click",()=>openShare(l));
+    d.querySelector("[data-mv]").addEventListener("change",ev=>{
+      const input=ev.currentTarget,date=input.value;
+      if(!date||date>TODAY||date===l.date)return;
+      const error=moveHistoryDate(l,date);
+      if(error){input.value=l.date;toast(error);return}
+      renderGym();toast(t("ย้ายวันแล้ว"));
+    });
+    d.querySelector("[data-ed]")?.addEventListener("click",()=>openHistoryEdit(l));
+    d.querySelector("[data-rm]").addEventListener("click",ev=>{const b=ev.target;
+      if(b.dataset.sure){detachHistoryDraft(l);logs.splice(idx,1);save("gymlog",logs);renderGym();toast(t("ลบแล้ว"))}else{b.dataset.sure=1;b.textContent=t("กดอีกครั้งเพื่อยืนยัน")}});
+    box.appendChild(d);
+  });
+}
+// A History entry has no immutable ID. Keep the complete selected version
+// in the draft, including records without a timestamp. Key order can change
+// in a JSON round trip without changing the saved workout.
+const historyVersion=log=>JSON.stringify(log,(_,value)=>
+  value&&typeof value==="object"&&!Array.isArray(value)
+    ?Object.fromEntries(Object.keys(value).sort().map(k=>[k,value[k]])):value);
+function moveHistoryDate(log,date){
+  // Another tab may have saved a workout since the History list was rendered.
+  const stored=load("gymlog",[]),entries=Array.isArray(stored)?stored:[];
+  const atDestination=entry=>entry.date===date&&entry.prog===log.prog;
+  if(logs.some(atDestination)||entries.some(atDestination))return t("วันที่เลือกมีบันทึกโปรแกรมนี้แล้ว");
+  const version=historyVersion(log);
+  const source=entries.find(entry=>entry.date===log.date&&entry.prog===log.prog&&historyVersion(entry)===version);
+  if(!source||!logs.includes(log))return t("ยืนยันบันทึกเดิมไม่ได้");
+  detachHistoryDraft(log);
+  source.date=date;
+  logs=entries.sort((a,b)=>a.date.localeCompare(b.date));
+  save("gymlog",logs);
+}
+function detachHistoryDraft(log){
+  if(draft.fromHist&&draft.day===log.date&&draft.prog===log.prog&&draft.historyVersion===historyVersion(log)){
+    draft.historyDetached=true;save("gymdraft",draft);
+  }
+}
+function openHistoryEdit(log){
+  const source=historyVersion(log);
+  const open=next=>{
+    draft=next;draft.historyVersion=source;delete draft.historyDetached;
+    DAY=log.date;cur=log.prog;editId=null;editing=false;picked=true;woIdx=draft.idx||0;
+    save("gymdraft",draft);location.hash="gym";renderAll();scrollAppTop(true);toast(t("แก้แล้วกด Save"));
+  };
+  if(!draft.fromHist){open(historyDraft(log));return}
+  const sameSlot=draft.day===log.date&&draft.prog===log.prog;
+  if(sameSlot&&!draft.historyDetached&&draft.historyVersion===source){open(draft);return}
+  const legacy=sameSlot&&!draft.historyVersion?historyDraft(log,draft):null;
+  const label=(day,name)=>esc(thDate(day,{day:"numeric",month:"short",year:"numeric"})+" · "+name);
+  const selected=label(log.date,log.pn||progName(log.prog));
+  const message=legacy
+    ?`<p class="note"><b>${selected}</b><br>${t("เมื่อบันทึก ฉบับร่างอาจเขียนทับเซ็ต โน้ต เมโม และสถานที่ตามรายการเปลี่ยนแปลงด้านล่าง")}</p>${historyChanges(log,editedHistoryRecord(log,legacy))}`
+    :`<p class="note">${t("ฉบับร่างที่เปิดอยู่")} · <b>${label(draft.day,progName(draft.prog))}</b><br>${t("รายการที่เลือก")} · <b>${selected}</b></p>`;
+  openGen(t(legacy?"ใช้ฉบับร่างกับบันทึกนี้?":"ทิ้งฉบับร่างที่เปิดอยู่?"),`${message}
+    ${legacy?`<button class="btn primary" data-resume-edit>${t("ใช้ฉบับร่างกับรายการนี้")}</button>`:""}<button class="btn" data-fresh-edit>${t("ทิ้งฉบับร่างและแก้รายการที่เลือก")}</button><button class="btn" data-gen-close>${t("ยกเลิก")}</button>`,b=>{
+    b.querySelector("[data-resume-edit]")?.addEventListener("click",()=>{closeGen();open(legacy)});
+    b.querySelector("[data-fresh-edit]").onclick=()=>{closeGen();open(historyDraft(log))};
+  });
+}
+function historyChanges(saved,proposed){
+  const changes=[];
+  const compare=(field,before,after)=>{
+    if(before!==after)changes.push(`<tr><th scope="row">${esc(field)}</th><td>${esc(before||"—")}</td><td>${esc(after||"—")}</td></tr>`);
+  };
+  const place=id=>id?(t(locById(id)?.name||id)):"";
+  const setsText=sets=>(sets||[]).map(({kg,reps,...metadata})=>{
+    const extras=Object.entries(metadata).map(([key,value])=>key+"="+JSON.stringify(value));
+    return `${kg??"—"} kg × ${reps??"—"}`+(extras.length?" ("+extras.join(", ")+")":"");
+  }).join("\n");
+  compare(t("โน้ตของการฝึก"),saved.note,proposed.note);
+  compare(t("สถานที่"),place(saved.loc),place(proposed.loc));
+  for(const id of new Set([...Object.keys(saved.ex),...Object.keys(proposed.ex)])){
+    const name=exName(id,proposed.ex[id]?proposed:saved);
+    compare(name,setsText(saved.ex[id]),setsText(proposed.ex[id]));
+    compare(name+" · "+t("เมโม"),saved.memo?.[id],proposed.memo?.[id]);
+  }
+  if(!changes.length)return `<p class="note">${t("ค่าที่บันทึกเหมือนกับฉบับร่าง")}</p>`;
+  return `<table style="width:100%;table-layout:fixed;white-space:pre-wrap;overflow-wrap:anywhere"><thead><tr><th>${t("ข้อมูล")}</th><th>${t("ค่าที่บันทึก")}</th><th>${t("หลังใช้ฉบับร่าง")}</th></tr></thead><tbody>${changes.join("")}</tbody></table>`;
+}
+function historyDraft(log,prior){
+  const historyExercises=[],ex={};
+  // A pre-upgrade draft already contained every recorded exercise. Missing
+  // entries were explicitly removed, and draft.extra owns any new exercises.
+  for(const [id,sets] of Object.entries(prior?.ex||log.ex)){
+    // Any old row could have been edited to match another saved set. Only
+    // indices captured together with a verified source can carry metadata.
+    ex[id]=prior?.ex?sets.map(({kg,reps,ok})=>({kg,reps,ok})):sets.map((s,sourceIndex)=>({kg:s.kg,reps:s.reps,ok:true,sourceIndex}));
+    if(prior?.extra?.some(e=>e.id===id))continue;
+    if(!log.ex[id]&&!sets.some(row=>row.ok||row.reps!==""&&row.reps!=null))continue;
+    const template=PROGS[log.prog]?.ex.find(e=>e.id===id)||EXLIB.find(e=>e.id===id)||{};
+    historyExercises.push({...libPick(template),id,n:exName(id,log),s:sets.length,r:template.r||"8-12"});
+  }
+  return {...prior,fromHist:1,started:1,day:log.date,prog:log.prog,loc:prior?.loc??log.loc,note:prior?.note??log.note,memo:{...log.memo,...prior?.memo},historyExercises,ex};
+}
+function editedHistoryRecord(log,edit=draft){
+  const rec={...log,ex:{}},names={...log.names},memo={...log.memo};
+  for(const e of edit.historyExercises.concat(edit.extra||[])){
+    const sets=[];
+    for(const row of edit.ex[e.id]||[]){
+      if(!row.ok)continue;
+      // The original index follows the row when another set is deleted.
+      const original=log.ex[e.id]?.[row.sourceIndex];
+      const set={...original};
+      if(row.kg!==original?.kg){
+        if(row.kg==="")continue;
+        set.kg=row.kg===null?null:+row.kg;
+      }
+      if(row.reps!==original?.reps){
+        if(row.reps==="")continue;
+        set.reps=+row.reps;
+      }
+      sets.push(set);
+    }
+    if(sets.length || log.ex[e.id]?.length===0){
+      rec.ex[e.id]=sets;
+      if(!log.ex[e.id])names[e.id]=e.n;
+      const text=edit.memo?.[e.id];
+      if(text!==memo[e.id]){if(text?.trim())memo[e.id]=text.trim();else delete memo[e.id]}
+    }
+  }
+  for(const id of Object.keys(log.ex)){
+    if(!rec.ex[id]){delete names[id];delete memo[id]}
+  }
+  if(log.names||Object.keys(names).length)rec.names=names;
+  if(log.memo||Object.keys(memo).length)rec.memo=memo;
+  if(edit.note!==log.note){if(edit.note?.trim())rec.note=edit.note.trim();else delete rec.note}
+  if(edit.loc)rec.loc=edit.loc;
+  return rec;
+}
+function newWorkoutRecord(day,prog){
+  const P=PROGS[prog];
+  const all=P.ex.concat(draft.extra||[]),ex={};
+  if(hasMissingWorkoutWeight(all))return null;
+  all.forEach(e=>{const s=(draft.ex[e.id]||[]).filter(r=>r.ok&&r.reps!=="").map(r=>({kg:+(r.kg??0),reps:+r.reps}));if(s.length)ex[e.id]=s});
+  const names={};all.forEach(e=>{if(ex[e.id])names[e.id]=e.n});
+  const memo={};Object.entries(draft.memo||{}).forEach(([k,v])=>{if(ex[k]&&v.trim())memo[k]=v.trim()});const note=(draft.note||"").trim();
+  const rec={date:day,prog,ex,names,loc:draft.loc||curLoc};if(PROGS[prog]&&PROGS[prog].name)rec.pn=PROGS[prog].name;if(day===TODAY)rec.at=Date.now();if(Object.keys(memo).length)rec.memo=memo;if(note)rec.note=note;
+  return rec;
+}
+function historyTargetIndex(entries,day,prog){
+  if(!Array.isArray(entries)||!draft.historyVersion||draft.historyDetached||draft.day!==day||draft.prog!==prog)return -1;
+  const index=entries.findIndex(l=>l.date===day&&l.prog===prog);
+  return index>=0&&historyVersion(entries[index])===draft.historyVersion?index:-1;
+}
+function commitDraft(day,prog,notify=false){
+  const refuse=message=>{if(notify)toast(t(message));return false};
+  if(!draft.ex||(!draft.fromHist&&!PROGS[prog]))return refuse("ยังไม่ได้ติ๊กเซ็ตไหนเลย");
+  // Another tab can save a workout while this draft is open.
+  const entries=load("gymlog",draft.fromHist?[]:logs);
+  const i=draft.fromHist?historyTargetIndex(entries,day,prog):entries.findIndex(l=>l.date===day&&l.prog===prog);
+  if(draft.fromHist&&(i<0||historyTargetIndex(logs,day,prog)<0))return false;
+  if(!draft.fromHist&&i>=0)return refuse("มีบันทึกโปรแกรมนี้ในวันที่ฝึกแล้ว ฉบับร่างยังอยู่");
+  const rec=draft.fromHist?editedHistoryRecord(entries[i]):newWorkoutRecord(day,prog);
+  if(!rec||!Object.keys(rec.ex).length){
+    const missingKg=!rec||hasMissingWorkoutWeight(sessEx());
+    return refuse(missingKg?"เซ็ตที่ติ๊กยังไม่ได้ใส่น้ำหนัก":"ยังไม่ได้ติ๊กเซ็ตไหนเลย");
+  }
+  logs=entries;
+  if(i>=0)logs[i]=rec;else logs.push(rec);
+  logs.sort((a,b)=>a.date.localeCompare(b.date));
+  save("gymlog",logs);draft={};save("gymdraft",draft);try{if(day===TODAY&&hasPlanToday())setDayMode(null)}catch(e){}return rec;
+}
+function checkHistoryTarget(){
+  if(!draft.fromHist||historyTargetIndex(logs,DAY,cur)>=0&&historyTargetIndex(load("gymlog",[]),DAY,cur)>=0)return true;
+  const older=!draft.historyVersion;
+  cfm(t("ยืนยันบันทึกเดิมไม่ได้"),t(older?"ฉบับร่างเก่าไม่มีข้อมูลยืนยันต้นฉบับ ไปที่ประวัติ ตรวจสอบรายการ แล้วเลือกแก้เซ็ต":"บันทึกเดิมมีการเปลี่ยนแปลง ย้ายวัน หรือลบแล้ว การแก้ไขยังอยู่ในหน้านี้"),t("ทิ้งการแก้ไขและกลับประวัติ"),1,t(older?"เก็บฉบับร่างและดูประวัติ":"แก้ไขต่อ")).then(discard=>{
+    if(discard)cancelProg();
+    if(discard||older){location.hash="stats";document.querySelector('#hist-mode [data-m="list"]').click()}
+  });
+  return false;
+}
+function trySaveWorkout(){
+  if(!checkHistoryTarget())return false;
+  return commitDraft(draft.day||DAY,draft.prog||cur,true);
+}
+// finishing with exercises left untouched: confirm once, listing what will be skipped
+function finishWorkout(){if(!checkHistoryTarget())return;const left=sessEx().filter(e=>!((draft.ex||{})[e.id]||[]).some(r=>r.ok));
+  if(!sessEx().some(e=>((draft.ex||{})[e.id]||[]).some(r=>r.ok))){toast(t("ยังไม่ได้ติ๊กเซ็ตไหนเลย"));return}
+  {const pg=woProgress();if(!left.length&&pg.done<pg.total){cfm(`${t("จบวันนี้เลยไหม?")}`,`${t("ทำไป")} ${pg.done}/${pg.total} ${t("เซ็ต")} · ${t("เซ็ตที่ยังไม่ติ๊กจะไม่ถูกบันทึก")}`,"✓ "+t("บันทึกเท่าที่เล่น"),0,t("เล่นต่อ")).then(ok=>{if(ok)doSave()});return}}
+  if(left.length){openGen(t("จบวันนี้เลยไหม?"),`<p class="note">${t("ท่าที่ยังไม่ได้เล่นจะไม่ถูกบันทึก")}</p><ul class="prog-ex" style="margin:0">${left.map(e=>`<li><b class="no">–</b><em class="nm">${e.z} ${esc(e.n)}</em><span class="ss"></span></li>`).join("")}</ul>
+    <div class="actions sheet-act"><button class="btn" data-gen-close>${t("เล่นต่อ")}</button><button class="btn primary" id="fin-ok" style="flex:1">✓ ${t("บันทึกเท่าที่เล่น")}</button></div>`,b=>b.querySelector("#fin-ok").addEventListener("click",()=>{document.getElementById("gen-sheet").hidden=true;doSave()}));return}
+  doSave()}
+document.getElementById("save-w").addEventListener("click",finishWorkout);
+function doSave(){
+  const back=draft.fromHist,saved=trySaveWorkout();if(!saved)return;
+  stopRest&&stopRest();if(back){DAY=TODAY}cur=nextProg();picked=false;chosen=false;editing=false;editId=null;renderAll();toast(t("บันทึกแล้ว ✅"));openShare(saved);
+}
+/* auto-save unsaved workout when the day ends */
+function autoCommitOld(){
+  if(draft.fromHist){
+    DAY=draft.day;
+    // Old app versions kept only the editable rows in a History draft.
+    if(!draft.historyExercises){
+      // Keep the old draft available for review without binding it to whoever
+      // currently occupies this slot. An explicit selection establishes that.
+      draft=historyDraft({date:draft.day,prog:draft.prog,ex:{}},draft);
+    }
+    return false;
+  }
+  if(draft.day&&draft.day<TODAY&&commitDraft(draft.day,draft.prog||cur)){cur=nextProg();toast(t("บันทึกเวทเมื่อวานให้แล้ว"));return true}return false}
+setInterval(()=>{const nd=dkey(new Date());if(nd===TODAY)return;
+  const prev=TODAY;TODAY=nd;autoCommitOld();if(DAY===prev&&!draft.fromHist){DAY=nd;draft.ex=draft.ex||{}}renderAll()},60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&dkey(new Date())!==TODAY){const prev=TODAY;TODAY=dkey(new Date());autoCommitOld();if(DAY===prev&&!draft.fromHist)DAY=TODAY;renderAll()}});
+// calendar moved to the Stats tab; the 📅 button jumps there
+document.getElementById("fold-btn").textContent="📅";document.getElementById("fold-btn").addEventListener("click",()=>{location.hash="stats"});
+function woProgress(){const ex=draft.ex||{};let done=0,total=0;sessEx().forEach(e=>{const r=ex[e.id]||[];total+=r.length||e.s;done+=r.filter(x=>x.ok).length});return{done,total,any:Object.values(ex).some(r=>r.some(x=>x.ok||x.reps!==""&&x.reps!=null))}}
+function updWoBar(){const c=document.getElementById("wo-count");if(!c)return;const p=woProgress();c.textContent=`${p.done}/${p.total}`;
+  const top=document.getElementById("wo-top");top.hidden=!picked||editing;const wl=document.getElementById("wo-loc");if(wl){const L=locById(workoutLoc());wl.textContent=`${L?.icon||"📍"} ${L?t(L.name):workoutLoc()}`}
+  const vol=Object.values(draft.ex||{}).flat().filter(r=>r.ok).reduce((a,r)=>a+(+r.kg||0)*(+r.reps||0),0);
+  document.getElementById("wo-vol").textContent=Math.round(vol).toLocaleString();document.getElementById("wo-sets").textContent=p.done;tickClock();
+  document.getElementById("tab-gym").classList.toggle("live",picked);
+  document.body.classList.toggle("wo-focus",picked&&!editing&&document.getElementById("locpick").hidden)}
+// focus mode: "‹ Today" leaves the session running (row shows In progress → Resume)
+document.getElementById("wo-back").addEventListener("click",()=>{setDayMode(null);pickAnyway=false;locPrev=null;renderGym();scrollAppTop()});
+// place of the running session can change any time
+document.getElementById("wo-loc").addEventListener("click",()=>{const ls=LOCS.filter(l=>hasType(l,"gym"));
+  openGen(t("เล่นที่ไหน?"),`<div class="chips">${ls.map(l=>`<button class="chip${l.id===workoutLoc()?" on":""}" data-wl="${esc(l.id)}">${esc(l.icon||"📍")} ${esc(t(l.name))}</button>`).join("")}</div><button class="menu-row" data-wlman><span class="mi">⚙</span><span class="mt"><b>${t("จัดการสถานที่")}</b></span><span class="mc">›</span></button>`,
+    b=>{b.querySelectorAll("[data-wl]").forEach(c=>c.addEventListener("click",()=>{draft.loc=c.dataset.wl;save("gymdraft",draft);if(!draft.fromHist){curLoc=draft.loc;locDay={date:TODAY,id:curLoc,prog:cur};save("locday",locDay)}closeGen();renderGym()}));
+      b.querySelector("[data-wlman]").addEventListener("click",openPlaces)})});
+function cancelProg(){const back=draft.fromHist;if(picked&&!back&&DAY===TODAY)setDayMode(null);picked=false;chosen=false;editing=false;editId=null;draft={prog:cur};save("gymdraft",draft);stopRest&&stopRest();updUnitBtn();if(back){DAY=TODAY;renderAll()}else renderGym()}
+// cancel: ask once (tap again within 3 s) when sets were already logged, so nothing is lost by accident
+// discard: immediate, with Undo (the bar brings the sets back)
+document.getElementById("cancel-w").addEventListener("click",async()=>{const any=woProgress().any;if(!await cfm(`${t("ยกเลิกทั้งหมด")}?`,any?t("เซ็ตที่ทำไว้จะหายทั้งหมด"):t("ยังไม่มีเซ็ตที่ติ๊ก"),t("ยกเลิกทั้งหมด"),1,t("เล่นต่อ")))return;cancelProg();if(any)undoLoud(t("ทิ้งแล้ว"));else toast(t("ยกเลิกการออกแล้ว"))});
+function renderGym(){setTimeout(()=>{try{renderToday()}catch(e){console.error(e)}},0);if(draft.prog==="free"&&!PROGS.free)PROGS.free={name:t("ออกแบบอิสระ"),sub:"",ex:[]};try{renderProgress()}catch(e){}try{renderStatsExtra()}catch(e){}try{renderHero()}catch(e){}
+  ["step3","step4"].forEach(id=>document.getElementById(id).hidden=!picked&&!editing);
+  document.getElementById("step1").classList.toggle("compact",(picked||editing)&&!document.getElementById("v-gym").hidden);document.getElementById("step2").hidden=picked||editing;
+  // resume a workout only if sets were actually logged (weights alone are pre-filled from last time)
+  if(!picked&&PROGS[draft.prog]&&(draft.started&&(draft.day||DAY)===DAY||draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.ok||x.reps!==""&&x.reps!=null)))){picked=true;cur=draft.prog;if(!draft.fromHist&&draft.loc&&locById(draft.loc))curLoc=draft.loc}
+  document.getElementById("pick-hint").hidden=picked;document.getElementById("exs").hidden=!picked&&!editing;
+  document.getElementById("step4").classList.toggle("locked",!picked);
+  document.getElementById("sn-2").classList.toggle("done",picked);document.getElementById("sn-3").classList.toggle("done",picked&&draft.ex&&Object.values(draft.ex).some(r=>r.some(x=>x.ok)));
+  document.getElementById("sn-1").classList.add("done");
+  const sb=document.getElementById("start-w"),row=document.getElementById("start-row");row.hidden=picked||editing||!chosen||!PROGS[cur];if(!row.hidden)sb.textContent=`▶ ${t("เริ่มออก")} · ${PROGS[cur].name}`;
+  document.getElementById("wo-add").hidden=!picked||editing;document.getElementById("edit-mode").hidden=cur==="free";const t3=document.querySelector("#step3 .step-t");if(t3)t3.textContent=PROGS[cur]&&picked?`${PROGS[cur].name} · ${t("กำลังเล่น")}`:t("กรอกน้ำหนัก");
+  renderProgs();renderEx();applyPager();renderSessions();document.getElementById("step4").hidden=editing||!picked;updWoBar();try{renderLocPick()}catch(e){console.error(e)}}
+document.getElementById("edit-w").addEventListener("click",()=>{if(!PROGS[cur])return;pmOnly=cur;pmFromList=false;renderPM();document.getElementById("pm-modal").hidden=false;window.scrollTo(0,0)});
+document.getElementById("start-w").addEventListener("click",()=>{if(!PROGS[cur])return;woIdx=0;draft.idx=0;draft.prog=cur;draft.started=1;draft.day=DAY;draft.loc=curLoc;draft.t0=Date.now();picked=true;chosen=false;save("gymdraft",draft);renderGym();
+  setTimeout(()=>document.getElementById("step3").scrollIntoView({behavior:smoothB(),block:"start"}),50)});
+
+/* ---------- collapsible step sections (Pick a program / Log your sets) ---------- */
+// step sections are plain headed sections now (no collapse, no numbers)
+try{localStorage.removeItem("stepfold")}catch(e){}
+
+/* ---------- workout clock (from Start, kept in the draft so it survives reopening the app) ---------- */
+function tickClock(){const el=document.getElementById("wo-clock");if(!el)return;if(!picked){el.textContent="00:00";return}
+  if(!draft.t0){draft.t0=Date.now();save("gymdraft",draft)}const s=Math.max(0,Math.floor((Date.now()-draft.t0)/1000));
+  const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;el.textContent=(h?h+":"+String(m).padStart(2,"0"):String(m).padStart(2,"0"))+":"+String(x).padStart(2,"0")}
+setInterval(()=>{if(picked)tickClock()},1000);
+document.getElementById("wo-finish").addEventListener("click",finishWorkout);
+
+/* ---------- + add an exercise to the running workout (session only), and the empty "free" workout ---------- */
+document.getElementById("wo-add").addEventListener("click",()=>openLib({add:1,skip:new Set(sessEx().map(e=>e.id)),onPick:async x=>{
+  if(!await cfm(`${t("เพิ่มท่านี้?")} <br>${esc(x.n)}`,`3 ${t("เซ็ต")} × 8-12`,`+ ${t("เพิ่มท่า_cf").replace(/_cf$/,"")}`)){document.getElementById("wo-add").click();return}
+  draft.extra=draft.extra||[];draft.extra.push({...libPick(x),s:3,r:"8-12"});save("gymdraft",draft);renderEx();updWoBar();
+  setTimeout(()=>{const c=[...document.querySelectorAll("#exs .ex")].pop();if(c)c.scrollIntoView({behavior:smoothB(),block:"center"})},60)}}));
+function startEmpty(){PROGS.free={name:t("ออกแบบอิสระ"),sub:"",ex:[]};cur="free";draft={prog:"free",loc:curLoc,ex:{},extra:[],started:1,day:DAY,t0:Date.now()};picked=true;chosen=false;
+  save("gymdraft",draft);renderGym();setTimeout(()=>document.getElementById("wo-add").click(),80)}
+document.getElementById("empty-w").addEventListener("click",startEmpty);
+
+/* ---------- one exercise at a time while training: ‹ 2/7 name › pager + swipe ---------- */
+let woIdx=(()=>{try{return +(JSON.parse(localStorage.getItem("gymdraft")||"{}").idx)||0}catch(e){return 0}})();
+function applyPager(){const box=document.getElementById("exs");if(!box)return;const cards=[...box.querySelectorAll(":scope>.ex")];
+  box.querySelector(".wo-pager")?.remove();const on=picked&&!editing&&cards.length>1;box.classList.toggle("paged",on);
+  cards.forEach(c=>c.classList.remove("pg-on"));if(!on)return;
+  woIdx=Math.max(0,Math.min(cards.length-1,woIdx));cards[woIdx].classList.add("pg-on");
+  const ex=sessEx(),e=ex[woIdx]||{},done=r=>(draft.ex[r.id]||[]).every(x=>x.ok);
+  const nav=document.createElement("div");nav.className="wo-pager";
+  nav.innerHTML=`<button class="btn sm" data-pg="-1" aria-label="prev">‹</button><span class="pg-mid"><small>${woIdx+1}/${cards.length}</small><span class="pg-dots">${ex.map((x,i)=>`<i class="${i===woIdx?"cur":done(x)?"ok":""}"></i>`).join("")}</span></span><button class="btn sm" data-pg="1" aria-label="next">›</button>`;
+  cards[0].before(nav);nav.querySelectorAll("[data-pg]").forEach(b=>b.addEventListener("click",()=>goEx(woIdx+ +b.dataset.pg)))}
+function goEx(i){const nc=document.querySelectorAll("#exs>.ex").length||1;woIdx=((i%nc)+nc)%nc;try{draft.idx=woIdx;localStorage.setItem("gymdraft",JSON.stringify(draft))}catch(_){}applyPager();const n=document.querySelector("#exs .wo-pager");if(n&&n.getBoundingClientRect().top<0)n.scrollIntoView({block:"start",behavior:smoothB()})}   // only pull back if the pager scrolled out above
+(()=>{const box=document.getElementById("exs");let x0=null,y0=0;box.addEventListener("touchstart",e=>{if(!box.classList.contains("paged")||e.target.closest("input,textarea"))return;x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+  box.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*1.5)goEx(woIdx+(dx<0?1:-1))},{passive:true})})();
+
+Object.assign(EN,{"ใส่น้ำหนักก่อนติ๊ก":"Enter the weight first","ล้างน้ำหนักและยกเลิกติ๊กเซ็ตนี้แล้ว":"Weight cleared and set unchecked"});
+Object.assign(EN,{"มีบันทึกโปรแกรมนี้ในวันที่ฝึกแล้ว ฉบับร่างยังอยู่":"This program is already saved for the workout date. Your draft is still open."});
+Object.assign(EN,{"วันที่เลือกมีบันทึกโปรแกรมนี้แล้ว":"This program is already logged on that date."});
+Object.assign(EN,{"ยืนยันบันทึกเดิมไม่ได้":"Cannot verify the original workout","บันทึกเดิมมีการเปลี่ยนแปลง ย้ายวัน หรือลบแล้ว การแก้ไขยังอยู่ในหน้านี้":"The original workout was changed, moved or deleted. Your edits are still open.","ฉบับร่างเก่าไม่มีข้อมูลยืนยันต้นฉบับ ไปที่ประวัติ ตรวจสอบรายการ แล้วเลือกแก้เซ็ต":"This older draft has no saved source version. Review the workout in History and choose Edit sets to resume.","ทิ้งการแก้ไขและกลับประวัติ":"Discard edits and return to History","แก้ไขต่อ":"Keep editing","เก็บฉบับร่างและดูประวัติ":"Keep draft and review History","ใช้ฉบับร่างกับบันทึกนี้?":"Apply the older draft to this workout?","เมื่อบันทึก ฉบับร่างอาจเขียนทับเซ็ต โน้ต เมโม และสถานที่ตามรายการเปลี่ยนแปลงด้านล่าง":"When you save, the draft can overwrite this workout’s sets, note, memos and location. Review the changes below.","ทิ้งฉบับร่างที่เปิดอยู่?":"Discard the open workout draft?","ฉบับร่างที่เปิดอยู่":"Open draft","รายการที่เลือก":"Selected entry","โน้ตของการฝึก":"Workout note","ค่าที่บันทึก":"Saved value","หลังใช้ฉบับร่าง":"After applying draft","ค่าที่บันทึกเหมือนกับฉบับร่าง":"The saved workout and draft have the same values.","ใช้ฉบับร่างกับรายการนี้":"Apply draft to this entry","ทิ้งฉบับร่างและแก้รายการที่เลือก":"Discard draft and edit this entry"});
+
+// renderEx() rebuilds every card; re-apply the pager so the current exercise stays shown (+Set / −Set / Tick all)
+{const _renderEx=renderEx;renderEx=function(){const r=_renderEx.apply(this,arguments);try{applyPager()}catch(e){}return r}}
+/* confirm sheet — always ask before adding/removing during a workout */
+function cfm(title,sub,ok,danger,no){return new Promise(res=>{let m=document.getElementById("cf-sheet");if(!m){m=document.createElement("div");m.id="cf-sheet";m.className="modal sheet";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");document.body.appendChild(m)}
+  m.innerHTML=`<div class="sheet-in"><div class="grab" aria-hidden="true"></div><div class="stack" style="gap:12px"><b class="cf-t">${title}</b>${sub?`<small class="note">${sub}</small>`:""}<div class="actions sheet-act"><button class="btn" data-cf="0">${no||t("ยกเลิก_cf").replace(/_cf$/,"")}</button><button class="btn ${danger?"danger":"primary"}" data-cf="1" style="flex:1">${ok}</button></div></div></div>`;
+  m.hidden=false;try{modalSync()}catch(_){}const end=v=>{m.hidden=true;try{modalSync()}catch(_){}res(v)};m.querySelectorAll("[data-cf]").forEach(b=>b.addEventListener("click",()=>end(b.dataset.cf==="1")));m.addEventListener("click",e=>{if(e.target===m)end(false)},{once:true})})}
+Object.assign(EN,{"ทำไป":"Done","เซ็ตที่ยังไม่ติ๊กจะไม่ถูกบันทึก":"unticked sets won't be saved","ออกโดยไม่บันทึก?":"Quit without saving?","ยังไม่มีเซ็ตที่ติ๊ก":"No sets ticked yet","ยกเลิก_cf":"Cancel","เพิ่มท่านี้?":"Add this exercise?","เพิ่มท่า_cf":"Add exercise","เอาท่านี้ออก?":"Remove this exercise?","เซ็ตที่บันทึกในท่านี้จะหายด้วย":"Sets logged for it will be lost","เอาออก_cf":"Remove","ลบเซ็ตสุดท้าย?":"Remove the last set?","ลบเซ็ต_cf":"Remove set","เลือกท่าที่จะเพิ่ม":"Pick an exercise to add"});
+
+Object.assign(EN,{"แตะเพื่อแก้":"tap to edit"});
+
+Object.assign(EN,{"ครั้งแรก — เลือกน้ำหนักที่ยกได้ประมาณ 12 ครั้งสบายๆ":"First time — pick a weight you can lift about 12 times comfortably","วอร์มก่อน":"Warm up","เบาๆ 8 ครั้ง แล้วหนักขึ้น 3 ครั้ง":"light × 8, then heavier × 3"});
+/* ===== log-sets layout (mock 3): thumb header, [✓n] [kg] × [reps] [−] rows, Add set row, next exercise card ===== */
+function decorateSets(){const ex=sessEx();document.querySelectorAll("#exs>.ex").forEach((card,ci)=>{if(card.dataset.dec)return;card.dataset.dec=1;const e=ex[ci];if(!e)return;
+  const g=(()=>{try{return gifOf(EXLIB.find(q=>q.id===e.id)||e)}catch(x){return ""}})(),rows=(draft.ex||{})[e.id]||[],last=(typeof lastLog==="function"?null:null);
+  const nm=card.querySelector(".ex-name");if(nm&&!card.querySelector(".ls-th")){nm.insertAdjacentHTML("afterbegin",`<span class="ls-th"${g?` style="background-image:url('${esc(g)}')"`:""}>${g?"":licon("dumbbell")}</span>`)}
+  const sets=card.querySelector(".sets");if(!sets||sets.querySelector('[data-pad="sets"]'))return;sets.classList.add("ls");
+  rows.forEach((r,i)=>{const kg=sets.querySelector(`#kg-${CSS.escape(e.id)}-${i}`),rp=sets.querySelector(`#rp-${CSS.escape(e.id)}-${i}`),ok=sets.querySelector(`#ok-${CSS.escape(e.id)}-${i}`);if(!kg||!rp||!ok)return;
+    const lab=document.createElement("label");lab.className="ls-n";lab.innerHTML=`<span>${i+1}</span>`;kg.before(lab);lab.prepend(ok);
+    const x=document.createElement("span");x.className="ls-x";x.textContent="×";kg.after(x);
+    const d=document.createElement("button");d.type="button";d.className="ls-del";d.setAttribute("aria-label",t("ลบเซ็ต_cf").replace(/_cf$/,"")+" "+(i+1));d.textContent="−";rp.after(d);
+    d.addEventListener("click",async()=>{if(!await cfm(`${t("ลบเซ็ต_cf").replace(/_cf$/,"")} ${i+1}?`,esc(e.n),t("ลบเซ็ต_cf").replace(/_cf$/,""),1))return;rows.splice(i,1);save("gymdraft",draft);renderEx();updWoBar()})});
+  const add=card.querySelector("[data-add]");if(add&&!card.querySelector(".ls-add")){const b=document.createElement("button");b.type="button";b.className="ls-add";b.innerHTML=`<span>${t("เพิ่มเซ็ต")}</span><i>+</i>`;b.addEventListener("click",()=>add.click());sets.after(b)}});
+  /* next exercise as a compact card under the current one */
+  const box=document.getElementById("exs");box.querySelectorAll(".ls-next").forEach(x=>x.remove());const cur=box.querySelector(".ex.pg-on");if(cur){const i=[...box.querySelectorAll(":scope>.ex")].indexOf(cur),n=ex[i+1];
+    if(n){const g=(()=>{try{return gifOf(EXLIB.find(q=>q.id===n.id)||n)}catch(x){return ""}})();cur.insertAdjacentHTML("afterend",`<button type="button" class="ls-next"><span class="ls-th"${g?` style="background-image:url('${esc(g)}')"`:""}>${g?"":licon("dumbbell")}</span><span><b>${esc(n.n)}</b><small>${n.s} ${t("เซ็ต")} · ${t("ถัดไป_n")}</small></span><i>›</i></button>`);box.querySelector(".ls-next").addEventListener("click",()=>goEx(i+1))}}}
+{const o=renderEx;renderEx=function(){const r=o.apply(this,arguments);try{decorateSets()}catch(e){console.error(e)}return r}}
+{const o=applyPager;applyPager=function(){const r=o.apply(this,arguments);try{decorateSets()}catch(e){}return r}}
+Object.assign(EN,{"เพิ่มเซ็ต":"Add set"});
+/* ===== workout = mock 3 exactly: top bar ‹ time · i/n ✓, card header thumb+name+sub+•••, pills with units, white Add exercise ===== */
+function mockTop(){const tp=document.getElementById("wo-top");if(!tp)return;if(!tp.querySelector(".wt-fin")){tp.insertAdjacentHTML("beforeend",`<span class="wt-pos" id="wt-pos"></span><button class="wt-fin" aria-label="${t("จบและบันทึก")}"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`);tp.querySelector(".wt-fin").addEventListener("click",()=>document.getElementById("save-w").click())}
+  const n=document.querySelectorAll("#exs>.ex").length;const p=document.getElementById("wt-pos");if(p)p.textContent=n?` · ${woIdx+1}/${n}`:""}
+function mockCards(){const ex=sessEx();document.querySelectorAll("#exs>.ex").forEach((card,ci)=>{const e=ex[ci];if(!e||card.dataset.mk)return;card.dataset.mk=1;
+  const L=lastFor(e.id),rows=(draft.ex||{})[e.id]||[],u=e.u||"kg";const kind=(()=>{try{return isCardio(PROGS[cur])?t("คาร์ดิโอ"):t("เวท")}catch(x){return ""}})();
+  const g=(()=>{try{return gifOf(EXLIB.find(q=>q.id===e.id)||e)}catch(x){return ""}})();
+  const hd=document.createElement("div");hd.className="mk-h";hd.innerHTML=`<span class="ls-th"${g?` style="background-image:url('${esc(g)}')"`:""}>${g?"":licon("dumbbell")}</span><span class="mk-t"><b>${esc(e.n)}</b><small><em>${kind}</em> · ${rows.length} ${t("เซ็ต")}${L&&L.sets[0]?` · ${t("ล่าสุด")} ${toDisp(L.sets[0].kg,u)}${u}×${L.sets[0].reps}`:""}</small></span><button type="button" class="mk-more" aria-label="${t("ตัวเลือก")}">⋯</button>`;
+  card.prepend(hd);
+  hd.querySelector(".mk-more").addEventListener("click",()=>{const q=s=>card.querySelector(s);
+    openGen(esc(e.n),`<div class="pm-menu">${[["how","▶","วิธีเล่น"],["edit","✎","แก้ไขท่า"],["load","↺","ใช้ค่าครั้งก่อน"],["all","✓✓","ติ๊กทุกเซ็ต"],["memo","✎","เมโม"],["rest","⏱",`${t("เวลาพัก")} ${fmt(restFor(e))}`],["unit","⇄",`${t("หน่วย")}: ${u}`],["cancel","✕","ยกเลิกการออก"]].filter(([k])=>k!=="load"||q("[data-load]")).map(([k,i,l])=>`<button class="menu-row${k==="cancel"?" warn":""}" data-mk="${k}"><span class="mi">${i}</span><span class="mt"><b>${t(l)}</b></span></button>`).join("")}</div><button class="btn" data-gen-close>${t("ปิด")}</button>`,
+      b=>b.querySelectorAll("[data-mk]").forEach(x=>x.addEventListener("click",()=>{const k=x.dataset.mk;closeGen();
+        if(k==="how")openHowTo(e.id,e.n);else if(k==="edit")q("[data-edit]")?.click();else if(k==="load")q("[data-load]")?.click();else if(k==="all")q("[data-all]")?.click();
+        else if(k==="memo"){const v=prompt(t("เมโม…"),(draft.memo||{})[e.id]||"");if(v!=null){draft.memo=draft.memo||{};draft.memo[e.id]=v;save("gymdraft",draft)}}
+        else if(k==="rest"){const v=prompt(t("เวลาพัก (วินาที)"),restFor(e));if(v&&+v>0){restCfg[e.id]=Math.max(15,Math.min(600,+v));save("restcfg",restCfg)}}
+        else if(k==="unit")q("[data-unit]")?.click();else if(k==="cancel")document.getElementById("cancel-w").click()})))});
+  /* pills: value + unit, future rows dimmed */
+  const first=rows.findIndex(r=>!r.ok);card.querySelectorAll(".sets.ls input[data-pad]").forEach(inp=>{if(inp.parentElement.classList.contains("mk-pill"))return;const w=document.createElement("span");w.className="mk-pill";inp.before(w);w.append(inp);w.insertAdjacentHTML("beforeend",`<i>${inp.dataset.pad==="kg"?u:t("ครั้ง_pm").replace(/_pm$/,"")}</i>`);
+    const i=+inp.id.split("-").pop();if(first>=0&&i>first)w.classList.add("dim");const fit=()=>{inp.style.width=(Math.max(1,String(inp.value||inp.placeholder||"").length)*0.62+0.5)+"em"};fit();inp.addEventListener("input",fit);inp.addEventListener("change",fit)})})}
+{const o=renderEx;renderEx=function(){const r=o.apply(this,arguments);try{mockCards();mockTop()}catch(e){console.error(e)}return r}}
+{const o=applyPager;applyPager=function(){const r=o.apply(this,arguments);try{mockTop()}catch(e){}return r}}
+Object.assign(EN,{"ตัวเลือก":"Options","แก้ไขท่า":"Edit exercise","ใช้ค่าครั้งก่อน":"Use last session","ติ๊กทุกเซ็ต":"Tick all sets","เมโม":"Memo","เวลาพัก":"Rest","เวลาพัก (วินาที)":"Rest (seconds)","หน่วย":"Unit","ยกเลิกการออก":"Cancel workout"});

@@ -19,7 +19,7 @@ document.getElementById("export").addEventListener("click",async()=>{
 (() => {
   const files = [
     ["/css/comic-page-bg.css?v=4", "data-comic-page-bg"],
-    ["/css/modal-theme.css?v=1", "data-modal-theme"],
+    ["/css/modal-theme.css?v=2", "data-modal-theme"],
     ["/css/clean-controls.css?v=3", "data-clean-controls"]
   ];
   files.forEach(([href, attr]) => {
