@@ -377,16 +377,17 @@ html body .sheet-act { box-sizing: border-box !important; width: 100% !important
 #nourish .dm.on .dm-items li { color: rgba(255,255,255,.55); }
 #nourish .dm .dm-add { align-self: flex-start; margin-top: 2px; }
 
-/* Train › View details (openPlanItem): same look as Today's View details — no dark thumbs, no black labels */
-#gen-body .pi-ex .pl-th, #gen-body .pl-wu .pl-th { display: none !important; }
-#gen-body .pl-pt { background: none !important; color: rgba(255,255,255,.55) !important; padding: 0 !important; font-weight: 500 !important; border-radius: 0 !important; }
-#gen-body .pi-ex.pl-card, #gen-body .pl-card.pl-wu {
-  background: var(--glass-bg) !important; border: 1px solid var(--glass-line) !important; border-radius: 18px !important; box-shadow: none !important;
-  padding: 12px 14px !important; gap: 10px !important;
-}
-#gen-body .pi-ex .pi-how { color: rgba(255,255,255,.6) !important; }
-/* join the exercise rows into one list (like Today's View details) */
-#gen-body .pi-ex.pl-card { border-radius: 0 !important; }
-#gen-body .pi-ex.pl-card + .pi-ex.pl-card { margin-top: -13px !important; border-top-color: rgba(255,255,255,.08) !important; }
-#gen-body .pi-ex.pl-card:not(.pi-ex + .pi-ex) { border-top-left-radius: 18px !important; border-top-right-radius: 18px !important; }
-#gen-body .pi-ex.pl-card:not(:has(+ .pi-ex)) { border-bottom-left-radius: 18px !important; border-bottom-right-radius: 18px !important; }
+/* Exercise list in View details (Train + Today), option B: timeline — numbered rings joined by a thin line */
+.tl { display: grid; gap: 0; margin: 4px 0 8px; }
+.tl-r { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; column-gap: 12px; align-items: start;
+  position: relative; padding: 0 0 16px; background: none !important; border: 0 !important; box-shadow: none !important;
+  width: 100%; text-align: left; color: #fff; font: inherit; cursor: default; }
+button.tl-r { cursor: pointer; }
+.tl-n { width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(255,255,255,.32); display: grid; place-items: center;
+  font: 600 12px/1 var(--f-num, ui-monospace, monospace); color: rgba(255,255,255,.7); background: transparent; }
+.tl-r:not(:last-child)::after { content: ""; position: absolute; left: 13px; top: 30px; bottom: 4px; width: 1px; background: rgba(255,255,255,.18); }
+.tl-t { display: grid; gap: 2px; min-width: 0; padding-top: 2px; }
+.tl-t b { font-size: 16px; font-weight: 700; overflow-wrap: anywhere; }
+.tl-t small { font-size: 13px; color: rgba(255,255,255,.6); }
+.tl-r .pi-how { color: rgba(255,255,255,.4); padding-top: 4px; }
+.tl-wu .tl-n { border-style: dashed; }
