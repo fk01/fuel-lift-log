@@ -707,7 +707,7 @@ html body #tx-bar .tx-btns .btn { flex: none !important; width: auto !important;
 
 /* ===== Edit program, round 2 — match mockup A ===== */
 /* header: "Edit program" small + ✕, opaque enough that rows scrolling under it never show through */
-html body #pm-modal .modal-in > .row-head:first-child { background: rgba(28,30,34,.96) !important; -webkit-backdrop-filter: blur(16px) !important; backdrop-filter: blur(16px) !important; }
+html body #pm-modal .modal-in > .row-head:first-child { background: rgba(20,21,24,.28) !important; -webkit-backdrop-filter: blur(16px) !important; backdrop-filter: blur(16px) !important; }
 html body #pm-modal #pm-title { font: 500 14px var(--f-body) !important; color: rgba(255,255,255,.65) !important; text-transform: none !important; letter-spacing: 0 !important; }
 html body #pm-modal #pm-close { background: none !important; border: 0 !important; color: #fff !important; }
 /* stats: sans labels like the mockup */
@@ -838,7 +838,11 @@ html body #v-more #acct-menu.menu { background: none !important; background-imag
 html body #gen-body .sh-x:focus:not(:focus-visible), html body #gen-body .sh-x:focus { outline: none !important; box-shadow: none !important; }
 html body #gen-body > .btn.primary:not([data-gen-close]) { align-self: flex-start !important; }
 /* Manage programs / Exercise library: sticky title row translucent (was near-solid dark), AI prompt as a bare label */
-html body #pm-modal .modal-in > .row-head, html body #lib-modal .modal-in > .row-head {
+html body #pm-modal .modal-in > .row-head:first-child, html body #lib-modal .modal-in > .row-head:first-child {
   background: rgba(20,21,24,.28) !important; -webkit-backdrop-filter: blur(14px) !important; backdrop-filter: blur(14px) !important; box-shadow: none !important; border-bottom: 1px solid rgba(255,255,255,.12) !important;
 }
 html body #lib-modal .btn.st-ai.lib-ai { background: none !important; background-image: none !important; border: 0 !important; box-shadow: none !important; padding: 8px 0 !important; text-align: left !important; align-items: flex-start !important; }
+/* Choose exercise (lib-modal.adding): app.css gave "+ Create exercise" a dashed box; iOS draws its own box on type=search */
+html body #lib-modal.adding #lib-new { border: 0 !important; color: #fff !important; font-weight: 700 !important; }
+html body #lib-modal #lib-q { -webkit-appearance: none !important; appearance: none !important; outline: none !important; box-shadow: none !important; }
+html body #lib-modal #lib-q::-webkit-search-decoration { -webkit-appearance: none; }
