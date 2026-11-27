@@ -1047,3 +1047,23 @@ html body #st-head .hq-hi b {
   font-size: clamp(20px, 5.9vw, 28px) !important; line-height: 1.15 !important;
   white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important;
 }
+
+/* ===== More → Background picker (bg-picker.js) ===== */
+html body #gen-body .bgp { display: grid; gap: 10px; }
+html body #gen-body .bgp-lab { font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-top: 4px; }
+html body #gen-body .bgp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+html body #gen-body .bgp-sty { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+html body #gen-body .bgp-t { position: relative; aspect-ratio: 9 / 16; border-radius: 10px; overflow: hidden; padding: 0; background: #26292e; border: 1px solid rgba(255,255,255,.14); color: #fff; font: inherit; }
+html body #gen-body .bgp-sty .bgp-t { aspect-ratio: 3 / 4; }
+html body #gen-body .bgp-t i { position: absolute; inset: 0; background-size: cover; background-position: center 25%; filter: invert(1) grayscale(1) contrast(1.1); mix-blend-mode: screen; opacity: .6; }
+html body #gen-body .bgp-t span { position: absolute; left: 0; right: 0; bottom: 0; padding: 4px 2px; font-size: 11px; text-align: center; background: linear-gradient(transparent, rgba(0,0,0,.75)); }
+html body #gen-body .bgp-t.bgp-add:not(:has(i)) { border-style: dashed; display: grid; place-items: center; }
+html body #gen-body .bgp-t.bgp-add:not(:has(i)) span { position: static; background: none; font-size: 12px; color: rgba(255,255,255,.8); }
+html body #gen-body .bgp-t[aria-pressed="true"] { box-shadow: 0 0 0 2px #fff; border-color: #fff; }
+html body #gen-body .bgp-link { justify-self: start; background: none; border: 0; padding: 4px 0; color: rgba(255,255,255,.75); font: inherit; font-size: 13px; }
+html body #gen-body .bgp-opts { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+html body #gen-body .bgp-opts button { background: none; border: 0; padding: 4px 0; color: rgba(255,255,255,.55); font: inherit; font-size: 14px; }
+html body #gen-body .bgp-opts button[aria-pressed="true"] { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 5px; }
+html body #gen-body .bgp-prev { position: relative; height: min(46vh, 340px); border-radius: 14px; overflow: hidden; background: #26292e; border: 1px solid rgba(255,255,255,.14); touch-action: none; cursor: grab; }
+html body #gen-body .bgp-prev i { position: absolute; inset: 0; background-size: cover; filter: invert(1) grayscale(1); mix-blend-mode: screen; opacity: .45; }
+html body #gen-body .bgp-prev span { position: absolute; left: 10px; bottom: 8px; font-size: 11px; color: rgba(255,255,255,.7); }
