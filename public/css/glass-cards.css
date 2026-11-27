@@ -1122,3 +1122,38 @@ html body #locpick .tw-h > span { text-transform: uppercase !important; letter-s
 html body #v-gym #locpick.tw-on.resting-b > .rb-plan { display: none !important; }
 html body #v-gym #locpick.tw-on.resting-b > .rb-plan ~ .tw { display: grid !important; }
 html body #v-gym #locpick.tw-on.resting-b.tw-allopen > .rb-plan ~ .pl-all { display: revert !important; }
+
+/* ===== Login — option B (user choice): manga cover. Hero art full screen + speed lines, big WEIGHT / GRAM title,
+   the form is a glass sheet at the bottom; Google = white button (like Start), inputs underlined ===== */
+html body #login.modal { padding: 0 !important; align-items: stretch !important; justify-content: stretch !important; background: #16171a !important; overflow: hidden !important; }
+html body #login::before { content: ""; position: absolute; inset: 0; background: url(/img/comic-login.jpg) center 18% / cover no-repeat; filter: invert(1) grayscale(1) contrast(1.15); mix-blend-mode: screen; opacity: .42; pointer-events: none; }
+html body #login::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-conic-gradient(from 0deg at 50% 38%, rgba(255,255,255,.22) 0deg .5deg, transparent .5deg 7.5deg);
+  -webkit-mask-image: radial-gradient(circle at 50% 38%, transparent 0 14%, #000 34%, #000 60%, transparent 85%); mask-image: radial-gradient(circle at 50% 38%, transparent 0 14%, #000 34%, #000 60%, transparent 85%); }
+html body #login .modal-in.acct { max-width: none !important; width: 100% !important; min-height: 100% !important; box-sizing: border-box !important; margin: 0 !important;
+  background: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+  padding: 0 !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; overflow: visible !important; z-index: 1; }
+html body #login .modal-in.acct::before { display: none !important; }
+html body #login .acct-cover { padding: calc(env(safe-area-inset-top, 0px) + 40px) 22px 20px; text-align: left; }
+html body #login .acct-sub { margin: 0 !important; font-size: 11px !important; letter-spacing: .35em !important; color: rgba(255,255,255,.7) !important; text-align: left !important; }
+html body #login .acct-logo { margin: 8px 0 0 !important; font-size: clamp(54px, 17vw, 76px) !important; line-height: .9 !important; font-weight: 900 !important; letter-spacing: -2px !important; color: #fff !important; text-align: left !important; text-shadow: 4px 4px 0 #000 !important; text-transform: uppercase; }
+html body #login .acct-tag { margin: 12px 0 0 !important; text-align: left !important; color: rgba(255,255,255,.75) !important; font-size: 14px !important; }
+html body #login .acct-sheet { display: grid; gap: 12px; padding: 22px 24px calc(env(safe-area-inset-bottom, 0px) + 22px);
+  border-radius: 24px 24px 0 0; border: 1px solid rgba(255,255,255,.18); border-bottom: 0;
+  background: linear-gradient(145deg, rgba(255,255,255,.13), rgba(255,255,255,.05)), rgba(20,21,24,.62);
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); }
+html body #login .acct-sheet > * { margin: 0 !important; }
+/* Google = white pill */
+html body #login .g-wrap { margin: 0 !important; height: 52px !important; }
+html body #login .g-face { background: #fff !important; color: #111 !important; border: 0 !important; font-weight: 700 !important; font-size: 16px !important; }
+/* inputs underlined, no boxes */
+html body #login .le-in { background: none !important; border: 0 !important; border-bottom: 1px solid rgba(255,255,255,.3) !important; border-radius: 0 !important; padding: 12px 0 !important; min-height: 0 !important; font-size: 16px !important; box-shadow: none !important; }
+html body #login .le-in:focus { border-bottom-color: #fff !important; outline: none !important; }
+html body #login .pw-eye { background: none !important; border: 0 !important; }
+html body #login #login-form { gap: 10px !important; }
+/* Sign in = soft grey pill; Face ID label */
+html body #login #acct-go { background: rgba(255,255,255,.14) !important; border: 0 !important; color: #fff !important; border-radius: 999px !important; min-height: 50px !important; font-weight: 700 !important; margin-top: 6px !important; }
+html body #login #passkey-login { background: none !important; border: 0 !important; color: #fff !important; justify-content: center !important; }
+html body #login .acct-or { color: rgba(255,255,255,.5) !important; }
+html body #login .acct-sw { justify-content: center !important; color: rgba(255,255,255,.7) !important; }
+html body #login .acct-sw .linkb { color: #fff !important; text-decoration: underline !important; }
