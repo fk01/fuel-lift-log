@@ -5,7 +5,7 @@ const { execFileSync } = require("node:child_process");
 const http = require("node:http"), fs = require("node:fs"), path = require("node:path");
 (async () => {
 if (process.argv.length === 2) {
-  for (const suite of ["workout-blank-kg.cjs", "workout-weight-controls.cjs", "workout-replace.cjs", "pm-reorder.cjs", "home-quest.cjs", "eat-next.cjs"]) {
+  for (const suite of ["workout-blank-kg.cjs", "workout-weight-controls.cjs", "workout-replace.cjs", "pm-reorder.cjs", "home-quest.cjs", "eat-next.cjs", "bg-picker.cjs"]) {
     execFileSync(process.execPath, [path.join(__dirname, suite)], { stdio: "inherit" });
   }
 }
