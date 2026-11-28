@@ -71,6 +71,21 @@ const srv = http.createServer((q, r) => {
     assert.equal(await vis(), true);
   });
 
+  await tc("in-progress workout: Back, then Discard from the week card", async ({ p }) => {
+    await p.locator('#locpick [data-tw="start"]').click(); await p.waitForTimeout(500);
+    await p.evaluate(() => { const e = sessEx()[0]; draft.ex[e.id] = [{ kg: 20, reps: "8", ok: true }]; save("gymdraft", draft); });
+    await p.locator("#wo-back").click(); await p.waitForTimeout(500);
+    const d = p.locator('#locpick [data-tw="discard"]');
+    assert.ok(await d.isVisible(), "Discard offered on the card");
+    assert.ok(await p.locator('#locpick [data-tw="resume"]').isVisible(), "Resume offered");
+    assert.equal(await p.locator("#wo-top").isVisible(), false, "workout bar not floating under the week");
+    assert.equal(await p.locator("#locpick .tw-tabs").count(), 0, "card locked to the open workout");
+    await d.click();
+    await p.locator('#cf-sheet:not([hidden]) [data-cf="1"]').click(); await p.waitForTimeout(400);
+    assert.equal(await p.evaluate(() => picked), false, "workout cancelled");
+    assert.ok(await p.locator('#locpick [data-tw="start"]').isVisible(), "back to Start");
+  });
+
   await b.close(); srv.close();
   if (fails.length) { console.log(fails.length + " failing"); process.exit(1); }
 })();

@@ -34,6 +34,8 @@
     const doneCnt = days.filter(ds => ds <= today && (doneOn(ds).length || cxAny(ds))).length;
     const plannedCnt = days.filter(ds => progsOn(ds).length).length;
 
+    // in progress: "n / m sets" so it reads as a workout that is still open
+    const ipTxt = () => { const sets = Object.values((draft && draft.ex) || {}).flat(); return `${L("กำลังเล่น", "In progress")} · ${sets.filter(x => x && x.ok).length}/${sets.length} ${t("เซ็ต")}`; };
     const todayCard = () => {
       if (resting) return `<div class="tw-card"><div class="tw-ch"><span class="tw-d">${dayName(today)}</span><b>${L("พักวันนี้", "Rest day")}</b></div>
         <small class="tw-s">${L("ให้กล้ามได้ฟื้น — พรุ่งนี้กลับมาใหม่", "Let your muscles recover — back tomorrow")}</small>
@@ -41,15 +43,17 @@
       if (!tKs.length) return `<div class="tw-card"><div class="tw-ch"><span class="tw-d">${dayName(today)}</span><b>${L("ยังไม่มีแผน", "Nothing planned")}</b></div>
         <div class="tw-act"><button type="button" class="tw-lnk" data-tw="rest">${L("พักวันนี้", "Rest today")}</button><button type="button" class="tw-go" data-tw="add">+ ${L("เพิ่มเข้าวันนี้", "Add to today")}</button></div></div>`;
       const lead = tKs.find(inProg) || tKs.find(q => !planItemDone(q) && !isCardio(PROGS[q])) || tKs.find(q => !planItemDone(q)) || tKs[0];
-      const k = tKs.includes(pickK) ? pickK : lead, P = PROGS[k], v = planItemDone(k), ip = inProg(k);
+      const busy = tKs.find(inProg), k = busy || (tKs.includes(pickK) ? pickK : lead), P = PROGS[k], v = planItemDone(k), ip = inProg(k);   // a workout in progress locks the card to it
       const sameName = tKs.filter(q => PROGS[q] && PROGS[q].name === P.name);
-      const tabs = tKs.length > 1 ? `<span class="tw-tabs">${tKs.map(q => `<button type="button" data-twk="${esc(q)}" aria-pressed="${q === k}">${sameName.length > 1 && PROGS[q].name === P.name ? esc(placeOf(q)) : nm(q)}${planItemDone(q) ? " ✓" : ""}</button>`).join("")}</span>` : "";
+      const tabs = tKs.length > 1 && !busy ? `<span class="tw-tabs">${tKs.map(q => `<button type="button" data-twk="${esc(q)}" aria-pressed="${q === k}">${sameName.length > 1 && PROGS[q].name === P.name ? esc(placeOf(q)) : nm(q)}${planItemDone(q) ? " ✓" : ""}</button>`).join("")}</span>` : "";
       const go = v ? `<button type="button" class="tw-go" data-tw="done" data-k="${esc(k)}">✓ ${L("เสร็จแล้ว", "Done")} ›</button>`
         : ip ? `<button type="button" class="tw-go" data-tw="resume">▶ ${L("กลับไปเล่น", "Resume")}</button>`
         : `<button type="button" class="tw-go" data-tw="start" data-k="${esc(k)}">▶ ${isCardio(P) ? L("บันทึก", "Log") : L("เริ่ม", "Start")}</button>`;
       return `<div class="tw-card"><div class="tw-ch"><span class="tw-d">${dayName(today)}</span><b data-tw="prev" data-k="${esc(k)}">${nm(k)}</b>${placeOf(k) ? `<span class="tw-pl">· ${esc(placeOf(k))}</span>` : ""}</div>${tabs}
-        <small class="tw-s">${v ? esc(planSummary(k, v)) : sub(k)}</small>${v ? "" : exList(k, 5)}
-        <div class="tw-act"><span class="tw-l2"><button type="button" class="tw-lnk" data-tw="rest">${L("พักวันนี้", "Rest today")}</button><button type="button" class="tw-lnk" data-tw="add">${L("เปลี่ยนวันนี้", "Change today")}</button></span>${go}</div></div>`;
+        <small class="tw-s">${v ? esc(planSummary(k, v)) : ip ? ipTxt() : sub(k)}</small>${v ? "" : exList(k, 5)}
+        <div class="tw-act"><span class="tw-l2">${ip
+          ? `<button type="button" class="tw-lnk" data-tw="discard" data-k="${esc(k)}">${L("ยกเลิกทั้งหมด", "Discard workout")}</button>`
+          : `<button type="button" class="tw-lnk" data-tw="rest">${L("พักวันนี้", "Rest today")}</button><button type="button" class="tw-lnk" data-tw="add">${L("เปลี่ยนวันนี้", "Change today")}</button>`}</span>${go}</div></div>`;
     };
     const row = ds => {
       if (ds === today) return todayCard();
@@ -80,6 +84,7 @@
     sec.querySelectorAll("[data-tw]").forEach(b => b.addEventListener("click", e => { const a = b.dataset.tw, k = b.dataset.k;
       if (a === "start") startPlanItem(k, true);
       else if (a === "resume") { setDayMode("train"); renderGym(); setTimeout(() => document.getElementById("step3")?.scrollIntoView({ block: "start" }), 50); }
+      else if (a === "discard") cfm(`${t("ยกเลิกทั้งหมด")}?<br>${nm(k)}`, t("เซ็ตที่ทำไว้จะหายทั้งหมด"), t("ยกเลิกทั้งหมด"), 1).then(ok => { if (ok) { cancelProg(); toast(t("ทิ้งแล้ว")); } });
       else if (a === "done") openDoneItem(k);
       else if (a === "prev") openPlanItem(k);
       else if (a === "rest") { setDayMode("rest"); renderGym(); }
