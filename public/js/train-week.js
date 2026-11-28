@@ -1,5 +1,5 @@
 /* train-week.js — Train tab, option G (user choice): the whole week as rows (Mon → Sun).
-   Today's row opens as a glass card: the program's exercises (sets × reps · last weight), a place / program
+   Today's row opens as a glass card: the program's exercises (sets × reps), a place / program
    switch when today has more than one, ▶ Start, Rest today, Change today. Other days: tap to see the
    exercises; ⇄ edits which programs are on that weekday (the weekly schedule = each program's days).
    All programs fold under one line. Loads after locations.js and wraps renderPlan(); the original
@@ -11,7 +11,6 @@
   const dayName = ds => L(...DN[new Date(ds + "T12:00:00").getDay()]);
   const placeOf = k => { try { const P = PROGS[k], l = locById(locOf(P) === "*" ? P.lastLoc : locOf(P)); return l ? t(l.name) : ""; } catch (e) { return ""; } };
   const exN = e => { try { return exOf(e.id).n || e.n; } catch (_) { return e.n || e.id; } };
-  const lastKg = id => { for (let i = logs.length - 1; i >= 0; i--) { const s = (logs[i].ex || {})[id]; if (s && s.length) { const m = Math.max(...s.map(q => +q.kg || 0)); return m > 0 ? m : null; } } return null; };
   let open = null, pickK = null, allOpen = false;
   const full = new Set();   // programs whose whole exercise list is unfolded ("+n more")
 
@@ -31,7 +30,7 @@
     const names = ks => [...new Set(ks.map(nm))].join(" · ");
     const sub = k => { const P = PROGS[k]; if (!P) return ""; return isCardio(P) ? L("คาร์ดิโอ", "Cardio") : `${nU(P.ex.length, "ท่า")} · ~${P.ex.length * 6} ${t("นาที")}`; };
     const exList = (k, max) => { const P = PROGS[k]; if (!P || isCardio(P)) return ""; const ex = P.ex || [], all = full.has(k), n = all ? ex.length : max;
-      return `<div class="tw-ex">${ex.slice(0, n).map(e => { const kg = lastKg(e.id); return `<div><span>${esc(exN(e))}</span><span>${e.s || 3}×${esc(String(e.r || "8-12"))}${kg ? ` · ${kg}` : ""}</span></div>`; }).join("")}${ex.length > max ? `<button type="button" class="tw-more" data-twmore="${esc(k)}" aria-expanded="${all}">${all ? L("ย่อ", "Show less") + " ⌃" : `+${ex.length - max} ${L("ท่า", "more")} ⌄`}</button>` : ""}</div>`; };
+      return `<div class="tw-ex">${ex.slice(0, n).map(e => `<div><span>${esc(exN(e))}</span><span>${e.s || 3}×${esc(String(e.r || "8-12"))}</span></div>`).join("")}${ex.length > max ? `<button type="button" class="tw-more" data-twmore="${esc(k)}" aria-expanded="${all}">${all ? L("ย่อ", "Show less") + " ⌃" : `+${ex.length - max} ${L("ท่า", "more")} ⌄`}</button>` : ""}</div>`; };
     const doneCnt = days.filter(ds => ds <= today && (doneOn(ds).length || cxAny(ds))).length;
     const plannedCnt = days.filter(ds => progsOn(ds).length).length;
 
