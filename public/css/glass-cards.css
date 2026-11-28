@@ -1160,3 +1160,4 @@ html body #login .acct-sw .linkb { color: #fff !important; text-decoration: unde
 /* back on the week view with a workout still open: the workout's Back · timer · Finish bar belongs to the
    workout screen — it was floating under the week list. Resume / Discard live on today's card instead. */
 html body #v-gym:has(#locpick:not([hidden])) > #wo-top { display: none !important; }
+html body #locpick .tw-more { justify-self: start; background: none; border: 0; padding: 6px 0 2px; font: inherit; font-size: 13px !important; color: rgba(255,255,255,.7) !important; text-align: left; }

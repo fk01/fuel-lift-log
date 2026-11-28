@@ -13,6 +13,7 @@
   const exN = e => { try { return exOf(e.id).n || e.n; } catch (_) { return e.n || e.id; } };
   const lastKg = id => { for (let i = logs.length - 1; i >= 0; i--) { const s = (logs[i].ex || {})[id]; if (s && s.length) { const m = Math.max(...s.map(q => +q.kg || 0)); return m > 0 ? m : null; } } return null; };
   let open = null, pickK = null, allOpen = false;
+  const full = new Set();   // programs whose whole exercise list is unfolded ("+n more")
 
   const orig = renderPlan;
   window.renderPlan = function (box) { const r = orig.apply(this, arguments); try { week(box); } catch (e) { console.error(e); } return r; };
@@ -29,8 +30,8 @@
     const nm = k => esc((PROGS[k] && PROGS[k].name) || k);
     const names = ks => [...new Set(ks.map(nm))].join(" · ");
     const sub = k => { const P = PROGS[k]; if (!P) return ""; return isCardio(P) ? L("คาร์ดิโอ", "Cardio") : `${nU(P.ex.length, "ท่า")} · ~${P.ex.length * 6} ${t("นาที")}`; };
-    const exList = (k, max) => { const P = PROGS[k]; if (!P || isCardio(P)) return ""; const ex = P.ex || [];
-      return `<div class="tw-ex">${ex.slice(0, max).map(e => { const kg = lastKg(e.id); return `<div><span>${esc(exN(e))}</span><span>${e.s || 3}×${esc(String(e.r || "8-12"))}${kg ? ` · ${kg}` : ""}</span></div>`; }).join("")}${ex.length > max ? `<div class="tw-more">+${ex.length - max} ${L("ท่า", "more")}</div>` : ""}</div>`; };
+    const exList = (k, max) => { const P = PROGS[k]; if (!P || isCardio(P)) return ""; const ex = P.ex || [], all = full.has(k), n = all ? ex.length : max;
+      return `<div class="tw-ex">${ex.slice(0, n).map(e => { const kg = lastKg(e.id); return `<div><span>${esc(exN(e))}</span><span>${e.s || 3}×${esc(String(e.r || "8-12"))}${kg ? ` · ${kg}` : ""}</span></div>`; }).join("")}${ex.length > max ? `<button type="button" class="tw-more" data-twmore="${esc(k)}" aria-expanded="${all}">${all ? L("ย่อ", "Show less") + " ⌃" : `+${ex.length - max} ${L("ท่า", "more")} ⌄`}</button>` : ""}</div>`; };
     const doneCnt = days.filter(ds => ds <= today && (doneOn(ds).length || cxAny(ds))).length;
     const plannedCnt = days.filter(ds => progsOn(ds).length).length;
 
@@ -78,6 +79,7 @@
     const pl = box.querySelector(".pl-all"); if (pl) sec.after(pl);        // the original program list shows only when unfolded
 
     const again = () => { try { renderGym(); } catch (e) { week(box); } };
+    sec.querySelectorAll("[data-twmore]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); const k = b.dataset.twmore; full.has(k) ? full.delete(k) : full.add(k); week(box); }));
     sec.querySelectorAll("[data-twk]").forEach(b => b.addEventListener("click", () => { pickK = b.dataset.twk; week(box); }));
     sec.querySelectorAll("[data-twopen]").forEach(b => b.addEventListener("click", () => { const ds = b.dataset.twopen; if (ds === today) return; open = open === ds ? null : ds; week(box); }));
     sec.querySelectorAll("[data-twsw]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); editDay(b.dataset.twsw); }));
