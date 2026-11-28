@@ -86,6 +86,16 @@ const srv = http.createServer((q, r) => {
     assert.ok(await p.locator('#locpick [data-tw="start"]').isVisible(), "back to Start");
   });
 
+  await tc("+n more unfolds every exercise, then folds back", async ({ p }) => {
+    const more = p.locator("#locpick .tw-card [data-twmore]");
+    assert.ok(await more.count() > 0, "program has more than 5 exercises");
+    const k = await more.getAttribute("data-twmore"), n = await p.evaluate(k => PROGS[k].ex.length, k);
+    await more.click(); await p.waitForTimeout(150);
+    assert.equal(await p.locator("#locpick .tw-card .tw-ex > div").count(), n, "all exercises listed");
+    await p.locator("#locpick .tw-card [data-twmore]").click(); await p.waitForTimeout(150);
+    assert.equal(await p.locator("#locpick .tw-card .tw-ex > div").count(), 5, "folded back to 5");
+  });
+
   await b.close(); srv.close();
   if (fails.length) { console.log(fails.length + " failing"); process.exit(1); }
 })();
